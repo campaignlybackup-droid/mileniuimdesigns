@@ -17,7 +17,10 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
-    "db:local": "prisma dev --name millennium"
+    "db:local": "prisma dev --name millennium",
+    "check:env": "tsx scripts/check-env.ts",
+    "db:probe": "tsx scripts/db-probe.ts",
+    "test:integration": "vitest run tests/integration"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",
@@ -50,6 +53,7 @@
     "react-hook-form": "7.88.0",
     "recharts": "3.10.1",
     "resend": "6.28.0",
+    "server-only": "0.0.1",
     "stripe": "22.6.2",
     "tailwind-merge": "3.7.0",
     "zod": "4.6.4",

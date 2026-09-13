@@ -1,0 +1,79 @@
+# Production migration and promotion — docs/architecture/01-stack-and-structure.md §5.3.
+#
+# THE ORDERING IS THE POINT. Vercel promotes a production deployment the moment its
+# build succeeds. If the migration ran after that, release N's code — which under
+# expand/contract writes the new column — would be live before the column existed, and
+# every write to it would 500 until someone noticed.
+#
+# So promotion is gated on the migration, not the other way round:
+#
+#   push to main  →  CI builds a PREVIEW (built, tested, NOT serving)
+#                 →  this workflow migrates production
+#                 →  on success, fast-forwards `release`
+#                 →  which is Vercel's Production Branch, so THAT deploys
+#
+# An unapproved or failed release is therefore simply not live, rather than live against
+# a schema it does not have.
+name: Migrate and promote
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  # Never two migrations at once: prisma migrate takes an advisory lock, and a queued
+  # second run would block until the first finished or time out mid-flight.
+  group: migrate-production
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: Migrate production, then promote
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The manual approval gate sits HERE — before the migration, and therefore before
+    # promotion. Configure required reviewers on this environment in repo settings.
+    environment: production
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npx prisma generate
+
+      - name: Reject a pooled DIRECT_URL before touching anything
+        run: npm run check:env
+        env:
+          APP_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_DEFAULT_MARKET: ${{ vars.NEXT_PUBLIC_DEFAULT_MARKET }}
+
+      - name: Show pending migrations
+        run: npx prisma migrate status
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Promote — fast-forward release to main
+        # Only reached when the migration succeeded. This push is what triggers the
+        # production deployment, because `release` is Vercel's Production Branch.
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push origin ${{ github.sha }}:refs/heads/release

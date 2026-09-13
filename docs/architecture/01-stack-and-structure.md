@@ -2276,3 +2276,50 @@ Running `npx prisma dev --name millennium` on this machine:
 
 A shadow database URL is printed alongside and is wired to `SHADOW_DATABASE_URL`;
 `prisma migrate dev` needs it because it cannot create databases on this server.
+
+### 6.7 P02 field notes
+
+Recorded while executing §5.3 and §5.4.
+
+**The generator `output` path is relative to the schema FILE.** §3 puts the schema at
+`prisma/schema/schema.prisma` (a directory, so forty tables are not one file), but
+`prisma init` writes `output = "../src/generated/prisma"`, which was correct only while
+the schema sat at `prisma/schema.prisma`. After the move it resolves to
+`prisma/src/generated/prisma` — and `prisma generate` reports success, having written the
+client somewhere nothing imports. It must be `"../../src/generated/prisma"`.
+
+**`tsx` transpiles to CJS unless `package.json` declares `"type": "module"`,** so
+top-level `await` in a script fails with *"Top-level await is currently not supported with
+the cjs output format"*, and `import.meta.dirname` is undefined. Scripts under `scripts/`
+therefore wrap their body in `async function main()` and use `process.cwd()`. Worth
+knowing before writing the seed and import scripts, which are the ones that will want
+top-level await.
+
+**`server-only` must be aliased in `vitest.config.mts`.** The package exports
+`./empty.js` under the `react-server` condition and an `index.js` that *throws* under
+`default`. Vitest resolves through the CJS require path, where the condition never
+applies, so every module importing `server-only` — which is every server module, by
+design — fails to import before a single test runs. Setting `resolve.conditions` does not
+help. The alias points at the package's **own** server entry (`server-only/empty.js`)
+rather than stubbing the package out, so the guard remains real in the production build.
+
+**Integration tests need `setupFiles`, not `env:`.** `src/lib/db/client.ts` calls `env()`
+at module scope, so the environment must be populated before the test file is *imported*,
+not before it runs. `tests/setup/env.ts` loads `.env.local` then `.env` with
+`override: false`, which also makes it a no-op in CI where the workflow supplies the
+variables and neither file exists.
+
+**Assert the isolation level, do not trust the option.** `tests/integration/db-connection.test.ts`
+reads `current_setting('transaction_isolation')` from inside both wrappers. `withTransaction`
+returning `read committed` and `withSerializableRetry` returning `serializable` is the
+only evidence that the `ReadCommitted` decision of §1.2 — the one that stops a losing
+customer seeing a 500 under concurrent checkout — is actually in force. (`SHOW` does not
+accept a column alias; `current_setting()` does.)
+
+**CI runs integration tests against a Postgres 17 service container.** §5.3 step 7
+specifies a Neon PR branch via the Neon GitHub integration, which needs an account that
+does not exist yet. A service container needs no credentials and runs today; the Neon
+path remains the target once the account exists, and nothing in the workflow changes but
+the connection strings. The concurrency tests are the reason this is not optional: a test
+that asserts exactly one of two simultaneous transactions wins is meaningless against a
+mock.

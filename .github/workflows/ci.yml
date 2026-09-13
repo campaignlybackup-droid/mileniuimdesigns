@@ -1,0 +1,108 @@
+# Continuous integration — docs/architecture/01-stack-and-structure.md §5.3.
+#
+# Runs on every PR and on pushes to main. A push to main produces a PREVIEW deployment
+# only: Vercel's Production Branch is `release`, and only migrate.yml fast-forwards it.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, lint, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Before typecheck and lint: the generated client is imported by src/lib/db/**,
+      # and generateStaticParams() imports its output, so nothing compiles without it.
+      - run: npx prisma generate
+
+      - name: Environment parity
+        # No database needed. Catches .env.example drifting from the Zod boot schema,
+        # and any DIRECT_URL that points at a pooled endpoint.
+        run: npm run check:env
+        env:
+          APP_ENV: preview
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+          DIRECT_URL: postgres://ci:ci@localhost:5432/ci
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_DEFAULT_MARKET: US
+
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:unit
+
+      - name: Build
+        run: npm run build
+        env:
+          # A build must not need real credentials. Every integration degrades to a
+          # visible `unconfigured` state rather than failing the build (hard rule 7).
+          APP_ENV: preview
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+          DIRECT_URL: postgres://ci:ci@localhost:5432/ci
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_DEFAULT_MARKET: US
+
+  integration:
+    name: Integration tests (real database)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Concurrency tests assert that exactly one of two simultaneous transactions wins.
+    # They are meaningless against a mock, so they need a real Postgres. In CI that is a
+    # service container; a Neon PR branch is the alternative once the Neon GitHub
+    # integration is configured (01 §5.3 step 7).
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: millennium_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      APP_ENV: preview
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/millennium_test
+      DIRECT_URL: postgres://postgres:postgres@localhost:5432/millennium_test
+      SHADOW_DATABASE_URL: postgres://postgres:postgres@localhost:5432/millennium_shadow
+      DATABASE_CONNECTION_LIMIT: "10"
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_DEFAULT_MARKET: US
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+
+      - name: Apply migrations
+        # Against DIRECT_URL, never a pooled endpoint: migrations take session-level
+        # advisory locks a transaction pooler does not preserve (01 §5.4).
+        run: npx prisma migrate deploy
+
+      - name: Probe the database
+        run: npm run db:probe
+
+      - name: Integration tests
+        run: npm run test:integration --if-present

@@ -5,7 +5,8 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  // Relative to THIS file, which lives in prisma/schema/ — hence two levels up.
+  output   = "../../src/generated/prisma"
 }
 
 datasource db {
