@@ -187,3 +187,165 @@ describe("jobs — singleton and dedupe", () => {
     }
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// Schema II — the catalogue (09 P05 exit criterion (b))
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+describe("one-of-a-kind cannot be sold twice by construction", () => {
+  it("refuses a SECOND variant on a one-of-a-kind product", async () => {
+    // idx_variants_ooak_single. Without it, "quantity 1" is meaningless: two variants
+    // each holding one unit make the piece sellable twice with every count looking right.
+    await ready;
+    await client.query("BEGIN");
+    try {
+      const { rows } = await client.query<{ id: string }>(`
+        INSERT INTO products (id, slug, title, status, is_one_of_a_kind, is_made_to_order,
+                              rank, search_text, completeness_score, completeness_checks,
+                              seo_score, seo_checks, ooak_quantity_override, version,
+                              created_at, updated_at)
+        VALUES (gen_random_uuid(), 'probe-ooak', 'Probe', 'draft', true, false, 0, '',
+                0, '{}'::jsonb, 0, '{}'::jsonb, false, 1, now(), now())
+        RETURNING id`);
+      const productId = rows[0]!.id;
+
+      const insertVariant = (sku: string) => client.query(
+        `INSERT INTO product_variants (id, product_id, is_one_of_a_kind, sku, position,
+                                       inventory_policy, option_signature, is_active,
+                                       version, created_at, updated_at)
+         VALUES (gen_random_uuid(), $1, true, $2, 0, 'tracked', '', true, 1, now(), now())`,
+        [productId, sku]);
+
+      await insertVariant("PROBE-OOAK-1");
+      let constraint = "";
+      try {
+        await insertVariant("PROBE-OOAK-2");
+      } catch (e) {
+        constraint = (e as { constraint?: string }).constraint ?? "";
+      }
+      expect(constraint).toContain("idx_variants_ooak_single");
+    } finally {
+      await client.query("ROLLBACK");
+    }
+  });
+});
+
+describe("attribute values carry exactly one value", () => {
+  it("refuses a row with both a number and a string", async () => {
+    // chk_pav_one_value. Without it the reader picks whichever column it looks at first,
+    // and one product shows two different carat weights on two screens.
+    const c = await rejects(`
+      INSERT INTO product_attribute_values
+        (id, product_id, attribute_id, value_text, value_numeric, created_at, updated_at)
+      VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), 'two', 2, now(), now())
+    `);
+    expect(c).toContain("chk_pav_one_value");
+  });
+
+  it("refuses a row with NO value at all", async () => {
+    const c = await rejects(`
+      INSERT INTO product_attribute_values (id, product_id, attribute_id, created_at, updated_at)
+      VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), now(), now())
+    `);
+    expect(c).toContain("chk_pav_one_value");
+  });
+});
+
+describe("collection rules cannot compare across currencies", () => {
+  it("refuses a price rule with no market", async () => {
+    // $400 tested against ₹40,000 is not a comparison (hard rule 2).
+    const c = await rejects(`
+      INSERT INTO collection_rules (id, collection_id, field, operator, value_numeric, position, created_at)
+      VALUES (gen_random_uuid(), gen_random_uuid(), 'price', 'gt', 40000, 0, now())
+    `);
+    expect(c).toContain("chk_collection_rules_price_market");
+  });
+
+  it("refuses the misspelling `bestselling`", async () => {
+    // 11 §7.9: the value is `best_selling`. Two spellings in two documents is how a sort
+    // silently falls through to its default.
+    //
+    // The INSERT matters: an UPDATE against an empty table affects zero rows and raises
+    // nothing, so the first version of this test passed while proving nothing. A
+    // constraint test must produce a row for the constraint to reject.
+    const c = await rejects(`
+      INSERT INTO collections (id, slug, title, mode, rule_match, sort_order, is_published,
+                               requires_sale_in_market, rank, version, created_at, updated_at)
+      VALUES (gen_random_uuid(), 'probe-sort', 'Probe', 'automatic', 'all', 'bestselling',
+              false, false, 0, 1, now(), now())
+    `);
+    expect(c).toContain("chk_collections_sort_order");
+  });
+
+  it("ACCEPTS the correct spelling `best_selling`", async () => {
+    // The converse. Without it, a constraint that rejects everything would also pass.
+    const c = await rejects(`
+      INSERT INTO collections (id, slug, title, mode, rule_match, sort_order, is_published,
+                               requires_sale_in_market, rank, version, created_at, updated_at)
+      VALUES (gen_random_uuid(), 'probe-sort-ok', 'Probe', 'automatic', 'all', 'best_selling',
+              false, false, 0, 1, now(), now())
+    `);
+    expect(c).toBe("");
+  });
+});
+
+describe("materials and weights", () => {
+  it("refuses a purity ratio above 1", async () => {
+    const c = await rejects(`UPDATE materials SET purity_ratio = 1.5 WHERE slug = '14k-yellow-gold'`);
+    expect(c).toContain("chk_materials_purity");
+  });
+
+  it("refuses a zero-weight metal component", async () => {
+    // A zero weight would price the piece at its making charge alone.
+    const c = await rejects(`
+      INSERT INTO variant_materials (variant_id, material_id, weight_grams, is_primary, created_at)
+      VALUES (gen_random_uuid(), (SELECT id FROM materials LIMIT 1), 0, true, now())
+    `);
+    expect(c).toContain("chk_variant_materials_weight");
+  });
+});
+
+describe("redirects cannot point at themselves", () => {
+  it("refuses a self-redirect", async () => {
+    const c = await rejects(`
+      INSERT INTO redirects (id, from_path, to_path, status_code, is_active, hit_count, created_at, updated_at)
+      VALUES (gen_random_uuid(), '/rings/x', '/rings/x', 301, true, 0, now(), now())
+    `);
+    expect(c).toContain("chk_redirects_not_self");
+  });
+
+  it("refuses a non-path target", async () => {
+    const c = await rejects(`
+      INSERT INTO redirects (id, from_path, to_path, status_code, is_active, hit_count, created_at, updated_at)
+      VALUES (gen_random_uuid(), '/rings/x', 'https://evil.test/x', 301, true, 0, now(), now())
+    `);
+    expect(c).toContain("chk_redirects_paths");
+  });
+});
+
+describe("the search vector is generated, not written", () => {
+  it("is populated by the database from the title", async () => {
+    await ready;
+    await client.query("BEGIN");
+    try {
+      await client.query(`
+        INSERT INTO products (id, slug, title, status, is_one_of_a_kind, is_made_to_order,
+                              rank, search_text, completeness_score, completeness_checks,
+                              seo_score, seo_checks, ooak_quantity_override, version,
+                              created_at, updated_at)
+        VALUES (gen_random_uuid(), 'probe-sv', 'Labradorite Drop Earrings', 'draft', false,
+                false, 0, 'labradorite silver', 0, '{}'::jsonb, 0, '{}'::jsonb, false, 1, now(), now())`);
+      const { rows } = await client.query<{ hit: boolean }>(`
+        SELECT search_vector @@ to_tsquery('simple', 'labradorite') AS hit
+        FROM products WHERE slug = 'probe-sv'`);
+      expect(rows[0]!.hit).toBe(true);
+    } finally {
+      await client.query("ROLLBACK");
+    }
+  });
+
+  it("cannot be written directly — the database owns it", async () => {
+    const c = await rejects(`UPDATE products SET search_vector = to_tsvector('simple','x')`);
+    expect(c.length).toBeGreaterThan(0);
+  });
+});

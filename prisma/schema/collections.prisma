@@ -1,0 +1,174 @@
+// Collections, curated facets and SEO metadata — 02 §2.4, §2.8, 03 §6.
+
+model Collection {
+  id                   String         @id @default(uuid(7)) @db.Uuid
+  slug                 String
+  title                String
+  descriptionJson      Json?          @map("description_json")
+  heroMediaId          String?        @map("hero_media_id") @db.Uuid
+  mode                 CollectionMode @default(manual)
+  /// 'all' or 'any' — how multiple rules combine.
+  ruleMatch            String         @default("all") @map("rule_match")
+  /// `best_selling`, never `bestselling` (11 §7.9).
+  sortOrder            String         @default("manual") @map("sort_order")
+  isPublished          Boolean        @default(false) @map("is_published")
+  startsAt             DateTime?      @map("starts_at") @db.Timestamptz(6)
+  endsAt               DateTime?      @map("ends_at") @db.Timestamptz(6)
+  lastRefreshedAt      DateTime?      @map("last_refreshed_at") @db.Timestamptz(6)
+  /// CLOSEOUTS is a rule set, not a hardcoded section. This makes "only show it where it
+  /// is actually on sale" expressible per market (03 §8.2).
+  requiresSaleInMarket Boolean        @default(false) @map("requires_sale_in_market")
+  rank                 Int            @default(0)
+  version              Int            @default(1)
+  deletedAt            DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  rules         CollectionRule[]
+  products      ProductCollection[]
+  marketContent CollectionMarketContent[]
+
+  @@map("collections")
+}
+
+/// The rule vocabulary is SHARED with customer_group_rules (15 §1) — one rule language,
+/// not two. A second would drift the day someone adds an operator to only one of them.
+model CollectionRule {
+  id              String                 @id @default(uuid(7)) @db.Uuid
+  collectionId    String                 @map("collection_id") @db.Uuid
+  field           CollectionRuleField
+  operator        CollectionRuleOperator
+  valueText       String?                @map("value_text")
+  valueUuid       String?                @map("value_uuid") @db.Uuid
+  valueNumeric    Decimal?               @map("value_numeric") @db.Decimal(14, 4)
+  /// A price rule without a market is a cross-currency comparison — $400 tested against
+  /// ₹40,000. The CHECK makes it unwritable (hard rule 2).
+  valueMarketCode String?                @map("value_market_code") @db.Char(2)
+  attributeId     String?                @map("attribute_id") @db.Uuid
+  position        Int                    @default(0) @db.SmallInt
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@index([collectionId, position], map: "idx_collection_rules_collection")
+  /// The difference between "which collections care about this product's new stone" being
+  /// an index probe and a sequential scan of every rule on every product save (03 §6.5).
+  @@index([field, valueUuid], map: "idx_collection_rules_field_target")
+  @@map("collection_rules")
+}
+
+model ProductCollection {
+  productId    String   @map("product_id") @db.Uuid
+  collectionId String   @map("collection_id") @db.Uuid
+  /// 'manual' or 'rule'. refreshCollection() never deletes a manual row — a merchandiser's
+  /// deliberate pin must survive the nightly rule sweep.
+  source       String   @default("rule")
+  rank         Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([productId, collectionId])
+  @@map("product_collections")
+}
+
+model CollectionMarketContent {
+  collectionId    String   @map("collection_id") @db.Uuid
+  marketCode      String   @map("market_code") @db.Char(2)
+  title           String?
+  descriptionJson Json?    @map("description_json")
+  isPublished     Boolean?
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, marketCode])
+  @@map("collection_market_content")
+}
+
+/// A curated, indexable `/rings/labradorite`-style page. EXACTLY ONE target is non-null.
+/// `is_active` is the global kill switch; per-market activation is curated_facet_markets,
+/// which stops a pair with nine US-priced pieces and zero INR ones from becoming an
+/// indexable, sitemap-listed page with nothing on it (03 §4.2).
+model CuratedFacet {
+  id                  String   @id @default(uuid(7)) @db.Uuid
+  categoryId          String   @map("category_id") @db.Uuid
+  slug                String
+  facetType           String   @map("facet_type")
+  stoneId             String?  @map("stone_id") @db.Uuid
+  materialId          String?  @map("material_id") @db.Uuid
+  attributeOptionId   String?  @map("attribute_option_id") @db.Uuid
+  tagId               String?  @map("tag_id") @db.Uuid
+  title               String
+  introJson           Json?    @map("intro_json")
+  isActive            Boolean  @default(true) @map("is_active")
+  isAuto              Boolean  @default(false) @map("is_auto")
+  productCountCached  Int      @default(0) @map("product_count_cached")
+  rank                Int      @default(0)
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  stone           Stone?           @relation(fields: [stoneId], references: [id], onDelete: Cascade)
+  material        Material?        @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  attributeOption AttributeOption? @relation(fields: [attributeOptionId], references: [id], onDelete: Cascade)
+  tag             Tag?             @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  markets         CuratedFacetMarket[]
+
+  @@unique([categoryId, slug], map: "uq_curated_facets")
+  @@map("curated_facets")
+}
+
+model CuratedFacetMarket {
+  facetId      String   @map("facet_id") @db.Uuid
+  marketCode   String   @map("market_code") @db.Char(2)
+  isActive     Boolean  @default(false) @map("is_active")
+  productCount Int      @default(0) @map("product_count")
+  refreshedAt  DateTime @default(now()) @map("refreshed_at") @db.Timestamptz(6)
+
+  facet CuratedFacet @relation(fields: [facetId], references: [id], onDelete: Cascade)
+
+  @@id([facetId, marketCode])
+  @@map("curated_facet_markets")
+}
+
+/// Per-entity SEO overrides. Defaults are GENERATED from the entity; this table holds
+/// only what an editor deliberately changed, so improving the default template improves
+/// every page that never needed a manual override (08 §3).
+model SeoMetadata {
+  id             String        @id @default(uuid(7)) @db.Uuid
+  entityType     SeoEntityType @map("entity_type")
+  entityId       String?       @map("entity_id") @db.Uuid
+  marketCode     String?       @map("market_code") @db.Char(2)
+  title          String?
+  description    String?
+  canonicalPath  String?       @map("canonical_path")
+  ogTitle        String?       @map("og_title")
+  ogDescription  String?       @map("og_description")
+  ogMediaId      String?       @map("og_media_id") @db.Uuid
+  robotsNoindex  Boolean       @default(false) @map("robots_noindex")
+  robotsNofollow Boolean       @default(false) @map("robots_nofollow")
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("seo_metadata")
+}
+
+/// Slug changes write one of these in the SAME transaction, so a URL is never orphaned.
+/// Chains are flattened and self-references refused, because renaming A→B then B→A
+/// otherwise takes the product permanently offline at both URLs (02 §7.10).
+model Redirect {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  fromPath   String   @map("from_path")
+  toPath     String   @map("to_path")
+  statusCode Int      @default(301) @map("status_code") @db.SmallInt
+  marketCode String?  @map("market_code") @db.Char(2)
+  isActive   Boolean  @default(true) @map("is_active")
+  hitCount   BigInt   @default(0) @map("hit_count")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("redirects")
+}

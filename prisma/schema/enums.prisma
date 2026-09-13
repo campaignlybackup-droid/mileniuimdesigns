@@ -125,3 +125,117 @@ enum TaxMode {
 
   @@map("tax_mode")
 }
+
+// ── Catalogue enums (02 §1.9) ──────────────────────────────────────────────────────
+
+enum ProductStatus {
+  draft
+  active
+  archived
+
+  @@map("product_status")
+}
+
+/// How a variant's availability is decided. `made_to_order` and `untracked` have NO
+/// inventory_items row, which is why reserveStock() must not treat "zero rows locked" as
+/// "you lost the race" — that made every made-to-order product permanently unbuyable
+/// at the last click of checkout (05 §1.2).
+enum InventoryPolicy {
+  tracked
+  made_to_order
+  untracked
+
+  @@map("inventory_policy")
+}
+
+enum CollectionMode {
+  manual
+  automatic
+
+  @@map("collection_mode")
+}
+
+/// The fields an automatic collection may test. `stone_is_lab_grown` and `is_on_sale`
+/// were added in 03 §6.2, each in its own migration.
+enum CollectionRuleField {
+  category
+  stone
+  material
+  tag
+  attribute
+  price
+  status
+  created_at
+  is_one_of_a_kind
+  stone_is_lab_grown
+  is_on_sale
+
+  @@map("collection_rule_field")
+}
+
+/// Shared with customer_group_rules (15 §1) — ONE rule vocabulary, not two.
+enum CollectionRuleOperator {
+  equals
+  not_equals
+  in
+  not_in
+  contains
+  not_contains
+  starts_with
+  gt
+  gte
+  lt
+  lte
+  is_true
+  is_false
+
+  @@map("collection_rule_operator")
+}
+
+enum AttributeDataType {
+  text
+  number
+  decimal
+  boolean
+  select
+  multi_select
+  measurement
+  currency
+  date
+
+  @@map("attribute_data_type")
+}
+
+enum MediaKind {
+  image
+  video
+  document
+  vector
+
+  @@map("media_kind")
+}
+
+enum ProductMediaRole {
+  hero
+  gallery
+  detail
+  lifestyle
+  mobile
+  video_thumbnail
+
+  @@map("product_media_role")
+}
+
+enum SeoEntityType {
+  product
+  category
+  collection
+  stone
+  material
+  cms_page
+  journal_post
+  curated_facet
+  home
+
+  @@map("seo_entity_type")
+}

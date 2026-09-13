@@ -24,6 +24,14 @@ const SCHEMA_I_TABLES = [
   // operations — every later phase writes into these
   "settings", "audit_logs", "jobs", "saved_views", "import_jobs", "import_job_rows",
   "search_queries", "analytics_events", "email_templates", "email_logs",
+  // Schema II — the catalogue
+  "categories", "products", "product_variants", "product_options", "product_option_values",
+  "variant_option_values", "stones", "product_stones", "materials", "variant_materials",
+  "tags", "product_tags", "product_categories", "product_market_content",
+  "category_market_content", "product_market_sort", "attributes", "attribute_options",
+  "product_attribute_values", "media", "media_folders", "product_media", "collections",
+  "collection_rules", "product_collections", "collection_market_content",
+  "curated_facets", "curated_facet_markets", "seo_metadata", "redirects",
 ] as const;
 
 async function tables(): Promise<Set<string>> {
@@ -77,6 +85,47 @@ describe("migration drift", () => {
       `SELECT count(*)::int AS n FROM role_permissions rp
        LEFT JOIN permissions p ON p.key = rp.permission_key WHERE p.key IS NULL`,
     );
+    expect(rows[0]!.n).toBe(0);
+  });
+
+  it("seeds exactly nine categories — STONES is a route, not a row", async () => {
+    await ready;
+    const { rows } = await client.query<{ n: number; slugs: string }>(
+      `SELECT count(*)::int AS n, string_agg(slug, ',' ORDER BY rank) AS slugs
+       FROM categories WHERE deleted_at IS NULL`,
+    );
+    expect(rows[0]!.n).toBe(9);
+    expect(rows[0]!.slugs).not.toContain("stones");
+    expect(rows[0]!.slugs).toContain("one-of-a-kind");
+  });
+
+  it("seeds seven stones and four materials with EMPTY copy and unpublished", async () => {
+    // Stone copy is an editorial claim about origin, meaning and care. Writing it for a
+    // real jewellery house would be inventing provenance (hard rule 8).
+    await ready;
+    const { rows: stones } = await client.query<{ n: number; described: number }>(
+      `SELECT count(*)::int AS n,
+              count(*) FILTER (WHERE short_description IS NOT NULL
+                                  OR description_json IS NOT NULL)::int AS described
+       FROM stones WHERE deleted_at IS NULL`,
+    );
+    expect(stones[0]!.n).toBe(7);
+    expect(stones[0]!.described, "a seeded stone has invented copy").toBe(0);
+
+    const { rows: pub } = await client.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM stones WHERE is_published AND deleted_at IS NULL`,
+    );
+    expect(pub[0]!.n, "an empty stone page is live and indexable").toBe(0);
+
+    const { rows: mats } = await client.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM materials WHERE deleted_at IS NULL`,
+    );
+    expect(mats[0]!.n).toBe(4);
+  });
+
+  it("seeds NO product — the catalogue is the client's", async () => {
+    await ready;
+    const { rows } = await client.query<{ n: number }>(`SELECT count(*)::int AS n FROM products`);
     expect(rows[0]!.n).toBe(0);
   });
 

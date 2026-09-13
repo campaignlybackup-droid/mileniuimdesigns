@@ -1,0 +1,360 @@
+// The catalogue — 02 §2.4, §7.5.
+
+model Category {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  parentId         String?   @map("parent_id") @db.Uuid
+  slug             String
+  name             String
+  /// Ancestor ids joined by '/'. Lets "everything under RINGS" be one index range scan
+  /// rather than a recursive CTE on every listing page.
+  materializedPath String    @map("materialized_path")
+  depth            Int       @db.SmallInt
+  descriptionJson  Json?     @map("description_json")
+  heroMediaId      String?   @map("hero_media_id") @db.Uuid
+  isPublished      Boolean   @default(false) @map("is_published")
+  rank             Int
+  taxCode          String?   @map("tax_code")
+  /// Three characters, used to build a readable SKU (03 §3.6).
+  skuToken         String?   @map("sku_token") @db.Char(3)
+  version          Int       @default(1)
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  parent     Category?               @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children   Category[]              @relation("CategoryTree")
+  products   ProductCategory[]
+  primaryFor Product[]               @relation("PrimaryCategory")
+  attributes Attribute[]
+  facets     CuratedFacet[]
+  marketContent CategoryMarketContent[]
+
+  @@map("categories")
+}
+
+model Product {
+  id                 String        @id @default(uuid(7)) @db.Uuid
+  slug               String
+  title              String
+  subtitle           String?
+  descriptionJson    Json?         @map("description_json")
+  careInstructionsJson Json?       @map("care_instructions_json")
+  status             ProductStatus @default(draft)
+  publishedAt        DateTime?     @map("published_at") @db.Timestamptz(6)
+  primaryCategoryId  String?       @map("primary_category_id") @db.Uuid
+  /// Inventory 1 by default, with an admin override. A sold one stays VISIBLE as archive
+  /// rather than vanishing — `sold_at` drives the `sold` availability band, and the band
+  /// never keys on `available_quantity <= 0` (03 §8.1, 11 §7.1).
+  isOneOfAKind       Boolean       @default(false) @map("is_one_of_a_kind")
+  isMadeToOrder      Boolean       @default(false) @map("is_made_to_order")
+  leadTimeDays       Int?          @map("lead_time_days") @db.SmallInt
+  defaultVariantId   String?       @map("default_variant_id") @db.Uuid
+  rank               Int           @default(0)
+  /// Denormalised bag of words from SEVEN sources: title, subtitle, SKUs, stone names,
+  /// material names, category names, tag names — and collection titles (02 §2.4). A
+  /// rename of any of those enqueues `reindex_search`, because a stone renamed and not
+  /// reindexed is a silent outage of the primary discovery path on a stone-led store.
+  searchText         String        @default("") @map("search_text")
+  /// A STORED generated column, weighted so a title match outranks a category-name match.
+  /// Prisma cannot express `GENERATED ALWAYS AS … STORED` at all, so it is created by the
+  /// hand-written migration and declared here as `Unsupported` — the same escape hatch
+  /// `inventory_transactions.balance_before` uses (01 §1.2, §6.8). The client never reads
+  /// or writes it; the database computes it.
+  searchVector       Unsupported("tsvector")? @map("search_vector")
+  /// Completeness scoring (03 §1.6). Surfaced so an admin can find what is unfinished,
+  /// never used to block publishing outright — required, recommended and optional are
+  /// three different things.
+  completenessScore  Int           @default(0) @map("completeness_score") @db.SmallInt
+  completenessChecks Json          @default("{}") @map("completeness_checks")
+  seoScore           Int           @default(0) @map("seo_score") @db.SmallInt
+  seoChecks          Json          @default("{}") @map("seo_checks")
+  scoredAt           DateTime?     @map("scored_at") @db.Timestamptz(6)
+  ooakQuantityOverride Boolean     @default(false) @map("ooak_quantity_override")
+  soldAt             DateTime?     @map("sold_at") @db.Timestamptz(6)
+  taxCode            String?       @map("tax_code")
+  version            Int           @default(1)
+  deletedAt          DateTime?     @map("deleted_at") @db.Timestamptz(6)
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  primaryCategory Category?              @relation("PrimaryCategory", fields: [primaryCategoryId], references: [id], onDelete: SetNull)
+  variants        ProductVariant[]
+  options         ProductOption[]
+  categories      ProductCategory[]
+  stones          ProductStone[]
+  tags            ProductTag[]
+  collections     ProductCollection[]
+  media           ProductMedia[]
+  attributeValues ProductAttributeValue[]
+  marketContent   ProductMarketContent[]
+  marketSort      ProductMarketSort[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id               String          @id @default(uuid(7)) @db.Uuid
+  productId        String          @map("product_id") @db.Uuid
+  isOneOfAKind     Boolean         @default(false) @map("is_one_of_a_kind")
+  sku              String
+  title            String?
+  position         Int             @default(0) @db.SmallInt
+  inventoryPolicy  InventoryPolicy @default(tracked) @map("inventory_policy")
+  barcode          String?
+  hsCode           String?         @map("hs_code")
+  countryOfOrigin  String?         @map("country_of_origin") @db.Char(2)
+  grossWeightGrams Decimal?        @map("gross_weight_grams") @db.Decimal(10, 3)
+  ringSize         Decimal?        @map("ring_size") @db.Decimal(6, 2)
+  lengthMm         Decimal?        @map("length_mm") @db.Decimal(6, 2)
+  /// A canonical, ordered encoding of this variant's option values. Makes "does a variant
+  /// with exactly these options already exist" a unique-index probe instead of a join per
+  /// option (03 §2.2).
+  optionSignature  String          @default("") @map("option_signature")
+  taxCode          String?         @map("tax_code")
+  isActive         Boolean         @default(true) @map("is_active")
+  version          Int             @default(1)
+  deletedAt        DateTime?       @map("deleted_at") @db.Timestamptz(6)
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  product         Product                 @relation(fields: [productId], references: [id], onDelete: Cascade)
+  optionValues    VariantOptionValue[]
+  materials       VariantMaterial[]
+  media           ProductMedia[]
+  attributeValues ProductAttributeValue[]
+
+  /// The composite-FK target that makes a denormalised product_id on another table
+  /// provably THIS variant's own, rather than a value someone passed in (04 §2.2).
+  @@unique([id, productId], map: "uq_product_variants_id_product")
+  @@map("product_variants")
+}
+
+model ProductOption {
+  id        String @id @default(uuid(7)) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  name      String
+  position  Int    @default(0) @db.SmallInt
+
+  product Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  values  ProductOptionValue[]
+
+  @@map("product_options")
+}
+
+model ProductOptionValue {
+  id            String  @id @default(uuid(7)) @db.Uuid
+  optionId      String  @map("option_id") @db.Uuid
+  value         String
+  swatchMediaId String? @map("swatch_media_id") @db.Uuid
+  materialId    String? @map("material_id") @db.Uuid
+  position      Int     @default(0) @db.SmallInt
+
+  option   ProductOption        @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  material Material?            @relation(fields: [materialId], references: [id], onDelete: SetNull)
+  variants VariantOptionValue[]
+
+  @@map("product_option_values")
+}
+
+model VariantOptionValue {
+  variantId     String @map("variant_id") @db.Uuid
+  optionId      String @map("option_id") @db.Uuid
+  optionValueId String @map("option_value_id") @db.Uuid
+
+  variant     ProductVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  optionValue ProductOptionValue @relation(fields: [optionValueId], references: [id], onDelete: Restrict)
+
+  @@id([variantId, optionId])
+  @@index([optionValueId, variantId], map: "idx_variant_option_values_value")
+  @@map("variant_option_values")
+}
+
+/// A first-class entity, not a filter chip. Stone-led discovery is the distinctive
+/// experience of this store (00-CONTEXT §6, 03 §4).
+model Stone {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  slug             String
+  name             String
+  shortDescription String?   @map("short_description")
+  descriptionJson  Json?     @map("description_json")
+  heroMediaId      String?   @map("hero_media_id") @db.Uuid
+  swatchMediaId    String?   @map("swatch_media_id") @db.Uuid
+  colourHex        String?   @map("colour_hex") @db.Char(7)
+  hardnessMohs     Decimal?  @map("hardness_mohs") @db.Decimal(3, 1)
+  isLabGrown       Boolean   @default(false) @map("is_lab_grown")
+  isPublished      Boolean   @default(false) @map("is_published")
+  rank             Int       @default(0)
+  /// `NST` is reserved for "no stone" (03 §3.6).
+  skuToken         String?   @map("sku_token") @db.Char(3)
+  version          Int       @default(1)
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  products ProductStone[]
+  facets   CuratedFacet[]
+
+  @@map("stones")
+}
+
+model ProductStone {
+  productId   String   @map("product_id") @db.Uuid
+  stoneId     String   @map("stone_id") @db.Uuid
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  caratWeight Decimal? @map("carat_weight") @db.Decimal(8, 3)
+  stoneCount  Int?     @map("stone_count") @db.SmallInt
+  cut         String?
+  position    Int      @default(0) @db.SmallInt
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stone   Stone   @relation(fields: [stoneId], references: [id], onDelete: Restrict)
+
+  @@id([productId, stoneId])
+  @@index([stoneId, productId], map: "idx_product_stones")
+  @@map("product_stones")
+}
+
+/// Flexible by design: 14K yellow/white/rose gold and silver today, whatever comes next
+/// as rows. `purity_ratio` and `is_rate_linked` are the metal-pricing inputs (04 §2).
+model Material {
+  id            String    @id @default(uuid(7)) @db.Uuid
+  slug          String
+  name          String
+  kind          String
+  purityLabel   String?   @map("purity_label")
+  purityRatio   Decimal?  @map("purity_ratio") @db.Decimal(6, 5)
+  isRateLinked  Boolean   @default(false) @map("is_rate_linked")
+  colourHex     String?   @map("colour_hex") @db.Char(7)
+  swatchMediaId String?   @map("swatch_media_id") @db.Uuid
+  isPublished   Boolean   @default(false) @map("is_published")
+  rank          Int       @default(0)
+  /// `NMTL` is reserved for "no metal".
+  skuToken      String?   @map("sku_token") @db.Char(4)
+  version       Int       @default(1)
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  variants     VariantMaterial[]
+  optionValues ProductOptionValue[]
+  facets       CuratedFacet[]
+
+  @@map("materials")
+}
+
+model VariantMaterial {
+  variantId   String   @map("variant_id") @db.Uuid
+  materialId  String   @map("material_id") @db.Uuid
+  /// The metal weight a rate-linked price is computed from. Strictly positive: a
+  /// zero-weight metal component would silently price at the making charge alone.
+  weightGrams Decimal  @map("weight_grams") @db.Decimal(10, 3)
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  variant  ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  material Material       @relation(fields: [materialId], references: [id], onDelete: Restrict)
+
+  @@id([variantId, materialId])
+  @@index([materialId, variantId], map: "idx_variant_materials_material")
+  @@map("variant_materials")
+}
+
+/// No `deleted_at`: a tag is hard-deleted and its joins cascade. A tag link is pure
+/// membership with no independent value (03 §5.4).
+model Tag {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  slug      String   @unique(map: "uq_tags_slug")
+  name      String
+  isVisible Boolean  @default(true) @map("is_visible")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  products ProductTag[]
+  facets   CuratedFacet[]
+
+  @@map("tags")
+}
+
+model ProductTag {
+  productId String   @map("product_id") @db.Uuid
+  tagId     String   @map("tag_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+  @@index([tagId, productId], map: "idx_product_tags_tag")
+  @@map("product_tags")
+}
+
+model ProductCategory {
+  productId  String   @map("product_id") @db.Uuid
+  categoryId String   @map("category_id") @db.Uuid
+  rank       Int      @default(0)
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([productId, categoryId])
+  @@map("product_categories")
+}
+
+/// An OVERRIDE layer, read through a LEFT JOIN with `coalesce(pmc.is_published, true)`.
+/// An inner join returns zero rows for every product with no override — which is the
+/// entire pre-existing catalogue the day a new market opens (02 §7.5).
+model ProductMarketContent {
+  productId         String   @map("product_id") @db.Uuid
+  marketCode        String   @map("market_code") @db.Char(2)
+  title             String?
+  subtitle          String?
+  descriptionJson   Json?    @map("description_json")
+  isPublished       Boolean  @default(true) @map("is_published")
+  unavailableReason String?  @map("unavailable_reason")
+  rankOverride      Int?     @map("rank_override")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([productId, marketCode])
+  @@map("product_market_content")
+}
+
+model CategoryMarketContent {
+  categoryId      String   @map("category_id") @db.Uuid
+  marketCode      String   @map("market_code") @db.Char(2)
+  name            String?
+  descriptionJson Json?    @map("description_json")
+  isPublished     Boolean?
+  rankOverride    Int?     @map("rank_override")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, marketCode])
+  @@map("category_market_content")
+}
+
+/// A CACHE with a transactional writer, never an authority. min/max price are written by
+/// catalog.reindexProduct() INSIDE the price-change transaction; units_90d nightly. It
+/// may appear in a WHERE or an ORDER BY and NOWHERE ELSE — reading an amount out of it to
+/// publish or charge is a second price authority (02 §7.11).
+model ProductMarketSort {
+  productId     String   @map("product_id") @db.Uuid
+  marketCode    String   @map("market_code") @db.Char(2)
+  currencyCode  String   @map("currency_code") @db.Char(3)
+  minPriceMinor BigInt   @map("min_price_minor")
+  maxPriceMinor BigInt   @map("max_price_minor")
+  units90d      Int      @default(0) @map("units_90d")
+  refreshedAt   DateTime @default(now()) @map("refreshed_at") @db.Timestamptz(6)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([productId, marketCode])
+  @@map("product_market_sort")
+}

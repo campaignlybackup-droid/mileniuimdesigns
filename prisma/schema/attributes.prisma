@@ -1,0 +1,82 @@
+// The flexible attribute system — 02 §2.4, 03 §3.
+//
+// An EAV layer, deliberately. A jewellery catalogue cannot have one fixed product schema:
+// a lab-grown diamond ring carries carat, cut, clarity, colour, shape and certification;
+// a silver chain carries length and clasp type. Adding an attribute must be a ROW, not a
+// migration — that is the difference between the client running their own catalogue and
+// filing a ticket.
+
+model Attribute {
+  id                  String            @id @default(uuid(7)) @db.Uuid
+  key                 String
+  label               String
+  dataType            AttributeDataType @map("data_type")
+  unit                String?
+  isFilterable        Boolean           @default(false) @map("is_filterable")
+  isComparable        Boolean           @default(false) @map("is_comparable")
+  applyingCategoryId  String?           @map("applies_to_category_id") @db.Uuid
+  /// Without `scope` the admin form cannot decide whether to render a field once for the
+  /// product or once per variant — ring size is per variant, certification is per product
+  /// (03 §3.2).
+  scope               String            @default("product")
+  /// Read by the publish gate. Required, recommended and optional are three different
+  /// things, and only this one blocks.
+  isRequired          Boolean           @default(false) @map("is_required")
+  valueMin            Decimal?          @map("value_min") @db.Decimal(14, 4)
+  valueMax            Decimal?          @map("value_max") @db.Decimal(14, 4)
+  decimalPlaces       Int?              @map("decimal_places") @db.SmallInt
+  maxLength           Int?              @map("max_length")
+  helpText            String?           @map("help_text")
+  rank                Int               @default(0)
+  version             Int               @default(1)
+  deletedAt           DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  category Category?               @relation(fields: [applyingCategoryId], references: [id], onDelete: SetNull)
+  options  AttributeOption[]
+  values   ProductAttributeValue[]
+
+  @@map("attributes")
+}
+
+model AttributeOption {
+  id            String  @id @default(uuid(7)) @db.Uuid
+  attributeId   String  @map("attribute_id") @db.Uuid
+  value         String
+  label         String
+  swatchMediaId String? @map("swatch_media_id") @db.Uuid
+  rank          Int     @default(0)
+
+  attribute Attribute               @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  values    ProductAttributeValue[]
+  facets    CuratedFacet[]
+
+  @@map("attribute_options")
+}
+
+/// EXACTLY ONE value column is non-null, enforced by chk_pav_one_value. Without it a row
+/// can carry both a number and a string and the reader picks whichever it looks at first
+/// — which is how one product shows two different carat weights on two screens.
+model ProductAttributeValue {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  productId    String   @map("product_id") @db.Uuid
+  /// NULL means the value applies to the whole product; set means this variant only.
+  variantId    String?  @map("variant_id") @db.Uuid
+  attributeId  String   @map("attribute_id") @db.Uuid
+  optionId     String?  @map("option_id") @db.Uuid
+  valueText    String?  @map("value_text")
+  valueNumeric Decimal? @map("value_numeric") @db.Decimal(14, 4)
+  valueBool    Boolean? @map("value_bool")
+  valueDate    DateTime? @map("value_date") @db.Date
+  valueJson    Json?    @map("value_json")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant   ProductVariant?  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  attribute Attribute        @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  option    AttributeOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("product_attribute_values")
+}

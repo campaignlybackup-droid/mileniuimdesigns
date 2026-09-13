@@ -2563,3 +2563,66 @@ three copies — `vercel.json#crons`, `src/lib/config/crons.ts`, and the directo
 `src/app/api/cron/` — are the same set, and additionally that every handler calls
 `assertCronRequest`. A handler with no schedule never runs and reads fine in review; a
 schedule with no handler 404s on a timer nobody watches.
+
+### 6.13 P05 field notes — `prisma migrate dev` silently dropped three hand-written constraints
+
+**This is the most important operational finding so far, and §6.8 predicted it one phase
+before it happened.**
+
+Generating the Schema II migration with `prisma migrate dev --create-only` emitted three
+`DROP INDEX` statements, buried in 650 lines of otherwise-correct SQL:
+
+```sql
+DROP INDEX "idx_analytics_occurred_brin";
+DROP INDEX "uq_email_templates";
+DROP INDEX "uq_settings_key_market";
+```
+
+**Why it happens, and why it will happen again.** Prisma diffs the DATABASE against the
+PRISMA SCHEMA. Anything in the database the schema does not describe reads as drift, and
+the generated migration removes it. Every object in the hand-written addendum is there
+*precisely because Prisma cannot express it* — which makes every one of them a standing
+candidate for silent deletion on the next migration. `uq_settings_key_market` is the index
+that makes a setting per-market rather than global; without it, two global rows for one
+key are insertable and whichever the query returns wins.
+
+**Nobody read the DROP lines.** A constraint test failed, and only then did it surface.
+That is the whole lesson: reviewing generated SQL does not scale past a few hundred lines,
+and the object being removed looks like tidy-up.
+
+**The durable fix is `tests/db/handwritten-constraints.test.ts`** — a manifest of every
+hand-written index (71), constraint (36), trigger (2) and generated column, asserting each
+still exists. A future migration may still propose a drop; it can no longer do so quietly.
+`prisma/migrations/20260913090000_restore_handwritten_constraints` puts the three back.
+
+**Add to that manifest whenever you hand-write a constraint.** It is the only thing
+standing between the addendum and the next `migrate dev`.
+
+### 6.14 P05 field notes — two tests that passed while proving nothing
+
+**`UPDATE collections SET sort_order = 'bestselling'` against an empty table.** Zero rows
+updated, no error raised, test green — while asserting a CHECK constraint that was never
+exercised. A constraint test must PRODUCE A ROW for the constraint to reject. The test now
+inserts, and a companion asserts the correct spelling is *accepted* — without that, a
+constraint rejecting everything would also pass.
+
+**The same shape appeared twice more this session** (the drift test asserting "customers is
+empty" against a database other tests write to, and the seed asserting "no user exists"
+rather than "the seed created none"). The pattern is worth naming: **an assertion whose
+subject can be absent is an assertion that passes for the wrong reason.** Check the
+precondition, or assert the delta rather than the state.
+
+### 6.15 P05 — what the catalogue ships with, and what it does not
+
+Nine categories, seven stones, four materials. **Every customer-visible copy field is
+empty and every row is `is_published = false`.**
+
+That is the deliberate consequence of hard rule 8, and it is worth stating plainly because
+it will look like unfinished work: stone copy is an editorial claim about origin, meaning
+and care; category copy is brand voice; product titles, descriptions and photography are
+the catalogue itself. Writing any of it would be inventing the client's business. The
+structure is complete and the site has nothing to say until they supply the content.
+
+`tests/db/drift.test.ts` asserts this actively — that no seeded stone has a description
+and none is published — so "we added some placeholder copy to make it look better" fails
+CI rather than shipping.
