@@ -2689,3 +2689,55 @@ lines.
 original — a 10 MB master file on a phone — and it RENDERS CORRECTLY, so only the transfer
 size is wrong and nothing in review catches it. Throwing is the only way that failure is
 visible.
+
+### 6.18 P07 field notes
+
+**The publish gate's blocker set is a decision, not a transcription.** `03 §1.5` says
+`publishProduct()` refuses when any **P** check fails — but the check table in `§1.6` has
+four columns (`#`, `key`, `Passes when`, `Weight`) and **no P column**. The blocker set had
+to be chosen.
+
+It is five: `title`, `hero`, `primary_category`, `skus`, `required_attributes` — the cases
+where publishing anyway produces a broken customer experience. The brief is explicit at
+`§110` that not every optional field may block, and a gate that refuses a product for want
+of a care note is a gate people learn to route around.
+
+Two more are **deferred blockers**: `priced_all_markets` and `stock` activate once
+`prices` (P10) and `inventory_items` (P18) exist. `priced_all_markets` is the most
+consequential check in the list — a published product with no price in a market is an
+indexable page with a dead add-to-bag — and it must block from P10. It cannot block now
+because nothing can satisfy it.
+
+> **Worth one review before P10.**
+
+**Checks that cannot be evaluated report themselves, rather than passing.**
+`ProductForScoring.pricedMarketCodes` is `string[] | null`, where `null` means "the table
+does not exist yet" and `[]` means "priced in no market". Those are different facts, and
+collapsing them into `[]` would make the check pass silently the day `prices` arrives with
+no rows in it.
+
+**A bug the loop test found, which review would not have.** Chain-flattening repoints any
+redirect pointing at the old path — so A→B then B→C gives A→C. Renaming *back* (A→B then
+B→A) makes the repoint target equal the redirect's own source, writing `from == to`. That
+is a self-redirect, `chk_redirects_not_self` refuses it, and **the whole slug change fails**
+— including the rename itself. The fix is ordering: deactivate the would-be self-redirect
+first, then repoint the rest. Renaming a product back to its original slug is an entirely
+ordinary editorial action.
+
+**`createProduct` returned a guessed version number.** It returned `version + 1` on the
+assumption that `rescoreProduct` bumps the row. It does not, deliberately: scoring is a
+server-side write, and bumping `version` would make every autosave conflict with a
+background rescore. The guess made every caller's *first* save look stale. Re-read, never
+assume, after a transaction that may or may not have touched the column.
+
+**`.strict()` is not a style preference.** Zod strips unknown keys silently by default. On
+an autosave payload that means a form which grew a `price` field has it quietly dropped,
+the editor sees "Saved", and the price never changed — discovered when a customer is
+charged the old one. `assertNoServerAuthoritativeFields` refuses rather than filters, for
+the same reason, and `tests/unit/actions-shape.test.ts` asserts every `z.object(` in an
+action file is matched by a `.strict()`.
+
+**A guard that reads prose as code produces the false positive that gets guards disabled.**
+The first version of the "no `getActor()`" check failed on this codebase's own comment
+explaining why `getActor()` must not exist. It now strips comments before matching. Worth
+remembering for every grep-based rule in this repo.
