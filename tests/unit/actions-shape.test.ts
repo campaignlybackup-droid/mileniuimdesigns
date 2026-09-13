@@ -40,6 +40,29 @@ function walk(dir: string, out: string[] = []): string[] {
 
 const files = walk(ACTIONS).filter((f) => !f.endsWith(".gitkeep"));
 
+/**
+ * Actions a signed-out shopper is MEANT to be able to call.
+ *
+ * Every other guard in this repository derives its expectations rather than listing them,
+ * because a hand-maintained list silently stops covering what it claims to. This one is a
+ * list on purpose: "is this action safe to expose anonymously?" is a judgement about the
+ * action's effect, and no property of the file can answer it. A derived rule here would
+ * either exempt too much (any action with no `requirePermission`) or too little.
+ *
+ * The list is short, each entry states what the action may do, and every entry must ALSO
+ * declare itself in the file — so the list and the code cannot drift apart silently, and
+ * adding one is a diff a reviewer sees twice.
+ */
+const PUBLIC_ACTIONS: Record<string, string> = {
+  "src/server/actions/market.ts":
+    "Switching market is a shopper choice. It sets the md_market cookie and redirects; it " +
+    "reads no customer data and writes nothing but a preference.",
+};
+
+function isPublic(file: string): boolean {
+  return relative(ROOT, file).replace(/\\/g, "/") in PUBLIC_ACTIONS;
+}
+
 describe("server action shape", () => {
   it("there is at least one action to check", () => {
     // A guard pointed at an empty directory passes forever and proves nothing.
@@ -53,8 +76,23 @@ describe("server action shape", () => {
     }
   });
 
+  it("every public action is declared in the file as well as in the list", () => {
+    // The list above is a judgement; this is what stops it becoming a place to hide things.
+    // An action cannot be quietly moved into the public set without the file saying so.
+    for (const [rel, reason] of Object.entries(PUBLIC_ACTIONS)) {
+      const file = resolve(ROOT, rel);
+      expect(existsSync(file), `${rel} is listed public but does not exist`).toBe(true);
+      expect(
+        readFileSync(file, "utf8"),
+        `${rel} must carry the marker \`PUBLIC ACTION\` explaining why it needs no actor`,
+      ).toContain("PUBLIC ACTION");
+      expect(reason.length).toBeGreaterThan(40);
+    }
+  });
+
   it("every action resolves a staff or customer actor — never a bare getActor()", () => {
     for (const f of files) {
+      if (isPublic(f)) continue;
       const src = code(readFileSync(f, "utf8"));
       expect(src, relative(ROOT, f)).toMatch(/requireStaffSession|requireCustomerSession/);
       // 07 §3.2: the two-resolver split is a confused-deputy defence. A single resolver
@@ -72,8 +110,10 @@ describe("server action shape", () => {
       const src = readFileSync(f, "utf8");
       const objects = [...code(src).matchAll(/z\s*\.object\(/g)].length;
       const stricts = [...code(src).matchAll(/\.strict\(\)/g)].length;
-      expect(stricts, `${relative(ROOT, f)}: ${objects} z.object( but ${stricts} .strict()`)
-        .toBeGreaterThanOrEqual(objects);
+      expect(
+        stricts,
+        `${relative(ROOT, f)}: ${objects} z.object( but ${stricts} .strict()`,
+      ).toBeGreaterThanOrEqual(objects);
     }
   });
 
@@ -82,7 +122,12 @@ describe("server action shape", () => {
       const src = readFileSync(f, "utf8");
       // toWireError carries a code and a copy key. Returning `e.message` would ship a
       // constraint name or a provider payload to a browser.
-      expect(src, relative(ROOT, f)).not.toMatch(/message:\s*\(?e(?:rror)?\s*as\s*Error\)?\.message/);
+      expect(src, relative(ROOT, f)).not.toMatch(
+        /message:\s*\(?e(?:rror)?\s*as\s*Error\)?\.message/,
+      );
+      // A public action that redirects returns no body at all, so there is no error shape
+      // for it to get wrong — but the raw-message check above still applies to it.
+      if (isPublic(f)) continue;
       expect(src, relative(ROOT, f)).toMatch(/toWireError/);
     }
   });

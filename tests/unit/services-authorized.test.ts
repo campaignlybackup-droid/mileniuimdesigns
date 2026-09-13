@@ -103,6 +103,10 @@ describe("every exported mutator is authorized server-side", () => {
       const src = readFileSync(file, "utf8");
       if (/requirePermission|requireAll|requireStaffSession|requireCustomerSession/.test(src))
         continue;
+      // An action a signed-out shopper is MEANT to call declares itself with this marker.
+      // `tests/unit/actions-shape.test.ts` holds the list of which those are and why, and
+      // asserts the marker is present — so neither the list nor the file can drift alone.
+      if (src.includes("PUBLIC ACTION")) continue;
       if (/export\s+(?:async\s+)?function|export\s+const/.test(src)) {
         offenders.push(relative(ROOT, file));
       }

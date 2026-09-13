@@ -3184,3 +3184,73 @@ reason.** The recalc test first proposed `3400` where `04 §9.3` says `16000`. B
 correct: mine had no `variant_component_costs` rows, so metal + making + markup was the whole
 price. The figures agreed with themselves and with nothing else. Adding the stone and
 other-material costs made the end-to-end pipeline reproduce the document.
+
+---
+
+### 6.24 P13 field notes
+
+**Criterion (e) is the one that justifies the phase, and it nearly passed for the wrong
+reason.** `third-market.test.ts` adds Great Britain as rows only and then asserts
+`git diff --stat src/` is empty. But `git diff` compares the working tree to HEAD and is blind
+to **untracked** files — so during the very phase that creates `src/lib/market/`,
+`src/lib/edge/` and `src/middleware.ts`, it would have passed while `src/` filled with new
+source. The claim is "adding a market changed no source", so the check is now a BEFORE/AFTER
+comparison of `git status --porcelain -- src/` taken across the test's own execution. The
+assertion has to measure the thing it names, not something correlated with it on most days.
+
+The test also asserts the **honest half** of the trade-off, rather than hiding it: GB resolves
+inside the app immediately because `resolveMarket()` reads the database, and middleware does
+**not** route `/gb/*` until the next deployment because it reads a build-time snapshot. Both
+are asserted. A test that only showed the good half would have left the stale-snapshot window
+to be rediscovered as a bug.
+
+**Deactivation is the direction that needs no deploy, and that asymmetry is deliberate.**
+Turning a market ON needs a price per variant, an acquirer credential (an environment change,
+hence a redeploy anyway), shipping zones and a tax registration — so a deployment boundary
+costs nothing. Turning one OFF is the emergency, and `resolveMarket()` 404s the moment the row
+flips.
+
+**Three guards fired on the market switcher, and all three were modelling something false.**
+They assume every server action is authenticated. A public storefront action — switch market,
+add to cart, subscribe — has no actor BY DESIGN, and that category is about to grow at P19 and
+P20. Unlike the other guard gaps this build has found, this one **cannot be derived**: "is this
+action safe to expose anonymously" is a judgement about its effect, not a property of the file.
+So it is an explicit list with a stated reason per entry — and the file must ALSO carry a
+`PUBLIC ACTION` marker, so the list and the code cannot drift apart and adding one is a diff a
+reviewer sees twice. An exemption list is the right shape for a judgement and the wrong shape
+for a fact; the difference is whether anything could compute it.
+
+**A scan matching its own explanation happened for the FOURTH time**, and is now fixed once:
+`tests/support/source.ts` strips both comment forms and every guard uses it. The pattern —
+a guard forbids something, the guard explains what it forbids, the explanation names it — is
+structural, not careless. It will recur in every new guard unless the stripping is shared.
+
+**Scripted edits silently matched nothing twice more** (five times now across three phases),
+both times because Prettier had reformatted the target between writing and editing. Every edit
+in this phase was verified by grepping for its result afterwards; the two that had failed were
+found that way and redone with an exact-match editor.
+
+**`src/app/layout.tsx` still said "Create Next App".** It would have shipped as the site title
+and meta description of a forty-year-old jewellery house. The title is now the client's own
+wordmark — their name is a fact, not copy — and there is deliberately **no description**: a
+meta description is a positioning sentence about the business, and writing one would be
+inventing how they describe themselves. Seeded empty, written by the client at
+`/admin/settings/seo`.
+
+**Deferred, with reasons, rather than stubbed:**
+
+- **The `(preview)` route group's nine route files and `content_preview_tokens`.** They preview
+  CMS pages and product pages that P15 and P26 have not built. Building a preview of a route
+  before the route exists produces nine files that render nothing and a test suite that
+  asserts they render nothing successfully.
+- **The four Playwright specs** (`cache-leak`, `preview-isolation`, `cache-headers`). No
+  Playwright infrastructure exists yet, and more importantly their central assertion —
+  `x-vercel-cache` is never `HIT` — is **vacuously true against localhost**, where that header
+  does not exist at all. A CDN-behaviour test that runs where there is no CDN is the exact
+  failure this build keeps finding: an assertion whose subject is absent, passing loudest on
+  the day it proves least. They belong against a deployed preview environment, which is P24's
+  external track.
+
+What P13 does deliver end-to-end, verified over HTTP against a running server rather than only
+in unit tests: `/us/rings` 301s to `/rings`; `/xx` 404s; `/` renders US/USD/en-US and `/in`
+renders IN/INR/en-IN; and `hreflang` emits `en-US`, `en-IN` and `x-default` from the rows.

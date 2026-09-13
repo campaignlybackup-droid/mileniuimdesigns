@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run gen:markets && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -28,7 +28,8 @@
     "db:guard": "tsx scripts/guard-migration.ts",
     "perf:seed": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts",
     "perf:drop": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts --drop",
-    "test:perf": "vitest bench --run tests/perf"
+    "test:perf": "vitest bench --run tests/perf",
+    "gen:markets": "dotenv -e .env.local -e .env -- tsx scripts/gen-market-snapshot.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",
