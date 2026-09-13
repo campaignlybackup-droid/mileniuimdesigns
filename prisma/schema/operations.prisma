@@ -25,8 +25,21 @@ model AuditLog {
   userAgent          String?   @map("user_agent")
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  actor        User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
-  impersonator User? @relation("AuditImpersonator", fields: [impersonatorUserId], references: [id], onDelete: SetNull)
+  /**
+   * RESTRICT, not SetNull — and this is a correction to 02 §7.11.
+   *
+   * `SET NULL` is an UPDATE, and the append-only trigger on this table blocks UPDATE. So
+   * the FK action could never fire: deleting a user with audit history raised
+   * `42501 audit_logs is append-only`, from inside a foreign-key action, three frames from
+   * anything the caller wrote.
+   *
+   * RESTRICT says the true thing plainly: a user who appears in the audit log cannot be
+   * hard-deleted. That is what an append-only log MEANS. Staff are soft-deleted
+   * (`users.deleted_at`) in every real flow — 02 §2.2 already says the cascade is "for a
+   * hard delete that will never happen" — so nothing legitimate is lost.
+   */
+  actor        User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  impersonator User? @relation("AuditImpersonator", fields: [impersonatorUserId], references: [id], onDelete: Restrict)
 
   @@index([entity, entityId, createdAt(sort: Desc)], map: "idx_audit_entity")
   @@index([actorUserId, createdAt(sort: Desc)], map: "idx_audit_actor")

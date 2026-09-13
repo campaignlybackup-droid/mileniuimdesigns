@@ -2429,3 +2429,54 @@ deliberately does not treat a permission change as a revocation, so an owner gra
 most money-adjacent key in the catalogue, on a session that never saw a second factor, for
 up to twelve hours. The response is a step-up challenge, not a logout: the session is
 valid, it simply has not proved the factor it now needs.
+
+### 6.10 P03A field notes (part 2)
+
+**`audit_logs` FKs had to change from `SET NULL` to `RESTRICT`, and the reason is a real
+architectural conflict rather than a preference.** `02 §7.11` specifies
+`audit_logs.actor_user_id ON DELETE SET NULL`. But `SET NULL` is an **UPDATE**, and
+`trg_audit_logs_no_update` — which `07 §7.4` requires — blocks UPDATE on that table. The
+FK action could therefore never fire. Deleting a user who appears in the log raised
+`42501 audit_logs is append-only` from inside a foreign-key action, several frames from
+anything the caller wrote.
+
+`RESTRICT` states the true constraint plainly: **a user who appears in the audit log
+cannot be hard-deleted.** That is what "append-only" means. Staff are soft-deleted via
+`users.deleted_at` in every real flow, and `02 §2.2` already calls the cascade "for a hard
+delete that will never happen" — so nothing legitimate is prevented, and the failure mode
+becomes a clear FK violation at the call site instead of a permission error from a
+trigger. Migration `20260913080000_audit_fk_restrict`.
+
+The general lesson: **an immutability trigger and a mutating FK action are mutually
+exclusive on the same table.** Any other table that acquires an append-only trigger must
+have its inbound FK actions audited at the same time.
+
+**The login ordering is the substance, and it is the opposite of the obvious one.** The
+natural implementation wraps the whole attempt in one transaction. Then the
+`failed_login_count` increment, the rate-limit row and the audit row all roll back with
+the throw, and the counter reads 0 after ten thousand guesses. `staffLogin()` therefore
+commits its failure bookkeeping through `recordFailure()` — a separate function on its own
+transaction — **before** returning the failure, and only the SUCCESS path shares a
+transaction, where rolling back is correct because a session without its bookkeeping is
+worse than no session. `tests/integration/login.test.ts` asserts the counter reads 3 after
+three failures.
+
+**A missing user still costs a password verification.** Without the dummy `verifyPassword`
+against a fixed hash, the missing-user path returns in about a millisecond and the
+present-user path takes about fifty — which enumerates the entire staff list by stopwatch.
+The test asserts the two paths stay within an order of magnitude of each other.
+
+**Exporting `generateCode()` from the TOTP module is deliberate.** Nothing in production
+calls it — the authenticator app generates codes and the server only verifies them. It
+exists so tests can act as the authenticator, which is the only honest way to test
+verification: a test that cannot produce a valid code ends up asserting only that invalid
+ones fail. The first draft brute-forced the six-digit space through `verifyTotp` and took
+**173 seconds**; deriving the code takes 650 ms and is also correct, because brute force
+would accept a neighbouring step's code as if it were the current one.
+
+**The per-IP login limiter puts everyone behind one NAT in a single bucket.** This showed
+up as test interference — every test passing no IP shared the `unknown` key — but it is
+production behaviour, not a test artefact: a shared office or a mobile carrier NAT is one
+key. It is why the per-EMAIL limiter exists alongside it, and why neither alone is
+sufficient. Worth revisiting at P24 if a real customer reports being locked out by a
+colleague.

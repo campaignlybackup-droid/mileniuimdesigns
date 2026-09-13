@@ -98,7 +98,16 @@ export function integrationStatus(): Record<IntegrationKey, IntegrationState> {
  * They live HERE because env.ts is the only module permitted to read process.env, and
  * that rule is worth more than the convenience of reading them where they are used.
  */
-export function secret(name: "PASSWORD_PEPPER" | "AUTH_SECRET" | "GIFT_CARD_CODE_PEPPER" | "OTP_HASH_PEPPER"): string | undefined {
+export function secret(
+  name:
+    | "PASSWORD_PEPPER"
+    | "AUTH_SECRET"
+    /** Set only during a rotation: lets old TOTP ciphertexts decrypt while new writes
+     *  use the new key, so rotating does not lock out every enrolled staff member. */
+    | "AUTH_SECRET_PREVIOUS"
+    | "GIFT_CARD_CODE_PEPPER"
+    | "OTP_HASH_PEPPER",
+): string | undefined {
   return process.env[name];
 }
 

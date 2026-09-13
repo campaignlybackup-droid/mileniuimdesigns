@@ -134,7 +134,7 @@ if (!existsSync(examplePath)) {
   }
   // Read by the Prisma CLI through prisma7.config.ts, never by the app, so they are
   // legitimately absent from env.ts's boot schema.
-  const CLI_ONLY = ["SHADOW_DATABASE_URL", "AUTH_SECRET", "PASSWORD_PEPPER", "OTP_HASH_PEPPER", "GIFT_CARD_CODE_PEPPER"];
+  const CLI_ONLY = ["SHADOW_DATABASE_URL", "AUTH_SECRET", "PASSWORD_PEPPER", "OTP_HASH_PEPPER", "GIFT_CARD_CODE_PEPPER", "AUTH_SECRET_PREVIOUS"];
   const known = new Set([...bootKeys, ...integKeys, ...CLI_ONLY]);
   for (const k of documented) {
     if (!known.has(k)) {
