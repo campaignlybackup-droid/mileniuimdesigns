@@ -1,0 +1,186 @@
+/*
+ * MILLENNIUM DESIGNS — the token layer. 10 §2.
+ *
+ * THE ONLY PLACE A COLOUR IS DEFINED. `tests/unit/contrast.test.ts` computes the WCAG contrast
+ * of the full token cross-product from this file, `tests/unit/background-tokens.test.ts`
+ * asserts the CMS's stored surface vocabulary is exactly the seven declared here, and a lint
+ * rule forbids a hex literal in a component. A colour that is not in this file does not exist.
+ *
+ * Components reference the SEMANTIC aliases (`--md-bg`, `--md-fg`), never the raw ramp. The
+ * ramp is what the house looks like; the aliases are what a component means. That separation
+ * is what lets a section be dark without every component inside it learning about darkness.
+ */
+
+:root {
+  /* Declared so form controls render correctly. There is NO dark-mode toggle: the site is a
+     designed light-and-dark composition, not a themeable surface, and `prefers-color-scheme`
+     does not alter this palette. Sections choose a SURFACE token instead. */
+  color-scheme: light;
+
+  /* ── Brand — the mark and its signal ─────────────────────────────────────────────── */
+  --md-green: #009c17;
+
+  /* ── Emerald surfaces — the dark half of the house ───────────────────────────────── */
+  --md-emerald-deep: #003d1f;
+  --md-forest: #062e1b;
+  --md-green-dark: #082519;
+  --md-green-black: #06130d;
+
+  /* ── Ivory surfaces — the light half, and the default ────────────────────────────── */
+  --md-ivory-soft: #fcfaf5;
+  --md-ivory: #f7f4ec;
+  --md-stone: #e8e2d7;
+  --md-taupe: #b9b1a3;
+  --md-charcoal: #171815;
+
+  /* ── Metallic — trace accent, NEVER a surface ────────────────────────────────────── */
+  --md-champagne: #c8b27a;
+  --md-gold-antique: #a88c55;
+
+  /* ── Semantic aliases — components reference these ───────────────────────────────── */
+  --md-bg: var(--md-ivory-soft);
+  --md-bg-raised: var(--md-ivory);
+  --md-fg: var(--md-charcoal);
+  --md-fg-muted: var(--md-taupe);
+  /* The readable muted colour. `--md-taupe` on ivory is ~2.3:1 and is permitted ONLY for
+     non-essential text at 18px or larger — never body copy, labels, prices, help or errors. */
+  --md-fg-secondary: color-mix(in oklab, var(--md-charcoal) 66%, var(--md-ivory-soft));
+  --md-rule: var(--md-stone);
+  /* A boundary that carries MEANING — a form field edge, a data-row separator, a control
+     outline — must clear 3:1 (WCAG 1.4.11). `--md-rule` is 1.24:1 on the page ground and is
+     meant to be: a whisper-thin divider is the house style. Conflating the two was the defect;
+     a hairline forced to 3:1 would look like a table, and a field border left at 1.24:1 is a
+     form nobody can see the shape of. Two tokens, two jobs. */
+  --md-rule-strong: color-mix(in oklab, var(--md-charcoal) 43%, var(--md-ivory-soft));
+  --md-bg-inverse: var(--md-emerald-deep);
+  --md-fg-inverse: var(--md-ivory-soft);
+  /* 68% was 2.9:1 over emerald — under the 3:1 floor for large text. */
+  --md-fg-inverse-muted: color-mix(in oklab, var(--md-ivory-soft) 76%, transparent);
+  --md-focus: var(--md-green);
+  --md-accent: var(--md-green);
+
+  /* ── State — muted, never traffic-light bright ───────────────────────────────────── */
+  --md-danger: #8c2f1f;
+  --md-success: var(--md-green);
+  --md-sold: var(--md-taupe);
+
+  /* ── Typography ──────────────────────────────────────────────────────────────────── */
+  --md-font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --md-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --md-t-hero: clamp(2.75rem, 7vw, 7rem);
+  --md-t-display: clamp(2rem, 4.5vw, 4rem);
+  --md-t-title: clamp(1.5rem, 2.5vw, 2.25rem);
+  --md-t-subtitle: clamp(1.125rem, 1.6vw, 1.375rem);
+  --md-t-body-lg: 1.0625rem;
+  --md-t-body: 0.9375rem;
+  --md-t-small: 0.8125rem;
+  --md-t-label: 0.6875rem;
+  --md-t-price: 1rem;
+
+  --md-measure: 68ch;
+  --md-measure-standfirst: 46ch;
+
+  /* ── Space, layout, radius, shadow, motion ───────────────────────────────────────── */
+  --md-space-1: 0.25rem;
+  --md-space-2: 0.5rem;
+  --md-space-3: 0.75rem;
+  --md-space-4: 1rem;
+  --md-space-5: 1.5rem;
+  --md-space-6: 2rem;
+  --md-space-7: 3rem;
+  --md-space-8: 4rem;
+  --md-space-9: 6rem;
+  --md-space-10: 8rem;
+  --md-space-11: 12rem;
+
+  --md-container: 1560px;
+  --md-container-text: 760px;
+  --md-gutter: clamp(1.25rem, 4vw, 4rem);
+
+  --md-radius-none: 0;
+  /* 2px is the MAXIMUM for a surface. Cards have no radius, no border and no shadow. */
+  --md-radius-sm: 2px;
+  /* ONLY the wishlist dot and the bag count. */
+  --md-radius-pill: 999px;
+
+  --md-shadow-none: none;
+  /* Exists for ONE purpose: detaching an overlay from the page. Any other shadow is a
+     review failure. */
+  --md-shadow-drawer: 0 0 60px rgb(6 19 13 / 18%);
+
+  --md-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --md-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --md-dur-fast: 160ms;
+  --md-dur: 320ms;
+  --md-dur-slow: 600ms;
+  --md-dur-reveal: 900ms;
+}
+
+/* Motion is an enhancement, never the only signal that something happened. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --md-dur-fast: 0ms;
+    --md-dur: 0ms;
+    --md-dur-slow: 0ms;
+    --md-dur-reveal: 0ms;
+  }
+}
+
+/*
+ * Surfaces. A section sets one of these and everything inside it inherits a coherent
+ * foreground — which is why a component never needs to know whether it is on the dark half.
+ */
+[data-surface="ivory-soft"] {
+  --md-bg: var(--md-ivory-soft);
+  --md-fg: var(--md-charcoal);
+  --md-fg-secondary: color-mix(in oklab, var(--md-charcoal) 66%, var(--md-ivory-soft));
+  --md-rule: var(--md-stone);
+}
+[data-surface="ivory"] {
+  --md-bg: var(--md-ivory);
+  --md-fg: var(--md-charcoal);
+  --md-fg-secondary: color-mix(in oklab, var(--md-charcoal) 66%, var(--md-ivory));
+  --md-rule: var(--md-stone);
+  --md-rule-strong: color-mix(in oklab, var(--md-charcoal) 43%, var(--md-ivory));
+}
+[data-surface="stone"] {
+  --md-bg: var(--md-stone);
+  --md-fg: var(--md-charcoal);
+  --md-fg-secondary: color-mix(in oklab, var(--md-charcoal) 70%, var(--md-stone));
+  --md-rule: color-mix(in oklab, var(--md-charcoal) 18%, var(--md-stone));
+  --md-rule-strong: color-mix(in oklab, var(--md-charcoal) 46%, var(--md-stone));
+  /* The brand green is 2.82:1 on this band — under the floor. A focus ring is the one element
+     that may not be on-brand at the cost of being invisible: a keyboard user who cannot see
+     where they are has no way to recover. Emerald keeps it in the family and clears 3:1. */
+  --md-focus: var(--md-emerald-deep);
+}
+[data-surface="emerald-deep"],
+[data-surface="forest"],
+[data-surface="green-dark"],
+[data-surface="green-black"] {
+  --md-fg: var(--md-ivory-soft);
+  /* 78% composited over emerald-deep was 4.22:1 — under the body threshold on the darkest of
+     the four. Sized for the WORST surface in the group, so one value is right for all of them. */
+  --md-fg-secondary: color-mix(in oklab, var(--md-ivory-soft) 84%, transparent);
+  --md-rule: color-mix(in oklab, var(--md-ivory-soft) 22%, transparent);
+  --md-rule-strong: color-mix(in oklab, var(--md-ivory-soft) 72%, transparent);
+  --md-focus: var(--md-ivory-soft);
+}
+[data-surface="emerald-deep"] {
+  --md-bg: var(--md-emerald-deep);
+}
+[data-surface="forest"] {
+  --md-bg: var(--md-forest);
+}
+[data-surface="green-dark"] {
+  --md-bg: var(--md-green-dark);
+}
+[data-surface="green-black"] {
+  --md-bg: var(--md-green-black);
+}
+
+[data-surface] {
+  background-color: var(--md-bg);
+  color: var(--md-fg);
+}

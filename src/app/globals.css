@@ -1,26 +1,72 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * The Tailwind v4 bridge. Tailwind utilities resolve to OUR tokens; there is no second
+ * palette. The `create-next-app` default that lived here declared its own `--background` /
+ * `--foreground` pair AND a `prefers-color-scheme: dark` block, which contradicts 10 §2.1
+ * rule 3 outright: this site is a designed light-and-dark composition, not a themeable
+ * surface, and the dark half is chosen by a section's `data-surface`, never by the visitor's
+ * operating system. Left in place it would have re-coloured every page at night.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--md-bg);
+  --color-bg-raised: var(--md-bg-raised);
+  --color-fg: var(--md-fg);
+  --color-fg-secondary: var(--md-fg-secondary);
+  --color-fg-muted: var(--md-fg-muted);
+  --color-rule: var(--md-rule);
+  --color-rule-strong: var(--md-rule-strong);
+  --color-accent: var(--md-accent);
+  --color-danger: var(--md-danger);
+  --color-bg-inverse: var(--md-bg-inverse);
+  --color-fg-inverse: var(--md-fg-inverse);
+
+  --font-display: var(--md-font-display);
+  --font-sans: var(--md-font-sans);
+
+  --radius-none: var(--md-radius-none);
+  --radius-sm: var(--md-radius-sm);
+  --radius-pill: var(--md-radius-pill);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--md-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--md-bg);
+  color: var(--md-fg);
+  font-family: var(--md-font-sans);
+  font-size: var(--md-t-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Visible focus EVERYWHERE, `:focus-visible` only, never removed for keyboard users (10 §8.2).
+ * A 2px ring at 2px offset, in the surface's own focus colour — which is why `--md-focus` is a
+ * token a surface can override rather than a fixed green: the brand green is 2.82:1 on the
+ * stone band, and a focus ring that cannot be seen leaves a keyboard user with no way to know
+ * where they are.
+ */
+:focus-visible {
+  outline: 2px solid var(--md-focus);
+  outline-offset: 2px;
+}
+
+/* Prices always align, and a price never jitters when it changes. */
+.md-price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  font-size: var(--md-t-price);
+  letter-spacing: 0.01em;
+}
+
+/* The ONLY uppercase token (10 §2.2). A headline is never uppercased. */
+.md-label {
+  font-size: var(--md-t-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }

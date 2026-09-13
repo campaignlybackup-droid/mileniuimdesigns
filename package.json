@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run gen:markets && next build",
+    "build": "npm run check:brand && npm run gen:markets && npm run gen:tokens && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -29,7 +29,9 @@
     "perf:seed": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts",
     "perf:drop": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts --drop",
     "test:perf": "vitest bench --run tests/perf",
-    "gen:markets": "dotenv -e .env.local -e .env -- tsx scripts/gen-market-snapshot.ts"
+    "gen:markets": "dotenv -e .env.local -e .env -- tsx scripts/gen-market-snapshot.ts",
+    "check:brand": "tsx scripts/check-brand-assets.ts",
+    "gen:tokens": "tsx scripts/gen-background-tokens.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",

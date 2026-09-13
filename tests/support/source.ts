@@ -34,3 +34,21 @@ export function sourceFiles(dir: string, out: string[] = []): string[] {
   }
   return out;
 }
+
+/**
+ * Two decimal places for a DIAGNOSTIC number, without `.toFixed()`.
+ *
+ * `.toFixed(` is banned repo-wide because it is how a price becomes a float. The ban is
+ * blanket and has no exemption list, deliberately — "it is not really money" is what every
+ * exemption says, and the one that is wrong looks exactly like the ones that are right.
+ *
+ * This is the second time a test has needed to print a non-money number to two places (P11's
+ * bench needed milliseconds, this needs a contrast ratio), so the workaround is shared rather
+ * than re-derived. It formats ONLY for a failure message; nothing computes from it.
+ */
+export function twoPlaces(n: number): string {
+  const rounded = Math.round(n * 100) / 100;
+  const whole = Math.trunc(rounded);
+  const frac = Math.abs(Math.round((rounded - whole) * 100));
+  return `${String(whole)}.${String(frac).padStart(2, "0")}`;
+}

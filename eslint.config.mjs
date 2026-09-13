@@ -143,6 +143,30 @@ const eslintConfig = defineConfig([
     },
   },
 
+  // 09 P14 criterion (a): every palette value is a CSS custom property, ZERO hex literals in
+  // components. A hex in a component is a colour outside the token table — so it is outside
+  // the contrast test, outside the surface system, and invisible to every check that exists.
+  {
+    files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]",
+          message:
+            "A hex colour in a component is a colour outside src/styles/tokens.css — outside " +
+            "the contrast test, outside the surface system, and invisible to every check we " +
+            "have. Use a --md-* token. (10 §2.1)",
+        },
+        {
+          selector:
+            "TemplateElement[value.raw=/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\\b/]",
+          message: "A hex colour in a template literal is still a hex colour. (10 §2.1)",
+        },
+      ],
+    },
+  },
+
   // The exemptions. Each names the single module allowed to do the banned thing.
   {
     files: ["src/lib/money.ts"],

@@ -3254,3 +3254,88 @@ inventing how they describe themselves. Seeded empty, written by the client at
 What P13 does deliver end-to-end, verified over HTTP against a running server rather than only
 in unit tests: `/us/rings` 301s to `/rings`; `/xx` 404s; `/` renders US/USD/en-US and `/in`
 renders IN/INR/en-IN; and `hreflang` emits `en-US`, `en-IN` and `x-default` from the rows.
+
+---
+
+### 6.25 P14 field notes
+
+**THE BUILD NOW FAILS, ON PURPOSE, AND WILL UNTIL THE CLIENT SENDS THE LOGO FILES.** That is
+09 P14 criterion (c) working, not a regression. `npm run build` runs `check:brand` first and
+stops in seconds with a message naming the two missing files, what they are, and why they must
+not be traced from the raster images.
+
+The failure this prevents is quiet and expensive. A missing logo becomes a styled
+`<span>MILLENNIUM DESIGNS</span>`. It looks deliberate, so it passes review; it ships; and it is
+a wordmark nobody designed, on every page, eventually on a printed invoice. A build that stops
+costs an afternoon. A plausible substitute costs a rebrand. `tests/unit/brand-assets.test.ts`
+is red for the same reason and is the **one** failing test in the suite — every report from
+here should say so rather than quietly excluding it.
+
+`Logo` accepts `variant`, `tone`, `size` and `priority` and nothing else, and the test asserts
+that list exactly. No `className`, no `style`, no colour, no transform. `size` sets a HEIGHT and
+the width follows the intrinsic ratio, so the mark cannot be stretched by being given a box of
+the wrong shape. `tone` is a data attribute, not a filter: the ivory mark is separate artwork
+the client supplies, because hue-rotating the green one is the redesign the component exists to
+prevent.
+
+**The specified palette does not meet the specified accessibility target, in three places.**
+`10 §2.1` gives the ramp and `10 §8.2` sets WCAG 2.2 AA; computing the cross-product found
+three conflicts. None is a test bug and none was fixed by relaxing a threshold:
+
+1. **`--md-rule` is 1.02–1.52:1 on every surface**, and `§8.2` holds "UI boundaries that carry
+   meaning" to 3:1. Both are right: a whisper-thin divider is the house style, and a form field
+   edge nobody can see is a form nobody can use. **Conflating them was the defect.** `--md-rule`
+   stays decorative; `--md-rule-strong` is new and clears 3:1 on all seven surfaces. The test
+   asserts BOTH directions — the strong token clears it, the hairline stays below it — so
+   "fixing" a future contrast warning by darkening the wrong token fails.
+2. **`--md-fg-secondary` was 4.22:1 on `emerald-deep`**, under the body threshold on the
+   darkest of the four dark surfaces. Raised from 78% to 84% ivory, sized for the worst surface
+   in the group so one value is right for all of them.
+3. **`--md-focus` was 2.82:1 on the `stone` band.** A focus ring is the one element that may not
+   be on-brand at the cost of being invisible — a keyboard user who cannot see where they are
+   has no way to recover. That surface now focuses in emerald, which is in the family and
+   clears 3:1 at 9.66.
+
+The values were **solved for, not guessed at**: a throwaway search found the minimum mix
+percentage clearing the threshold on each surface, which is how `43%`, `72%` and `84%` got
+their third significant figure instead of being nudged until the test went green.
+
+**The contrast pipeline is hand-written on purpose.** `tokens.css` uses `color-mix(in oklab,…)`
+and `var()` chains, so checking it means sRGB ↔ linear ↔ Oklab conversion, alpha compositing
+and token resolution. A colour library would have been quicker and would have **silently
+normalised** an unparseable value — turning a broken token into a passing test. This one
+throws, and a test asserts that it throws.
+
+**The starter stylesheet contained a second palette and a dark-mode block.** `globals.css`
+still had `create-next-app`'s `--background`/`--foreground` pair and a
+`@media (prefers-color-scheme: dark)` override — which contradicts `10 §2.1` rule 3 outright:
+this site is a designed light-and-dark composition, and the dark half is chosen by a section's
+`data-surface`, never by the visitor's operating system. Left alone it would have re-coloured
+every page at night. Replaced with a Tailwind v4 bridge over the real tokens, so a utility class
+and a custom property cannot disagree.
+
+**Three copies of the surface vocabulary are now one.** `BACKGROUND_TOKENS` is GENERATED from
+`tokens.css`, and the test asserts every stored token is declared, has a `[data-surface]` block
+that actually sets a background, and that the metallics and the brand green are absent — a gold
+background being unstorable beats it being forbidden in prose. A token the CMS can store but the
+stylesheet does not define renders as **transparent**, which reads as a layout bug rather than
+as a deleted token, three weeks after the edit that caused it.
+
+**A sixth silent edit failure, and a second recurrence of the `.toFixed` friction.** The
+contrast test's rule assertions did not apply on the first attempt; found by grepping for the
+result, as the P12 rule requires. And formatting a contrast ratio hit the repo-wide `.toFixed`
+ban for the same reason P11's bench hit it — so `twoPlaces()` now lives in `tests/support`
+rather than being re-derived a third time. The ban stays blanket: "it is not really money" is
+what every exemption says, and the one that is wrong looks exactly like the ones that are right.
+
+**What the footer does not contain is the point.** No address, no telephone number, no opening
+hours, no "established 1984", no social links, no company registration. Every one is a fact
+about a real business and every one is outstanding client input. Empty sections are hidden
+rather than filled with plausible placeholders, because a placeholder that reads as verified is
+how an invented fact ships.
+
+**Not done, and not claimed:** the `(Z)` criterion — both `10 §9` review gates walked and signed
+by a named person over the header, the footer and the primitive gallery. `10 §9.1` item 7
+("could this be any other brand's site with the logo swapped?") is an automatic failure and no
+test detects it. It cannot be walked meaningfully before the marks exist, since the gate is
+largely about how the lockup sits in the composition.
