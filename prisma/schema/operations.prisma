@@ -1,0 +1,269 @@
+// Operations, settings, audit, jobs, import and analytics — 02 §2.9, §7.11.
+// These tables are created in Schema I because every later phase writes into them, and
+// an operations table discovered missing by the phase that needs it is a migration
+// written under pressure (09 P03 exit criterion (e)).
+
+/// Append-only. Never updated, never deleted while settings['audit.retention_days'] is
+/// NULL. The application database role holds INSERT and SELECT on this table and nothing
+/// else — an audit log the audited party can edit is decoration (07 §7.4).
+model AuditLog {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  actorType          ActorType @map("actor_type")
+  actorUserId        String?   @map("actor_user_id") @db.Uuid
+  actorCustomerId    String?   @map("actor_customer_id") @db.Uuid
+  /// Both principals are recorded during impersonation, so "the admin did it while
+  /// acting as the customer" is recoverable (07 §1.11).
+  impersonatorUserId String?   @map("impersonator_user_id") @db.Uuid
+  entity             String
+  entityId           String?   @map("entity_id") @db.Uuid
+  action             String
+  before             Json?
+  after              Json?
+  summary            String?
+  requestId          String?   @map("request_id")
+  ipAddress          String?   @map("ip_address") @db.Inet
+  userAgent          String?   @map("user_agent")
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  actor        User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  impersonator User? @relation("AuditImpersonator", fields: [impersonatorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId, createdAt(sort: Desc)], map: "idx_audit_entity")
+  @@index([actorUserId, createdAt(sort: Desc)], map: "idx_audit_actor")
+  @@index([createdAt(sort: Desc)], map: "idx_audit_created")
+  /// The retention split, the weekly off-site export and "every refund and permission
+  /// change this quarter" are all `WHERE action IN (…) AND created_at > $1`, which none
+  /// of the other three indexes can serve at 20 million rows (07 §7.3).
+  @@index([action, createdAt(sort: Desc)], map: "idx_audit_action")
+  @@map("audit_logs")
+}
+
+/// (key, market_code) with NULLS NOT DISTINCT — applied in the hand-written migration,
+/// because Prisma cannot express it. That is what makes a setting a PER-MARKET row
+/// rather than a global flag (02 §7.11).
+model Setting {
+  /// Surrogate key. The REAL identity is `(key, market_code) NULLS NOT DISTINCT`, which
+  /// Prisma cannot express — a primary key may not contain a nullable column, and
+  /// NULLS NOT DISTINCT has no Prisma equivalent at all. The unique index is created in
+  /// the hand-written migration; this is the same escape hatch as the generated columns
+  /// and partial indexes (01 §1.2).
+  id                String   @id @default(uuid(7)) @db.Uuid
+  key               String
+  marketCode        String?  @map("market_code") @db.Char(2)
+  value             Json
+  valueType         String   @map("value_type")
+  groupKey          String   @map("group_key")
+  label             String
+  description       String?
+  isSecret          Boolean  @default(false) @map("is_secret")
+  updatedByUserId   String?  @map("updated_by_user_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  updatedBy User? @relation(fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([groupKey], map: "idx_settings_group")
+  @@map("settings")
+}
+
+model SavedView {
+  id           String            @id @default(uuid(7)) @db.Uuid
+  resource     SavedViewResource
+  name         String
+  /// NULL means a shared view owned by nobody.
+  ownerUserId  String?           @map("owner_user_id") @db.Uuid
+  isShared     Boolean           @map("is_shared")
+  isDefault    Boolean           @map("is_default")
+  /// Validated against 11 §8's sort and filter whitelists ON WRITE. A saved view is a
+  /// user-supplied ORDER BY and WHERE, and the indexes of 02 §4 are sized for exactly
+  /// that whitelist and nothing else.
+  filters      Json
+  columnConfig Json              @map("column_config")
+  sort         Json
+  position     Int               @db.SmallInt
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  owner User? @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+
+  /// A view carries NO permission of its own — it is gated on the owning resource's read
+  /// permission, and a column carries its own `requires` which column_config cannot
+  /// grant. Otherwise a view authored by an owner carries cost_minor to a
+  /// catalog_manager who opens it (11 §1.2 rule 3).
+  @@index([resource, position], map: "idx_saved_views_resource")
+  @@map("saved_views")
+}
+
+model Job {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  kind            JobKind
+  status          JobStatus
+  payload         Json
+  priority        Int       @default(100) @db.SmallInt
+  attempts        Int       @default(0) @db.SmallInt
+  maxAttempts     Int       @default(3) @map("max_attempts") @db.SmallInt
+  runAfter        DateTime  @default(now()) @map("run_after") @db.Timestamptz(6)
+  lockedAt        DateTime? @map("locked_at") @db.Timestamptz(6)
+  lockedBy        String?   @map("locked_by")
+  progressCurrent Int?      @map("progress_current")
+  progressTotal   Int?      @map("progress_total")
+  result          Json?
+  error           String?
+  startedAt       DateTime? @map("started_at") @db.Timestamptz(6)
+  finishedAt      DateTime? @map("finished_at") @db.Timestamptz(6)
+  /// NULL is permitted PER KIND by JOB_KINDS[kind].systemPermitted, not by a closed
+  /// allowlist of three kinds — which is exactly what silently refused every
+  /// order-confirmation email, because a webhook writes that row and has no user
+  /// (11 §3.3).
+  createdByUserId String?   @map("created_by_user_id") @db.Uuid
+  /// The per-entity and per-market singleton form that idx_jobs_singleton cannot
+  /// express: feed_rebuild dedupes per market, publish_scheduled per entity.
+  dedupeKey       String?   @map("dedupe_key")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  createdBy  User?       @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  importJobs ImportJob[]
+
+  @@index([priority, runAfter], map: "idx_jobs_claim")
+  @@index([lockedAt], map: "idx_jobs_stuck")
+  @@map("jobs")
+}
+
+model ImportJob {
+  id              String     @id @default(uuid(7)) @db.Uuid
+  jobId           String?    @map("job_id") @db.Uuid
+  resource        String
+  mode            ImportMode
+  fileMediaId     String?    @map("file_media_id") @db.Uuid
+  fileName        String     @map("file_name")
+  mapping         Json
+  marketCode      String?    @map("market_code") @db.Char(2)
+  currencyCode    String?    @map("currency_code") @db.Char(3)
+  isDryRun        Boolean    @map("is_dry_run")
+  status          JobStatus
+  totalRows       Int        @default(0) @map("total_rows")
+  validRows       Int        @default(0) @map("valid_rows")
+  invalidRows     Int        @default(0) @map("invalid_rows")
+  appliedRows     Int        @default(0) @map("applied_rows")
+  createdByUserId String?    @map("created_by_user_id") @db.Uuid
+  startedAt       DateTime?  @map("started_at") @db.Timestamptz(6)
+  finishedAt      DateTime?  @map("finished_at") @db.Timestamptz(6)
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// `import.run` never authorises the apply on its own: importJobApply() additionally
+  /// requires the RESOURCE's own write permission, or an inventory_manager uploads a
+  /// prices CSV and rewrites the catalogue through a tool whose check passed (11 §1.5).
+  job       Job?           @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  createdBy User?          @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  rows      ImportJobRow[]
+
+  @@index([createdAt(sort: Desc)], map: "idx_import_jobs_created")
+  @@map("import_jobs")
+}
+
+model ImportJobRow {
+  id          String          @id @default(uuid(7)) @db.Uuid
+  importJobId String          @map("import_job_id") @db.Uuid
+  rowNumber   Int             @map("row_number")
+  raw         Json
+  normalized  Json?
+  status      ImportRowStatus
+  errors      Json            @default("[]")
+  entityId    String?         @map("entity_id") @db.Uuid
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  importJob ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+
+  @@unique([importJobId, rowNumber])
+  @@index([importJobId, status])
+  @@map("import_job_rows")
+}
+
+model SearchQuery {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  queryText       String   @map("query_text")
+  normalizedQuery String   @map("normalized_query")
+  marketCode      String   @map("market_code") @db.Char(2)
+  resultCount     Int      @map("result_count")
+  clickedProductId String? @map("clicked_product_id") @db.Uuid
+  customerId      String?  @map("customer_id") @db.Uuid
+  sessionId       String?  @map("session_id") @db.Uuid
+  filtersApplied  Json     @map("filters_applied")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  /// Only a submitted /search render logs here. Typeahead does not, or the zero-result
+  /// report drowns in prefixes of words people went on to finish typing (02 §7.11).
+  @@index([createdAt(sort: Desc)], map: "idx_search_queries_recent")
+  @@map("search_queries")
+}
+
+/// The public writer is POST /api/analytics/[market]/collect, and it may NOT set
+/// revenue_minor, currency_code, order_id, market_code or customer_id. An unauthenticated
+/// endpoint that accepts those lets anyone make the client's revenue dashboard say
+/// whatever they like (02 §2.9).
+model AnalyticsEvent {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  eventName    String    @map("event_name")
+  occurredAt   DateTime  @map("occurred_at") @db.Timestamptz(6)
+  marketCode   String    @map("market_code") @db.Char(2)
+  sessionId    String?   @map("session_id") @db.Uuid
+  customerId   String?   @map("customer_id") @db.Uuid
+  productId    String?   @map("product_id") @db.Uuid
+  variantId    String?   @map("variant_id") @db.Uuid
+  orderId      String?   @map("order_id") @db.Uuid
+  revenueMinor BigInt?   @map("revenue_minor")
+  currencyCode String?   @map("currency_code") @db.Char(3)
+  properties   Json
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([eventName, occurredAt(sort: Desc)], map: "idx_analytics_event_time")
+  @@index([productId, occurredAt(sort: Desc)], map: "idx_analytics_product")
+  @@map("analytics_events")
+}
+
+model EmailTemplate {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  key            String
+  marketCode     String?  @map("market_code") @db.Char(2)
+  subject        String
+  preheader      String?
+  heading        String?
+  bodyJson       Json     @map("body_json")
+  ctaLabel       String?  @map("cta_label")
+  ctaUrlTemplate String?  @map("cta_url_template")
+  footerJson     Json     @default("{}") @map("footer_json")
+  logoMediaId    String?  @map("logo_media_id") @db.Uuid
+  isActive       Boolean  @default(true) @map("is_active")
+  version        Int      @default(1)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// Edited under settings.manage. chk_email_templates_cta enforces the pair: no button
+  /// with no destination, and no destination with no button (06 §12.3).
+  @@map("email_templates")
+}
+
+model EmailLog {
+  id                String         @id @default(uuid(7)) @db.Uuid
+  templateKey       String         @map("template_key")
+  toEmail           String         @map("to_email")
+  status            EmailLogStatus
+  providerMessageId String?        @map("provider_message_id")
+  orderId           String?        @map("order_id") @db.Uuid
+  customerId        String?        @map("customer_id") @db.Uuid
+  marketCode        String?        @map("market_code") @db.Char(2)
+  subject           String
+  error             String?
+  sentAt            DateTime?      @map("sent_at") @db.Timestamptz(6)
+  deliveredAt       DateTime?      @map("delivered_at") @db.Timestamptz(6)
+  bouncedAt         DateTime?      @map("bounced_at") @db.Timestamptz(6)
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  /// A send attempted while Resend is unconfigured writes status = skipped_unconfigured.
+  /// The UI then never says "confirmation sent", because it was not (hard rule 7).
+  @@index([status, createdAt(sort: Desc)], map: "idx_email_logs_status")
+  @@index([orderId], map: "idx_email_logs_order")
+  @@map("email_logs")
+}

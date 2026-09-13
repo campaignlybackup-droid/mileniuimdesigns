@@ -139,12 +139,6 @@ const eslintConfig = defineConfig([
             "Declare Serializable only in src/lib/db/transaction.ts, which retries SQLSTATE " +
             "40001. Inline, a serialization failure reaches the customer as a 500. (01 §1.2)",
         },
-        {
-          selector: "NewExpression[callee.name='Date'][arguments.length=0]",
-          message:
-            "new Date() inside pricing makes a price differ between two calls a millisecond " +
-            "apart during one checkout. `at` is always passed in. (01 §2.2)",
-        },
       ],
     },
   },
@@ -166,16 +160,23 @@ const eslintConfig = defineConfig([
     files: ["src/lib/db/transaction.ts"],
     rules: { "no-restricted-syntax": "off" },
   },
-  // `new Date()` is only banned inside pricing; elsewhere it is ordinary. This block
-  // therefore re-states the OTHER three bans for everything outside pricing — and must
-  // exclude the modules exempted above, because in flat config the LAST match wins and
-  // a later block silently re-enables what an earlier one turned off.
+  // `new Date()` is banned ONLY inside pricing, stated positively.
+  //
+  // It was previously expressed as "everything EXCEPT pricing gets the other three
+  // rules", which meant the base block carried the Date ban and applied it to scripts,
+  // seeds and tests — where `new Date()` is ordinary. An inverted rule is also the shape
+  // that silently re-enabled the money.ts exemption in P01. State the narrow thing.
   {
-    files: ["src/**/*.{ts,tsx}"],
-    ignores: ["src/lib/pricing/**", "src/lib/money.ts", "src/lib/db/transaction.ts"],
+    files: ["src/lib/pricing/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-syntax": [
         "error",
+        {
+          selector: "NewExpression[callee.name='Date'][arguments.length=0]",
+          message:
+            "new Date() inside pricing makes a price differ between two calls a millisecond " +
+            "apart during one checkout. `at` is always passed in. (01 §2.2)",
+        },
         {
           selector: "CallExpression > MemberExpression[property.name='toFixed']",
           message: ".toFixed() on an amount is float money. Use src/lib/money.ts. (01 §2.2)",
@@ -184,11 +185,18 @@ const eslintConfig = defineConfig([
           selector: "CallExpression[callee.name='parseFloat']",
           message: "parseFloat on an amount reintroduces float money. (01 §2.2)",
         },
-        {
-          selector: "Property[key.name='isolationLevel'][value.value='Serializable']",
-          message: "Declare Serializable only in src/lib/db/transaction.ts. (01 §1.2)",
-        },
       ],
+    },
+  },
+
+  // Bootstrap surfaces: seeds, scripts and tests run BEFORE or OUTSIDE the app, so they
+  // legitimately read process.env directly and construct their own Prisma client. They
+  // are not request-path code and no secret reaches a user through them.
+  {
+    files: ["prisma/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts", "*.config.{ts,mts,mjs,js}"],
+    rules: {
+      "no-restricted-properties": "off",
+      "no-restricted-imports": "off",
     },
   },
 ]);

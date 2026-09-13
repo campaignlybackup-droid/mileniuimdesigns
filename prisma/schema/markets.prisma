@@ -1,0 +1,108 @@
+// Markets, currencies and locations — 02 §2.1, §7.2.
+//
+// Markets are DATA, not code. Adding the UK is rows in `markets`, `currencies`,
+// `market_locations`, `order_counters` and `prices` — never a `switch` on a country code
+// and never a new deploy path (00-CONTEXT §1, 09 P13 exit criterion (e)).
+
+model Currency {
+  /// ISO 4217, upper case, enforced by chk_currencies_code_upper.
+  code      String   @id @db.Char(3)
+  name      String
+  symbol    String
+  /// Digits after the decimal point: 2 for USD and INR, 0 for JPY. Every amount in the
+  /// system is an integer count of these (02 §1.10).
+  minorUnit Int      @map("minor_unit") @db.SmallInt
+  isActive  Boolean  @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  markets Market[]
+
+  @@map("currencies")
+}
+
+model Market {
+  /// ISO 3166-1 alpha-2, upper case.
+  code         String  @id @db.Char(2)
+  name         String
+  currencyCode String  @map("currency_code") @db.Char(3)
+  locale       String
+  countryCode  String  @map("country_code") @db.Char(2)
+  /// Report day boundaries are computed in THIS zone, never in UTC — an Indian evening
+  /// must not bucket into the previous UTC day (14 §2.3).
+  timezone     String
+  /// Looked up in the payment provider registry. NOT a union of 'stripe' | 'razorpay':
+  /// a third market must be a row, not an edit (01 §2.x).
+  paymentProviderKey String? @map("payment_provider_key")
+  taxMode      TaxMode @map("tax_mode")
+  /// India displays tax-inclusive prices, the US displays tax-exclusive. The pricing
+  /// service always returns GROSS; extraction happens once, in src/lib/orders/ (04 §8.5).
+  pricesIncludeTax Boolean @map("prices_include_tax")
+  defaultLocationId String? @map("default_location_id") @db.Uuid
+  weightUnit   String  @map("weight_unit")
+  /// DDP or DAP. Who pays duty at the border.
+  incoterm     String  @default("DAP")
+  isActive     Boolean @map("is_active")
+  rank         Int
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  currency  Currency         @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+  locations MarketLocation[]
+
+  /// The composite-FK target the whole money model rests on: any table carrying both a
+  /// market and a currency FKs THIS, so a row cannot claim a currency its market does
+  /// not use — which is how a rupee amount ends up inside a dollar order (02 §7.2).
+  @@unique([code, currencyCode], map: "uq_markets_code_currency")
+  @@map("markets")
+}
+
+model InventoryLocation {
+  id            String    @id @default(uuid(7)) @db.Uuid
+  code          String
+  name          String
+  countryCode   String    @map("country_code") @db.Char(2)
+  /// Seeded EMPTY. The client's real stock locations are a NEEDS INPUT, and inventing an
+  /// address for a real jewellery house is exactly what hard rule 8 forbids.
+  addressJson   Json?     @map("address_json")
+  isFulfillable Boolean   @map("is_fulfillable")
+  isActive      Boolean   @map("is_active")
+  rank          Int
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  markets MarketLocation[]
+
+  @@map("inventory_locations")
+}
+
+/// Which locations fulfil which market, in priority order. Multi-location exists from day
+/// one even with one active location, because retrofitting it later means rewriting every
+/// availability query (02 §2.6).
+model MarketLocation {
+  marketCode String   @map("market_code") @db.Char(2)
+  locationId String   @map("location_id") @db.Uuid
+  priority   Int      @db.SmallInt
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  market   Market            @relation(fields: [marketCode], references: [code], onDelete: Cascade)
+  location InventoryLocation @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  @@id([marketCode, locationId])
+  @@index([locationId], map: "idx_market_locations_location")
+  @@map("market_locations")
+}
+
+/// Gapless per-market order numbering. Read `SELECT … FOR UPDATE` inside the order
+/// transaction at ReadCommitted. Gapless because a GST invoice series must be
+/// consecutive — which is also why no foreign key points at it: it must be lockable
+/// without dragging another table's locks in (02 §7.8).
+model OrderCounter {
+  marketCode String   @id @map("market_code") @db.Char(2)
+  prefix     String
+  nextValue  BigInt   @map("next_value")
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("order_counters")
+}

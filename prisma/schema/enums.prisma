@@ -1,0 +1,127 @@
+// Enums — 02 §1.9.
+//
+// A DB enum is used where the value set is closed and changing it is a deliberate act
+// (a migration). Merchant-editable vocabularies are lookup TABLES, not enums, so that
+// adding a market or a material is a row rather than a deploy.
+
+/// Who performed an audited action. `system` covers jobs with no originating human,
+/// which is permitted per job kind by JOB_KINDS[kind].systemPermitted (11 §3.3).
+enum ActorType {
+  staff
+  customer
+  system
+  webhook
+  cron
+
+  @@map("actor_type")
+}
+
+/// 07 §1.5. `staff_invite` and `data_export` are added in their own migrations ahead of
+/// first use, because ALTER TYPE ... ADD VALUE cannot run in the same transaction that
+/// uses the new value.
+enum OtpPurpose {
+  customer_login
+  email_verification
+  password_reset
+  admin_2fa_recovery
+  staff_invite
+  data_export
+
+  @@map("otp_purpose")
+}
+
+/// 02 §1.9. Nineteen values. `account_export` and `customer_group_refresh` were added
+/// after the first draft — both are machine-originated jobs that were initially filed
+/// under human-only kinds, which is the defect that silently killed every
+/// order-confirmation email (11 §3.2).
+enum JobKind {
+  import_apply
+  export
+  bulk_edit
+  recalc_apply
+  collection_refresh
+  sitemap_rebuild
+  email_batch
+  reindex_search
+  publish_scheduled
+  media_orphan_scan
+  product_metrics_refresh
+  consistency_check
+  reconcile_inventory
+  send_email
+  analytics_dispatch
+  feed_rebuild
+  audit_archive
+  account_export
+  customer_group_refresh
+
+  @@map("job_kind")
+}
+
+enum JobStatus {
+  queued
+  running
+  succeeded
+  failed
+  cancelled
+
+  @@map("job_status")
+}
+
+enum ImportMode {
+  create
+  update
+  upsert
+
+  @@map("import_mode")
+}
+
+enum ImportRowStatus {
+  pending
+  valid
+  invalid
+  applied
+  skipped
+  failed
+
+  @@map("import_row_status")
+}
+
+enum SavedViewResource {
+  products
+  variants
+  orders
+  customers
+  inventory
+  prices
+  returns
+  media
+
+  @@map("saved_view_resource")
+}
+
+/// `skipped_unconfigured` is the honest state for a send attempted while Resend is not
+/// configured. The UI never says "confirmation sent" for one of these (hard rule 7).
+enum EmailLogStatus {
+  queued
+  sent
+  delivered
+  bounced
+  complained
+  failed
+  skipped_unconfigured
+  skipped_sandbox
+
+  @@map("email_log_status")
+}
+
+/// How a market computes tax. `rules_table` is hand-maintained rates; `none` is a market
+/// that does not charge tax at checkout. Destination-based US sales tax across ~11,000
+/// jurisdictions is `provider_stripe_tax` — it is not maintainable by hand (01 §2.x).
+enum TaxMode {
+  provider_stripe_tax
+  rules_table
+  none
+
+  @@map("tax_mode")
+}

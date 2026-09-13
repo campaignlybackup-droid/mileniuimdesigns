@@ -1,0 +1,102 @@
+// Customers — 02 §2.3, §7.4.
+//
+// The identity pair (customers + customer_groups) lives in Schema I, not Schema IV:
+// `sessions.customer_id` FKs `customers`, so a migration that created sessions here and
+// customers fifteen phases later could not be written, and P03's exit criterion (d) —
+// insert a session carrying a customer principal — could not be executed at all
+// (09 P03, corrected).
+
+model CustomerGroup {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  key         String   @unique(map: "uq_customer_groups_key")
+  name        String
+  description String?
+  isDefault   Boolean  @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  customers Customer[]
+
+  @@map("customer_groups")
+}
+
+model Customer {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  email             String
+  emailVerifiedAt   DateTime? @map("email_verified_at") @db.Timestamptz(6)
+  /// Nullable: a guest checkout creates a customer row with no password. It is NOT
+  /// found-or-created by email — that would attach a guest order, with a stranger's
+  /// shipping address, to whoever owns that address (02 §2.3).
+  passwordHash      String?   @map("password_hash")
+  firstName         String?   @map("first_name")
+  lastName          String?   @map("last_name")
+  phone             String?
+  phoneVerifiedAt   DateTime? @map("phone_verified_at") @db.Timestamptz(6)
+  customerGroupId   String    @map("customer_group_id") @db.Uuid
+  defaultMarketCode String?   @map("default_market_code") @db.Char(2)
+  defaultShippingAddressId String? @map("default_shipping_address_id") @db.Uuid
+  defaultBillingAddressId  String? @map("default_billing_address_id") @db.Uuid
+  acceptsMarketing  Boolean   @default(false) @map("accepts_marketing")
+  marketingConsentAt DateTime? @map("marketing_consent_at") @db.Timestamptz(6)
+  marketingConsentSource String? @map("marketing_consent_source")
+  isGuest           Boolean   @default(false) @map("is_guest")
+  totalOrdersCount  Int       @default(0) @map("total_orders_count")
+  lastOrderAt       DateTime? @map("last_order_at") @db.Timestamptz(6)
+  internalNote      String?   @map("internal_note")
+  /// Set instead of deleting. The invoice must survive a data-subject erasure request;
+  /// the person attached to it must not (07 §8.3).
+  anonymizedAt      DateTime? @map("anonymized_at") @db.Timestamptz(6)
+  version           Int       @default(1)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// NOTE: there is deliberately NO total_spent_minor column. Lifetime value is
+  /// per currency and lives in customer_currency_totals — a single column would either
+  /// mix USD and INR into one meaningless number or hardcode the two launch currencies
+  /// as two columns, and both violate hard rule 2 (02 §7.4).
+  group           CustomerGroup           @relation(fields: [customerGroupId], references: [id], onDelete: Restrict)
+  currencyTotals  CustomerCurrencyTotal[]
+  sessions        Session[]
+  otpRequests     OtpRequest[]
+
+  @@index([createdAt(sort: Desc)], map: "idx_customers_created")
+  @@index([customerGroupId], map: "idx_customers_group")
+  @@map("customers")
+}
+
+/// Lifetime value, per currency, never summed across them. A "total spent" that adds
+/// $400 to ₹40,000 is not a number (hard rule 2, 14 §1.2).
+model CustomerCurrencyTotal {
+  customerId        String    @map("customer_id") @db.Uuid
+  currencyCode      String    @map("currency_code") @db.Char(3)
+  totalSpentMinor   BigInt    @default(0) @map("total_spent_minor")
+  totalRefundedMinor BigInt   @default(0) @map("total_refunded_minor")
+  ordersCount       Int       @default(0) @map("orders_count")
+  lastOrderAt       DateTime? @map("last_order_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, currencyCode])
+  @@index([currencyCode, totalSpentMinor(sort: Desc)], map: "idx_cct_currency_spend")
+  @@map("customer_currency_totals")
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(uuid(7)) @db.Uuid
+  email          String
+  customerId     String?   @map("customer_id") @db.Uuid
+  marketCode     String?   @map("market_code") @db.Char(2)
+  status         String
+  confirmedAt    DateTime? @map("confirmed_at") @db.Timestamptz(6)
+  unsubscribedAt DateTime? @map("unsubscribed_at") @db.Timestamptz(6)
+  source         String?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// NOTE: no `properties` column. A back-in-stock request is a
+  /// back_in_stock_requests row, never a newsletter subscriber with metadata — they
+  /// carry different consent and must not share a table (08 §4.4).
+  @@map("newsletter_subscribers")
+}

@@ -1079,7 +1079,7 @@ is **composed**, not collapsed: `/admin/system/webhooks/[id]/replay` requires
 event can move money.
 
 **A route map may not widen the catalogue.** Any route needing a capability the
-72 keys cannot express is a change to this section first, and to the route table
+73 keys cannot express is a change to this section first, and to the route table
 second. That rule is what stopped the seventy-third key being invented in `08` §5,
 and it is why the four genuinely new CMS and media keys are here rather than
 there.
@@ -1294,7 +1294,7 @@ brand asset. An `admin` runs the business. An `owner` changes what the business
 > *Verified applied in 09.*
 > count equals `Object.keys(catalogue).length`". The catalogue is a frozen array,
 > not an object; the assertion is `permissions` row count
-> `=== PERMISSION_KEYS.length`, and the number is **72**.
+> `=== PERMISSION_KEYS.length`, and the number is **73**.
 
 ### 2.6 Three invariants the service layer enforces, because a constraint cannot
 

@@ -20,7 +20,10 @@
     "db:local": "prisma dev --name millennium",
     "check:env": "tsx scripts/check-env.ts",
     "db:probe": "tsx scripts/db-probe.ts",
-    "test:integration": "vitest run tests/integration"
+    "test:integration": "vitest run tests/integration tests/db",
+    "db:seed": "dotenv -e .env -- tsx prisma/seed/index.ts",
+    "create:admin": "dotenv -e .env -- tsx scripts/create-admin.ts",
+    "test:db": "vitest run tests/db"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",

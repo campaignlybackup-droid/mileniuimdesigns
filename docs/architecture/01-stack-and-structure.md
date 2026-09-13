@@ -2323,3 +2323,61 @@ path remains the target once the account exists, and nothing in the workflow cha
 the connection strings. The concurrency tests are the reason this is not optional: a test
 that asserts exactly one of two simultaneous transactions wins is meaningless against a
 mock.
+
+### 6.8 P03 field notes
+
+**The pinned permission count did its job on the first run.** `09` P03 criterion (b)
+requires `permissions` row count `=== PERMISSION_KEYS.length` **and that the number be a
+literal**. The catalogue in `11 §1.3` is **73** keys — `review.moderate` became key 73
+when the reviews descope was resolved in `15 §3.3` — while `09`, `02 §7.3` and
+`07 §1297` all still said 72. Three documents disagreed with the one that owns the list,
+and the literal caught it before a single row was seeded. All four now say 73.
+
+This is the argument for pinning counts rather than asserting `length === length`, which
+would have passed silently and shipped a role matrix missing a key.
+
+**`src/lib/rbac/catalogue.ts` is generated from the document, not transcribed.** The 73
+keys, their descriptions and all 242 grants were parsed out of `11 §1.3`/`§1.4` and
+emitted. Transcribing 242 checkmarks by hand has an error rate, and every error is a
+silent privilege bug. Note that the matrix rows for the eight keys added during
+reconciliation are **bolded** in the table (`**\`review.moderate\`**`), so any parser must
+allow optional `**` around the key or it will silently find 65 rows instead of 73 and
+conclude those keys are ungranted.
+
+**Prisma cannot express a primary key containing a nullable column,** so
+`settings (key, market_code) NULLS NOT DISTINCT` — the thing that makes a setting a
+per-market row rather than a global flag — is impossible to model. `settings` therefore
+takes a surrogate `id` in Prisma and the real identity is a unique index in the
+hand-written addendum. `tests/db/constraints.test.ts` proves a second global row for one
+key is refused; without the index it would be insertable and whichever row the query
+happened to return would win.
+
+**The migration is Prisma-generated plus a 180-line hand-written addendum,** which carries
+everything Prisma has no syntax for: 13 CHECK constraints, 18 partial and expression
+indexes, two `NULLS NOT DISTINCT` uniques, a GIN index, a BRIN index, and the audit-log
+immutability triggers. This is the designed escape hatch of §1.2, not a workaround — but
+it does mean **`prisma migrate dev` must be run with `--create-only`** and the addendum
+re-appended whenever the schema changes, or the constraints are silently dropped.
+
+**Audit immutability is a trigger, not only a grant.** `07 §7.4` specifies INSERT/SELECT
+grants for the application role. A grant is untestable on a superuser development
+database and silently does nothing if the role is ever changed, so `audit_logs` also
+carries `BEFORE UPDATE` and `BEFORE DELETE` triggers that raise
+`insufficient_privilege`. `tests/integration/audit-immutable.test.ts` asserts a
+single-row UPDATE, a single-row DELETE and a **bulk** DELETE are all refused and the row
+survives unchanged.
+
+**The seed asserts it created no user, and fails if it did.** `09` P03 criterion (c) is
+"no user row exists after seeding". Rather than leaving that to a reviewer, the seed
+counts `users` at the end and throws. A seeded default login is the single most reliable
+way for a development credential to reach production; the first account is minted
+deliberately by `npm run create:admin`, which also writes its own creation into
+`audit_logs` so that an admin account can never appear with no provenance.
+
+**A lint rule expressed as an exclusion leaked again.** The `new Date()` ban is
+pricing-only, but it was written as "every file EXCEPT `src/lib/pricing/**` gets the other
+three rules" — which left the *base* block carrying the Date ban and applying it to
+scripts, seeds and tests, where `new Date()` is ordinary. It is now stated positively:
+one block, `files: ["src/lib/pricing/**"]`, listing what is banned there. Combined with
+the P01 finding (§6.5), the rule is: **in flat config, state the narrow thing positively;
+never express a restriction as an exclusion.**

@@ -1,0 +1,192 @@
+// Identity, access and sessions — 02 §2.2, §7.3.
+//
+// TWO POPULATIONS, deliberately separate: `users` are staff, `customers` are shoppers.
+// One `sessions` table serves both but carries exactly ONE principal
+// (chk_sessions_one_principal), and the two actor resolvers never read each other's
+// cookie. A single getActor() reading the admin cookie first would let the storefront
+// price, cache and audit a shopping staff member's session as an admin's — a confused
+// deputy (07 §3.2).
+
+model User {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  email              String
+  /// argon2id. Never a fast hash: this is the one value a breach makes reusable.
+  passwordHash       String    @map("password_hash")
+  firstName          String    @map("first_name")
+  lastName           String    @map("last_name")
+  avatarMediaId      String?   @map("avatar_media_id") @db.Uuid
+  isActive           Boolean   @map("is_active")
+  /// AES-GCM under a key derived from AUTH_SECRET. Self-describing `v<n>:` ciphertext so
+  /// that rotating AUTH_SECRET does not lock out every enrolled staff member at once
+  /// (07 §1.10).
+  totpSecretEncrypted String?  @map("totp_secret_encrypted")
+  totpEnrolledAt     DateTime? @map("totp_enrolled_at") @db.Timestamptz(6)
+  /// argon2id hashes, not the codes.
+  totpRecoveryCodes  String[]  @map("totp_recovery_codes")
+  /// The RFC 6238 counter of the last accepted code. Verification rejects
+  /// `step <= totpLastStep`, which is the only thing that makes "single use" a
+  /// mechanism rather than a claim (07 §1.10).
+  totpLastStep       BigInt?   @map("totp_last_step")
+  lastLoginAt        DateTime? @map("last_login_at") @db.Timestamptz(6)
+  passwordChangedAt  DateTime  @map("password_changed_at") @db.Timestamptz(6)
+  /// Incremented on a path that COMMITS before the throw — wrapping the increment, the
+  /// rate-limit write and the audit row in the caller's transaction would roll all three
+  /// back and leave the counter at 0 after ten thousand guesses (07 §1.6).
+  failedLoginCount   Int       @default(0) @map("failed_login_count") @db.SmallInt
+  lockedUntil        DateTime? @map("locked_until") @db.Timestamptz(6)
+  /// Optimistic concurrency. Zero rows on `WHERE id = $1 AND version = $2` is a
+  /// StaleWriteError, never a silent overwrite of a colleague's edit.
+  version            Int       @default(1)
+  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  roles           UserRole[]
+  sessions        Session[]        @relation("SessionUser")
+  impersonated    Session[]        @relation("SessionImpersonator")
+  grantedRoles    UserRole[]       @relation("UserRoleGrantedBy")
+  grantedPerms    RolePermission[] @relation("RolePermissionGrantedBy")
+  auditLogs       AuditLog[]       @relation("AuditActor")
+  impersonatedAudit AuditLog[]     @relation("AuditImpersonator")
+  savedViews      SavedView[]
+  jobs            Job[]
+  importJobs      ImportJob[]
+  settings        Setting[]
+  otpRequests     OtpRequest[]
+
+  @@index([isActive, lastName], map: "idx_users_active")
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  key         String   @unique(map: "uq_roles_key")
+  name        String
+  description String?
+  /// A system role cannot be deleted or renamed through the admin. The seven roles of
+  /// 11 §1.4 are all system roles.
+  isSystem    Boolean  @map("is_system")
+  rank        Int
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@map("roles")
+}
+
+/// Exactly 72 rows, seeded from src/lib/rbac/catalogue.ts. The row count is asserted
+/// against PERMISSION_KEYS.length as a pinned literal, so adding a key without seeding it
+/// fails at P03 rather than at P29 (09 P03 exit criterion (b)).
+model Permission {
+  key         String   @id
+  resource    String
+  action      String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId           String   @map("role_id") @db.Uuid
+  permissionKey    String   @map("permission_key")
+  grantedByUserId  String?  @map("granted_by_user_id") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionKey], references: [key], onDelete: Cascade)
+  grantedBy  User?      @relation("RolePermissionGrantedBy", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([roleId, permissionKey])
+  @@index([permissionKey, roleId], map: "idx_role_permissions_permission")
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId          String   @map("user_id") @db.Uuid
+  roleId          String   @map("role_id") @db.Uuid
+  grantedByUserId String?  @map("granted_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role  @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  grantedBy User? @relation("UserRoleGrantedBy", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([userId, roleId])
+  @@index([roleId], map: "idx_user_roles_role")
+  @@map("user_roles")
+}
+
+model Session {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  /// SHA-256 of the opaque token. The token itself is a bearer credential and is never
+  /// stored — a database dump must not be a set of live sessions.
+  tokenHash Bytes     @map("token_hash")
+  userId    String?   @map("user_id") @db.Uuid
+  customerId String?  @map("customer_id") @db.Uuid
+  /// Set only when a staff member is impersonating a customer. Both principals are then
+  /// recorded on every audit row, so "who actually did this" survives (07 §1.11).
+  impersonatorUserId String? @map("impersonator_user_id") @db.Uuid
+  ipAddress String?   @map("ip_address") @db.Inet
+  userAgent String?   @map("user_agent")
+  /// On the SESSION, not on `users` — otherwise a second factor satisfied on one machine
+  /// silently satisfies a session opened on another (07 §1.9).
+  totpVerifiedAt DateTime? @map("totp_verified_at") @db.Timestamptz(6)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  lastSeenAt DateTime @map("last_seen_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user         User?     @relation("SessionUser", fields: [userId], references: [id], onDelete: Cascade)
+  customer     Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  impersonator User?     @relation("SessionImpersonator", fields: [impersonatorUserId], references: [id], onDelete: SetNull)
+
+  @@unique([tokenHash], map: "idx_sessions_token_hash")
+  @@map("sessions")
+}
+
+model OtpRequest {
+  id         String     @id @default(uuid(7)) @db.Uuid
+  purpose    OtpPurpose
+  /// An email, a phone number, or a user id depending on purpose.
+  identifier String
+  /// TEXT, an argon2id PHC string — NOT a bare BYTEA digest. `argon2.verify(hash, token)`
+  /// takes and returns a PHC string carrying its own salt and parameters, and a BYTEA
+  /// column has nowhere to put either. Rows are found by (purpose, identifier) and then
+  /// verified; they are never looked up BY the hash, which is why a per-row salt is
+  /// correct here and wrong for gift_cards.code_hash (02 §2.2).
+  codeHash   String     @map("code_hash")
+  customerId String?    @map("customer_id") @db.Uuid
+  userId     String?    @map("user_id") @db.Uuid
+  attempts   Int        @default(0) @db.SmallInt
+  maxAttempts Int       @map("max_attempts") @db.SmallInt
+  consumedAt DateTime?  @map("consumed_at") @db.Timestamptz(6)
+  expiresAt  DateTime   @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([purpose, identifier, createdAt(sort: Desc)], map: "idx_otp_lookup")
+  @@map("otp_requests")
+}
+
+/// No foreign key to anything, deliberately: it must be writable when every other table
+/// is contended, and it holds no identifier that resolves to a person — emails are
+/// HMAC'd, never stored in the clear (11 §4.1).
+model RateLimit {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  key         String
+  windowStart DateTime @map("window_start") @db.Timestamptz(6)
+  count       Int
+  expiresAt   DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([key, windowStart], map: "idx_rate_limits_key_window")
+  @@index([expiresAt], map: "idx_rate_limits_expiry")
+  @@map("rate_limits")
+}
