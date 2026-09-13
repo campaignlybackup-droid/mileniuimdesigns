@@ -373,6 +373,11 @@ model PricingRule {
   adjustmentType PricingRuleAdjustment @map("adjustment_type")
   valueBp        Int?                  @map("value_bp")
   amountMinor    BigInt?               @map("amount_minor")
+  /// per_unit | per_line. Without it, `amount_minor = 2500` on a fixed_amount_off rule is
+  /// "$25 off each" to the merchandiser who wrote it and "$25 off the line" to whoever
+  /// implemented it — two readings that differ by (quantity − 1) × $25 on every multi-quantity
+  /// bag (04 §1.4.1). The default is per_unit because that is what "$25 off this chain" means.
+  amountBasis    String                @default("per_unit") @map("amount_basis")
   priority       Int                   @default(0) @db.SmallInt
   isStackable    Boolean               @default(false) @map("is_stackable")
   startsAt       DateTime?             @map("starts_at") @db.Timestamptz(6)

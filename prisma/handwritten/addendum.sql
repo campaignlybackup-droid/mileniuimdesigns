@@ -694,3 +694,13 @@ DO $$ BEGIN
   ALTER TABLE "tax_rules" ADD CONSTRAINT "chk_tax_rules_rate" CHECK (rate_bp BETWEEN 0 AND 10000);
 EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 CREATE INDEX IF NOT EXISTS "idx_tax_rules_lookup" ON "tax_rules" (market_code, country_code, tax_code, priority) WHERE is_active;
+
+-- 04 §1.4.1 — P11's two schema additions to pricing_rules.
+DO $$ BEGIN
+  ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_amount_basis" CHECK (amount_basis IN ('per_unit','per_line'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- A rule that sets the price IS the price. Composing it with a further percentage is an
+-- argument about which the merchandiser meant, resolved at runtime on a customer's bag.
+DO $$ BEGIN
+  ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_fixed_price_not_stackable" CHECK (NOT (adjustment_type = 'fixed_price' AND is_stackable));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;

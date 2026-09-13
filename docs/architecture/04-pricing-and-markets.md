@@ -555,10 +555,20 @@ quantity 3, a 17.5% rule:
 
 | | Per-unit-then-multiply (wrong) | Line-then-reduce (this spec) |
 | --- | --- | --- |
-| Discount | `applyBp(9999, 1750) = 1750` each | `applyBp(29997, 1750) = 5250` |
-| Unit final | `8249` | `ceil(24747 / 3) = 8249` |
-| Line subtotal | `24747` | `24747` |
-| Residue → `line_discount_minor` | — | `0` |
+| Discount | `applyBp(9999, 1750) = 1750` each, `× 3 = 5250` | `applyBp(29997, 1750) = 5249` |
+| Line after discount | `24747` | `24748` |
+| Unit final | `8249` | `ceil(24748 / 3) = 8250` |
+| Line subtotal | `24747` | `24750` |
+| Residue → `line_discount_minor` | — | `2` |
+
+*(**Corrected.** The first draft of this table gave the line-then-reduce discount as `5250`
+and the residue as `0`. `5250` is `applyBp(9999, 1750) × 3` — the per-unit-then-multiply
+figure this example exists to argue against. Rounding once on the line is
+`applyBp(29997, 1750)`, and `29997 × 0.175 = 5249.475`, which is `5249` half-up. As printed,
+the two columns agreed, so the worked example demonstrated the opposite of its point and
+anyone checking a per-unit implementation against it would have passed. The identities still
+hold on the corrected figures: `24750 − 2 = 24748`, which is the quoted line.
+`tests/unit/pricing-contract.test.ts` asserts all four numbers.)*
 
 and the same line at quantity 2 with a `per_line` `fixed_amount_off` of `2501`:
 `L = 19998 − 2501 = 17497`; `unitFinalMinor = ceil(17497/2) = 8749`;

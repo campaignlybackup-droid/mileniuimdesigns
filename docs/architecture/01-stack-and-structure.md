@@ -3037,3 +3037,80 @@ second live row — and also by writing the same variant in a *different* market
 succeed. A unique index over `(variant_id)` alone would pass the first test while making the
 whole multi-market model impossible. Likewise the market/currency FK is tested in both
 directions, because a foreign key that refused everything would pass the rejection test.
+
+---
+
+### 6.22 P11 field notes
+
+**`04 §1.4.2`'s worked example was wrong, in the one way that mattered.** The table gives the
+line-then-reduce discount as `5250` and the residue as `0`. But `5250` is
+`applyBp(9999, 1750) × 3` — the **per-unit-then-multiply** figure the example exists to argue
+against. Rounding once on the line is `applyBp(29997, 1750)`, and `29997 × 0.175 = 5249.475`,
+which is `5249` half-up. As printed, both columns of the comparison agreed, so the worked
+example demonstrated the opposite of its point — and anyone checking a per-unit implementation
+against it would have passed. Corrected in `04`, and all four numbers are now asserted in
+`tests/unit/pricing-contract.test.ts`: discount `5249`, line `24748`, unit `8250`, residue `2`.
+The identities still hold: `24750 − 2 = 24748`.
+
+**Two more schema additions `02`'s register omits, both specified in `04 §1.4.1`:**
+`pricing_rules.amount_basis` and `chk_pricing_rules_fixed_price_not_stackable`. Neither is in
+`02 §7.13`'s P10 list, so P10 did not build them, and P11's arithmetic cannot be written
+without the first: `amount_minor = 2500` on a `fixed_amount_off` rule is "$25 off each" to the
+merchandiser who typed it and "$25 off the line" to whoever implemented it, and the difference
+is `(quantity − 1) × $25` on every multi-quantity bag. That is now the third register omission
+this build has found (`chk_prices_formula_source` and `chk_prices_list_identity` at P10). The
+pattern is consistent: **`04` owns pricing and is complete; `02`'s consolidated register is a
+transcription of it and is not.** Future pricing work should read `04` first.
+
+**`new Date()` is banned inside `src/lib/pricing/**`, and the ban has a consequence the
+document does not spell out.** `04 §1.4` says `at` "defaults to `now()`" — but pricing is the
+one module forbidden to invent an instant, because a checkout calling the resolver twice a
+millisecond apart must not price two lines of one bag on two sides of a sale boundary. The
+default therefore lives outside pricing: `src/lib/clock.ts` exports `requestNow()`, a React
+`cache()`d instant, one per request. Outside a request it degrades to a fresh value per call,
+which is correct — every such caller (recalc, the apply job, forensic replay) passes `at`
+explicitly anyway.
+
+**The batch OMITS a missing price; the singular form throws.** `04 §1.4` says a variant with
+neither price level "is simply absent from the result… with no sentinel row to mistake for a
+price". A listing or a cart containing one unavailable line must still render the other
+thirty-nine; `resolvePrice` is where the absence becomes `PriceUnavailableError`, because there
+the whole answer is missing. **I wrote this wrong twice.** First I made the batch throw, which
+meant one unpriced variant would take down a whole PLP. Then I "fixed" it and the fix silently
+did not apply — a Python string replacement against a file Prettier had already reformatted —
+so `getDisplayPrice` kept a `try/catch` per variant, which was both the N+1 the document
+explicitly bans and a workaround for a bug I believed I had removed. **The lesson is not about
+the bug; it is that I did not verify the edit landed.** Three separate replacements in this
+phase silently matched nothing. Every one is now checked by re-reading the file or by a test.
+
+**The query-count test asserts CONSTANCY, not a number.** `09`'s first draft pinned it at
+"one query", which `04 §3` contradicts. A budget the correct implementation fails on the day it
+is written gets deleted, and the invariant that actually matters goes with it. So the test
+measures 1, 48 and 200 lines and asserts the three counts are EQUAL, plus a loose ceiling so
+"equal but large" cannot pass. Verified by injecting a per-line query and watching it report
+`[[1,5],[48,52],[200,204]]`. The real count is four: market, prices, scopes, rules — the market
+and rules reads memoised per request, as `04 §1.4.1` specifies.
+
+**`getDisplayPrice` IS `resolvePriceBatch` at quantity 1.** Not a cheaper query that happens to
+agree — agreeing by construction is the only way it stays agreeing. The divergence is entirely
+mundane: the card reads `prices.list_minor` because that is one cheap query, the bag runs the
+rule stack, and the two match perfectly until the first `pricing_rules` row exists. At that
+moment every listing on the site overstates its prices and nothing fails.
+`display-equals-charged.test.ts` asserts the integers match before AND after a rule goes live,
+and asserts the rule actually moved the number — otherwise it would be two copies of the
+undiscounted figure agreeing with each other.
+
+**The authorization guard flagged three pure functions, and the fix was to sharpen the guard,
+not to exempt them.** `applyRule`, `applyRuleStack` and `applyPercentageCoupon` start with a
+verb the mutator heuristic watches for — reasonably, since `applyRecalcRun` writes prices. The
+property that separates them: **every database call in this codebase is asynchronous**, so a
+module with no `async`, no `await` and no `Promise` cannot write anything whatever its
+functions are called. That is now a positive test on the file rather than a new exemption list,
+because an exemption list is a second thing to maintain and forgetting to add to one is silent.
+`applyPercentageCoupon` also moved from `resolve.ts` to `rules.ts`, where arithmetic belongs.
+
+**Two converse assertions worth naming.** The customer-group test asserts an anonymous shopper
+gets the undiscounted price — which is only meaningful because the next test asserts a member
+gets a *different* one. And `display-equals-charged` asserts a US rule does not move Indian
+prices, which is where a currency-blind rule engine would put a 15% American markdown onto
+every rupee price on the site.
