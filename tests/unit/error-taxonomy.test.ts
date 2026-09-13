@@ -13,6 +13,17 @@ import {
   toWireError,
 } from "@/lib/errors";
 
+/** Shared by both suites below. */
+function walk(dir: string, out: string[] = []): string[] {
+  for (const e of readdirSync(dir)) {
+    if (e === "generated") continue;
+    const p = join(dir, e);
+    if (statSync(p).isDirectory()) walk(p, out);
+    else if (/\.tsx?$/.test(p)) out.push(p);
+  }
+  return out;
+}
+
 /** Commissioned by 11 §2.3 and 09 §2.5. */
 describe("error taxonomy", () => {
   it("is closed at 52 codes", () => {
@@ -88,17 +99,45 @@ describe("error taxonomy", () => {
   });
 });
 
-describe("no error code literal in src/ is missing from the taxonomy", () => {
-  function walk(dir: string, out: string[] = []): string[] {
-    for (const e of readdirSync(dir)) {
-      if (e === "generated") continue;
-      const p = join(dir, e);
-      if (statSync(p).isDirectory()) walk(p, out);
-      else if (/\.tsx?$/.test(p)) out.push(p);
+describe("there is exactly ONE error base class", () => {
+  it("no module outside src/lib/errors.ts declares a class extending Error", () => {
+    // 11 §2.1: "there is no second base and no second ErrorCode union." This existed
+    // once — src/lib/rbac/errors.ts declared its own ForbiddenError — and the failure
+    // mode is silent: two classes with one name mean `instanceof` fails across the
+    // boundary, so a caller's catch block simply does not catch. A test found it; review
+    // had not.
+    const offenders: string[] = [];
+    for (const file of walk(resolve(process.cwd(), "src"))) {
+      if (file.endsWith("lib/errors.ts")) continue;
+      const src = readFileSync(file, "utf8");
+      // Extending AppError is CORRECT and expected — 11 §2.1 says domain modules
+      // re-export their own classes "from the one base". The offence is extending the
+      // built-in Error, which creates a second base.
+      for (const m of src.matchAll(/class\s+(\w*Error)\s+extends\s+Error\b/g)) {
+        offenders.push(`${file}: ${m[1]} extends Error (should extend AppError)`);
+      }
     }
-    return out;
-  }
+    expect(offenders).toEqual([]);
+  });
 
+  it("classes that DO extend AppError are instances of it, so a catch block catches", async () => {
+    const { CurrencyMismatchError } = await import("@/lib/money");
+    const { AppError, isAppError } = await import("@/lib/errors");
+    const e = new CurrencyMismatchError("USD", "INR");
+    expect(e).toBeInstanceOf(AppError);
+    expect(isAppError(e)).toBe(true);
+    expect(e.code).toBe("INTERNAL");
+  });
+
+  it("the error names auth and rbac throw are the taxonomy's own classes", async () => {
+    const errors = await import("@/lib/errors");
+    const rbac = await import("@/lib/rbac");
+    expect(rbac.ForbiddenError).toBe(errors.ForbiddenError);
+    expect(rbac.UnauthenticatedError).toBe(errors.UnauthenticatedError);
+  });
+});
+
+describe("no error code literal in src/ is missing from the taxonomy", () => {
   it("finds every SCREAMING_SNAKE code literal in ERROR_CODES", () => {
     const known = new Set<string>(ERROR_CODES);
     const offenders: string[] = [];

@@ -2480,3 +2480,41 @@ production behaviour, not a test artefact: a shared office or a mobile carrier N
 key. It is why the per-EMAIL limiter exists alongside it, and why neither alone is
 sufficient. Worth revisiting at P24 if a real customer reports being locked out by a
 colleague.
+
+### 6.11 P03A field notes (part 3) — I built a second error taxonomy and a test caught it
+
+`11 §2.1` says: *"Every class extends `AppError` directly … there is no second base and no
+second `ErrorCode` union."* I violated it three times in my own code, and none of the
+three was visible on review.
+
+**The first was `src/lib/rbac/errors.ts`,** written during P03 before the taxonomy was
+generated in P04. It declared its own `ForbiddenError` and `UnauthenticatedError`. Two
+classes with one name means **`instanceof` silently fails across the boundary** — a caller
+writing `catch (e) { if (e instanceof ForbiddenError) … }` simply does not catch, and the
+failure surfaces as an unhandled 500 rather than a 403. An impersonation test found it by
+asserting `rejects.toBeInstanceOf(ForbiddenError)` against an error that *was* a
+`ForbiddenError`, from the other module.
+
+**The other two were `CurrencyMismatchError` and `SerializationRetryExhaustedError`,**
+both extending the built-in `Error`. Neither would ever have reached a client correctly:
+`toWireError()` treats a non-`AppError` as `INTERNAL`, so a currency mismatch and a
+serialization conflict would both have rendered as "something went wrong" with no code and
+no retryable flag. They now carry `INTERNAL` and `CONCURRENCY` respectively, and
+`CONCURRENCY` inherits `retryable: true`, so a caller can honestly offer "try again".
+
+`tests/unit/error-taxonomy.test.ts` now greps `src/**` for any class extending the
+built-in `Error` and fails. It deliberately permits `extends AppError`, because that is
+the pattern `11 §2.1` asks for.
+
+**The lesson is about the shape of the rule, not the rule.** "There is one base class" is
+unenforceable by reading, because the duplicate looks correct in isolation — a file
+declaring a `ForbiddenError` is entirely reasonable until you know another one exists.
+Rules of the form "there is exactly one X" need a test that counts, and the test is three
+lines.
+
+**Two assertions were also moved from where they read well to where they are true.** The
+drift test asserted "`customers` is empty after seeding" and the seed asserted "no user
+row exists" — but both run against a database that other tests legitimately write to. The
+honest form measures the SEED: count before, count after, throw if it added any. Both now
+live in `prisma/seed/index.ts`. An assertion that only holds when it happens to run first
+is a flaky test waiting for a colleague.

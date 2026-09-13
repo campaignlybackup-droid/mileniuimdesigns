@@ -1,6 +1,11 @@
 import type { PermissionKey, RoleKey } from "@/lib/rbac/catalogue";
 import { ROLE_MATRIX } from "@/lib/rbac/catalogue";
-import { ForbiddenError, UnauthenticatedError } from "@/lib/rbac/errors";
+// From THE taxonomy (11 §2.1), not a local copy. src/lib/rbac/errors.ts previously
+// declared its own ForbiddenError and UnauthenticatedError — a second base class, which
+// is precisely what 11 §2.1 forbids and for precisely this reason: two classes with one
+// name means `instanceof` silently fails across the boundary, so a caller's catch block
+// does not catch. A test caught it; nothing else would have.
+import { ForbiddenError, UnauthenticatedError } from "@/lib/errors";
 
 export type { PermissionKey, RoleKey };
 export { ForbiddenError, UnauthenticatedError };
@@ -68,10 +73,20 @@ export function requirePermission(
   if (actor.kind === "system") {
     // A system actor is never granted an admin permission implicitly. The job runner
     // builds a STAFF actor from jobs.created_by_user_id for human-originated kinds.
-    throw new ForbiddenError(permission);
+    throw new ForbiddenError(`Missing permission: ${permission}`, {
+      context: { permission, actorKind: actor.kind },
+    });
   }
-  if (actor.kind !== "staff") throw new UnauthenticatedError();
-  if (!actor.permissions.has(permission)) throw new ForbiddenError(permission);
+  if (actor.kind !== "staff") throw new UnauthenticatedError("Not signed in.");
+  if (!actor.permissions.has(permission)) {
+    // The message names the permission because the audience is a STAFF member looking at
+    // an admin screen, who needs to tell their owner what to grant. It is never shown to
+    // a shopper: a customer-scoped miss raises NotFoundError, so that possessing an id
+    // cannot confirm the id exists (07 §4.2).
+    throw new ForbiddenError(`Missing permission: ${permission}`, {
+      context: { permission },
+    });
+  }
 }
 
 /** Require every one of several permissions — e.g. an export needs its resource's read

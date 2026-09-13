@@ -27,7 +27,10 @@ async function main(): Promise<void> {
     // Counted BEFORE, so the assertion below measures what the SEED did rather than what
     // is in the database. `npm run create:admin` legitimately creates the first account;
     // the criterion is that the seed never does (09 P03 (c)).
-    const usersBefore = await db.user.count();
+    const before = {
+      users: await db.user.count(),
+      customers: await db.customer.count(),
+    };
     console.log("seeding markets, currencies, locations…");
     await seedMarkets(db);
     console.log("seeding roles, 73 permissions and the grant matrix…");
@@ -56,9 +59,17 @@ async function main(): Promise<void> {
           "without one no customer — and therefore no order — can ever be created.",
       );
     }
-    if (users !== usersBefore) {
+    const customers = await db.customer.count();
+    if (customers !== before.customers) {
       throw new Error(
-        `Seed created ${users - usersBefore} user(s). It must create none — the first ` +
+        `Seed created ${customers - before.customers} customer(s). It must create none: ` +
+          `inventing a customer for a real jewellery house is exactly what hard rule 8 ` +
+          `forbids, and a seeded customer would carry a fabricated consent record.`,
+      );
+    }
+    if (users !== before.users) {
+      throw new Error(
+        `Seed created ${users - before.users} user(s). It must create none — the first ` +
           `staff account is minted by \`npm run create:admin\`, so that a seeded default ` +
           `login cannot reach production (09 P03 exit criterion (c)).`,
       );

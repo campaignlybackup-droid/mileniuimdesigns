@@ -1,3 +1,5 @@
+import { AppError } from "@/lib/errors";
+
 /**
  * The ONLY module permitted to format or parse money.
  *
@@ -27,13 +29,22 @@ export interface Money {
   readonly currency: CurrencyCode;
 }
 
-export class CurrencyMismatchError extends Error {
+/**
+ * Extends the ONE base class (11 §2.1). It is `INTERNAL` rather than a validation error
+ * because reaching it means code tried to add two currencies — a violation of hard rule 2
+ * by the program, not by the customer. The shopper sees the generic message; the log
+ * carries both codes.
+ */
+export class CurrencyMismatchError extends AppError {
+  readonly code = "INTERNAL" as const;
+  readonly httpStatus = 500;
+  readonly copyKey = "copy.error.internal";
   constructor(a: CurrencyCode, b: CurrencyCode) {
     super(
       `Refused to combine ${a} and ${b}. There is no conversion between market ` +
         `currencies anywhere in this system (hard rule 2).`,
+      { context: { a, b } },
     );
-    this.name = "CurrencyMismatchError";
   }
 }
 

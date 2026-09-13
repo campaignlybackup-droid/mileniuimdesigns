@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 import type { PermissionKey, RoleKey, StaffActor, CustomerActor } from "@/lib/rbac";
 import { permissionsForRoles } from "@/lib/rbac";
 import { requiresTotp } from "@/lib/rbac/catalogue";
-import { UnauthenticatedError } from "@/lib/rbac/errors";
-import { TotpRequiredError } from "@/lib/errors";
+
+import { TotpRequiredError, UnauthenticatedError } from "@/lib/errors";
 import { cookieName } from "@/lib/config/constants";
 import { env } from "@/lib/config/env";
 import { resolveCustomerSession, resolveStaffSession, touchSession } from "@/lib/auth/session";
@@ -82,7 +82,7 @@ export const getCustomerActor = cache(async (): Promise<CustomerActor | null> =>
  */
 export async function requireStaffSession(): Promise<StaffActor> {
   const actor = await getStaffActor();
-  if (!actor) throw new UnauthenticatedError();
+  if (!actor) throw new UnauthenticatedError("Not signed in.");
 
   if (requiresTotp(actor.permissions as Iterable<PermissionKey>) && !actor.totpVerifiedAt) {
     throw new TotpRequiredError(
@@ -94,6 +94,6 @@ export async function requireStaffSession(): Promise<StaffActor> {
 
 export async function requireCustomerSession(): Promise<CustomerActor> {
   const actor = await getCustomerActor();
-  if (!actor) throw new UnauthenticatedError();
+  if (!actor) throw new UnauthenticatedError("Not signed in.");
   return actor;
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db/client";
+import { AppError } from "@/lib/errors";
 
 /**
  * The transaction primitives (01 §1.2).
@@ -86,15 +87,22 @@ export async function withSerializableRetry<T>(
   throw new SerializationRetryExhaustedError(attempts, lastError);
 }
 
-export class SerializationRetryExhaustedError extends Error {
-  override readonly cause: unknown;
+/**
+ * Extends the ONE base class (11 §2.1), with code `CONCURRENCY` — which is precisely what
+ * this is. `retryable` is inherited as true from the taxonomy, so a caller that surfaces
+ * it can honestly offer "try again".
+ */
+export class SerializationRetryExhaustedError extends AppError {
+  readonly code = "CONCURRENCY" as const;
+  readonly httpStatus = 409;
+  readonly copyKey = "copy.error.concurrency";
+  override readonly retryable = true;
   constructor(attempts: number, cause: unknown) {
     super(
       `Transaction still conflicting after ${attempts} serializable attempts. This is ` +
         `contention on a counter row, not a bug in the caller — investigate what else ` +
         `writes it concurrently.`,
+      { context: { attempts }, cause },
     );
-    this.name = "SerializationRetryExhaustedError";
-    this.cause = cause;
   }
 }
