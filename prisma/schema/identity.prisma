@@ -8,51 +8,51 @@
 // deputy (07 §3.2).
 
 model User {
-  id                 String    @id @default(uuid(7)) @db.Uuid
-  email              String
+  id                  String    @id @default(uuid(7)) @db.Uuid
+  email               String
   /// argon2id. Never a fast hash: this is the one value a breach makes reusable.
-  passwordHash       String    @map("password_hash")
-  firstName          String    @map("first_name")
-  lastName           String    @map("last_name")
-  avatarMediaId      String?   @map("avatar_media_id") @db.Uuid
-  isActive           Boolean   @map("is_active")
+  passwordHash        String    @map("password_hash")
+  firstName           String    @map("first_name")
+  lastName            String    @map("last_name")
+  avatarMediaId       String?   @map("avatar_media_id") @db.Uuid
+  isActive            Boolean   @map("is_active")
   /// AES-GCM under a key derived from AUTH_SECRET. Self-describing `v<n>:` ciphertext so
   /// that rotating AUTH_SECRET does not lock out every enrolled staff member at once
   /// (07 §1.10).
-  totpSecretEncrypted String?  @map("totp_secret_encrypted")
-  totpEnrolledAt     DateTime? @map("totp_enrolled_at") @db.Timestamptz(6)
+  totpSecretEncrypted String?   @map("totp_secret_encrypted")
+  totpEnrolledAt      DateTime? @map("totp_enrolled_at") @db.Timestamptz(6)
   /// argon2id hashes, not the codes.
-  totpRecoveryCodes  String[]  @map("totp_recovery_codes")
+  totpRecoveryCodes   String[]  @map("totp_recovery_codes")
   /// The RFC 6238 counter of the last accepted code. Verification rejects
   /// `step <= totpLastStep`, which is the only thing that makes "single use" a
   /// mechanism rather than a claim (07 §1.10).
-  totpLastStep       BigInt?   @map("totp_last_step")
-  lastLoginAt        DateTime? @map("last_login_at") @db.Timestamptz(6)
-  passwordChangedAt  DateTime  @map("password_changed_at") @db.Timestamptz(6)
+  totpLastStep        BigInt?   @map("totp_last_step")
+  lastLoginAt         DateTime? @map("last_login_at") @db.Timestamptz(6)
+  passwordChangedAt   DateTime  @map("password_changed_at") @db.Timestamptz(6)
   /// Incremented on a path that COMMITS before the throw — wrapping the increment, the
   /// rate-limit write and the audit row in the caller's transaction would roll all three
   /// back and leave the counter at 0 after ten thousand guesses (07 §1.6).
-  failedLoginCount   Int       @default(0) @map("failed_login_count") @db.SmallInt
-  lockedUntil        DateTime? @map("locked_until") @db.Timestamptz(6)
+  failedLoginCount    Int       @default(0) @map("failed_login_count") @db.SmallInt
+  lockedUntil         DateTime? @map("locked_until") @db.Timestamptz(6)
   /// Optimistic concurrency. Zero rows on `WHERE id = $1 AND version = $2` is a
   /// StaleWriteError, never a silent overwrite of a colleague's edit.
-  version            Int       @default(1)
-  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version             Int       @default(1)
+  deletedAt           DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  roles           UserRole[]
-  sessions        Session[]        @relation("SessionUser")
-  impersonated    Session[]        @relation("SessionImpersonator")
-  grantedRoles    UserRole[]       @relation("UserRoleGrantedBy")
-  grantedPerms    RolePermission[] @relation("RolePermissionGrantedBy")
-  auditLogs       AuditLog[]       @relation("AuditActor")
-  impersonatedAudit AuditLog[]     @relation("AuditImpersonator")
-  savedViews      SavedView[]
-  jobs            Job[]
-  importJobs      ImportJob[]
-  settings        Setting[]
-  otpRequests     OtpRequest[]
+  roles             UserRole[]
+  sessions          Session[]        @relation("SessionUser")
+  impersonated      Session[]        @relation("SessionImpersonator")
+  grantedRoles      UserRole[]       @relation("UserRoleGrantedBy")
+  grantedPerms      RolePermission[] @relation("RolePermissionGrantedBy")
+  auditLogs         AuditLog[]       @relation("AuditActor")
+  impersonatedAudit AuditLog[]       @relation("AuditImpersonator")
+  savedViews        SavedView[]
+  jobs              Job[]
+  importJobs        ImportJob[]
+  settings          Setting[]
+  otpRequests       OtpRequest[]
 
   @@index([isActive, lastName], map: "idx_users_active")
   @@map("users")
@@ -92,10 +92,10 @@ model Permission {
 }
 
 model RolePermission {
-  roleId           String   @map("role_id") @db.Uuid
-  permissionKey    String   @map("permission_key")
-  grantedByUserId  String?  @map("granted_by_user_id") @db.Uuid
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  roleId          String   @map("role_id") @db.Uuid
+  permissionKey   String   @map("permission_key")
+  grantedByUserId String?  @map("granted_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   permission Permission @relation(fields: [permissionKey], references: [key], onDelete: Cascade)
@@ -122,24 +122,24 @@ model UserRole {
 }
 
 model Session {
-  id        String    @id @default(uuid(7)) @db.Uuid
+  id                 String    @id @default(uuid(7)) @db.Uuid
   /// SHA-256 of the opaque token. The token itself is a bearer credential and is never
   /// stored — a database dump must not be a set of live sessions.
-  tokenHash Bytes     @map("token_hash")
-  userId    String?   @map("user_id") @db.Uuid
-  customerId String?  @map("customer_id") @db.Uuid
+  tokenHash          Bytes     @map("token_hash")
+  userId             String?   @map("user_id") @db.Uuid
+  customerId         String?   @map("customer_id") @db.Uuid
   /// Set only when a staff member is impersonating a customer. Both principals are then
   /// recorded on every audit row, so "who actually did this" survives (07 §1.11).
-  impersonatorUserId String? @map("impersonator_user_id") @db.Uuid
-  ipAddress String?   @map("ip_address") @db.Inet
-  userAgent String?   @map("user_agent")
+  impersonatorUserId String?   @map("impersonator_user_id") @db.Uuid
+  ipAddress          String?   @map("ip_address") @db.Inet
+  userAgent          String?   @map("user_agent")
   /// On the SESSION, not on `users` — otherwise a second factor satisfied on one machine
   /// silently satisfies a session opened on another (07 §1.9).
-  totpVerifiedAt DateTime? @map("totp_verified_at") @db.Timestamptz(6)
-  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
-  lastSeenAt DateTime @map("last_seen_at") @db.Timestamptz(6)
-  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  totpVerifiedAt     DateTime? @map("totp_verified_at") @db.Timestamptz(6)
+  expiresAt          DateTime  @map("expires_at") @db.Timestamptz(6)
+  lastSeenAt         DateTime  @map("last_seen_at") @db.Timestamptz(6)
+  revokedAt          DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   user         User?     @relation("SessionUser", fields: [userId], references: [id], onDelete: Cascade)
   customer     Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -150,23 +150,23 @@ model Session {
 }
 
 model OtpRequest {
-  id         String     @id @default(uuid(7)) @db.Uuid
-  purpose    OtpPurpose
+  id          String     @id @default(uuid(7)) @db.Uuid
+  purpose     OtpPurpose
   /// An email, a phone number, or a user id depending on purpose.
-  identifier String
+  identifier  String
   /// TEXT, an argon2id PHC string — NOT a bare BYTEA digest. `argon2.verify(hash, token)`
   /// takes and returns a PHC string carrying its own salt and parameters, and a BYTEA
   /// column has nowhere to put either. Rows are found by (purpose, identifier) and then
   /// verified; they are never looked up BY the hash, which is why a per-row salt is
   /// correct here and wrong for gift_cards.code_hash (02 §2.2).
-  codeHash   String     @map("code_hash")
-  customerId String?    @map("customer_id") @db.Uuid
-  userId     String?    @map("user_id") @db.Uuid
-  attempts   Int        @default(0) @db.SmallInt
-  maxAttempts Int       @map("max_attempts") @db.SmallInt
-  consumedAt DateTime?  @map("consumed_at") @db.Timestamptz(6)
-  expiresAt  DateTime   @map("expires_at") @db.Timestamptz(6)
-  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  codeHash    String     @map("code_hash")
+  customerId  String?    @map("customer_id") @db.Uuid
+  userId      String?    @map("user_id") @db.Uuid
+  attempts    Int        @default(0) @db.SmallInt
+  maxAttempts Int        @map("max_attempts") @db.SmallInt
+  consumedAt  DateTime?  @map("consumed_at") @db.Timestamptz(6)
+  expiresAt   DateTime   @map("expires_at") @db.Timestamptz(6)
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
 
   customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)

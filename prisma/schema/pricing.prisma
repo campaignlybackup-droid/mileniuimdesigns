@@ -1,0 +1,502 @@
+// Pricing, discounts and tax — P10 (Schema III). 02 §2.5, §7.13; 04 §2.2, §3.3, §8.3.
+//
+// Three rules shape every table here, and each has a constraint behind it rather than a
+// convention:
+//
+//  1. **USD and INR prices are INDEPENDENT.** There is no conversion anywhere in this file.
+//     Every currency-denominated term sits on a row that carries its own currency, and the
+//     composite FK `(market_code, currency_code) → markets` makes a row claiming a currency
+//     its market does not use unwritable. `pricing_formula_versions` has not one BIGINT on it
+//     for exactly this reason: one amount there would feed both markets.
+//
+//  2. **`prices` is append-only in effect.** A change is a new row and a `valid_to` on the
+//     old one — never an UPDATE of an amount. An order placed last March must still be
+//     explicable from rows that exist today.
+//
+//  3. **A metal-rate change moves nothing by itself.** `metal_rates` is written by one
+//     function that imports nothing which writes `prices`. The only path to a changed price
+//     is a `recalc_runs` row a named human approved.
+
+/// The live price of a variant in a market. ONE active row per (variant, market), enforced by
+/// idx_prices_active — the partial unique that makes "which price is current" have exactly one
+/// answer rather than a most-recent-wins ORDER BY that two writers can disagree about.
+model Price {
+  id             String      @id @default(uuid(7)) @db.Uuid
+  productId      String      @map("product_id") @db.Uuid
+  /// NULL = the product-level default. Always `manual` — chk_prices_variant_level_formula.
+  variantId      String?     @map("variant_id") @db.Uuid
+  marketCode     String      @map("market_code") @db.Char(2)
+  /// Denormalised so the composite FK can prove it against the market. Never independent data.
+  currencyCode   String      @map("currency_code") @db.Char(3)
+  listMinor      BigInt      @map("list_minor")
+  saleMinor      BigInt?     @map("sale_minor")
+  /// Reading this requires `price.read_cost` (11 §1.3) — it is margin, not a customer fact.
+  costMinor      BigInt?     @map("cost_minor")
+  compareAtMinor BigInt?     @map("compare_at_minor")
+  priceSource    PriceSource @map("price_source")
+
+  // The configured inputs of a rate-linked price (02 §2.5 meaning, unchanged).
+  materialId        String?  @map("material_id") @db.Uuid
+  metalRateId       String?  @map("metal_rate_id") @db.Uuid
+  metalWeightGrams  Decimal? @map("metal_weight_grams") @db.Decimal(10, 3)
+  makingChargeMinor BigInt?  @map("making_charge_minor")
+  makingChargeBp    Int?     @map("making_charge_bp")
+
+  // ── 04 §2.2's thirteen computation-snapshot columns ────────────────────────────────
+  // A snapshot, so a three-year-old price can be re-derived and explained without any of
+  // its inputs still existing. All NULL when price_source = 'manual'.
+  formulaVersionId           String? @map("formula_version_id") @db.Uuid
+  purityRatioBp              Int?    @map("purity_ratio_bp")
+  metalComponentMinor        BigInt? @map("metal_component_minor")
+  makingChargeComputedMinor  BigInt? @map("making_charge_computed_minor")
+  stoneCostMinor             BigInt? @map("stone_cost_minor")
+  otherMaterialCostMinor     BigInt? @map("other_material_cost_minor")
+  markupMinor                BigInt? @map("markup_minor")
+  /// Signed.
+  marketAdjustmentDeltaMinor BigInt? @map("market_adjustment_delta_minor")
+  /// Signed. How far the floor clamp moved the base; 0 when it did not fire. Without this a
+  /// clamped price cannot satisfy chk_prices_components_sum and the INSERT fails on exactly
+  /// the lines the floor exists to protect.
+  floorAdjustmentMinor       BigInt? @map("floor_adjustment_minor")
+  computedBaseMinor          BigInt? @map("computed_base_minor")
+  /// Signed. The residue of rounding_increment_minor.
+  roundingAdjustmentMinor    BigInt? @map("rounding_adjustment_minor")
+  /// Signed. NULL unless price_source = 'hybrid'.
+  hybridAdjustmentDeltaMinor BigInt? @map("hybrid_adjustment_delta_minor")
+  /// SHA-256 over the ordered tuple of every input evaluateFormula read. A recalc line
+  /// carries it forward and the apply re-checks it, so a run approved against stale inputs
+  /// fails closed instead of shipping a number nobody previewed (04 §3.3 step 6).
+  inputsDigest               Bytes?  @map("inputs_digest")
+
+  validFrom       DateTime  @map("valid_from") @db.Timestamptz(6)
+  /// NULL = this is the live row. Set = superseded.
+  validTo         DateTime? @map("valid_to") @db.Timestamptz(6)
+  createdByUserId String?   @map("created_by_user_id") @db.Uuid
+  recalcRunId     String?   @map("recalc_run_id") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  product        Product                @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant        ProductVariant?        @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  market         Market                 @relation(fields: [marketCode, currencyCode], references: [code, currencyCode], onDelete: Restrict)
+  material       Material?              @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  metalRate      MetalRate?             @relation(fields: [metalRateId], references: [id], onDelete: Restrict)
+  formulaVersion PricingFormulaVersion? @relation(fields: [formulaVersionId], references: [id], onDelete: Restrict)
+  recalcRun      RecalcRun?             @relation(fields: [recalcRunId], references: [id], onDelete: Restrict)
+  history        PriceHistory[]         @relation("PriceHistoryPrice")
+  supersededBy   PriceHistory[]         @relation("PriceHistoryPrevious")
+
+  /// Informationless on its own, exactly like uq_product_variants_id_product: the target that
+  /// makes a child row's denormalised market provably THIS price's own (02 §2.5).
+  @@unique([id, marketCode], map: "uq_prices_id_market")
+  @@map("prices")
+}
+
+/// Why a price changed, who changed it, and what it was. Append-only.
+model PriceHistory {
+  id                String            @id @default(uuid(7)) @db.Uuid
+  priceId           String            @map("price_id") @db.Uuid
+  previousPriceId   String?           @map("previous_price_id") @db.Uuid
+  productId         String            @map("product_id") @db.Uuid
+  variantId         String?           @map("variant_id") @db.Uuid
+  marketCode        String            @map("market_code") @db.Char(2)
+  currencyCode      String            @map("currency_code") @db.Char(3)
+  previousListMinor BigInt?           @map("previous_list_minor")
+  newListMinor      BigInt?           @map("new_list_minor")
+  previousSaleMinor BigInt?           @map("previous_sale_minor")
+  newSaleMinor      BigInt?           @map("new_sale_minor")
+  changeBp          Int?              @map("change_bp")
+  reason            PriceChangeReason
+  recalcRunId       String?           @map("recalc_run_id") @db.Uuid
+  actorType         ActorType         @map("actor_type")
+  actorUserId       String?           @map("actor_user_id") @db.Uuid
+  note              String?
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  price         Price      @relation("PriceHistoryPrice", fields: [priceId], references: [id], onDelete: Restrict)
+  previousPrice Price?     @relation("PriceHistoryPrevious", fields: [previousPriceId], references: [id], onDelete: Restrict)
+  recalcRun     RecalcRun? @relation(fields: [recalcRunId], references: [id], onDelete: Restrict)
+
+  @@map("price_history")
+}
+
+/// A metal rate observation. Written by recordMetalRate(), which imports NOTHING that writes
+/// `prices` — R03's mitigation is the absence of an import, not a flag (04 §3.1).
+model MetalRate {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  materialId       String   @map("material_id") @db.Uuid
+  currencyCode     String   @map("currency_code") @db.Char(3)
+  rateMinorPerGram BigInt   @map("rate_minor_per_gram")
+  /// Extra decimal places carried by the rate itself, 0..6. Silver at ₹94.3782/g is not
+  /// expressible in paise per gram without it, and rounding at the input would compound
+  /// across every gram of every piece.
+  rateScale        Int      @map("rate_scale") @db.SmallInt
+  effectiveAt      DateTime @map("effective_at") @db.Timestamptz(6)
+  source           String
+  sourceReference  String?  @map("source_reference")
+  enteredByUserId  String?  @map("entered_by_user_id") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  material Material        @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  currency Currency        @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+  prices   Price[]
+  runLines RecalcRunLine[]
+
+  @@unique([materialId, currencyCode, effectiveAt], map: "uq_metal_rates")
+  @@map("metal_rates")
+}
+
+/// A named pricing formula. Publishing is a POINTER MOVE on published_version_id, and it
+/// re-prices on the next approved recalc run — never on read.
+model PricingFormula {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  name               String
+  slug               String
+  description        String?
+  publishedVersionId String?   @map("published_version_id") @db.Uuid
+  isActive           Boolean   @default(true) @map("is_active")
+  version            Int       @default(1)
+  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  publishedVersion PricingFormulaVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id], onDelete: Restrict)
+  versions         PricingFormulaVersion[] @relation("FormulaVersions")
+  bindings         PriceFormulaBinding[]
+
+  @@map("pricing_formulas")
+}
+
+/// Append-only, and CURRENCY-FREE. Not one BigInt on this model: a currency-denominated term
+/// here would feed both markets from one number and break hard rule 2 in the schema itself.
+model PricingFormulaVersion {
+  id                       String   @id @default(uuid(7)) @db.Uuid
+  formulaId                String   @map("formula_id") @db.Uuid
+  versionNo                Int      @map("version_no")
+  /// NULL ⇒ use the variant's primary variant_materials row.
+  materialId               String?  @map("material_id") @db.Uuid
+  /// material | override
+  puritySource             String   @map("purity_source")
+  /// 9250 = .925
+  purityRatioBp            Int?     @map("purity_ratio_bp")
+  /// variant_primary | variant_material | fixed
+  weightSource             String   @map("weight_source")
+  fixedWeightMilligrams    BigInt?  @map("fixed_weight_milligrams")
+  /// none | percent_of_metal | fixed_per_gram | fixed
+  makingChargeMode         String   @map("making_charge_mode")
+  /// 150% labour is 15000. The 02 §1.1 basis-point range exemption.
+  makingChargeBp           Int?     @map("making_charge_bp")
+  includeStoneCost         Boolean  @default(true) @map("include_stone_cost")
+  includeOtherMaterialCost Boolean  @default(true) @map("include_other_material_cost")
+  /// none | percent_of_subtotal | fixed
+  markupMode               String   @map("markup_mode")
+  markupBp                 Int?     @map("markup_bp")
+  createdByUserId          String?  @map("created_by_user_id") @db.Uuid
+  note                     String?
+  /// No updated_at — append-only (02 §1.3).
+  createdAt                DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  formula      PricingFormula             @relation("FormulaVersions", fields: [formulaId], references: [id], onDelete: Restrict)
+  material     Material?                  @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  publishedFor PricingFormula[]           @relation("PublishedVersion")
+  marketTerms  PricingFormulaMarketTerm[]
+  prices       Price[]
+
+  @@unique([formulaId, versionNo], map: "uq_pricing_formula_versions")
+  /// The target that lets a market-terms row bind to a version OF THE FORMULA IT CLAIMS.
+  @@unique([id, formulaId], map: "uq_pricing_formula_versions_id_formula")
+  @@map("pricing_formula_versions")
+}
+
+/// EVERY currency-denominated term of a formula. A market with no row here cannot be priced
+/// by this formula: evaluateFormula returns FormulaInvalidError and the preview line is
+/// `skipped`. Absence is a state, not a default.
+model PricingFormulaMarketTerm {
+  formulaVersionId           String   @map("formula_version_id") @db.Uuid
+  marketCode                 String   @map("market_code") @db.Char(2)
+  currencyCode               String   @map("currency_code") @db.Char(3)
+  makingChargeMinor          BigInt?  @map("making_charge_minor")
+  makingChargePerGramMinor   BigInt?  @map("making_charge_per_gram_minor")
+  markupMinor                BigInt?  @map("markup_minor")
+  /// Signed. A per-market positioning term, added last before rounding.
+  marketAdjustmentDeltaMinor BigInt?  @map("market_adjustment_delta_minor")
+  marketAdjustmentBp         Int?     @map("market_adjustment_bp")
+  /// 1 = to the minor unit; 100 = whole dollar; 10000 = nearest ₹100.
+  roundingIncrementMinor     BigInt   @default(1) @map("rounding_increment_minor")
+  roundingMode               String   @default("half_up") @map("rounding_mode")
+  /// THE floor, and the only one in the schema. prices.floor_minor does not exist (02 §7.2).
+  floorMinor                 BigInt?  @map("floor_minor")
+  createdAt                  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  formulaVersion PricingFormulaVersion @relation(fields: [formulaVersionId], references: [id], onDelete: Cascade)
+  market         Market                @relation(fields: [marketCode, currencyCode], references: [code, currencyCode], onDelete: Restrict)
+
+  @@id([formulaVersionId, marketCode])
+  @@map("pricing_formula_market_terms")
+}
+
+/// Which variant uses which formula, in which market. VARIANT-LEVEL ONLY: weight lives on
+/// variant_materials, recalc_run_lines.variant_id is NOT NULL, and a product-level binding
+/// would be silently absent from every recalc run — a price that claims to be metal-linked
+/// and never moves, with no error anywhere (04 §2.2).
+model PriceFormulaBinding {
+  id                         String   @id @default(uuid(7)) @db.Uuid
+  /// Denormalised for the recalc scope filter; proven against the variant by a composite FK.
+  productId                  String   @map("product_id") @db.Uuid
+  variantId                  String   @map("variant_id") @db.Uuid
+  marketCode                 String   @map("market_code") @db.Char(2)
+  currencyCode               String   @map("currency_code") @db.Char(3)
+  formulaId                  String   @map("formula_id") @db.Uuid
+  /// metal_linked | hybrid
+  mode                       String
+  /// percent | fixed_delta | fixed_override
+  hybridAdjustmentType       String?  @map("hybrid_adjustment_type")
+  hybridAdjustmentBp         Int?     @map("hybrid_adjustment_bp")
+  hybridAdjustmentDeltaMinor BigInt?  @map("hybrid_adjustment_delta_minor")
+  hybridOverrideMinor        BigInt?  @map("hybrid_override_minor")
+  isActive                   Boolean  @default(true) @map("is_active")
+  version                    Int      @default(1)
+  createdByUserId            String?  @map("created_by_user_id") @db.Uuid
+  createdAt                  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  product Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  market  Market         @relation(fields: [marketCode, currencyCode], references: [code, currencyCode], onDelete: Restrict)
+  formula PricingFormula @relation(fields: [formulaId], references: [id], onDelete: Restrict)
+
+  @@map("price_formula_bindings")
+}
+
+/// A stone's cost TO THIS BUSINESS IN THIS CURRENCY — a commercial fact about a variant, not
+/// a gemmological fact about a stone, and different in USD and INR for the same physical
+/// stone. A missing row is ZERO, not an error: the one place in the schema where absence
+/// means zero, safe because zero is arithmetically correct for "this piece has no stones".
+model VariantComponentCost {
+  variantId     String   @map("variant_id") @db.Uuid
+  currencyCode  String   @map("currency_code") @db.Char(3)
+  /// stone | other_material | finishing | certification
+  componentKind String   @map("component_kind")
+  amountMinor   BigInt   @map("amount_minor")
+  note          String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  variant  ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  currency Currency       @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+
+  @@id([variantId, currencyCode, componentKind])
+  @@index([currencyCode, variantId], map: "idx_vcc_currency")
+  @@map("variant_component_costs")
+}
+
+/// A proposed repricing. There is NO path from a metal-rate write to `applied`: the cron
+/// produces `previewing → pending_approval` and stops. chk_recalc_approved requires a named
+/// approver for every status beyond that.
+model RecalcRun {
+  id                 String          @id @default(uuid(7)) @db.Uuid
+  status             RecalcRunStatus
+  marketCode         String?         @map("market_code") @db.Char(2)
+  materialId         String?         @map("material_id") @db.Uuid
+  triggeredBy        ActorType       @map("triggered_by")
+  createdByUserId    String?         @map("created_by_user_id") @db.Uuid
+  approvedByUserId   String?         @map("approved_by_user_id") @db.Uuid
+  approvedAt         DateTime?       @map("approved_at") @db.Timestamptz(6)
+  appliedAt          DateTime?       @map("applied_at") @db.Timestamptz(6)
+  jobId              String?         @map("job_id") @db.Uuid
+  lineCount          Int             @default(0) @map("line_count")
+  skippedCount       Int             @default(0) @map("skipped_count")
+  failedCount        Int             @default(0) @map("failed_count")
+  totalIncreaseMinor BigInt          @default(0) @map("total_increase_minor")
+  totalDecreaseMinor BigInt          @default(0) @map("total_decrease_minor")
+  note               String?
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  material Material?       @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  lines    RecalcRunLine[]
+  prices   Price[]
+  history  PriceHistory[]
+
+  @@map("recalc_runs")
+}
+
+/// One proposed line. Carries the whole proposed computation, so the run detail screen is a
+/// row read and the apply is a re-CHECK rather than a re-computation (04 §3.3).
+model RecalcRunLine {
+  id                String  @id @default(uuid(7)) @db.Uuid
+  recalcRunId       String  @map("recalc_run_id") @db.Uuid
+  variantId         String  @map("variant_id") @db.Uuid
+  marketCode        String  @map("market_code") @db.Char(2)
+  currencyCode      String  @map("currency_code") @db.Char(3)
+  currentPriceId    String? @map("current_price_id") @db.Uuid
+  currentListMinor  BigInt? @map("current_list_minor")
+  proposedListMinor BigInt? @map("proposed_list_minor")
+  metalRateId       String? @map("metal_rate_id") @db.Uuid
+  status            String
+  skipReason        String? @map("skip_reason")
+  newPriceId        String? @map("new_price_id") @db.Uuid
+
+  // 04 §3.3's proposed-row snapshot. The apply re-checks the digest, so a run approved
+  // against inputs that have since moved fails closed instead of applying arithmetic
+  // nobody previewed.
+  proposedMetalComponentMinor        BigInt? @map("proposed_metal_component_minor")
+  proposedMakingChargeComputedMinor  BigInt? @map("proposed_making_charge_computed_minor")
+  proposedStoneCostMinor             BigInt? @map("proposed_stone_cost_minor")
+  proposedOtherMaterialCostMinor     BigInt? @map("proposed_other_material_cost_minor")
+  proposedMarkupMinor                BigInt? @map("proposed_markup_minor")
+  proposedMarketAdjustmentDeltaMinor BigInt? @map("proposed_market_adjustment_delta_minor")
+  proposedFloorAdjustmentMinor       BigInt? @map("proposed_floor_adjustment_minor")
+  proposedRoundingAdjustmentMinor    BigInt? @map("proposed_rounding_adjustment_minor")
+  proposedInputsDigest               Bytes?  @map("proposed_inputs_digest")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  run       RecalcRun      @relation(fields: [recalcRunId], references: [id], onDelete: Cascade)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  metalRate MetalRate?     @relation(fields: [metalRateId], references: [id], onDelete: Restrict)
+
+  @@unique([recalcRunId, variantId, marketCode], map: "uq_recalc_run_lines")
+  @@index([recalcRunId, status], map: "idx_recalc_run_lines_run")
+  @@map("recalc_run_lines")
+}
+
+/// A sale or markdown applied ON TOP of a stored price at read time. Per market AND per
+/// currency, because "20% off" and "$50 off" are not the same kind of thing across markets.
+model PricingRule {
+  id             String                @id @default(uuid(7)) @db.Uuid
+  name           String
+  scopeType      PricingRuleScope      @map("scope_type")
+  scopeId        String?               @map("scope_id") @db.Uuid
+  marketCode     String                @map("market_code") @db.Char(2)
+  currencyCode   String                @map("currency_code") @db.Char(3)
+  adjustmentType PricingRuleAdjustment @map("adjustment_type")
+  valueBp        Int?                  @map("value_bp")
+  amountMinor    BigInt?               @map("amount_minor")
+  priority       Int                   @default(0) @db.SmallInt
+  isStackable    Boolean               @default(false) @map("is_stackable")
+  startsAt       DateTime?             @map("starts_at") @db.Timestamptz(6)
+  endsAt         DateTime?             @map("ends_at") @db.Timestamptz(6)
+  isActive       Boolean               @default(true) @map("is_active")
+  version        Int                   @default(1)
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  market Market @relation(fields: [marketCode, currencyCode], references: [code, currencyCode], onDelete: Restrict)
+
+  @@map("pricing_rules")
+}
+
+model Coupon {
+  id                        String          @id @default(uuid(7)) @db.Uuid
+  code                      String?
+  trigger                   DiscountTrigger
+  name                      String
+  customerLabel             String?         @map("customer_label")
+  type                      DiscountType
+  valueBp                   Int?            @map("value_bp")
+  appliesTo                 String          @map("applies_to")
+  maxRedemptions            Int?            @map("max_redemptions")
+  maxRedemptionsPerCustomer Int?            @map("max_redemptions_per_customer")
+  redemptionCount           Int             @default(0) @map("redemption_count")
+  startsAt                  DateTime?       @map("starts_at") @db.Timestamptz(6)
+  endsAt                    DateTime?       @map("ends_at") @db.Timestamptz(6)
+  isActive                  Boolean         @default(true) @map("is_active")
+  isStackable               Boolean         @default(false) @map("is_stackable")
+  priority                  Int             @default(0) @db.SmallInt
+  version                   Int             @default(1)
+  deletedAt                 DateTime?       @map("deleted_at") @db.Timestamptz(6)
+  createdAt                 DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                 DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  amounts    CouponAmount[]
+  conditions CouponCondition[]
+
+  @@map("coupons")
+}
+
+/// A fixed_amount coupon has ONE ROW PER CURRENCY and no conversion — hard rule 2. "$50 off"
+/// and "₹50 off" are different offers, and deriving one from the other at today's FX rate is
+/// how a discount becomes a 60x giveaway in the market nobody was watching.
+model CouponAmount {
+  couponId         String   @map("coupon_id") @db.Uuid
+  currencyCode     String   @map("currency_code") @db.Char(3)
+  amountMinor      BigInt   @map("amount_minor")
+  minSubtotalMinor BigInt?  @map("min_subtotal_minor")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  coupon   Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  currency Currency @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+
+  @@id([couponId, currencyCode])
+  @@map("coupon_amounts")
+}
+
+model CouponCondition {
+  id           String              @id @default(uuid(7)) @db.Uuid
+  couponId     String              @map("coupon_id") @db.Uuid
+  type         CouponConditionType
+  operator     String
+  targetId     String?             @map("target_id") @db.Uuid
+  marketCode   String?             @map("market_code") @db.Char(2)
+  valueMinor   BigInt?             @map("value_minor")
+  currencyCode String?             @map("currency_code") @db.Char(3)
+  createdAt    DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
+
+  @@index([couponId], map: "idx_coupon_conditions_coupon")
+  @@map("coupon_conditions")
+}
+
+/// code_hash is hmac_sha256(code, GIFT_CARD_CODE_PEPPER), NOT Argon2id (02 §2.7): a per-row
+/// salt would make uq_gift_cards_code_hash uncollidable and `WHERE code_hash = $1`
+/// unmatchable, so redemption would be structurally impossible.
+model GiftCard {
+  id                  String         @id @default(uuid(7)) @db.Uuid
+  codeHash            Bytes          @map("code_hash")
+  codeLast4           String         @map("code_last4") @db.Char(4)
+  currencyCode        String         @map("currency_code") @db.Char(3)
+  initialBalanceMinor BigInt         @map("initial_balance_minor")
+  balanceMinor        BigInt         @map("balance_minor")
+  status              GiftCardStatus
+  issuedToCustomerId  String?        @map("issued_to_customer_id") @db.Uuid
+  issuedByOrderId     String?        @map("issued_by_order_id") @db.Uuid
+  expiresAt           DateTime?      @map("expires_at") @db.Timestamptz(6)
+  version             Int            @default(1)
+  deletedAt           DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  currency Currency @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+
+  @@unique([codeHash], map: "uq_gift_cards_code_hash")
+  @@map("gift_cards")
+}
+
+/// Backs markets.tax_mode = 'rules_table'. A RATE CHANGE IS A NEW ROW WITH A START DATE,
+/// never an edit: an order placed before a VAT change must still reconcile.
+model TaxRule {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  marketCode        String    @map("market_code") @db.Char(2)
+  currencyCode      String    @map("currency_code") @db.Char(3)
+  countryCode       String    @map("country_code") @db.Char(2)
+  regionCode        String?   @map("region_code")
+  taxCode           String    @map("tax_code")
+  name              String
+  rateBp            Int       @map("rate_bp")
+  isCompound        Boolean   @default(false) @map("is_compound")
+  appliesToShipping Boolean   @default(true) @map("applies_to_shipping")
+  priority          Int       @default(0) @db.SmallInt
+  startsAt          DateTime? @map("starts_at") @db.Timestamptz(6)
+  endsAt            DateTime? @map("ends_at") @db.Timestamptz(6)
+  isActive          Boolean   @default(true) @map("is_active")
+  version           Int       @default(1)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  market Market @relation(fields: [marketCode, currencyCode], references: [code, currencyCode], onDelete: Restrict)
+
+  @@map("tax_rules")
+}

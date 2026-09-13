@@ -93,28 +93,28 @@ model CollectionMarketContent {
 /// which stops a pair with nine US-priced pieces and zero INR ones from becoming an
 /// indexable, sitemap-listed page with nothing on it (03 §4.2).
 model CuratedFacet {
-  id                  String   @id @default(uuid(7)) @db.Uuid
-  categoryId          String   @map("category_id") @db.Uuid
-  slug                String
-  facetType           String   @map("facet_type")
-  stoneId             String?  @map("stone_id") @db.Uuid
-  materialId          String?  @map("material_id") @db.Uuid
-  attributeOptionId   String?  @map("attribute_option_id") @db.Uuid
-  tagId               String?  @map("tag_id") @db.Uuid
-  title               String
-  introJson           Json?    @map("intro_json")
-  isActive            Boolean  @default(true) @map("is_active")
-  isAuto              Boolean  @default(false) @map("is_auto")
-  productCountCached  Int      @default(0) @map("product_count_cached")
-  rank                Int      @default(0)
-  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                 String   @id @default(uuid(7)) @db.Uuid
+  categoryId         String   @map("category_id") @db.Uuid
+  slug               String
+  facetType          String   @map("facet_type")
+  stoneId            String?  @map("stone_id") @db.Uuid
+  materialId         String?  @map("material_id") @db.Uuid
+  attributeOptionId  String?  @map("attribute_option_id") @db.Uuid
+  tagId              String?  @map("tag_id") @db.Uuid
+  title              String
+  introJson          Json?    @map("intro_json")
+  isActive           Boolean  @default(true) @map("is_active")
+  isAuto             Boolean  @default(false) @map("is_auto")
+  productCountCached Int      @default(0) @map("product_count_cached")
+  rank               Int      @default(0)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  stone           Stone?           @relation(fields: [stoneId], references: [id], onDelete: Cascade)
-  material        Material?        @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  attributeOption AttributeOption? @relation(fields: [attributeOptionId], references: [id], onDelete: Cascade)
-  tag             Tag?             @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  category        Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  stone           Stone?               @relation(fields: [stoneId], references: [id], onDelete: Cascade)
+  material        Material?            @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  attributeOption AttributeOption?     @relation(fields: [attributeOptionId], references: [id], onDelete: Cascade)
+  tag             Tag?                 @relation(fields: [tagId], references: [id], onDelete: Cascade)
   markets         CuratedFacetMarket[]
 
   @@unique([categoryId, slug], map: "uq_curated_facets")

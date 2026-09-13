@@ -470,3 +470,227 @@ EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 CREATE UNIQUE INDEX IF NOT EXISTS "idx_categories_sku_token" ON "categories" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS "idx_stones_sku_token" ON "stones" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS "idx_materials_sku_token" ON "materials" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;
+
+-- ── Pricing, discounts and tax — P10 ─────────────────────────────────────────────
+-- 02 §2.5, §7.13; 04 §2.2, §3.3, §8.3. Everything Prisma cannot express: the partial
+-- uniques that make "which price is live" have exactly one answer, the composite foreign
+-- keys that make a currency/market mismatch unwritable, and the two arithmetic identities
+-- that turn a rounding bug into a failed INSERT rather than a plausible wrong number.
+
+-- THE constraint of this phase. One live price per (variant, market): without it "the
+-- current price" is a most-recent-wins ORDER BY that two concurrent writers can disagree
+-- about, and the losing row stays live forever with no error anywhere.
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_prices_active" ON "prices" (variant_id, market_code)
+  WHERE valid_to IS NULL AND deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_prices_active_product" ON "prices" (product_id, market_code)
+  WHERE variant_id IS NULL AND valid_to IS NULL AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_prices_history" ON "prices" (product_id, market_code, valid_from DESC);
+CREATE INDEX IF NOT EXISTS "idx_prices_recalc" ON "prices" (recalc_run_id) WHERE recalc_run_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_prices_metal_rate" ON "prices" (metal_rate_id) WHERE metal_rate_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_prices_live_product" ON "prices" (product_id, market_code)
+  WHERE valid_to IS NULL AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_prices_on_sale" ON "prices" (product_id, market_code)
+  WHERE sale_minor IS NOT NULL AND valid_to IS NULL AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_prices_market_list" ON "prices" (market_code, list_minor)
+  WHERE valid_to IS NULL AND deleted_at IS NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_amounts" CHECK (list_minor >= 0 AND (sale_minor IS NULL OR sale_minor >= 0) AND (cost_minor IS NULL OR cost_minor >= 0));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_sale_lte_list" CHECK (sale_minor IS NULL OR sale_minor <= list_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_currency_upper" CHECK (currency_code = upper(currency_code));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_linked_inputs" CHECK (price_source = 'manual' OR (material_id IS NOT NULL AND metal_rate_id IS NOT NULL AND metal_weight_grams IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_making_charge_bp" CHECK (making_charge_bp IS NULL OR making_charge_bp BETWEEN 0 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_window" CHECK (valid_to IS NULL OR valid_to > valid_from);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- A product-level row is ALWAYS manual: weight lives on variant_materials, and
+-- recalc_run_lines.variant_id is NOT NULL, so a product-level formula price is not
+-- representable as a preview line at all — it would claim to be metal-linked and never move.
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_variant_level_formula" CHECK (price_source = 'manual' OR variant_id IS NOT NULL);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_formula_source" CHECK (price_source = 'manual' OR formula_version_id IS NOT NULL);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_hybrid_adjustment" CHECK ((price_source = 'hybrid') = (hybrid_adjustment_delta_minor IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- The two identities. They are why "explain this price" is a row read rather than a
+-- re-computation, and why a rounding bug in evaluateFormula fails an INSERT instead of
+-- shipping a plausible wrong number.
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_components_sum" CHECK (price_source = 'manual' OR (computed_base_minor = metal_component_minor + making_charge_computed_minor + coalesce(stone_cost_minor, 0) + coalesce(other_material_cost_minor, 0) + coalesce(markup_minor, 0) + coalesce(market_adjustment_delta_minor, 0) + coalesce(floor_adjustment_minor, 0)));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "prices" ADD CONSTRAINT "chk_prices_list_identity" CHECK (price_source = 'manual' OR (list_minor = computed_base_minor + coalesce(rounding_adjustment_minor, 0) + coalesce(hybrid_adjustment_delta_minor, 0)));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "price_history" ADD CONSTRAINT "chk_price_history_signed_delta" CHECK (change_bp IS NULL OR change_bp BETWEEN -100000 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_price_history_product" ON "price_history" (product_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS "idx_price_history_run" ON "price_history" (recalc_run_id) WHERE recalc_run_id IS NOT NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "metal_rates" ADD CONSTRAINT "chk_metal_rates_positive" CHECK (rate_minor_per_gram > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "metal_rates" ADD CONSTRAINT "chk_metal_rates_scale" CHECK (rate_scale BETWEEN 0 AND 6);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_metal_rates_latest" ON "metal_rates" (material_id, currency_code, effective_at DESC);
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_pricing_formulas_slug_live" ON "pricing_formulas" (slug) WHERE deleted_at IS NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_purity_source" CHECK (purity_source IN ('material','override'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_purity" CHECK ((purity_source = 'override') = (purity_ratio_bp IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_purity_range" CHECK (purity_ratio_bp IS NULL OR purity_ratio_bp BETWEEN 1 AND 10000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_weight_source" CHECK (weight_source IN ('variant_primary','variant_material','fixed'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_weight" CHECK ((weight_source = 'fixed') = (fixed_weight_milligrams IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_weight_positive" CHECK (fixed_weight_milligrams IS NULL OR fixed_weight_milligrams > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_making_mode" CHECK (making_charge_mode IN ('none','percent_of_metal','fixed_per_gram','fixed'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_making_bp" CHECK ((making_charge_mode = 'percent_of_metal') = (making_charge_bp IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_making_bp_range" CHECK (making_charge_bp IS NULL OR making_charge_bp BETWEEN 0 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_markup_mode" CHECK (markup_mode IN ('none','percent_of_subtotal','fixed'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_markup_bp" CHECK ((markup_mode = 'percent_of_subtotal') = (markup_bp IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_versions" ADD CONSTRAINT "chk_pfv_markup_bp_range" CHECK (markup_bp IS NULL OR markup_bp BETWEEN 0 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_market_terms" ADD CONSTRAINT "chk_pfmt_adjustment_one" CHECK (NOT (market_adjustment_delta_minor IS NOT NULL AND market_adjustment_bp IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_market_terms" ADD CONSTRAINT "chk_pfmt_adjustment_bp" CHECK (market_adjustment_bp IS NULL OR market_adjustment_bp BETWEEN -10000 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_market_terms" ADD CONSTRAINT "chk_pfmt_rounding" CHECK (rounding_increment_minor > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_formula_market_terms" ADD CONSTRAINT "chk_pfmt_rounding_mode" CHECK (rounding_mode IN ('half_up','up','down'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_mode" CHECK (mode IN ('metal_linked','hybrid'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_hybrid" CHECK ((mode = 'hybrid') = (hybrid_adjustment_type IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_hybrid_type" CHECK (hybrid_adjustment_type IS NULL OR hybrid_adjustment_type IN ('percent','fixed_delta','fixed_override'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_hybrid_value" CHECK (num_nonnulls(hybrid_adjustment_bp, hybrid_adjustment_delta_minor, hybrid_override_minor) = CASE WHEN mode = 'hybrid' THEN 1 ELSE 0 END);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_hybrid_bp" CHECK (hybrid_adjustment_bp IS NULL OR hybrid_adjustment_bp BETWEEN -10000 AND 1000000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "chk_pfb_override_positive" CHECK (hybrid_override_minor IS NULL OR hybrid_override_minor >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- The composite FK that makes the denormalised product_id provably the variant's own.
+-- Without it a binding can name variant A and product B, the recalc scope filter silently
+-- includes or excludes the wrong variants, and nothing anywhere complains.
+DO $$ BEGIN
+  ALTER TABLE "price_formula_bindings" ADD CONSTRAINT "fk_pfb_variant_product" FOREIGN KEY (variant_id, product_id) REFERENCES "product_variants" (id, product_id) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_pfb_variant" ON "price_formula_bindings" (variant_id, market_code) WHERE is_active;
+CREATE INDEX IF NOT EXISTS "idx_pfb_formula" ON "price_formula_bindings" (formula_id, market_code) WHERE is_active;
+CREATE INDEX IF NOT EXISTS "idx_pfb_product" ON "price_formula_bindings" (product_id, market_code) WHERE is_active;
+
+DO $$ BEGIN
+  ALTER TABLE "variant_component_costs" ADD CONSTRAINT "chk_vcc_currency_upper" CHECK (currency_code = upper(currency_code));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "variant_component_costs" ADD CONSTRAINT "chk_vcc_amount" CHECK (amount_minor >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "variant_component_costs" ADD CONSTRAINT "chk_vcc_kind" CHECK (component_kind IN ('stone','other_material','finishing','certification'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- A run cannot leave the preview states without a NAMED approver. This is R03's floor: the
+-- cron produces previewing → pending_approval and has no path to applied at all.
+DO $$ BEGIN
+  ALTER TABLE "recalc_runs" ADD CONSTRAINT "chk_recalc_approved" CHECK ((status IN ('approved','applying','applied')) = (approved_by_user_id IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "recalc_runs" ADD CONSTRAINT "chk_recalc_totals_market" CHECK ((total_increase_minor = 0 AND total_decrease_minor = 0) OR market_code IS NOT NULL);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_recalc_runs_status" ON "recalc_runs" (status, created_at DESC);
+
+DO $$ BEGIN
+  ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_value" CHECK ((adjustment_type = 'percentage_off' AND value_bp IS NOT NULL AND amount_minor IS NULL) OR (adjustment_type <> 'percentage_off' AND amount_minor IS NOT NULL AND value_bp IS NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_scope" CHECK ((scope_type = 'all') = (scope_id IS NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_bp" CHECK (value_bp IS NULL OR value_bp BETWEEN 0 AND 10000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_pricing_rules_live" ON "pricing_rules" (market_code, scope_type, scope_id, priority) WHERE is_active;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_coupons_code_live" ON "coupons" (upper(code)) WHERE code IS NOT NULL AND deleted_at IS NULL;
+DO $$ BEGIN
+  ALTER TABLE "coupons" ADD CONSTRAINT "chk_coupons_code_trigger" CHECK ((trigger = 'code') = (code IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "coupons" ADD CONSTRAINT "chk_coupons_percentage" CHECK (type <> 'percentage' OR (value_bp IS NOT NULL AND value_bp BETWEEN 1 AND 10000));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "coupons" ADD CONSTRAINT "chk_coupons_redemptions" CHECK (redemption_count >= 0 AND (max_redemptions IS NULL OR redemption_count <= max_redemptions));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_coupons_automatic" ON "coupons" (priority) WHERE trigger = 'automatic' AND is_active AND deleted_at IS NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "coupon_amounts" ADD CONSTRAINT "chk_coupon_amounts_positive" CHECK (amount_minor > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "coupon_conditions" ADD CONSTRAINT "chk_coupon_conditions_money" CHECK (value_minor IS NULL OR currency_code IS NOT NULL);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "gift_cards" ADD CONSTRAINT "chk_gift_cards_balance" CHECK (balance_minor >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "gift_cards" ADD CONSTRAINT "chk_gift_cards_initial" CHECK (initial_balance_minor > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "tax_rules" ADD CONSTRAINT "chk_tax_rules_window" CHECK (ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "tax_rules" ADD CONSTRAINT "chk_tax_rules_rate" CHECK (rate_bp BETWEEN 0 AND 10000);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_tax_rules_lookup" ON "tax_rules" (market_code, country_code, tax_code, priority) WHERE is_active;

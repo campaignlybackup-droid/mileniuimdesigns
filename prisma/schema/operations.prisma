@@ -27,12 +27,10 @@ model AuditLog {
 
   /**
    * RESTRICT, not SetNull — and this is a correction to 02 §7.11.
-   *
    * `SET NULL` is an UPDATE, and the append-only trigger on this table blocks UPDATE. So
    * the FK action could never fire: deleting a user with audit history raised
    * `42501 audit_logs is append-only`, from inside a foreign-key action, three frames from
    * anything the caller wrote.
-   *
    * RESTRICT says the true thing plainly: a user who appears in the audit log cannot be
    * hard-deleted. That is what an append-only log MEANS. Staff are soft-deleted
    * (`users.deleted_at`) in every real flow — 02 §2.2 already says the cascade is "for a
@@ -60,18 +58,18 @@ model Setting {
   /// NULLS NOT DISTINCT has no Prisma equivalent at all. The unique index is created in
   /// the hand-written migration; this is the same escape hatch as the generated columns
   /// and partial indexes (01 §1.2).
-  id                String   @id @default(uuid(7)) @db.Uuid
-  key               String
-  marketCode        String?  @map("market_code") @db.Char(2)
-  value             Json
-  valueType         String   @map("value_type")
-  groupKey          String   @map("group_key")
-  label             String
-  description       String?
-  isSecret          Boolean  @default(false) @map("is_secret")
-  updatedByUserId   String?  @map("updated_by_user_id") @db.Uuid
-  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id              String   @id @default(uuid(7)) @db.Uuid
+  key             String
+  marketCode      String?  @map("market_code") @db.Char(2)
+  value           Json
+  valueType       String   @map("value_type")
+  groupKey        String   @map("group_key")
+  label           String
+  description     String?
+  isSecret        Boolean  @default(false) @map("is_secret")
+  updatedByUserId String?  @map("updated_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   updatedBy User? @relation(fields: [updatedByUserId], references: [id], onDelete: SetNull)
 
@@ -195,16 +193,16 @@ model ImportJobRow {
 }
 
 model SearchQuery {
-  id              String   @id @default(uuid(7)) @db.Uuid
-  queryText       String   @map("query_text")
-  normalizedQuery String   @map("normalized_query")
-  marketCode      String   @map("market_code") @db.Char(2)
-  resultCount     Int      @map("result_count")
-  clickedProductId String? @map("clicked_product_id") @db.Uuid
-  customerId      String?  @map("customer_id") @db.Uuid
-  sessionId       String?  @map("session_id") @db.Uuid
-  filtersApplied  Json     @map("filters_applied")
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id               String   @id @default(uuid(7)) @db.Uuid
+  queryText        String   @map("query_text")
+  normalizedQuery  String   @map("normalized_query")
+  marketCode       String   @map("market_code") @db.Char(2)
+  resultCount      Int      @map("result_count")
+  clickedProductId String?  @map("clicked_product_id") @db.Uuid
+  customerId       String?  @map("customer_id") @db.Uuid
+  sessionId        String?  @map("session_id") @db.Uuid
+  filtersApplied   Json     @map("filters_applied")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   /// Only a submitted /search render logs here. Typeahead does not, or the zero-result
   /// report drowns in prefixes of words people went on to finish typing (02 §7.11).
@@ -217,19 +215,19 @@ model SearchQuery {
 /// endpoint that accepts those lets anyone make the client's revenue dashboard say
 /// whatever they like (02 §2.9).
 model AnalyticsEvent {
-  id           String    @id @default(uuid(7)) @db.Uuid
-  eventName    String    @map("event_name")
-  occurredAt   DateTime  @map("occurred_at") @db.Timestamptz(6)
-  marketCode   String    @map("market_code") @db.Char(2)
-  sessionId    String?   @map("session_id") @db.Uuid
-  customerId   String?   @map("customer_id") @db.Uuid
-  productId    String?   @map("product_id") @db.Uuid
-  variantId    String?   @map("variant_id") @db.Uuid
-  orderId      String?   @map("order_id") @db.Uuid
-  revenueMinor BigInt?   @map("revenue_minor")
-  currencyCode String?   @map("currency_code") @db.Char(3)
+  id           String   @id @default(uuid(7)) @db.Uuid
+  eventName    String   @map("event_name")
+  occurredAt   DateTime @map("occurred_at") @db.Timestamptz(6)
+  marketCode   String   @map("market_code") @db.Char(2)
+  sessionId    String?  @map("session_id") @db.Uuid
+  customerId   String?  @map("customer_id") @db.Uuid
+  productId    String?  @map("product_id") @db.Uuid
+  variantId    String?  @map("variant_id") @db.Uuid
+  orderId      String?  @map("order_id") @db.Uuid
+  revenueMinor BigInt?  @map("revenue_minor")
+  currencyCode String?  @map("currency_code") @db.Char(3)
   properties   Json
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([eventName, occurredAt(sort: Desc)], map: "idx_analytics_event_time")
   @@index([productId, occurredAt(sort: Desc)], map: "idx_analytics_product")

@@ -188,6 +188,24 @@ export async function seedPerfCatalog(db: Client): Promise<{ products: number }>
     `;
   }
 
+  // Every listing and facet query is gated on a live price in the market (03 §4.2, wired at
+  // P10). Without prices the bench would measure a query that returns nothing, which is fast
+  // for a reason that has nothing to do with the index under test — and the fixture would
+  // stop resembling the catalogue whose performance it exists to predict. One manual
+  // product-level row per product per ACTIVE market, each in that market's own currency: the
+  // amounts are synthetic and deliberately unlike any real price point.
+  await db.$executeRaw`
+    INSERT INTO prices (id, product_id, variant_id, market_code, currency_code, list_minor,
+                        price_source, valid_from, created_at)
+    SELECT gen_random_uuid(), p.id, NULL, m.code, m.currency_code,
+           1000 + (right(p.slug, 5)::int % 900) * 13,
+           'manual', now() - interval '1 day', now()
+    FROM products p
+    CROSS JOIN markets m
+    WHERE p.slug LIKE ${PERF_PREFIX + "%"} AND m.is_active
+    ON CONFLICT DO NOTHING
+  `;
+
   await vacuumPerfTables(db);
 
   const after = await db.$queryRaw<{ n: number }[]>`
@@ -209,13 +227,17 @@ export async function seedPerfCatalog(db: Client): Promise<{ products: number }>
  */
 export async function vacuumPerfTables(db: Client): Promise<void> {
   await db.$executeRawUnsafe(
-    "VACUUM ANALYZE products, product_categories, product_stones, product_variants, variant_materials, product_attribute_values",
+    "VACUUM ANALYZE products, product_categories, product_stones, product_variants, variant_materials, product_attribute_values, prices",
   );
 }
 
 export async function dropPerfCatalog(db: Client): Promise<void> {
   await assertSafeTarget(db);
   // Products cascade to categories, stones, variants and attribute values.
+  await db.$executeRaw`
+    DELETE FROM prices WHERE product_id IN (
+      SELECT id FROM products WHERE slug LIKE ${PERF_PREFIX + "%"}
+    )`;
   await db.$executeRaw`DELETE FROM products WHERE slug LIKE ${PERF_PREFIX + "%"}`;
   await db.$executeRaw`DELETE FROM attributes WHERE key IN (${PERF_ATTR_12}, ${PERF_ATTR_4})`;
   await db.$executeRaw`DELETE FROM categories WHERE slug = ${PERF_CATEGORY_SLUG}`;

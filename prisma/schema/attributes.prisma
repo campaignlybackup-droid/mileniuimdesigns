@@ -7,31 +7,31 @@
 // filing a ticket.
 
 model Attribute {
-  id                  String            @id @default(uuid(7)) @db.Uuid
-  key                 String
-  label               String
-  dataType            AttributeDataType @map("data_type")
-  unit                String?
-  isFilterable        Boolean           @default(false) @map("is_filterable")
-  isComparable        Boolean           @default(false) @map("is_comparable")
-  applyingCategoryId  String?           @map("applies_to_category_id") @db.Uuid
+  id                 String            @id @default(uuid(7)) @db.Uuid
+  key                String
+  label              String
+  dataType           AttributeDataType @map("data_type")
+  unit               String?
+  isFilterable       Boolean           @default(false) @map("is_filterable")
+  isComparable       Boolean           @default(false) @map("is_comparable")
+  applyingCategoryId String?           @map("applies_to_category_id") @db.Uuid
   /// Without `scope` the admin form cannot decide whether to render a field once for the
   /// product or once per variant — ring size is per variant, certification is per product
   /// (03 §3.2).
-  scope               String            @default("product")
+  scope              String            @default("product")
   /// Read by the publish gate. Required, recommended and optional are three different
   /// things, and only this one blocks.
-  isRequired          Boolean           @default(false) @map("is_required")
-  valueMin            Decimal?          @map("value_min") @db.Decimal(14, 4)
-  valueMax            Decimal?          @map("value_max") @db.Decimal(14, 4)
-  decimalPlaces       Int?              @map("decimal_places") @db.SmallInt
-  maxLength           Int?              @map("max_length")
-  helpText            String?           @map("help_text")
-  rank                Int               @default(0)
-  version             Int               @default(1)
-  deletedAt           DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isRequired         Boolean           @default(false) @map("is_required")
+  valueMin           Decimal?          @map("value_min") @db.Decimal(14, 4)
+  valueMax           Decimal?          @map("value_max") @db.Decimal(14, 4)
+  decimalPlaces      Int?              @map("decimal_places") @db.SmallInt
+  maxLength          Int?              @map("max_length")
+  helpText           String?           @map("help_text")
+  rank               Int               @default(0)
+  version            Int               @default(1)
+  deletedAt          DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   category Category?               @relation(fields: [applyingCategoryId], references: [id], onDelete: SetNull)
   options  AttributeOption[]
@@ -59,19 +59,19 @@ model AttributeOption {
 /// can carry both a number and a string and the reader picks whichever it looks at first
 /// — which is how one product shows two different carat weights on two screens.
 model ProductAttributeValue {
-  id           String   @id @default(uuid(7)) @db.Uuid
-  productId    String   @map("product_id") @db.Uuid
+  id           String    @id @default(uuid(7)) @db.Uuid
+  productId    String    @map("product_id") @db.Uuid
   /// NULL means the value applies to the whole product; set means this variant only.
-  variantId    String?  @map("variant_id") @db.Uuid
-  attributeId  String   @map("attribute_id") @db.Uuid
-  optionId     String?  @map("option_id") @db.Uuid
-  valueText    String?  @map("value_text")
-  valueNumeric Decimal? @map("value_numeric") @db.Decimal(14, 4)
-  valueBool    Boolean? @map("value_bool")
+  variantId    String?   @map("variant_id") @db.Uuid
+  attributeId  String    @map("attribute_id") @db.Uuid
+  optionId     String?   @map("option_id") @db.Uuid
+  valueText    String?   @map("value_text")
+  valueNumeric Decimal?  @map("value_numeric") @db.Decimal(14, 4)
+  valueBool    Boolean?  @map("value_bool")
   valueDate    DateTime? @map("value_date") @db.Date
-  valueJson    Json?    @map("value_json")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  valueJson    Json?     @map("value_json")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
   variant   ProductVariant?  @relation(fields: [variantId], references: [id], onDelete: Cascade)

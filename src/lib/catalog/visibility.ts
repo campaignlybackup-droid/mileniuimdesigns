@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db/client";
-import { empty, sql, type Sql } from "@/lib/db/sql";
+import { sql, type Sql } from "@/lib/db/sql";
 
 /**
  * THE definition of "a product a shopper in this market can see" — 09 P09, 03 §3.5, §4.2.
@@ -27,20 +27,29 @@ export const LIVE_PRODUCT_CLAUSES = [
 /**
  * The market's price gate — `EXISTS (SELECT 1 FROM prices …)` in 03 §4.2.
  *
- * `prices` does not exist yet: it is created by P10, and P09 runs before it. This function
- * therefore contributes NOTHING today, and that is a hole in the definition above — a
- * product with no price in India is currently "live" in India, which is exactly the empty
- * indexable page `curated_facet_markets` exists to prevent.
+ * **Closed at P10, which is when `prices` came into existence.** Until then this returned
+ * `empty` and `facet-market-activation.test.ts` asserted that it did; the same test flipped to
+ * requiring the clause the moment `to_regclass('public.prices')` stopped being null, and it
+ * duly failed on P10's first migration. The hole never had to be remembered.
  *
- * It is written as a hole with a name rather than a note in a document because a note is not
- * checked. `facet-market-activation.test.ts` probes `to_regclass('public.prices')` and, from
- * the moment P10's migration lands, REQUIRES the rendered predicate to reference the table.
- * The test does not need to be remembered or re-enabled; it arms itself on the day its
- * subject exists, which is the day the omission starts being wrong.
+ * What it enforces: a product with no live price in a market is not visible in that market. It
+ * is not a performance filter and it is not tidiness — an unpriced product that renders is a
+ * product a shopper can reach, and the next thing it does is either show nothing where a price
+ * belongs or fall back to another market's number. `resolvePrice` returning
+ * `PriceUnavailableError` rather than falling back is the same rule one layer up (R02).
+ *
+ * `valid_to IS NULL` is what "live" means here: `prices` is append-only in effect, so the row
+ * with no end date is the current one, and `idx_prices_active` guarantees there is at most one
+ * of them per (variant, market).
  */
 export function priceVisibility(marketCode: string): Sql {
-  void marketCode;
-  return empty;
+  return sql`AND EXISTS (
+    SELECT 1 FROM prices pr
+    WHERE pr.product_id = p.id
+      AND pr.market_code = ${marketCode}
+      AND pr.valid_to IS NULL
+      AND pr.deleted_at IS NULL
+  )`;
 }
 
 /**

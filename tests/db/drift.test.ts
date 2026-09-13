@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { Client } from "pg";
 import { PERF_PREFIX } from "../../prisma/fixtures/perf-catalog";
+import { tablesInSchema } from "./schema-coverage";
 
 /**
  * Commissioned by 09 P03 criterion (e) and §2.6.
@@ -15,72 +16,6 @@ afterAll(async () => {
   await client.end();
 });
 
-/** Every table Schema I is responsible for (09 P03 "Builds"). */
-const SCHEMA_I_TABLES = [
-  // markets
-  "currencies",
-  "markets",
-  "inventory_locations",
-  "market_locations",
-  "order_counters",
-  // identity and access
-  "users",
-  "roles",
-  "permissions",
-  "role_permissions",
-  "user_roles",
-  "sessions",
-  "otp_requests",
-  "rate_limits",
-  // customers
-  "customer_groups",
-  "customers",
-  "customer_currency_totals",
-  "newsletter_subscribers",
-  // operations — every later phase writes into these
-  "settings",
-  "audit_logs",
-  "jobs",
-  "saved_views",
-  "import_jobs",
-  "import_job_rows",
-  "search_queries",
-  "analytics_events",
-  "email_templates",
-  "email_logs",
-  // Schema II — the catalogue
-  "categories",
-  "products",
-  "product_variants",
-  "product_options",
-  "product_option_values",
-  "variant_option_values",
-  "stones",
-  "product_stones",
-  "materials",
-  "variant_materials",
-  "tags",
-  "product_tags",
-  "product_categories",
-  "product_market_content",
-  "category_market_content",
-  "product_market_sort",
-  "attributes",
-  "attribute_options",
-  "product_attribute_values",
-  "media",
-  "media_folders",
-  "product_media",
-  "collections",
-  "collection_rules",
-  "product_collections",
-  "collection_market_content",
-  "curated_facets",
-  "curated_facet_markets",
-  "seo_metadata",
-  "redirects",
-] as const;
-
 async function tables(): Promise<Set<string>> {
   await ready;
   const { rows } = await client.query<{ tablename: string }>(
@@ -90,10 +25,25 @@ async function tables(): Promise<Set<string>> {
 }
 
 describe("migration drift", () => {
-  it("every table Schema I promises actually exists", async () => {
+  it("every table the Prisma schema declares actually exists", async () => {
+    // DERIVED from the models, never a hand-typed list. The hand-typed version passed for
+    // four phases while `media_tags` was declared and never created, because nobody had
+    // remembered to add `media_tags` to it (tests/db/schema-coverage.ts).
     const present = await tables();
-    const missing = SCHEMA_I_TABLES.filter((t) => !present.has(t));
-    expect(missing).toEqual([]);
+    const declared = [...tablesInSchema()].sort();
+    expect(declared.length).toBeGreaterThanOrEqual(74);
+    expect(declared.filter((t) => !present.has(t))).toEqual([]);
+  });
+
+  it("every table in the database is declared by the Prisma schema", async () => {
+    // The converse, which catches the other direction: a table created by a hand-written
+    // migration and never modelled is a table Prisma will propose DROPPING on the next diff.
+    const declared = tablesInSchema();
+    const orphans = [...(await tables())]
+      .filter((t) => !declared.has(t))
+      // Prisma's own bookkeeping, which is deliberately not a model.
+      .filter((t) => t !== "_prisma_migrations");
+    expect(orphans).toEqual([]);
   });
 
   it("the required extensions are installed", async () => {
@@ -194,6 +144,45 @@ describe("migration drift", () => {
       `SELECT slug, title FROM products WHERE slug NOT LIKE '${PERF_PREFIX}%' OR title NOT LIKE 'ZZ PERF%'`,
     );
     expect(rows).toEqual([]);
+  });
+
+  it("seeds NO metal rate — P10 exit criterion (d)", async () => {
+    // A seeded rate is a FABRICATED BUSINESS FACT: it is the price of silver on a particular
+    // day, and nobody here knows what the client pays. Worse than the fabrication, it would
+    // let P12's headline test — "a rate change moves nothing" — pass against a rate nobody
+    // entered, which is the R03 mitigation appearing to work while proving nothing.
+    //
+    // The table stays empty until a human types a number. Every formula that needs one
+    // returns RateUnavailableError, and the recalc preview reports the line as skipped.
+    await ready;
+    const { rows } = await client.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM metal_rates`,
+    );
+    expect(rows[0]!.n, "a seeded metal rate is an invented business fact").toBe(0);
+  });
+
+  it("seeds no pricing formula, binding, coupon, gift card or tax rule either", async () => {
+    // The same rule as the catalogue and for the same reason. A making charge, a markup, a
+    // GST rate and a discount are all commercial decisions; every one of them would be
+    // invented, and each would then be quietly correct-looking on an admin screen.
+    await ready;
+    for (const table of [
+      "pricing_formulas",
+      "pricing_formula_versions",
+      "pricing_formula_market_terms",
+      "price_formula_bindings",
+      "pricing_rules",
+      "coupons",
+      "gift_cards",
+      "tax_rules",
+      "recalc_runs",
+      "variant_component_costs",
+    ]) {
+      const { rows } = await client.query<{ n: number }>(
+        `SELECT count(*)::int AS n FROM ${table}`,
+      );
+      expect(rows[0]!.n, `${table} should be empty after the seed`).toBe(0);
+    }
   });
 
   it("seeds both markets, each with a currency its market actually uses", async () => {

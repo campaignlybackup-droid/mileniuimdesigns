@@ -249,3 +249,102 @@ enum SeoEntityType {
 
   @@map("seo_entity_type")
 }
+
+// ── Pricing, discounts and tax — P10, 02 §1.9 ────────────────────────────────────────
+
+/// Matches `ResolvedPrice.priceSource` (01 §2.3) exactly. A `metal_linked` or `hybrid`
+/// price is a STORED row exactly like a manual one — `resolvePrice()` never calls
+/// `evaluateFormula()`, which is hard rule 6 expressed as a call graph (02 §7.2).
+enum PriceSource {
+  manual
+  metal_linked
+  hybrid
+
+  @@map("price_source")
+}
+
+enum PriceChangeReason {
+  manual_edit
+  bulk_edit
+  csv_import
+  recalc_run
+  rule_activation
+  rule_expiry
+  seed
+
+  @@map("price_change_reason")
+}
+
+enum PricingRuleScope {
+  all
+  product
+  category
+  collection
+  material
+  stone
+  tag
+  customer_group
+
+  @@map("pricing_rule_scope")
+}
+
+enum PricingRuleAdjustment {
+  percentage_off
+  fixed_amount_off
+  fixed_price
+
+  @@map("pricing_rule_adjustment")
+}
+
+/// `previewing → pending_approval → approved → applying → applied` is the only path to a
+/// changed price. There is NO transition from a metal-rate write to `applied`: R03 is
+/// prevented by the absence of an edge, not by a check somewhere in the middle (04 §3.3).
+enum RecalcRunStatus {
+  previewing
+  pending_approval
+  approved
+  applying
+  applied
+  rejected
+  failed
+
+  @@map("recalc_run_status")
+}
+
+enum DiscountType {
+  percentage
+  fixed_amount
+  free_shipping
+
+  @@map("discount_type")
+}
+
+enum DiscountTrigger {
+  code
+  automatic
+
+  @@map("discount_trigger")
+}
+
+enum CouponConditionType {
+  min_subtotal
+  product
+  category
+  collection
+  customer_group
+  first_order_only
+  market
+  excludes_discounted
+
+  @@map("coupon_condition_type")
+}
+
+enum GiftCardStatus {
+  active
+  redeemed
+  expired
+  cancelled
+  disabled
+
+  @@map("gift_card_status")
+}

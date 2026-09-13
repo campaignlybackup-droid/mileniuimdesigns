@@ -32,6 +32,7 @@ const FINISH = key("finish");
 const SETTING = key("setting");
 
 let categoryId = "";
+let currencyCode = "";
 let productIds: string[] = [];
 const attributeIds = new Map<string, string>();
 /** option value → id */
@@ -80,6 +81,11 @@ async function makeAttribute(
 }
 
 beforeAll(async () => {
+  const market = await db.$queryRaw<{ currency_code: string }[]>`
+    SELECT currency_code FROM markets WHERE code = ${MARKET}
+  `;
+  currencyCode = market[0]!.currency_code;
+
   const cat = await db.$queryRaw<{ id: string }[]>`
     INSERT INTO categories (id, slug, name, materialized_path, depth, is_published, rank,
                             version, created_at, updated_at)
@@ -110,6 +116,16 @@ beforeAll(async () => {
       INSERT INTO product_categories (product_id, category_id, rank, is_primary, created_at)
       VALUES (${productId}::uuid, ${categoryId}::uuid, 0, true, now())
     `;
+    // Every listing and every facet count is gated on a live price in the market (03 §4.2,
+    // wired at P10). An unpriced product is not visible, so a fixture without prices would
+    // make every count below zero — and the brute-force comparison would agree, for the
+    // wrong reason.
+    await db.$executeRaw`
+      INSERT INTO prices (id, product_id, variant_id, market_code, currency_code, list_minor,
+                          price_source, valid_from, created_at)
+      VALUES (gen_random_uuid(), ${productId}::uuid, NULL, ${MARKET}, ${currencyCode},
+              ${BigInt(20000 + i * 100)}, 'manual', now(), now())
+    `;
     await withTransaction(async (tx) => {
       await setAttributeValues(owner, tx, {
         productId,
@@ -131,6 +147,10 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await db.$executeRaw`
+    DELETE FROM prices WHERE product_id IN (
+      SELECT id FROM products WHERE slug LIKE ${`zz-p09-${String(stamp)}%`}
+    )`;
   await db.$executeRaw`DELETE FROM products WHERE slug LIKE ${`zz-p09-${String(stamp)}%`}`;
   await db.$executeRaw`DELETE FROM attributes WHERE key LIKE ${`zz_p09_%_${String(stamp)}`}`;
   await db.$executeRaw`DELETE FROM categories WHERE slug = ${`zz-p09-${String(stamp)}`}`;
@@ -339,6 +359,39 @@ describe("P09 (c) — facet counts equal a brute-force count over the same predi
         ]),
       );
     }
+  });
+
+  it("drops a product whose price has been superseded", async () => {
+    // The price gate, asserted at the facet layer rather than only in visibility.ts. The
+    // product is still published, still in the category and still carries the option — the
+    // only thing that changed is that its price ended.
+    const target = productIds[0]!;
+    const finish = finishOf(0);
+    const before = await getFacetCounts({
+      scope: scope(),
+      marketCode: MARKET,
+      filters: { stoneIds: [], materialIds: [], attributes: [] },
+    });
+    const countOf = (c: Awaited<ReturnType<typeof getFacetCounts>>) =>
+      c.attributes[attributeIds.get(FINISH)!]?.find(
+        (x) => x.valueId === optionIds.get(`${FINISH}:${finish}`)!,
+      )?.count ?? 0;
+
+    await db.$executeRaw`UPDATE prices SET valid_to = now() WHERE product_id = ${target}::uuid`;
+    const after = await getFacetCounts({
+      scope: scope(),
+      marketCode: MARKET,
+      filters: { stoneIds: [], materialIds: [], attributes: [] },
+    });
+    expect(countOf(after)).toBe(countOf(before) - 1);
+
+    await db.$executeRaw`UPDATE prices SET valid_to = NULL WHERE product_id = ${target}::uuid`;
+    const restored = await getFacetCounts({
+      scope: scope(),
+      marketCode: MARKET,
+      filters: { stoneIds: [], materialIds: [], attributes: [] },
+    });
+    expect(countOf(restored)).toBe(countOf(before));
   });
 
   it("agrees with the listing it is rendered beside", async () => {

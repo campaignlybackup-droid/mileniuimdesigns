@@ -16,33 +16,33 @@ model MediaFolder {
 }
 
 model Media {
-  id                 String    @id @default(uuid(7)) @db.Uuid
-  folderId           String?   @map("folder_id") @db.Uuid
-  kind               MediaKind
-  provider           String
+  id                String    @id @default(uuid(7)) @db.Uuid
+  folderId          String?   @map("folder_id") @db.Uuid
+  kind              MediaKind
+  provider          String
   /// The provider's own identifier. NO URL IS EVER STORED: a URL bakes in a provider,
   /// a transformation and a CDN host, and changing any of the three then means a data
   /// migration instead of a config change (02 §2.8).
-  publicId           String    @map("public_id")
-  version            String?
-  format             String
-  bytes              BigInt
-  width              Int?
-  height             Int?
-  durationSeconds    Decimal?  @map("duration_seconds") @db.Decimal(8, 2)
-  altText            String?   @map("alt_text")
-  title              String?
-  credit             String?
-  dominantColourHex  String?   @map("dominant_colour_hex") @db.Char(7)
-  blurDataUrl        String?   @map("blur_data_url")
-  checksumSha256     Bytes?    @map("checksum_sha256")
-  uploadedByUserId   String?   @map("uploaded_by_user_id") @db.Uuid
+  publicId          String    @map("public_id")
+  version           String?
+  format            String
+  bytes             BigInt
+  width             Int?
+  height            Int?
+  durationSeconds   Decimal?  @map("duration_seconds") @db.Decimal(8, 2)
+  altText           String?   @map("alt_text")
+  title             String?
+  credit            String?
+  dominantColourHex String?   @map("dominant_colour_hex") @db.Char(7)
+  blurDataUrl       String?   @map("blur_data_url")
+  checksumSha256    Bytes?    @map("checksum_sha256")
+  uploadedByUserId  String?   @map("uploaded_by_user_id") @db.Uuid
   /// Demo assets are neutral placeholders, never a real jewellery photograph the client
   /// has not licensed, and they are labelled so they can be found and removed (02 §6).
-  isDemo             Boolean   @default(false) @map("is_demo")
-  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isDemo            Boolean   @default(false) @map("is_demo")
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   folder       MediaFolder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
   productMedia ProductMedia[]

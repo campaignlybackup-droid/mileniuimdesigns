@@ -2952,3 +2952,88 @@ all** — a missing import made every case error out, and the numbers I read wer
 baseline file, unchanged. Identical results across runs are not a strong signal of stability;
 they are first a signal that nothing executed. The loop now asserts `6 passed` before reading
 the file.
+
+---
+
+### 6.21 P10 field notes
+
+**The armed assertion worked.** P09 left the price gate as a named hole,
+`priceVisibility()`, with a test that probed `to_regclass('public.prices')`. P10's first
+migration created the table, and the test failed on the next run with a message naming the
+function to fix — before anyone thought to look for it. That is the whole value of the shape:
+the omission announced itself on the day it started being wrong, rather than being remembered
+or not.
+
+Closing it broke four facet tests and one bench guard, all correctly: their fixtures had no
+prices, so their products were no longer visible. Fixing them turned P09's headline case into
+the real one — the products are now priced in one market and not the other, and **the unpriced
+market is refused an indexable page**, which is what `03 §4.2` actually says. Before P10 that
+test could only assert the market-content half.
+
+**`media_tags` was declared at P06 and the table was never created. It took four phases and an
+unrelated `migrate diff` to notice.** `drift.test.ts` did not catch it because its expected-table
+list was a hand-typed constant and nobody had added `media_tags` to it. The test was green the
+whole time, faithfully asserting the presence of every table someone had remembered to type.
+
+The same defect was in `handwritten-constraints.test.ts`, whose manifest of 115 objects was
+also hand-maintained — and P10 adds 74, which is 74 more chances to forget one. Both lists are
+now **derived**: tables from the Prisma models, hand-written objects from `addendum.sql` via the
+same extraction `guard-migration.ts` uses, so the guard and the test cannot disagree about what
+is protected. `drift.test.ts` also now asserts the **converse** — every table in the database is
+declared by a model — which catches the other direction: a table created by a hand-written
+migration and never modelled is a table Prisma will propose DROPPING on the next diff.
+
+The objection to deriving is that deletion becomes invisible: remove a model and the test stops
+expecting its table. That is what the count floors are for, and they are the one thing here a
+person still types. Deleting is a visible edit to a file whose entire purpose is to hold those
+declarations; **forgetting to add was invisible and failed nothing.**
+
+**`prisma migrate diff` proposed fifteen destructive statements. Third time, same cause.** Three
+at P05, fourteen at P06, fifteen here — fourteen `DROP INDEX`/`DROP CONSTRAINT` against
+hand-written objects plus one `ALTER COLUMN … DROP DEFAULT` against the `products.search_vector`
+generated column. This is not a mistake anyone is making: Prisma diffs the database against the
+Prisma schema, and every object in the addendum exists precisely because Prisma cannot express
+it, so each reads as drift. `db:guard` is what refuses the migration if any survive.
+
+**My test helper crashed the database server.** `rejects()` sent multi-statement strings over
+the simple query protocol. When statement 2 fails, statements 3+ still execute and Postgres
+answers "current transaction is aborted" — and `prisma dev`'s pglite WASM engine does not merely
+error on that, it **exits**, taking the database down for every other test file in the run. The
+first symptom was `ECONNREFUSED` in twelve unrelated suites, which looks nothing like its cause.
+`rejectsAll()` sends one statement per call and stops at the first failure, so nothing is ever
+sent into an aborted transaction. Recorded because any future test that batches statements will
+find this again.
+
+**Two CHECK constraints are specified in `04 §2.2` and missing from `02`'s register line for
+`prices`:** `chk_prices_formula_source` and `chk_prices_list_identity`. `04` names both, and its
+own §1 table calls `chk_prices_components_sum` and `chk_prices_list_identity` "both identities".
+`02`'s register lists only the first. Built from `04`, which is the document that owns pricing;
+`02`'s line is the incomplete one. Without `chk_prices_list_identity` a rounding bug in
+`evaluateFormula` ships a plausible wrong number instead of failing an INSERT.
+
+**Three assertions that make the phase's rules structural rather than stated:**
+
+- `pricing_formula_versions` has **no BIGINT column** except `fixed_weight_milligrams`, asserted
+  against `information_schema`. That is "USD and INR prices are INDEPENDENT" expressed as a
+  schema property: a single amount on that table would feed both markets from one number, and
+  no CHECK anywhere else would notice. The one permitted BIGINT is named rather than excluded by
+  a pattern, so adding `making_charge_minor` there fails.
+- `chk_recalc_approved` refuses `approved`, `applying` and `applied` without a named approver,
+  **and** refuses an approver on a run that has not been approved. R03's floor is the absence of
+  an edge from a metal-rate write to `applied`, not a check somewhere in the middle.
+- The composite FK `(variant_id, product_id) → product_variants` on `price_formula_bindings`.
+  Without it a binding names variant A and product B, the recalc scope filter silently includes
+  or excludes the wrong variants, and nothing anywhere complains.
+
+**Every pricing table seeds EMPTY, and a test says so per table.** `metal_rates` is exit
+criterion (d) — a seeded rate is the price of silver on a day nobody here knows, and it would
+let P12's "a rate change moves nothing" pass against a rate nobody entered. The same reasoning
+extends to formulas, bindings, coupons, gift cards, tax rules and component costs: a making
+charge, a markup, a GST rate and a discount are all commercial decisions, and each would look
+quietly correct on an admin screen.
+
+**Two converse assertions, both deliberate.** `idx_prices_active` is tested by trying to write a
+second live row — and also by writing the same variant in a *different* market, which must
+succeed. A unique index over `(variant_id)` alone would pass the first test while making the
+whole multi-market model impossible. Likewise the market/currency FK is tested in both
+directions, because a foreign key that refused everything would pass the rejection test.

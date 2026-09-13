@@ -16,39 +16,48 @@ model Currency {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  markets Market[]
+  markets               Market[]
+  metalRates            MetalRate[]
+  variantComponentCosts VariantComponentCost[]
+  couponAmounts         CouponAmount[]
+  giftCards             GiftCard[]
 
   @@map("currencies")
 }
 
 model Market {
   /// ISO 3166-1 alpha-2, upper case.
-  code         String  @id @db.Char(2)
-  name         String
-  currencyCode String  @map("currency_code") @db.Char(3)
-  locale       String
-  countryCode  String  @map("country_code") @db.Char(2)
+  code               String   @id @db.Char(2)
+  name               String
+  currencyCode       String   @map("currency_code") @db.Char(3)
+  locale             String
+  countryCode        String   @map("country_code") @db.Char(2)
   /// Report day boundaries are computed in THIS zone, never in UTC — an Indian evening
   /// must not bucket into the previous UTC day (14 §2.3).
-  timezone     String
+  timezone           String
   /// Looked up in the payment provider registry. NOT a union of 'stripe' | 'razorpay':
   /// a third market must be a row, not an edit (01 §2.x).
-  paymentProviderKey String? @map("payment_provider_key")
-  taxMode      TaxMode @map("tax_mode")
+  paymentProviderKey String?  @map("payment_provider_key")
+  taxMode            TaxMode  @map("tax_mode")
   /// India displays tax-inclusive prices, the US displays tax-exclusive. The pricing
   /// service always returns GROSS; extraction happens once, in src/lib/orders/ (04 §8.5).
-  pricesIncludeTax Boolean @map("prices_include_tax")
-  defaultLocationId String? @map("default_location_id") @db.Uuid
-  weightUnit   String  @map("weight_unit")
+  pricesIncludeTax   Boolean  @map("prices_include_tax")
+  defaultLocationId  String?  @map("default_location_id") @db.Uuid
+  weightUnit         String   @map("weight_unit")
   /// DDP or DAP. Who pays duty at the border.
-  incoterm     String  @default("DAP")
-  isActive     Boolean @map("is_active")
-  rank         Int
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  incoterm           String   @default("DAP")
+  isActive           Boolean  @map("is_active")
+  rank               Int
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  currency  Currency         @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
-  locations MarketLocation[]
+  currency                  Currency                   @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+  locations                 MarketLocation[]
+  prices                    Price[]
+  pricingFormulaMarketTerms PricingFormulaMarketTerm[]
+  priceFormulaBindings      PriceFormulaBinding[]
+  pricingRules              PricingRule[]
+  taxRules                  TaxRule[]
 
   /// The composite-FK target the whole money model rests on: any table carrying both a
   /// market and a currency FKs THIS, so a row cannot claim a currency its market does
