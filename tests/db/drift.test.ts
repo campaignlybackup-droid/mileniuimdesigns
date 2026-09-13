@@ -1,5 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { Client } from "pg";
+import { PERF_PREFIX } from "../../prisma/fixtures/perf-catalog";
 
 /**
  * Commissioned by 09 P03 criterion (e) and §2.6.
@@ -10,28 +11,74 @@ import { Client } from "pg";
 const url = process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"]!;
 const client = new Client({ connectionString: url });
 const ready = client.connect();
-afterAll(async () => { await client.end(); });
+afterAll(async () => {
+  await client.end();
+});
 
 /** Every table Schema I is responsible for (09 P03 "Builds"). */
 const SCHEMA_I_TABLES = [
   // markets
-  "currencies", "markets", "inventory_locations", "market_locations", "order_counters",
+  "currencies",
+  "markets",
+  "inventory_locations",
+  "market_locations",
+  "order_counters",
   // identity and access
-  "users", "roles", "permissions", "role_permissions", "user_roles",
-  "sessions", "otp_requests", "rate_limits",
+  "users",
+  "roles",
+  "permissions",
+  "role_permissions",
+  "user_roles",
+  "sessions",
+  "otp_requests",
+  "rate_limits",
   // customers
-  "customer_groups", "customers", "customer_currency_totals", "newsletter_subscribers",
+  "customer_groups",
+  "customers",
+  "customer_currency_totals",
+  "newsletter_subscribers",
   // operations — every later phase writes into these
-  "settings", "audit_logs", "jobs", "saved_views", "import_jobs", "import_job_rows",
-  "search_queries", "analytics_events", "email_templates", "email_logs",
+  "settings",
+  "audit_logs",
+  "jobs",
+  "saved_views",
+  "import_jobs",
+  "import_job_rows",
+  "search_queries",
+  "analytics_events",
+  "email_templates",
+  "email_logs",
   // Schema II — the catalogue
-  "categories", "products", "product_variants", "product_options", "product_option_values",
-  "variant_option_values", "stones", "product_stones", "materials", "variant_materials",
-  "tags", "product_tags", "product_categories", "product_market_content",
-  "category_market_content", "product_market_sort", "attributes", "attribute_options",
-  "product_attribute_values", "media", "media_folders", "product_media", "collections",
-  "collection_rules", "product_collections", "collection_market_content",
-  "curated_facets", "curated_facet_markets", "seo_metadata", "redirects",
+  "categories",
+  "products",
+  "product_variants",
+  "product_options",
+  "product_option_values",
+  "variant_option_values",
+  "stones",
+  "product_stones",
+  "materials",
+  "variant_materials",
+  "tags",
+  "product_tags",
+  "product_categories",
+  "product_market_content",
+  "category_market_content",
+  "product_market_sort",
+  "attributes",
+  "attribute_options",
+  "product_attribute_values",
+  "media",
+  "media_folders",
+  "product_media",
+  "collections",
+  "collection_rules",
+  "product_collections",
+  "collection_market_content",
+  "curated_facets",
+  "curated_facet_markets",
+  "seo_metadata",
+  "redirects",
 ] as const;
 
 async function tables(): Promise<Set<string>> {
@@ -59,7 +106,11 @@ describe("migration drift", () => {
 
   it("no migration is pending or failed", async () => {
     await ready;
-    const { rows } = await client.query<{ migration_name: string; finished_at: Date | null; rolled_back_at: Date | null }>(
+    const { rows } = await client.query<{
+      migration_name: string;
+      finished_at: Date | null;
+      rolled_back_at: Date | null;
+    }>(
       `SELECT migration_name, finished_at, rolled_back_at FROM _prisma_migrations ORDER BY started_at`,
     );
     expect(rows.length).toBeGreaterThan(0);
@@ -69,7 +120,9 @@ describe("migration drift", () => {
 
   it("seeds the 73 permissions and grants owner all of them", async () => {
     await ready;
-    const { rows: p } = await client.query<{ n: number }>(`SELECT count(*)::int AS n FROM permissions`);
+    const { rows: p } = await client.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM permissions`,
+    );
     expect(p[0]!.n).toBe(73);
 
     const { rows: o } = await client.query<{ n: number }>(
@@ -92,7 +145,7 @@ describe("migration drift", () => {
     await ready;
     const { rows } = await client.query<{ n: number; slugs: string }>(
       `SELECT count(*)::int AS n, string_agg(slug, ',' ORDER BY rank) AS slugs
-       FROM categories WHERE deleted_at IS NULL`,
+       FROM categories WHERE deleted_at IS NULL AND slug NOT LIKE '${PERF_PREFIX}%'`,
     );
     expect(rows[0]!.n).toBe(9);
     expect(rows[0]!.slugs).not.toContain("stones");
@@ -125,8 +178,22 @@ describe("migration drift", () => {
 
   it("seeds NO product — the catalogue is the client's", async () => {
     await ready;
-    const { rows } = await client.query<{ n: number }>(`SELECT count(*)::int AS n FROM products`);
+    const { rows } = await client.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM products WHERE slug NOT LIKE '${PERF_PREFIX}%'`,
+    );
     expect(rows[0]!.n).toBe(0);
+  });
+
+  it("every product that DOES exist is an unmistakably-marked performance fixture", async () => {
+    // The exclusion above is a hole in a hard-rule-8 guard, so it is closed from the other
+    // side. It is not enough that non-fixture products number zero; every row present must
+    // also be visibly synthetic in BOTH its slug and its title, so no row can hide behind the
+    // prefix while reading, on an admin screen, like a real piece.
+    await ready;
+    const { rows } = await client.query<{ slug: string; title: string }>(
+      `SELECT slug, title FROM products WHERE slug NOT LIKE '${PERF_PREFIX}%' OR title NOT LIKE 'ZZ PERF%'`,
+    );
+    expect(rows).toEqual([]);
   });
 
   it("seeds both markets, each with a currency its market actually uses", async () => {

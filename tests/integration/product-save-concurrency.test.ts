@@ -1,8 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import { db } from "@/lib/db/client";
 import {
-  createProduct, publishProduct, saveProduct, setProductSlug,
-  assertNoServerAuthoritativeFields, ServerAuthoritativeFieldError,
+  createProduct,
+  publishProduct,
+  saveProduct,
+  setProductSlug,
+  assertNoServerAuthoritativeFields,
+  ServerAuthoritativeFieldError,
 } from "@/lib/catalog";
 import { permissionsForRoles } from "@/lib/rbac";
 import { ConflictError, ForbiddenError, SlugTakenError, StaleWriteError } from "@/lib/errors";
@@ -11,12 +15,18 @@ import type { StaffActor } from "@/lib/rbac";
 /** Commissioned by 09 P07 exit criteria (a)–(e). */
 const stamp = Date.now();
 const owner: StaffActor = {
-  kind: "staff", userId: "00000000-0000-7000-8000-000000000001",
-  roles: ["owner"], permissions: permissionsForRoles(["owner"]), totpVerifiedAt: new Date(),
+  kind: "staff",
+  userId: "00000000-0000-7000-8000-000000000001",
+  roles: ["owner"],
+  permissions: permissionsForRoles(["owner"]),
+  totpVerifiedAt: new Date(),
 };
 const analyst: StaffActor = {
-  kind: "staff", userId: "00000000-0000-7000-8000-000000000002",
-  roles: ["analyst"], permissions: permissionsForRoles(["analyst"]), totpVerifiedAt: null,
+  kind: "staff",
+  userId: "00000000-0000-7000-8000-000000000002",
+  roles: ["analyst"],
+  permissions: permissionsForRoles(["analyst"]),
+  totpVerifiedAt: null,
 };
 
 const made: string[] = [];
@@ -58,7 +68,10 @@ describe("optimistic concurrency", () => {
       saveProduct(owner, { id: p.id, expectedVersion: p.version, title: "Second edit" }),
     ).rejects.toBeInstanceOf(StaleWriteError);
 
-    const after = await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { title: true } });
+    const after = await db.product.findUniqueOrThrow({
+      where: { id: p.id },
+      select: { title: true },
+    });
     expect(after.title).toBe("First edit");
   });
 
@@ -90,7 +103,15 @@ describe("server-authoritative fields are REFUSED, not ignored", () => {
     // 09 P07 criterion (e). Silently ignoring them lets the admin believe it saved a
     // price that never changed — and nobody finds out until a customer is charged the
     // old one.
-    for (const field of ["price", "inventory", "version", "soldAt", "isDemo", "status", "slug"]) {
+    for (const field of [
+      "price",
+      "inventory",
+      "version",
+      "soldAt",
+      "isDemo",
+      "status",
+      "slug",
+    ]) {
       expect(
         () => assertNoServerAuthoritativeFields({ title: "x", [field]: 1 }),
         field,
@@ -128,17 +149,23 @@ describe("slug changes", () => {
   });
 
   it("refuses a slug already in use", async () => {
-    const a = await newProduct("slug-a");
+    await newProduct("slug-a");
     const b = await newProduct("slug-b");
     await expect(
-      setProductSlug(owner, { id: b.id, slug: `p7-${stamp}-slug-a`, expectedVersion: b.version }),
+      setProductSlug(owner, {
+        id: b.id,
+        slug: `p7-${stamp}-slug-a`,
+        expectedVersion: b.version,
+      }),
     ).rejects.toBeInstanceOf(SlugTakenError);
   });
 
   it("writes NO redirect for a draft — that URL never existed", async () => {
     const p = await newProduct("draft-slug");
     const r = await setProductSlug(owner, {
-      id: p.id, slug: `p7-${stamp}-draft-renamed`, expectedVersion: p.version,
+      id: p.id,
+      slug: `p7-${stamp}-draft-renamed`,
+      expectedVersion: p.version,
     });
     expect(r.redirectCreated).toBe(false);
   });
@@ -154,14 +181,21 @@ describe("slug changes", () => {
       data: { status: "active", publishedAt: new Date() },
     });
 
-    const current = await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true, slug: true } });
+    const current = await db.product.findUniqueOrThrow({
+      where: { id: p.id },
+      select: { version: true, slug: true },
+    });
     const oldSlug = current.slug;
     const r = await setProductSlug(owner, {
-      id: p.id, slug: `p7-${stamp}-pub-renamed`, expectedVersion: current.version,
+      id: p.id,
+      slug: `p7-${stamp}-pub-renamed`,
+      expectedVersion: current.version,
     });
     expect(r.redirectCreated).toBe(true);
 
-    const redirect = await db.redirect.findFirst({ where: { fromPath: `/products/${oldSlug}` } });
+    const redirect = await db.redirect.findFirst({
+      where: { fromPath: `/products/${oldSlug}` },
+    });
     expect(redirect?.toPath).toBe(`/products/p7-${stamp}-pub-renamed`);
     expect(redirect?.statusCode).toBe(301);
   });
@@ -171,33 +205,52 @@ describe("slug changes", () => {
     const p = await newProduct("chain");
     await db.product.update({ where: { id: p.id }, data: { status: "active" } });
 
-    let v = (await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true } })).version;
+    let v = (
+      await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true } })
+    ).version;
     const first = `p7-${stamp}-chain`;
     const second = `p7-${stamp}-chain-2`;
     const third = `p7-${stamp}-chain-3`;
 
-    ({ version: v } = await setProductSlug(owner, { id: p.id, slug: second, expectedVersion: v }));
+    ({ version: v } = await setProductSlug(owner, {
+      id: p.id,
+      slug: second,
+      expectedVersion: v,
+    }));
     await setProductSlug(owner, { id: p.id, slug: third, expectedVersion: v });
 
     const a = await db.redirect.findFirst({ where: { fromPath: `/products/${first}` } });
-    expect(a?.toPath, "A still points at B — the chain was not flattened").toBe(`/products/${third}`);
+    expect(a?.toPath, "A still points at B — the chain was not flattened").toBe(
+      `/products/${third}`,
+    );
   });
 
   it("does not create a loop when a slug is changed back", async () => {
     // A→B then B→A would take the product permanently offline at both URLs.
     const p = await newProduct("loop");
     await db.product.update({ where: { id: p.id }, data: { status: "active" } });
-    let v = (await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true } })).version;
+    let v = (
+      await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true } })
+    ).version;
     const original = `p7-${stamp}-loop`;
     const renamed = `p7-${stamp}-loop-2`;
 
-    ({ version: v } = await setProductSlug(owner, { id: p.id, slug: renamed, expectedVersion: v }));
+    ({ version: v } = await setProductSlug(owner, {
+      id: p.id,
+      slug: renamed,
+      expectedVersion: v,
+    }));
     await setProductSlug(owner, { id: p.id, slug: original, expectedVersion: v });
 
     const live = await db.redirect.findMany({
-      where: { isActive: true, OR: [{ fromPath: `/products/${original}` }, { fromPath: `/products/${renamed}` }] },
+      where: {
+        isActive: true,
+        OR: [{ fromPath: `/products/${original}` }, { fromPath: `/products/${renamed}` }],
+      },
     });
-    const loop = live.filter((r) => r.toPath === `/products/${original}` || r.toPath === `/products/${renamed}`);
+    const loop = live.filter(
+      (r) => r.toPath === `/products/${original}` || r.toPath === `/products/${renamed}`,
+    );
     // At most one direction may survive; both would be a loop.
     expect(loop.length).toBeLessThanOrEqual(1);
   });
@@ -240,8 +293,15 @@ describe("scoring", () => {
 
   it("reindexes search_text from the title", async () => {
     const p = await newProduct("reindex");
-    await saveProduct(owner, { id: p.id, expectedVersion: p.version, title: "Labradorite Drop" });
-    const row = await db.product.findUniqueOrThrow({ where: { id: p.id }, select: { searchText: true } });
+    await saveProduct(owner, {
+      id: p.id,
+      expectedVersion: p.version,
+      title: "Labradorite Drop",
+    });
+    const row = await db.product.findUniqueOrThrow({
+      where: { id: p.id },
+      select: { searchText: true },
+    });
     expect(row.searchText).toContain("Labradorite");
   });
 });

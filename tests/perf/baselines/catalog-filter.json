@@ -1,0 +1,14 @@
+{
+  "single-attribute": {
+    "p95Ms": 22.08
+  },
+  "pagination-last-page": {
+    "p95Ms": 10.04
+  },
+  "three-filter-PLP": {
+    "p95Ms": 24.79
+  },
+  "facet-counts": {
+    "p95Ms": 43.68
+  }
+}

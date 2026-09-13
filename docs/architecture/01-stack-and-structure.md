@@ -2785,3 +2785,170 @@ the rest of the window. The test asserts the absence of `band`, `available` and 
 returns what each axis can still reach given a partial selection, and the axis keeps
 offering all five sizes. Hiding "US 5" makes a shopper believe the size does not exist,
 rather than that it is not made in white gold.
+
+---
+
+### 6.20 P09 field notes
+
+**The `attribute_data_type` enum P05 shipped was not the one the documents specify, and the
+difference was three separate defects.** `02 §1.9` and `03 §3.2` state the same list —
+`text | long_text | number | boolean | select | multi_select | date | composite`. P05
+transcribed a superseded draft: `text | number | decimal | boolean | select | multi_select |
+measurement | currency | date`.
+
+1. `long_text` and `composite` were **missing**, while `chk_pav_one_value` counts `value_json`
+   among the value columns. The column existed for a type that could not be declared.
+2. `decimal` and `measurement` were **present**, and they are not storage types — `03 §3.2`
+   maps both onto `number`, differing only in validation and in whether `unit` is required.
+   The damage was not cosmetic: `chk_attributes_filterable_type`, which *was* transcribed
+   correctly, permits `is_filterable` only for `('select','multi_select','boolean','number')`.
+   So a Measurement attribute — which `03 §3.2`'s own table calls range-filterable — could not
+   be marked filterable. The merchandiser ticks a box and gets a constraint violation naming a
+   check they have never heard of. **Two rows transcribed from two drafts contradict each
+   other, and the contradiction is invisible until someone uses the feature.**
+3. `currency` was **present**, and `03 §3.1` refuses it in as many words. An EAV money value is
+   an amount with no market, no currency FK, no `_minor` suffix and no CHECK — R02 reached
+   without touching one of the composite foreign keys built to prevent it.
+
+All three attribute tables were empty, verified before writing the migration. The migration
+maps `decimal`/`measurement` → `number` anyway and **raises** on a `currency` row rather than
+mapping it, because nothing else in the list means "an amount" and inventing a target is how a
+refused type returns under another name.
+
+**`ALTER COLUMN … TYPE` on an enum is refused while a CHECK constraint compares that column to
+literals.** Postgres answers `operator does not exist: attribute_data_type_new =
+attribute_data_type` — it is declining to guess which enum the merchandiser meant. The
+constraint comes off and goes straight back on inside the same file and transaction.
+
+**The migration guard learned the one legitimate drop, and gained a second rule that found a
+real hole.** Rule A was already there: a migration must not drop a protected object without
+re-creating it. Its rebuild exception matched only `CREATE`, never `ADD CONSTRAINT`, and only
+within six lines — so a constraint drop paired with a re-add was never recognised. Widening it
+surfaced Rule B, which matters more:
+
+> Where a migration CREATES a protected object and the addendum cannot overwrite it, the two
+> definitions must match exactly.
+
+`npm run db:deploy` is `migrate deploy && db:addendum`, so the addendum runs last — but "last"
+only wins if it can overwrite. Its indexes mostly open with `DROP INDEX IF EXISTS`, so they
+can, and Prisma's plain `idx_jobs_claim` is duly replaced by the partial one. Its CHECK
+constraints **cannot**: they are `ADD CONSTRAINT` inside `DO $$ … EXCEPTION WHEN
+duplicate_object THEN NULL`, which by design does nothing when the name is taken. A migration
+adding `chk_attributes_filterable_type` with one extra enum member would have been the version
+the database kept, permanently — and every check that existed before this one would still have
+passed. `db:addendum` exits 0. The manifest test asserts the constraint is **present**.
+**Presence is not the same claim as correctness.** Both rules were verified by deliberately
+breaking the migration in each of the two ways and confirming each error.
+
+**An assertion whose subject does not exist yet can arm itself.** P09's named test is `03
+§4.2`'s "an unpriced market must not get an empty indexable facet page" — and `prices` is built
+by **P10**. Today "unpriced market" is every market, so the obvious test would pass against a
+database where nothing is priced: the recurring failure of this codebase, an assertion passing
+loudest on the day its subject is absent. So the price gate is a **named hole**,
+`priceVisibility()` in `src/lib/catalog/visibility.ts`, and the test probes
+`to_regclass('public.prices')`. While the table is absent it asserts the clause is absent too;
+the moment P10's migration lands it requires the clause. Verified by creating a stub `prices`
+table and watching the test fail with the message that names the function to fix. Nobody has to
+remember it.
+
+**A 120 ms budget met at 21 ms proves nothing on its own.** Five thousand rows is small enough
+that a sequential scan also clears the budget — drop `idx_pav_filter` and every timing
+assertion still passes, until the catalogue reaches the size at which it does not, which is
+production. The bench therefore asserts the **plan**, not only the clock.
+
+Three further ways the bench could have passed for the wrong reason, each closed:
+- *The fixture might be absent.* `beforeAll` asserts 5,000 products and 5,000 category rows.
+- *The filter might match everything or nothing.* The single-attribute case asserts a full page
+  of results; the three-filter case asserts its set is non-empty and strictly smaller than the
+  single-filter set. Three predicates over one deterministic fixture intersect on
+  `i ≡ 0 (mod 420)` — a case that accidentally matched nothing would be gloriously fast.
+- *The named cases might collapse into one.* `09 §2.10` gives this file two budgets; a bench
+  with two thresholds and no case names has one. Both are named, both baselined.
+
+**I claimed a deep page would force a full index range. It does the opposite, and that is the
+point.** A keyset cursor makes a late page *cheaper* — `(rank, id) > cursor` is a seek, not a
+skip. The case is now `pagination-is-flat` and asserts a **ratio**: the last page must not cost
+materially more than the first, which is exactly what OFFSET would break, and would break
+without any single commit looking like the cause. The genuine full pass is `facet-counts`,
+which cannot short-circuit because an aggregate has to see every row.
+
+**Leave-one-out is per attribute, not per dimension class.** Selecting `setting=bezel` must not
+zero the other settings, but must still narrow `finish`. One `GROUP BY` cannot carry a `WHERE`
+that differs per group, so the clause for attribute A is waived on exactly the rows being
+counted for A: `AND (pav.attribute_id = $a OR EXISTS (…))`. One statement, N aggregates.
+`count(DISTINCT b.id)` everywhere and never `count(*)`: materials are reached through variants,
+so a ring in three sizes all in 14K yellow would print `(3)` beside a facet returning one card
+— the same error `03 §4.2` corrects in the stone breakdown.
+
+**Dropping an unresolvable facet value silently is the bug the document warns about, not the
+fix for it.** `03 §3.5` requires that an unparseable facet never produce "an unfiltered listing
+pretending to be filtered". Resolving to ids and dropping what does not resolve *is* a widening
+— rename an option from `matte` to `matt` and every existing link returns the whole category
+under a heading that still says Matte. `parseCatalogFilters` therefore returns `dropped`
+alongside `filters`, and chips render from `filters`. Nothing is at stake for a crawler (any
+URL with `searchParams` is already `no-store, noindex`); what is at stake is a shopper being
+shown five hundred rings under a heading that promised four.
+
+**Category applicability is deliberately not enforced on write.** `applies_to_category_id`
+decides which fields the form renders and which facets a listing offers. Enforcing it in
+`setAttributeValues` would make a product unsaveable the moment someone re-filed it from RINGS
+to CHAINS: the save carries values for attributes that no longer apply, each is refused, and
+the only way forward is to delete a merchandiser's typed data as a side effect of a filing
+change. Out-of-scope values simply stop being shown.
+
+**`data_type` cannot change once values exist.** Flipping `select` to `text` leaves every
+existing value in `option_id` while every reader looks in `value_text`. The product pages go
+blank and not one error is raised — `chk_pav_one_value` is satisfied, because each row still
+has exactly one value, just not the one anybody reads.
+
+**Three guards written in earlier phases caught this phase's code, and all three were right.**
+`services-authorized.test.ts` flagged `setAttributeValues` as an exported mutator with no
+permission check. Its premise is literally true here — the CSV import at P29 will call it, and
+it is not a server action — so the fix was to authorize, never to exempt. `boundaries/dependencies`
+and `actions-shape.test.ts` then both flagged the action file for importing `@/lib/db`: an
+action may not own a transaction. The standalone forms moved into the service, where anything
+can compose them.
+
+**A fixture that hides from a hard-rule-8 guard has to be closed from the other side.** The
+5,000 synthetic products broke `drift.test.ts`'s "seeds NO product" and the seed's own category
+count. Excluding them by prefix opens a hole, so the guard now also asserts that **every**
+product present is visibly synthetic in *both* slug and title — no row can hide behind the
+prefix while reading like a real piece on an admin screen. And `seedPerfCatalog` gained a
+second gate that does not depend on `APP_ENV`: it refuses any database holding even one
+non-fixture product. Both verified by inserting a real-looking row and watching each refuse.
+
+**Open, and flagged rather than decided quietly:** per-market activation is computed for
+facets with `is_auto = false` too. `03 §4.2`'s "a row with `is_auto = false` is never touched"
+sits in the `ensureStoneFacets` bullet list, which is about the facet row and its global
+`is_active`; the per-market table is introduced in the paragraph after. My reading is that an
+indexable page with nothing on it is a harm that does not become acceptable because someone
+wrote a good introduction for a different market — so `curated_facets.is_active` is never
+written by the activation pass, and `curated_facet_markets.is_active` is. If the client wants a
+manual facet pinned live in a thin market, that is a column, not a redesign.
+
+**`prisma dev`'s Postgres runs no autovacuum, and a benchmark that ignores that measures its
+own history.** `last_autoanalyze` is null on every table and stays null. The fixture originally
+INSERTed 5,000 products and then UPDATEd `primary_category_id` — Postgres has no in-place
+update, so that second pass left 5,000 dead tuples that nothing ever reclaimed. `facet-counts`,
+the one case that cannot short-circuit, climbed **33 → 70 → 121 ms over three consecutive
+runs**, and the 25% regression band would have failed spuriously until someone deleted it.
+Two fixes: the fixture sets `primary_category_id` in the INSERT, and both the seed and the
+bench's `beforeAll` run `VACUUM ANALYZE` over the fixture tables. Three consecutive runs now
+give 43.74 / 43.47 / 43.68 ms. Recorded here because it applies to every local measurement this
+project will take, not only this one.
+
+**The scratch database I created to verify the migration chain was a fiction.** `prisma dev`'s
+WASM server **ignores the database name in the connection string entirely**: `CREATE DATABASE
+md_chain_check` succeeded, `pg_database` listed it, and `current_database()` on a connection to
+it returned `template1`. `migrate deploy` then reported "No pending migrations to apply"
+against what looked like an empty database. So there is no local isolation, `shadowDatabaseUrl`
+against this server means nothing, and any future test that assumes a separate database is
+testing the dev database under another name. Verifying a migration chain from zero here
+requires a real reset, which is what P09 did — with consent, against a database holding 0 live
+users, 0 real products, 0 media and 0 sessions. All seven migrations replayed cleanly.
+
+**I reported three identical benchmark runs as evidence of stability. The suite had not run at
+all** — a missing import made every case error out, and the numbers I read were the previous
+baseline file, unchanged. Identical results across runs are not a strong signal of stability;
+they are first a signal that nothing executed. The loop now asserts `6 passed` before reading
+the file.

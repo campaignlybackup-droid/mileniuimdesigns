@@ -1,5 +1,5 @@
 import "server-only";
-import type { Tx } from "@/lib/db/transaction";
+
 import { db } from "@/lib/db/client";
 import { withTransaction } from "@/lib/db/transaction";
 import { requirePermission, type Actor } from "@/lib/rbac";
@@ -52,7 +52,10 @@ export function optionSignature(
 
 /** Every combination of one value per axis. */
 export function cartesian<T>(axes: T[][]): T[][] {
-  return axes.reduce<T[][]>((acc, axis) => acc.flatMap((row) => axis.map((v) => [...row, v])), [[]]);
+  return axes.reduce<T[][]>(
+    (acc, axis) => acc.flatMap((row) => axis.map((v) => [...row, v])),
+    [[]],
+  );
 }
 
 /** Ten axes of two values each is 1,024 variants — almost always a mistake, and one that
@@ -90,8 +93,13 @@ export async function generateVariants(
       where: { productId: product.id },
       orderBy: { position: "asc" },
       select: {
-        id: true, name: true, position: true,
-        values: { orderBy: { position: "asc" }, select: { id: true, value: true, materialId: true } },
+        id: true,
+        name: true,
+        position: true,
+        values: {
+          orderBy: { position: "asc" },
+          select: { id: true, value: true, materialId: true },
+        },
       },
     });
     if (options.length === 0) {
@@ -107,7 +115,9 @@ export async function generateVariants(
       return { optionId: o.id, values };
     });
 
-    const combos = cartesian(axes.map((a) => a.values.map((v) => ({ optionId: a.optionId, ...v }))));
+    const combos = cartesian(
+      axes.map((a) => a.values.map((v) => ({ optionId: a.optionId, ...v }))),
+    );
 
     if (product.isOneOfAKind && combos.length > 1) {
       // idx_variants_ooak_single would refuse the second row anyway; failing here says
@@ -155,9 +165,8 @@ export async function generateVariants(
       // The metal axis carries a material; the size axis does not. The SKU needs both,
       // and the ring size when there is one.
       const materialId = combo.find((c) => c.materialId)?.materialId ?? null;
-      const ringSize = combo
-        .map((c) => input.ringSizeByValueId?.[c.id])
-        .find((s) => s !== undefined) ?? null;
+      const ringSize =
+        combo.map((c) => input.ringSizeByValueId?.[c.id]).find((s) => s !== undefined) ?? null;
 
       const sku = await buildSku(tx, {
         categoryId: product.primaryCategoryId ?? "",
@@ -254,7 +263,9 @@ export async function getVariantMatrix(productId: string): Promise<VariantMatrix
     where: { productId },
     orderBy: { position: "asc" },
     select: {
-      id: true, name: true, position: true,
+      id: true,
+      name: true,
+      position: true,
       values: {
         orderBy: { position: "asc" },
         select: { id: true, value: true, position: true, materialId: true },
@@ -266,7 +277,9 @@ export async function getVariantMatrix(productId: string): Promise<VariantMatrix
     where: { productId, deletedAt: null, isActive: true },
     orderBy: { position: "asc" },
     select: {
-      id: true, sku: true, optionSignature: true,
+      id: true,
+      sku: true,
+      optionSignature: true,
       optionValues: { select: { optionId: true, optionValueId: true } },
       media: { take: 1, orderBy: { position: "asc" }, select: { mediaId: true } },
     },
@@ -278,7 +291,10 @@ export async function getVariantMatrix(productId: string): Promise<VariantMatrix
       name: o.name,
       position: o.position,
       values: o.values.map((v) => ({
-        valueId: v.id, value: v.value, position: v.position, materialId: v.materialId,
+        valueId: v.id,
+        value: v.value,
+        position: v.position,
+        materialId: v.materialId,
       })),
     })),
     variants: variants.map((v) => ({

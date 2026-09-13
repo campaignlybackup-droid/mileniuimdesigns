@@ -8,6 +8,7 @@ import { seedStones } from "./04-stones";
 import { seedMaterials } from "./05-materials";
 import { seedSettings } from "./06-settings";
 import { seedEmailTemplates } from "./07-email-templates";
+import { PERF_PREFIX } from "../fixtures/perf-catalog";
 
 /**
  * Development and bootstrap seed — 02 §6.
@@ -33,7 +34,9 @@ async function main(): Promise<void> {
     const before = {
       users: await db.user.count(),
       customers: await db.customer.count(),
-      products: await db.product.count(),
+      products: await db.product.count({
+        where: { NOT: { slug: { startsWith: PERF_PREFIX } } },
+      }),
     };
     console.log("seeding markets, currencies, locations…");
     await seedMarkets(db);
@@ -51,17 +54,23 @@ async function main(): Promise<void> {
     console.log("seeding email template shells…");
     await seedEmailTemplates(db);
 
-    const [permissions, roles, grants, users, groups, categories, stones, materials, products] = await Promise.all([
-      db.permission.count(),
-      db.role.count(),
-      db.rolePermission.count(),
-      db.user.count(),
-      db.customerGroup.count(),
-      db.category.count({ where: { deletedAt: null } }),
-      db.stone.count({ where: { deletedAt: null } }),
-      db.material.count({ where: { deletedAt: null } }),
-      db.product.count(),
-    ]);
+    const [permissions, roles, grants, users, groups, categories, stones, materials, products] =
+      await Promise.all([
+        db.permission.count(),
+        db.role.count(),
+        db.rolePermission.count(),
+        db.user.count(),
+        db.customerGroup.count(),
+        // The performance fixture creates one synthetic root category (09 §2.10). It is
+        // excluded BY ITS DOCUMENTED PREFIX rather than by a wildcard, so the invariant below
+        // still counts every real category — including one a future seed adds by mistake.
+        db.category.count({
+          where: { deletedAt: null, NOT: { slug: { startsWith: PERF_PREFIX } } },
+        }),
+        db.stone.count({ where: { deletedAt: null } }),
+        db.material.count({ where: { deletedAt: null } }),
+        db.product.count({ where: { NOT: { slug: { startsWith: PERF_PREFIX } } } }),
+      ]);
     console.log(
       `\n  permissions ${permissions}   roles ${roles}   grants ${grants}   groups ${groups}` +
         `\n  categories ${categories}   stones ${stones}   materials ${materials}` +

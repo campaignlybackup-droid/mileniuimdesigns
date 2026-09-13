@@ -130,18 +130,26 @@ export abstract class AppError extends Error {
   abstract readonly copyKey: string;
   /** Whether retrying the same request could plausibly succeed. */
   readonly retryable: boolean = false;
-  /** VALIDATION_FAILED family only. */
+  /** VALIDATION_FAILED family only. Field-keyed messages, safe to show a customer. */
   readonly fields?: Record<string, string[]>;
   /** Logged, NEVER serialised to a client. */
   readonly context: Record<string, unknown> = {};
 
   constructor(
     message: string,
-    options?: { context?: Record<string, unknown>; cause?: unknown },
+    options?: {
+      context?: Record<string, unknown>;
+      cause?: unknown;
+      fields?: Record<string, string[]>;
+    },
   ) {
     super(message, options?.cause !== undefined ? { cause: options.cause } : undefined);
     this.name = new.target.name;
     if (options?.context) this.context = options.context;
+    // `fields` is the only part of an error that `toWireError` sends to a client, so it is
+    // set HERE rather than by a subclass assigning over a readonly property with a cast — a
+    // cast that would also be the obvious way to smuggle `context` out to the browser.
+    if (options?.fields) this.fields = options.fields;
   }
 }
 

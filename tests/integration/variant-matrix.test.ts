@@ -25,7 +25,6 @@ let productId = "";
 let metalOptionId = "";
 let sizeOptionId = "";
 const sizeValueIds: string[] = [];
-let yellowValueId = "";
 let whiteValueId = "";
 
 beforeAll(async () => {
@@ -53,10 +52,10 @@ beforeAll(async () => {
     select: { id: true },
   });
   metalOptionId = metal.id;
-  yellowValueId = (await db.productOptionValue.create({
+  await db.productOptionValue.create({
     data: { optionId: metal.id, value: "14K Yellow Gold", materialId: yellow.id, position: 0 },
     select: { id: true },
-  })).id;
+  });
   whiteValueId = (await db.productOptionValue.create({
     data: { optionId: metal.id, value: "14K White Gold", materialId: white.id, position: 1 },
     select: { id: true },

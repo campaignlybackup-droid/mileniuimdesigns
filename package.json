@@ -25,7 +25,10 @@
     "create:admin": "dotenv -e .env -- tsx scripts/create-admin.ts",
     "test:db": "vitest run tests/db",
     "db:addendum": "dotenv -e .env -- tsx scripts/apply-addendum.ts",
-    "db:guard": "tsx scripts/guard-migration.ts"
+    "db:guard": "tsx scripts/guard-migration.ts",
+    "perf:seed": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts",
+    "perf:drop": "dotenv -e .env.local -e .env -- tsx scripts/seed-perf-fixture.ts --drop",
+    "test:perf": "vitest bench --run tests/perf"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",

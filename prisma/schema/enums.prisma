@@ -192,16 +192,26 @@ enum CollectionRuleOperator {
   @@map("collection_rule_operator")
 }
 
+/// The CANONICAL list is 02 §1.9 and 03 §3.2: text, long_text, number, boolean, select,
+/// multi_select, date, composite. The admin UI's vocabulary is deliberately RICHER than this
+/// one — "Decimal" and "Measurement" are both `number`, differing only in validation and in
+/// whether `attributes.unit` is required. Two more enum values would be two more ALTER TYPE
+/// migrations for zero query benefit (03 §3.2).
+///
+/// `currency` is REFUSED and is not a member. An EAV money value is an amount with no market,
+/// no currency FK, no `_minor` suffix and no CHECK — and the first thing anyone does with one
+/// is show it to a shopper, which is R02 with a plausible story attached. A price is a
+/// `prices` row; a cost is `prices.cost_minor`; a non-price number with a unit is `number`
+/// plus `attributes.unit` (03 §3.1).
 enum AttributeDataType {
   text
+  long_text
   number
-  decimal
   boolean
   select
   multi_select
-  measurement
-  currency
   date
+  composite
 
   @@map("attribute_data_type")
 }

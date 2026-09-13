@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: "node",
     setupFiles: ["tests/setup/env.ts"],
-    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
+    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.bench.ts"],
     // The local Prisma dev server caps at ~10 connections (00-CONTEXT §3). Integration
     // tests therefore run single-file to avoid exhausting the pool and failing in ways
     // that look like application bugs.
