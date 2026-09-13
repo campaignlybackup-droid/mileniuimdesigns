@@ -31,7 +31,7 @@ describe("migration drift", () => {
     // remembered to add `media_tags` to it (tests/db/schema-coverage.ts).
     const present = await tables();
     const declared = [...tablesInSchema()].sort();
-    expect(declared.length).toBeGreaterThanOrEqual(74);
+    expect(declared.length).toBeGreaterThanOrEqual(106);
     expect(declared.filter((t) => !present.has(t))).toEqual([]);
   });
 

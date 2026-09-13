@@ -64,7 +64,7 @@ function creationsIn(sql: string): Creation[] {
   const patterns = [
     /ADD CONSTRAINT "([^"]+)"/g,
     /CREATE (?:UNIQUE )?INDEX (?:CONCURRENTLY )?(?:IF NOT EXISTS )?"([^"]+)"/g,
-    /CREATE (?:OR REPLACE )?TRIGGER "([^"]+)"/g,
+    /CREATE (?:OR REPLACE )?(?:CONSTRAINT )?TRIGGER "([^"]+)"/g,
   ];
   for (const re of patterns) {
     for (const m of text.matchAll(re)) {

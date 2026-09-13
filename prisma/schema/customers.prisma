@@ -58,6 +58,8 @@ model Customer {
   currencyTotals CustomerCurrencyTotal[]
   sessions       Session[]
   otpRequests    OtpRequest[]
+  addresses      Address[]
+  wishlists      Wishlist[]
 
   @@index([createdAt(sort: Desc)], map: "idx_customers_created")
   @@index([customerGroupId], map: "idx_customers_group")

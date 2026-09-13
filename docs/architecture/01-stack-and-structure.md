@@ -3413,3 +3413,70 @@ which is the exact shape `15 §1.1` exists to prevent. Verified in both directio
 **And a fifth scan-reads-its-own-comment.** `error-taxonomy.test.ts` matched the sentence in
 `predicate.ts` explaining why a second Error base is forbidden. It predates
 `tests/support/source.ts` and now uses it. Every guard written from here starts with `codeOf`.
+
+---
+
+### 6.27 P18 field notes
+
+Thirty-one tables, thirteen enums, ninety-seven hand-written constraints and indexes. The
+count of protected objects went from 193 to 290 in one phase, which is why the manifest being
+DERIVED from `addendum.sql` rather than hand-typed mattered here more than anywhere.
+
+**The addendum refused to apply, and the refusal found a missing constraint target.**
+`checkout_gift_cards` carries `(gift_card_id, currency_code) → gift_cards (id, currency_code)`,
+and `gift_cards` had no unique on that pair — P10 built the table without it, so the FK `02
+§7.2` specifies was *unstatable* rather than merely absent. `uq_gift_cards_id_currency` is
+informationless on its own (`id` is already the primary key), exactly like `uq_orders_id_money`
+and `uq_product_variants_id_product`, and for the same reason: it is what makes a child's
+denormalised currency provably the parent's. Without it an INR gift card attaches to a USD
+checkout session and ₹10,000 discharges $10,000 of liability — a rupee instrument settling a
+dollar debt at an invented rate, **arrived at by omission rather than by decision**.
+
+That is the sixth register-vs-implementation gap, and the first one a *failing operation* found
+rather than a test. Worth noting: the composite FK could not be written, so the error was
+immediate and precise. A nullable FK would have been silently absent.
+
+**The totals trigger has to be deferred, and that is the whole design.** `orders.subtotal_minor`
+must equal the sum of its lines. It cannot be a CHECK — a CHECK cannot read another table — and
+it cannot fire per statement, because `createOrderFromCart()` inserts the header BEFORE its
+items. An immediate trigger would reject every order at the moment it was created, and **the
+only way to ship would be to delete the constraint**. `CONSTRAINT TRIGGER … INITIALLY DEFERRED`
+runs once, at commit, when the whole order exists. Two of them, one per side: the case that
+actually happens is a line adjusted or deleted without the header being recomputed.
+
+**Writing the test for a deferred constraint exposed three things about testing them.**
+
+1. *A rollback proves nothing.* Every other constraint test in this repository rolls back, and
+   a deferred constraint does not fire until COMMIT — so the same shape would have passed
+   whether or not the trigger existed. These tests commit, which means they leave rows behind.
+2. *So they must clean at both ends.* The first failing run left an order row, and the next run
+   then failed on a primary key rather than on the thing under test — a test failing for the
+   wrong reason looks exactly like a test failing for the right one.
+3. *The cleanup tripped the constraint it was cleaning up after.* Each `client.query` is its
+   own transaction, so deleting the lines committed while the header still claimed a subtotal.
+   Wrapping the cleanup in one transaction is what makes it work — and it exercises the
+   "order is gone by commit" branch in the trigger, which existed precisely for that.
+
+**The extractor did not recognise `CREATE CONSTRAINT TRIGGER`**, so the two new triggers were
+protected by neither the guard nor the manifest — invisible to both, while the manifest count
+still said everything was covered. Found by the trigger count reading 2 when four triggers
+existed. Both regexes fixed. **A guard whose pattern is narrower than the thing it guards
+reports success for the objects it cannot see.**
+
+**The converse assertions that make the rest mean something.** `chk_inventory_no_oversell` is
+tested by rejecting `reserved > on_hand` AND by *accepting* `reserved = on_hand` — a constraint
+written `<` instead of `<=` would make the LAST unit of everything unsellable, which is a
+silent inventory leak nobody reports as a bug. The composite order FK is tested by rejecting a
+wrong currency, rejecting a wrong market, AND accepting the order's own money, because a
+foreign key that refused everything would pass the first two. And the webhook dedupe asserts a
+second delivery is actually refused, not merely that the index exists.
+
+**`balance_before` is a generated column, not a written one.** A ledger whose before and after
+are both supplied by the caller can record a movement that never happened. Prisma cannot
+express `GENERATED ALWAYS AS … STORED` at all, so it is hand-written and the test asserts
+`is_generated = 'ALWAYS'` rather than asserting the column exists.
+
+**Not done in this phase, and not claimed:** the services. P18 is Schema IV — the tables, the
+constraints and the indexes. `reserveStock`, `commitStock`, `createOrderFromCart` and the
+checkout state machine are P19 and P20, and they are the phases where `one-of-a-kind.test.ts`
+runs at `repeats: 200`. What exists now is the floor those services will be written against.

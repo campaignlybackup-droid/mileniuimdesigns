@@ -90,6 +90,8 @@ model Product {
   marketSort           ProductMarketSort[]
   prices               Price[]
   priceFormulaBindings PriceFormulaBinding[]
+  wishlistItems        WishlistItem[]
+  backInStockRequests  BackInStockRequest[]
 
   @@map("products")
 }
@@ -128,6 +130,10 @@ model ProductVariant {
   priceFormulaBindings  PriceFormulaBinding[]
   variantComponentCosts VariantComponentCost[]
   recalcRunLines        RecalcRunLine[]
+  inventoryItems        InventoryItem[]
+  wishlistItems         WishlistItem[]
+  backInStockRequests   BackInStockRequest[]
+  cartItems             CartItem[]
 
   /// The composite-FK target that makes a denormalised product_id on another table
   /// provably THIS variant's own, rather than a value someone passed in (04 §2.2).

@@ -178,15 +178,16 @@ model SeoMetadata {
 /// Chains are flattened and self-references refused, because renaming A→B then B→A
 /// otherwise takes the product permanently offline at both URLs (02 §7.10).
 model Redirect {
-  id         String   @id @default(uuid(7)) @db.Uuid
-  fromPath   String   @map("from_path")
-  toPath     String   @map("to_path")
-  statusCode Int      @default(301) @map("status_code") @db.SmallInt
-  marketCode String?  @map("market_code") @db.Char(2)
-  isActive   Boolean  @default(true) @map("is_active")
-  hitCount   BigInt   @default(0) @map("hit_count")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id           String        @id @default(uuid(7)) @db.Uuid
+  fromPath     String        @map("from_path")
+  toPath       String        @map("to_path")
+  statusCode   Int           @default(301) @map("status_code") @db.SmallInt
+  marketCode   String?       @map("market_code") @db.Char(2)
+  isActive     Boolean       @default(true) @map("is_active")
+  hitCount     BigInt        @default(0) @map("hit_count")
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  redirectHits RedirectHit[]
 
   @@map("redirects")
 }

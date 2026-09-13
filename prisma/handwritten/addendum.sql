@@ -718,3 +718,313 @@ EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "collection_rule_values" ADD CONSTRAINT "chk_crv_one_value" CHECK (num_nonnulls(value_uuid, value_text) = 1);
 EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- ── Schema IV — inventory and commerce. P18 ──────────────────────────────────────
+-- 02 §2.6–§2.7. Everything Prisma cannot express, and the three risks it closes.
+
+-- R01's floor. Whatever the service layer believes about availability, the database refuses
+-- to promise more of a thing than exists. This is the constraint `one-of-a-kind.test.ts`
+-- hammers at repeats: 200 per commit.
+DO $$ BEGIN
+  ALTER TABLE "inventory_items" ADD CONSTRAINT "chk_inventory_on_hand_nonneg" CHECK (on_hand_quantity >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "inventory_items" ADD CONSTRAINT "chk_inventory_reserved_nonneg" CHECK (reserved_quantity >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "inventory_items" ADD CONSTRAINT "chk_inventory_no_oversell" CHECK (reserved_quantity <= on_hand_quantity);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- A one-of-a-kind piece is one piece. Not one per location.
+DO $$ BEGIN
+  ALTER TABLE "inventory_items" ADD CONSTRAINT "chk_inventory_ooak_qty" CHECK (NOT is_one_of_a_kind OR (on_hand_quantity <= 1 AND incoming_quantity = 0));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_inventory_items_ooak_single_row" ON "inventory_items" (variant_id) WHERE is_one_of_a_kind;
+-- The denormalised flag is provably the variant's own.
+DO $$ BEGIN
+  ALTER TABLE "inventory_items" ADD CONSTRAINT "fk_inventory_items_variant_ooak" FOREIGN KEY (variant_id, is_one_of_a_kind) REFERENCES "product_variants" (id, is_one_of_a_kind) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_inventory_items_variant_location" ON "inventory_items" (variant_id, location_id);
+CREATE INDEX IF NOT EXISTS "idx_inventory_low_stock" ON "inventory_items" (location_id, available_quantity) WHERE available_quantity <= 2;
+
+DO $$ BEGIN
+  ALTER TABLE "inventory_transactions" ADD CONSTRAINT "chk_inventory_tx_nonzero" CHECK (quantity_delta <> 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- A generated column, so the ledger's two ends cannot disagree: Prisma cannot express
+-- GENERATED ALWAYS AS … STORED at all (01 §1.2).
+ALTER TABLE "inventory_transactions" DROP COLUMN IF EXISTS "balance_before";
+ALTER TABLE "inventory_transactions" ADD COLUMN "balance_before" INTEGER
+  GENERATED ALWAYS AS (balance_after - quantity_delta) STORED;
+CREATE INDEX IF NOT EXISTS "idx_inventory_tx_item" ON "inventory_transactions" (inventory_item_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS "idx_inventory_tx_variant" ON "inventory_transactions" (variant_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS "idx_inventory_tx_order" ON "inventory_transactions" (order_id) WHERE order_id IS NOT NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "reservations" ADD CONSTRAINT "chk_reservations_ref" CHECK ((ref_kind = 'cart' AND cart_id IS NOT NULL AND order_id IS NULL) OR (ref_kind = 'order' AND order_id IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_reservations_active_cart" ON "reservations" (cart_id) WHERE status = 'active' AND cart_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_reservations_expiry" ON "reservations" (expires_at) WHERE status = 'active';
+CREATE INDEX IF NOT EXISTS "idx_reservations_order" ON "reservations" (order_id) WHERE order_id IS NOT NULL;
+DO $$ BEGIN
+  ALTER TABLE "reservation_lines" ADD CONSTRAINT "chk_reservation_lines_qty" CHECK (quantity > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "addresses" ADD CONSTRAINT "chk_addresses_country_upper" CHECK (country_code = upper(country_code));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_addresses_customer" ON "addresses" (customer_id) WHERE NOT is_archived;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_wishlists_default" ON "wishlists" (customer_id) WHERE is_default;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_wishlists_share" ON "wishlists" (share_token_hash) WHERE share_token_hash IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS "uq_wishlist_items" ON "wishlist_items"
+  (wishlist_id, product_id, coalesce(variant_id, '00000000-0000-0000-0000-000000000000'::uuid));
+
+DO $$ BEGIN
+  ALTER TABLE "back_in_stock_requests" ADD CONSTRAINT "chk_bisr_email" CHECK (email = lower(btrim(email)));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_bisr_pending" ON "back_in_stock_requests"
+  (lower(email), product_id, coalesce(variant_id, '00000000-0000-0000-0000-000000000000'::uuid), market_code)
+  WHERE notified_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_bisr_variant" ON "back_in_stock_requests" (variant_id) WHERE notified_at IS NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_carts_token_hash" ON "carts" (token_hash);
+CREATE INDEX IF NOT EXISTS "idx_carts_customer_active" ON "carts" (customer_id, updated_at DESC) WHERE status = 'active' AND customer_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_carts_abandoned" ON "carts" (last_activity_at) WHERE status = 'active' AND email IS NOT NULL AND abandoned_email_sent_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_carts_drafts" ON "carts" (created_by_user_id, updated_at DESC) WHERE created_by_user_id IS NOT NULL AND status = 'active';
+DO $$ BEGIN
+  ALTER TABLE "cart_items" ADD CONSTRAINT "chk_cart_items_qty" CHECK (quantity > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "cart_items" ADD CONSTRAINT "chk_cart_items_amounts" CHECK (unit_list_minor >= 0 AND unit_final_minor >= 0 AND unit_final_minor <= unit_list_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- ON UPDATE RESTRICT: a cart's market may not be edited out from under its items.
+DO $$ BEGIN
+  ALTER TABLE "cart_items" ADD CONSTRAINT "fk_cart_items_cart_market" FOREIGN KEY (cart_id, market_code) REFERENCES "carts" (id, market_code) ON DELETE CASCADE ON UPDATE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "checkout_sessions" ADD CONSTRAINT "fk_checkout_sessions_cart_market" FOREIGN KEY (cart_id, market_code) REFERENCES "carts" (id, market_code) ON DELETE CASCADE ON UPDATE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "checkout_sessions" ADD CONSTRAINT "fk_checkout_sessions_market" FOREIGN KEY (market_code, currency_code) REFERENCES "markets" (code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_checkout_sessions_expiry" ON "checkout_sessions" (expires_at) WHERE order_id IS NULL;
+
+-- BOTH composite FKs. With only the card-side one, an INR card attaches to a USD session and
+-- ₹10,000 is read by the USD order as $10,000.00 — a rupee instrument discharging a dollar
+-- liability at an invented rate, arrived at by omission.
+DO $$ BEGIN
+  ALTER TABLE "checkout_gift_cards" ADD CONSTRAINT "fk_cgc_card_currency" FOREIGN KEY (gift_card_id, currency_code) REFERENCES "gift_cards" (id, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "checkout_gift_cards" ADD CONSTRAINT "fk_cgc_session_currency" FOREIGN KEY (checkout_session_id, currency_code) REFERENCES "checkout_sessions" (id, currency_code) ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "checkout_gift_cards" ADD CONSTRAINT "chk_cgc_amount" CHECK (applied_amount_minor > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_orders_idempotency_key" ON "orders" (idempotency_key);
+CREATE UNIQUE INDEX IF NOT EXISTS "uq_orders_number" ON "orders" (order_number);
+DO $$ BEGIN
+  ALTER TABLE "orders" ADD CONSTRAINT "chk_orders_amounts" CHECK (subtotal_minor >= 0 AND discount_total_minor >= 0 AND shipping_total_minor >= 0 AND tax_total_minor >= 0 AND gift_card_total_minor >= 0 AND total_minor >= 0 AND refunded_total_minor >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "orders" ADD CONSTRAINT "chk_orders_refund_cap" CHECK (refunded_total_minor <= total_minor + gift_card_total_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- Both directions: paid means a timestamp, and a timestamp means paid.
+DO $$ BEGIN
+  ALTER TABLE "orders" ADD CONSTRAINT "chk_orders_paid_at" CHECK ((payment_status IN ('paid','partially_refunded','refunded')) = (paid_at IS NOT NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_orders_list" ON "orders" (market_code, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS "idx_orders_customer" ON "orders" (customer_id, created_at DESC) WHERE customer_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_orders_email" ON "orders" (lower(email), created_at DESC);
+CREATE INDEX IF NOT EXISTS "idx_orders_number_trgm" ON "orders" USING GIN (order_number gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS "idx_orders_unfulfilled" ON "orders" (market_code, placed_at) WHERE fulfillment_status IN ('unfulfilled','partially_fulfilled') AND status <> 'cancelled';
+CREATE INDEX IF NOT EXISTS "idx_orders_unfulfillable" ON "orders" (created_at DESC) WHERE status = 'paid_unfulfillable';
+CREATE INDEX IF NOT EXISTS "idx_orders_paid_at" ON "orders" (paid_at) WHERE paid_at IS NOT NULL;
+
+-- The composite FK every order child carries. A line in another currency is refused.
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "fk_order_items_order_money" FOREIGN KEY (order_id, market_code, currency_code) REFERENCES "orders" (id, market_code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "chk_order_items_qty" CHECK (quantity > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "chk_order_items_counters" CHECK (fulfilled_quantity BETWEEN 0 AND quantity AND returned_quantity BETWEEN 0 AND quantity);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- The identity 04 §1.4.2's ceil-and-carry step exists to keep true.
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "chk_order_items_subtotal" CHECK (line_subtotal_minor = unit_final_minor * quantity);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "chk_order_items_total" CHECK (line_total_minor = line_subtotal_minor - line_discount_minor + line_tax_minor + line_shipping_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "order_items" ADD CONSTRAINT "chk_order_items_refund_cap" CHECK (refunded_minor <= line_total_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_order_items_order" ON "order_items" (order_id, line_number);
+CREATE INDEX IF NOT EXISTS "idx_order_items_variant" ON "order_items" (variant_id, created_at DESC) WHERE variant_id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS "idx_order_events_customer" ON "order_events" (order_id, created_at) WHERE is_customer_visible;
+
+DO $$ BEGIN
+  ALTER TABLE "payments" ADD CONSTRAINT "fk_payments_order_money" FOREIGN KEY (order_id, market_code, currency_code) REFERENCES "orders" (id, market_code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "payments" ADD CONSTRAINT "chk_payments_amounts" CHECK (amount_minor >= 0 AND captured_minor >= 0 AND refunded_minor >= 0 AND captured_minor <= amount_minor AND refunded_minor <= captured_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_payments_provider_payment" ON "payments" (provider_key, provider_payment_id) WHERE provider_payment_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_payments_order" ON "payments" (order_id, created_at DESC);
+
+-- The dedupe. A provider that retries a delivery must not capture twice.
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_webhook_events_event" ON "webhook_events" (provider, provider_event_id);
+CREATE INDEX IF NOT EXISTS "idx_webhook_events_retry" ON "webhook_events" (next_attempt_at) WHERE status = 'failed';
+CREATE INDEX IF NOT EXISTS "idx_webhook_events_order" ON "webhook_events" (order_id) WHERE order_id IS NOT NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "refunds" ADD CONSTRAINT "fk_refunds_order_money" FOREIGN KEY (order_id, market_code, currency_code) REFERENCES "orders" (id, market_code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "refunds" ADD CONSTRAINT "chk_refunds_amount" CHECK (amount_minor > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_refunds_order" ON "refunds" (order_id, created_at DESC);
+-- A PENDING refund still holds its share of the remainder, so the over-refund predicate
+-- cannot be served by a succeeded-only index (05 §9.4).
+CREATE INDEX IF NOT EXISTS "idx_refunds_payment_open" ON "refunds" (payment_id) WHERE status IN ('pending','succeeded');
+
+DO $$ BEGIN
+  ALTER TABLE "shipments" ADD CONSTRAINT "chk_shipments_insured_currency" CHECK (insured_value_minor IS NULL OR currency_code IS NOT NULL);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "returns" ADD CONSTRAINT "fk_returns_order_money" FOREIGN KEY (order_id, market_code, currency_code) REFERENCES "orders" (id, market_code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "returns" ADD CONSTRAINT "chk_returns_reason" CHECK (reason_code IN ('not_as_described','damaged','wrong_size','changed_mind','other'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_returns_tracking" ON "returns" (tracking_number) WHERE tracking_number IS NOT NULL;
+DO $$ BEGIN
+  ALTER TABLE "return_items" ADD CONSTRAINT "chk_return_items_qty" CHECK (quantity > 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "coupon_usages" ADD CONSTRAINT "fk_coupon_usages_order_money" FOREIGN KEY (order_id, market_code, currency_code) REFERENCES "orders" (id, market_code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_coupon_usages_customer" ON "coupon_usages" (coupon_id, customer_id) WHERE customer_id IS NOT NULL;
+
+DO $$ BEGIN
+  ALTER TABLE "gift_card_transactions" ADD CONSTRAINT "chk_gct_amount" CHECK (amount_delta_minor <> 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "gift_card_transactions" ADD CONSTRAINT "chk_gct_type" CHECK (type IN ('issue','redeem','refund','adjust','expire'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_shipping_zones_name_live" ON "shipping_zones" (market_code, lower(name)) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_shipping_zones_market" ON "shipping_zones" (market_code, rank) WHERE is_active AND deleted_at IS NULL;
+DO $$ BEGIN
+  ALTER TABLE "shipping_zone_rules" ADD CONSTRAINT "chk_szr_match_type" CHECK (match_type IN ('country','region','postal_prefix','postal_range'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_zone_rules" ADD CONSTRAINT "chk_szr_country_upper" CHECK (country_code = upper(country_code));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_methods" ADD CONSTRAINT "fk_shipping_methods_zone_market" FOREIGN KEY (zone_id, market_code) REFERENCES "shipping_zones" (id, market_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_methods" ADD CONSTRAINT "chk_shipping_methods_strategy" CHECK (rate_strategy IN ('flat','by_order_value','by_weight','free'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_shipping_methods_code_live" ON "shipping_methods" (zone_id, upper(code)) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS "idx_shipping_methods_zone" ON "shipping_methods" (zone_id, rank) WHERE is_active AND deleted_at IS NULL;
+DO $$ BEGIN
+  ALTER TABLE "shipping_rates" ADD CONSTRAINT "fk_shipping_rates_method_market" FOREIGN KEY (method_id, market_code) REFERENCES "shipping_methods" (id, market_code) ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_rates" ADD CONSTRAINT "fk_shipping_rates_market" FOREIGN KEY (market_code, currency_code) REFERENCES "markets" (code, currency_code) ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_rates" ADD CONSTRAINT "chk_shipping_rates_amount" CHECK (amount_minor >= 0);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "shipping_rates" ADD CONSTRAINT "chk_shipping_rates_band" CHECK (max_value_minor IS NULL OR max_value_minor > min_value_minor);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+-- Two rates whose value bands overlap make the quoted price depend on row order, which is
+-- how one customer is charged £8 and the next £12 for the same basket.
+DO $$ BEGIN
+  ALTER TABLE "shipping_rates" ADD CONSTRAINT "ex_shipping_rates_no_overlap" EXCLUDE USING gist (
+    method_id WITH =, currency_code WITH =,
+    int8range(min_value_minor, coalesce(max_value_minor, 9223372036854775807)) WITH &&
+  );
+EXCEPTION WHEN duplicate_object OR duplicate_table OR undefined_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "payment_links" ADD CONSTRAINT "chk_payment_links_ref" CHECK (num_nonnulls(cart_id, order_id) = 1);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "payment_links" ADD CONSTRAINT "chk_payment_links_status" CHECK (status IN ('active','used','expired','cancelled'));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE INDEX IF NOT EXISTS "idx_payment_links_open" ON "payment_links" (expires_at) WHERE status = 'active';
+
+-- trg_orders_totals_match — DEFERRED to commit, and that is the whole point. P18 criterion (c).
+--
+-- `orders.subtotal_minor` must equal the sum of its lines. That cannot be a CHECK, because a
+-- CHECK cannot read another table; and it cannot fire per statement, because
+-- `createOrderFromCart()` inserts the order row BEFORE its items — an immediate trigger would
+-- reject every order at the moment it is created, so the only way to ship would be to delete
+-- the constraint.
+--
+-- CONSTRAINT TRIGGER … INITIALLY DEFERRED runs once, at COMMIT, when the whole order exists.
+-- What it catches is the case that actually happens: a line inserted, updated or deleted
+-- without the header being recomputed — a refund that adjusted one line, a draft edited in the
+-- admin — leaving an order whose printed total is not the sum of what is on it.
+CREATE OR REPLACE FUNCTION md_orders_totals_match() RETURNS trigger AS $$
+DECLARE
+  expected BIGINT;
+  actual   BIGINT;
+BEGIN
+  SELECT coalesce(sum(line_subtotal_minor), 0) INTO expected
+    FROM order_items WHERE order_id = NEW.id;
+  SELECT subtotal_minor INTO actual FROM orders WHERE id = NEW.id;
+  IF actual IS DISTINCT FROM expected THEN
+    RAISE EXCEPTION
+      'orders.subtotal_minor (%) does not equal the sum of its line subtotals (%) for order %',
+      actual, expected, NEW.id
+      USING ERRCODE = 'check_violation', CONSTRAINT = 'trg_orders_totals_match';
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS "trg_orders_totals_match" ON "orders";
+CREATE CONSTRAINT TRIGGER "trg_orders_totals_match"
+  AFTER INSERT OR UPDATE OF subtotal_minor ON "orders"
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION md_orders_totals_match();
+
+CREATE OR REPLACE FUNCTION md_order_items_totals_match() RETURNS trigger AS $$
+DECLARE
+  target   UUID;
+  expected BIGINT;
+  actual   BIGINT;
+BEGIN
+  target := coalesce(NEW.order_id, OLD.order_id);
+  -- The order may have been deleted in the same transaction; nothing to reconcile then.
+  SELECT subtotal_minor INTO actual FROM orders WHERE id = target;
+  IF NOT FOUND THEN RETURN NULL; END IF;
+  SELECT coalesce(sum(line_subtotal_minor), 0) INTO expected
+    FROM order_items WHERE order_id = target;
+  IF actual IS DISTINCT FROM expected THEN
+    RAISE EXCEPTION
+      'order_items sum (%) does not equal orders.subtotal_minor (%) for order %',
+      expected, actual, target
+      USING ERRCODE = 'check_violation', CONSTRAINT = 'trg_order_items_totals_match';
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- The same check from the other side: a line written after the header was settled.
+DROP TRIGGER IF EXISTS "trg_order_items_totals_match" ON "order_items";
+CREATE CONSTRAINT TRIGGER "trg_order_items_totals_match"
+  AFTER INSERT OR UPDATE OR DELETE ON "order_items"
+  DEFERRABLE INITIALLY DEFERRED
+  FOR EACH ROW EXECUTE FUNCTION md_order_items_totals_match();

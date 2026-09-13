@@ -348,3 +348,142 @@ enum GiftCardStatus {
 
   @@map("gift_card_status")
 }
+
+// ── Inventory, cart, order and fulfilment — P18, 02 §1.9 ─────────────────────────────
+
+enum InventoryTransactionType {
+  initial
+  receipt
+  adjustment
+  sale
+  return_restock
+  transfer_in
+  transfer_out
+  write_off
+  recount
+
+  @@map("inventory_transaction_type")
+}
+
+enum ReservationStatus {
+  active
+  committed
+  released
+  expired
+
+  @@map("reservation_status")
+}
+
+enum ReservationRefKind {
+  cart
+  order
+
+  @@map("reservation_ref_kind")
+}
+
+enum CartStatus {
+  active
+  merged
+  converted
+  abandoned
+
+  @@map("cart_status")
+}
+
+/// SEVEN values. `pending_review` is the high-value hold (§2.7, 11 §7.3) and
+/// `paid_unfulfillable` is the state R01 lands in when money was taken for a piece that is
+/// already gone — both are real states an order reaches, not error handling.
+enum OrderStatus {
+  pending_payment
+  paid
+  pending_review
+  paid_unfulfillable
+  processing
+  completed
+  cancelled
+
+  @@map("order_status")
+}
+
+enum PaymentStatus {
+  unpaid
+  authorized
+  paid
+  partially_refunded
+  refunded
+  failed
+
+  @@map("payment_status")
+}
+
+enum FulfillmentStatus {
+  unfulfilled
+  partially_fulfilled
+  fulfilled
+  partially_returned
+  returned
+
+  @@map("fulfillment_status")
+}
+
+enum PaymentEventType {
+  intent_created
+  authorized
+  captured
+  failed
+  cancelled
+  refund_created
+  refund_succeeded
+  refund_failed
+  dispute_opened
+  dispute_closed
+
+  @@map("payment_event_type")
+}
+
+enum ShipmentStatus {
+  pending
+  label_created
+  in_transit
+  delivered
+  failed
+  cancelled
+
+  @@map("shipment_status")
+}
+
+enum ReturnStatus {
+  requested
+  approved
+  rejected
+  in_transit
+  received
+  refunded
+  closed
+
+  @@map("return_status")
+}
+
+enum RefundStatus {
+  pending
+  succeeded
+  failed
+
+  @@map("refund_status")
+}
+
+enum WebhookStatus {
+  received
+  processed
+  failed
+  ignored
+
+  @@map("webhook_status")
+}
+
+enum AddressKind {
+  shipping
+  billing
+
+  @@map("address_kind")
+}

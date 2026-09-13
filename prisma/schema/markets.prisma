@@ -58,6 +58,9 @@ model Market {
   priceFormulaBindings      PriceFormulaBinding[]
   pricingRules              PricingRule[]
   taxRules                  TaxRule[]
+  carts                     Cart[]
+  orders                    Order[]
+  paymentLinks              PaymentLink[]
 
   /// The composite-FK target the whole money model rests on: any table carrying both a
   /// market and a currency FKs THIS, so a row cannot claim a currency its market does
@@ -81,7 +84,8 @@ model InventoryLocation {
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  markets MarketLocation[]
+  markets        MarketLocation[]
+  inventoryItems InventoryItem[]
 
   @@map("inventory_locations")
 }

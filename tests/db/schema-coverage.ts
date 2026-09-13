@@ -56,6 +56,6 @@ export function handWrittenObjects(): HandWritten {
   return {
     indexes: collect(/CREATE (?:UNIQUE )?INDEX (?:IF NOT EXISTS )?"([^"]+)"/g),
     constraints: collect(/ADD CONSTRAINT "([^"]+)"/g),
-    triggers: collect(/CREATE (?:OR REPLACE )?TRIGGER "([^"]+)"/g),
+    triggers: collect(/CREATE (?:OR REPLACE )?(?:CONSTRAINT )?TRIGGER "([^"]+)"/g),
   };
 }

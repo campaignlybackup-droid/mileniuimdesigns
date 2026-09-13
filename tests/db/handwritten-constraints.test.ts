@@ -42,7 +42,7 @@ const {
  * numbers are what makes that fail: they are the one thing here a person still has to type,
  * and they only ever move up.
  */
-const FLOORS = { indexes: 93, constraints: 94, triggers: 2 };
+const FLOORS = { indexes: 139, constraints: 147, triggers: 4 };
 
 describe("hand-written database objects still exist", () => {
   it("every index in the manifest is present", async () => {

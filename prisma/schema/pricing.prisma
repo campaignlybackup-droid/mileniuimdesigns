@@ -437,8 +437,9 @@ model Coupon {
   createdAt                 DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  amounts    CouponAmount[]
-  conditions CouponCondition[]
+  amounts      CouponAmount[]
+  conditions   CouponCondition[]
+  couponUsages CouponUsage[]
 
   @@map("coupons")
 }
@@ -497,9 +498,15 @@ model GiftCard {
   createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  currency Currency @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+  currency             Currency              @relation(fields: [currencyCode], references: [code], onDelete: Restrict)
+  checkoutGiftCards    CheckoutGiftCard[]
+  giftCardTransactions GiftCardTransaction[]
 
   @@unique([codeHash], map: "uq_gift_cards_code_hash")
+  /// Informationless on its own, exactly like uq_orders_id_money — the target that makes a
+  /// `checkout_gift_cards` row's currency provably THIS card's. Without it an INR card
+  /// attaches to a USD session and ₹10,000 discharges $10,000 of liability (02 §7.2).
+  @@unique([id, currencyCode], map: "uq_gift_cards_id_currency")
   @@map("gift_cards")
 }
 

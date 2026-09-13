@@ -1,0 +1,12 @@
+-- uq_gift_cards_id_currency — the composite-FK target checkout_gift_cards needs. P18.
+--
+-- Found by the addendum failing to apply: `(gift_card_id, currency_code) → gift_cards
+-- (id, currency_code)` has no unique to point at. 02 §7.2 specifies the FK and P10 built
+-- `gift_cards` without its target, so the constraint was unstatable rather than merely absent.
+--
+-- Informationless on its own — `id` is already the primary key — exactly like
+-- `uq_orders_id_money` and `uq_product_variants_id_product`, and for the same reason: it is
+-- what makes a child row's denormalised currency provably the parent's. Without it an INR
+-- gift card attaches to a USD checkout session and ₹10,000 is read by the USD order as
+-- $10,000.00, a rupee instrument discharging a dollar liability at an invented rate.
+CREATE UNIQUE INDEX "uq_gift_cards_id_currency" ON "gift_cards"("id", "currency_code");
