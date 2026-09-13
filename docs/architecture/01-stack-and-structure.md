@@ -3480,3 +3480,81 @@ express `GENERATED ALWAYS AS … STORED` at all, so it is hand-written and the t
 constraints and the indexes. `reserveStock`, `commitStock`, `createOrderFromCart` and the
 checkout state machine are P19 and P20, and they are the phases where `one-of-a-kind.test.ts`
 runs at `repeats: 200`. What exists now is the floor those services will be written against.
+
+---
+
+### 6.28 P19 field notes
+
+**The race test passes 200 consecutive runs with exactly one winner each time.** That is
+criterion (a), and it is the assertion the whole inventory phase exists for: two transactions
+open together on one ring, one reserves it, the other gets `InsufficientStockError`. It runs
+200 times because a concurrency bug that reproduces one time in fifty passes a single-run test
+and then happens on a Saturday. Each run also asserts `reserved_quantity = 1` afterwards, so a
+"both won but the counter is fine" outcome cannot pass.
+
+**The reconciler found a design hole in its own baseline test, on the first run.** My fixture
+created an `inventory_items` row with `on_hand_quantity = 10` by direct INSERT, and the
+reconciler correctly reported it as divergent: the counter said 10, the ledger said 0. The test
+was wrong and the reconciler was right — **an inventory row created without an opening ledger
+entry is permanently divergent**, and would be reported every night forever.
+
+The fix is not in the test. `openInventoryItem()` now creates the row and its `initial`
+movement together, and it is the only supported way to bring stock into existence. A row whose
+opening balance nobody recorded is indistinguishable, at stocktake, from stock that appeared
+through a bug — which is exactly what the reconciler is for.
+
+**The reconciler reports and does not heal, and the shape says so.** `ReconcileResult.healed`
+is typed `false`, not `boolean`. A future implementation that started correcting counters would
+have to change the type, which is a diff a reviewer sees. The criterion states the reason and it
+is worth repeating: *a counter silently rewritten is an oversell whose evidence was destroyed.*
+The divergence is the only trace; correcting it means the next one happens with nothing to find,
+and the nightly report goes green on the morning it most needed to be red.
+
+**Two guards caught this phase's code.** `boundaries/dependencies` refused the
+`release-reservations` cron importing `@/lib/db/transaction` — a route that owns a transaction
+decides isolation level, timeout and retry policy, none of which belong in an HTTP handler. The
+transaction moved into `releaseExpired()`. And TypeScript refused `actor.userId = …` in two
+tests: `StaffActor` is readonly deliberately, because an actor whose identity can be reassigned
+after construction is an actor a later line can change.
+
+**`idx_reservations_active_cart` caught a test holding two reservations on one cart.** It is
+correct: a reservation describes a *specific bag*, so a mutated bag releases and re-takes. The
+test now releases first, which is also what the real flow does.
+
+**Three properties that are easy to get subtly wrong, each with its own assertion:**
+
+- **`sold` is checked before any quantity.** A sold one-of-a-kind piece has zero available, so
+  any ordering that consulted quantity first would render the archive as `out` — and the One of
+  a Kind edit would quietly become a list of unavailable products.
+- **Release is idempotent BY GUARD, not by convention.** The header transition is conditional
+  on `status = 'active'`; zero rows means someone already released it and the counters are left
+  alone. Decrementing twice is exactly how phantom-available stock is created, and it would let
+  one reservation sell a piece twice.
+- **Made-to-order variants are filtered out BEFORE allocation.** Without that step, the
+  candidate query returns zero rows, "zero rows means you lost the race" fires, and every
+  made-to-order product in the catalogue is permanently unbuyable — failing at the last click
+  of checkout, which is the worst possible place to discover it.
+
+**A failing movement writes nothing at all.** The counter UPDATE is conditional on the result
+staying non-negative and not exceeding on-hand, so a refused movement leaves neither a counter
+change nor a ledger row. The alternative — writing the ledger row and letting the CHECK refuse
+the counter — leaves the log claiming something the stock never did.
+
+**The 1,000-movement ledger test takes about two minutes**, and that is inherent: 2,000 round
+trips against the local WASM engine. It was worse — a single interactive transaction of that
+length held the whole connection pool and made every suite running beside it fail with
+`Connection terminated due to connection timeout`, which looks nothing like its cause. Batched
+into transactions of 25, which is also the realistic shape: real movements arrive as many small
+transactions, and those are the ones that can actually interleave.
+
+**Deferred with a reason:** `/admin/inventory`. The screens are P26/P29's admin surface work and
+they render data this phase now produces; building them before the design system has its marks
+would mean laying out a page around a logo nobody has seen.
+
+**A postscript, and the P10 leak detector earning its place.** The first full integration run
+after this phase failed on `drift.test.ts`'s "every product that DOES exist is an
+unmistakably-marked performance fixture" — three `ZZ MTO` products left behind by three failed
+runs of the made-to-order case. Its cleanup sat at the END OF THE TEST BODY, which does not run
+when the test throws. Moved to `afterAll`. The assertion that caught it was added at P10 to
+close a hole in a hard-rule-8 guard and has been silently correct ever since; this is the first
+time it had anything to say.

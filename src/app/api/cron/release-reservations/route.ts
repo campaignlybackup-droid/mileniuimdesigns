@@ -1,18 +1,21 @@
 import { NextResponse } from "next/server";
 import { assertCronRequest } from "@/lib/security/cron";
 import { toWireError } from "@/lib/errors";
+import { releaseExpired } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Registered in vercel.json — tests/unit/cron-registry.test.ts asserts the set of these
- * directories equals the set of scheduled paths EXACTLY, so neither an unregistered
- * handler nor a registered path with no handler can ship.
+ * Release expired reservations — 05 §1.6. Every five minutes.
  *
- * Stub: records the run and returns `skipped`. 09 P04A explicitly allows handlers to be
- * stubs at this phase — what must exist now is the spine: the schedule, the
- * authentication, and the registry check that keeps the two in lockstep.
+ * A shopper who abandons a checkout holds a one-of-a-kind piece for
+ * `RESERVATION_TTL_MINUTES`. Nothing happens synchronously when they close the tab, so this
+ * is what puts the piece back on sale — and until it runs, that piece is unbuyable by anyone
+ * else. Five minutes is the ceiling on how long a lapsed hold blocks a real sale.
+ *
+ * Releasing is idempotent by guard, so an overlapping invocation cannot decrement a counter
+ * twice — which is exactly how phantom-available stock would be created.
  */
 export async function GET(req: Request): Promise<Response> {
   try {
@@ -21,5 +24,7 @@ export async function GET(req: Request): Promise<Response> {
     const w = toWireError(e);
     return NextResponse.json({ error: w.code }, { status: w.httpStatus });
   }
-  return NextResponse.json({ ok: true, skipped: true, job: "release-reservations" });
+
+  const { released } = await releaseExpired(new Date());
+  return NextResponse.json({ ok: true, released });
 }

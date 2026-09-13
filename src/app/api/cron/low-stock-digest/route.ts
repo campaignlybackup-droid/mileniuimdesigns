@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import { assertCronRequest } from "@/lib/security/cron";
 import { toWireError } from "@/lib/errors";
+import { lowStockItems, LOW_STOCK_THRESHOLD } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Registered in vercel.json — tests/unit/cron-registry.test.ts asserts the set of these
- * directories equals the set of scheduled paths EXACTLY, so neither an unregistered
- * handler nor a registered path with no handler can ship.
+ * The low-stock digest — 09 P19.
  *
- * Stub: records the run and returns `skipped`. 09 P04A explicitly allows handlers to be
- * stubs at this phase — what must exist now is the spine: the schedule, the
- * authentication, and the registry check that keeps the two in lockstep.
+ * A one-of-a-kind piece at zero is SOLD, not low, and is excluded: listing it every night
+ * trains whoever reads the digest to skim past the section, which is how a genuinely
+ * low-stock line gets missed.
+ *
+ * The email itself is P22's; this computes the set and returns it, so the cron is exercisable
+ * and the query is under test before there is a template to send it through.
  */
 export async function GET(req: Request): Promise<Response> {
   try {
@@ -21,5 +23,12 @@ export async function GET(req: Request): Promise<Response> {
     const w = toWireError(e);
     return NextResponse.json({ error: w.code }, { status: w.httpStatus });
   }
-  return NextResponse.json({ ok: true, skipped: true, job: "low-stock-digest" });
+
+  const items = await lowStockItems(LOW_STOCK_THRESHOLD);
+  return NextResponse.json({
+    ok: true,
+    threshold: LOW_STOCK_THRESHOLD,
+    count: items.length,
+    items,
+  });
 }

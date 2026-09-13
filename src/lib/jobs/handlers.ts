@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { registerHandler } from "@/lib/jobs";
 import { runRecalcApply } from "@/lib/pricing/recalc";
+import { reconcileInventory } from "@/lib/inventory";
 
 /**
  * Job handler registrations — imported once, for its side effects, by the worker route.
@@ -21,4 +22,26 @@ registerHandler("recalc_apply", async ({ job }) => {
   return { recalcRunId, applied, failed };
 });
 
-export const REGISTERED_AT_BOOT = ["recalc_apply"] as const;
+/**
+ * R01's early-warning signal (09 P19, §5 launch blocker).
+ *
+ * `systemPermitted: true` and `dedupeKey: 'kind'` — it runs with a NULL creator because no
+ * human enqueues it, and only one may be queued at a time.
+ *
+ * **It REPORTS into `jobs.result` and heals nothing.** A counter silently rewritten is an
+ * oversell whose evidence was destroyed: the divergence is the only trace that something went
+ * wrong, and a job that corrects it means the next one happens with nothing left to find.
+ */
+registerHandler("reconcile_inventory", async () => {
+  const result = await reconcileInventory();
+  return {
+    itemsChecked: result.itemsChecked,
+    divergenceCount: result.divergences.length,
+    // Capped: a systemic drift would otherwise write ten thousand rows into a jobs.result
+    // column that an admin screen then has to render. The count above is the alarm.
+    divergences: result.divergences.slice(0, 50),
+    healed: result.healed,
+  };
+});
+
+export const REGISTERED_AT_BOOT = ["recalc_apply", "reconcile_inventory"] as const;
