@@ -196,11 +196,12 @@ model PricingFormulaVersion {
   /// No updated_at — append-only (02 §1.3).
   createdAt                DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  formula      PricingFormula             @relation("FormulaVersions", fields: [formulaId], references: [id], onDelete: Restrict)
-  material     Material?                  @relation(fields: [materialId], references: [id], onDelete: Restrict)
-  publishedFor PricingFormula[]           @relation("PublishedVersion")
-  marketTerms  PricingFormulaMarketTerm[]
-  prices       Price[]
+  formula        PricingFormula             @relation("FormulaVersions", fields: [formulaId], references: [id], onDelete: Restrict)
+  material       Material?                  @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  publishedFor   PricingFormula[]           @relation("PublishedVersion")
+  marketTerms    PricingFormulaMarketTerm[]
+  prices         Price[]
+  recalcRunLines RecalcRunLine[]
 
   @@unique([formulaId, versionNo], map: "uq_pricing_formula_versions")
   /// The target that lets a market-terms row bind to a version OF THE FORMULA IT CLAIMS.
@@ -307,6 +308,10 @@ model RecalcRun {
   lineCount          Int             @default(0) @map("line_count")
   skippedCount       Int             @default(0) @map("skipped_count")
   failedCount        Int             @default(0) @map("failed_count")
+  /// A run that applied 7,940 of 8,000 lines is not `applied` and is not `failed`. Both
+  /// counters are how the run screen and /admin/system/jobs say so without a new enum
+  /// value (04 §3.3).
+  unchangedCount     Int             @default(0) @map("unchanged_count")
   totalIncreaseMinor BigInt          @default(0) @map("total_increase_minor")
   totalDecreaseMinor BigInt          @default(0) @map("total_decrease_minor")
   note               String?
@@ -340,21 +345,39 @@ model RecalcRunLine {
   // 04 §3.3's proposed-row snapshot. The apply re-checks the digest, so a run approved
   // against inputs that have since moved fails closed instead of applying arithmetic
   // nobody previewed.
-  proposedMetalComponentMinor        BigInt? @map("proposed_metal_component_minor")
-  proposedMakingChargeComputedMinor  BigInt? @map("proposed_making_charge_computed_minor")
-  proposedStoneCostMinor             BigInt? @map("proposed_stone_cost_minor")
-  proposedOtherMaterialCostMinor     BigInt? @map("proposed_other_material_cost_minor")
-  proposedMarkupMinor                BigInt? @map("proposed_markup_minor")
-  proposedMarketAdjustmentDeltaMinor BigInt? @map("proposed_market_adjustment_delta_minor")
-  proposedFloorAdjustmentMinor       BigInt? @map("proposed_floor_adjustment_minor")
-  proposedRoundingAdjustmentMinor    BigInt? @map("proposed_rounding_adjustment_minor")
-  proposedInputsDigest               Bytes?  @map("proposed_inputs_digest")
+  proposedMetalComponentMinor        BigInt?  @map("proposed_metal_component_minor")
+  proposedMakingChargeComputedMinor  BigInt?  @map("proposed_making_charge_computed_minor")
+  proposedStoneCostMinor             BigInt?  @map("proposed_stone_cost_minor")
+  proposedOtherMaterialCostMinor     BigInt?  @map("proposed_other_material_cost_minor")
+  proposedMarkupMinor                BigInt?  @map("proposed_markup_minor")
+  proposedMarketAdjustmentDeltaMinor BigInt?  @map("proposed_market_adjustment_delta_minor")
+  proposedFloorAdjustmentMinor       BigInt?  @map("proposed_floor_adjustment_minor")
+  proposedRoundingAdjustmentMinor    BigInt?  @map("proposed_rounding_adjustment_minor")
+  proposedInputsDigest               Bytes?   @map("proposed_inputs_digest")
+  /// The formula version the preview was evaluated against, captured when the preview was
+  /// BUILT. Publishing a new version mid-review cannot change what the approver approved.
+  formulaVersionId                   String?  @map("formula_version_id") @db.Uuid
+  proposedPurityRatioBp              Int?     @map("proposed_purity_ratio_bp")
+  proposedMetalWeightGrams           Decimal? @map("proposed_metal_weight_grams") @db.Decimal(10, 3)
+  proposedHybridAdjustmentDeltaMinor BigInt?  @map("proposed_hybrid_adjustment_delta_minor")
+  /// Carried forward from the superseded row. The replacement is a NEW row, so anything not
+  /// copied is GONE: dropping sale_minor ends a live campaign silently, and dropping
+  /// cost_minor breaks every margin report from that date forward (04 §3.3).
+  proposedSaleMinor                  BigInt?  @map("proposed_sale_minor")
+  proposedCompareAtMinor             BigInt?  @map("proposed_compare_at_minor")
+  proposedCostMinor                  BigInt?  @map("proposed_cost_minor")
+  /// Signed, in basis points. What the run detail screen sorts by.
+  changeBp                           Int?     @map("change_bp")
+  /// Set when the line cannot be applied as proposed — a sale that now exceeds list, or a
+  /// price below cost. The run cannot be approved while any blocked line is unresolved.
+  blockedReason                      String?  @map("blocked_reason")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  run       RecalcRun      @relation(fields: [recalcRunId], references: [id], onDelete: Cascade)
-  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
-  metalRate MetalRate?     @relation(fields: [metalRateId], references: [id], onDelete: Restrict)
+  run            RecalcRun              @relation(fields: [recalcRunId], references: [id], onDelete: Cascade)
+  formulaVersion PricingFormulaVersion? @relation(fields: [formulaVersionId], references: [id], onDelete: Restrict)
+  variant        ProductVariant         @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  metalRate      MetalRate?             @relation(fields: [metalRateId], references: [id], onDelete: Restrict)
 
   @@unique([recalcRunId, variantId, marketCode], map: "uq_recalc_run_lines")
   @@index([recalcRunId, status], map: "idx_recalc_run_lines_run")

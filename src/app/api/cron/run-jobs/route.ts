@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { assertCronRequest, workerId } from "@/lib/security/cron";
 import { drainJobs, requeueStale } from "@/lib/jobs";
 import { toWireError } from "@/lib/errors";
+// Imported for its side effects: this is what puts the handlers in the registry before the
+// worker starts claiming. Without it every job fails with "no handler registered".
+import "@/lib/jobs/handlers";
 
 export const dynamic = "force-dynamic";
 /** 300s, matching 11 §5.2. `drainJobs` stops itself at 240s so the worker finishes

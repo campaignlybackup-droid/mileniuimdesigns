@@ -11,12 +11,7 @@ import {
   type PricingRuleRow,
   type ScopeType,
 } from "@/lib/pricing/rules";
-import type {
-  DiscountLine,
-  MarketCode,
-  PriceSourceValue,
-  ResolvedPrice,
-} from "@/lib/pricing/types";
+import type { MarketCode, PriceSourceValue, ResolvedPrice } from "@/lib/pricing/types";
 import { cache } from "react";
 import { requestNow } from "@/lib/clock";
 

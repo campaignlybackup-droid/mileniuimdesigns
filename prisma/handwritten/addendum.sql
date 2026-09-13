@@ -704,3 +704,10 @@ EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "pricing_rules" ADD CONSTRAINT "chk_pricing_rules_fixed_price_not_stackable" CHECK (NOT (adjustment_type = 'fixed_price' AND is_stackable));
 EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- 04 §3.3 — a skipped line has no proposal, and a line with a proposal is not skipped.
+-- Without it a `skipped` row can carry a `proposed_list_minor` that the apply would then
+-- insert, which is the one way a line the reviewer was told was skipped still ships.
+DO $$ BEGIN
+  ALTER TABLE "recalc_run_lines" ADD CONSTRAINT "chk_rrl_proposed" CHECK ((status = 'skipped') = (proposed_list_minor IS NULL));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;

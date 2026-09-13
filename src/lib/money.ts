@@ -65,6 +65,53 @@ export function subMoney(a: Money, b: Money): Money {
 }
 
 /**
+ * `applyBp` for a SIGNED amount or a signed rate — 04 §2.3.
+ *
+ * `applyBp` is `(a * bp + 5000n) / 10000n`, and BigInt division truncates TOWARD ZERO. For a
+ * negative product that rounds the wrong direction and the `+5000n` pushes it further wrong.
+ * A −1500 bp hybrid adjustment computed with `applyBp` is off by one minor unit in the
+ * merchant's favour on roughly half of all bases, forever, silently.
+ *
+ * Half-up on the MAGNITUDE, then the sign restored — which is "away from zero on a .5"
+ * (02 §1.10 rule 5), and makes `applyBpSigned(-a, bp) === -applyBpSigned(a, bp)` hold.
+ */
+export function applyBpSigned(amountMinor: bigint, bp: number): bigint {
+  const p = amountMinor * BigInt(bp);
+  const negative = p < 0n;
+  const magnitude = negative ? -p : p;
+  const r = (magnitude + 5000n) / 10_000n;
+  return negative ? -r : r;
+}
+
+/**
+ * Commercial rounding to a market's increment — 04 §2.3 step 7.
+ *
+ * A SECOND, deliberate rounding, separate from the one that turns the computation into minor
+ * units: `1` = to the cent, `100` = to the whole dollar, `10000` = to the nearest ₹100. Its
+ * effect is recorded on the price row as `rounding_adjustment_minor`, so a price that ends in
+ * a round number can still be explained.
+ *
+ * Defined for `x >= 0n` only, which the zero clamp in step 6 guarantees.
+ */
+export function roundToIncrement(
+  x: bigint,
+  increment: bigint,
+  mode: "half_up" | "up" | "down",
+): bigint {
+  if (x < 0n)
+    throw new RangeError("roundToIncrement is defined for non-negative amounts only.");
+  if (increment <= 0n) throw new RangeError("A rounding increment must be positive.");
+  switch (mode) {
+    case "half_up":
+      return ((x + increment / 2n) / increment) * increment;
+    case "up":
+      return ((x + increment - 1n) / increment) * increment;
+    case "down":
+      return (x / increment) * increment;
+  }
+}
+
+/**
  * Apply a rate in basis points (10000 = 100%), half-up, away from zero on a .5.
  * Rounding direction is deliberately NOT currency-dependent (02 §1.10 rule 5).
  */

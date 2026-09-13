@@ -3114,3 +3114,73 @@ gets the undiscounted price — which is only meaningful because the next test a
 gets a *different* one. And `display-equals-charged` asserts a US rule does not move Indian
 prices, which is where a currency-blind rule engine would put a 15% American markdown onto
 every rupee price on the site.
+
+---
+
+### 6.23 P12 field notes
+
+**The R03 test asserts an absence four ways, and a fifth way that is different in kind.**
+Raising silver 30% must leave byte-identical `prices` rows, an identical `getDisplayPrice()`,
+zero new `price_history` rows and zero cache purges. All four would pass on the day someone
+adds an import to `rates.ts` — right up until the first rate is entered after it. So the fifth
+assertion is structural: `rates.ts` contains no `INSERT INTO prices`, no `UPDATE prices`, no
+`revalidateTag`, and the only table it writes is `metal_rates`. **The mitigation is an absence,
+so the test has to assert the absence at the level where it is guaranteed**, not at the level
+where it currently happens to hold.
+
+Two converse assertions keep the four honest: the rates really were recorded (the test would
+pass identically if `recordMetalRate` threw every time), and the new rate really is 30% higher.
+
+**The worked example of `04 §9` reproduces exactly, in both markets** — every intermediate
+figure, including the `allocate()` tie-break that gives the two leftover minor units to markup
+(`.800`) and metal (`.600`). That is the strongest validation available in this build: numbers
+written down before the code existed, not numbers the code produced and then agreed with.
+US `$160.00`, India `₹10,000.00`, and no ratio relates them — four of the six inputs are
+configured separately per currency and the rounding increments differ.
+
+**`getLatestRates` reaching for the global `db` inside an open transaction cost eight seconds
+and produced an error naming the wrong thing.** The preview holds an interactive transaction;
+a query issued on the pooled client from inside it goes out on a DIFFERENT connection, and the
+local `prisma dev` engine is single-threaded pglite, so it blocks behind the open transaction
+until that transaction times out. The reported failure is "a query cannot be executed on an
+expired transaction" — which points at the transaction, not at the query that stalled it. I
+found it by timing each stage.
+
+Against a real Postgres this would not deadlock; it would read OUTSIDE the transaction's
+snapshot, so a rate inserted concurrently could be seen by half a run and not the other half.
+**Both are wrong, and the parameter makes neither possible**: `getLatestRates(client, …)` now
+takes the client, and the comment says why so the next person does not "simplify" it back.
+
+**A silent edit failure cost a column.** `unchanged_count` never reached the Prisma schema
+because a Python replacement matched nothing — the fourth such failure in two phases. Worse,
+my first fix edited a migration that had **already been applied**: Prisma records a checksum
+per migration, so the edit changed nothing in this database while changing what a fresh deploy
+would produce. The two environments would then differ in a way no test could see, because each
+would be internally consistent. Reverted, and added as its own migration. **Rule for the rest
+of this build: an applied migration is immutable, and every scripted edit is verified by
+re-reading the file.**
+
+**`jobs.created_by_user_id` refused a fabricated actor id, and it was right to.** The recalc
+test used a made-up uuid; the foreign key rejected the enqueue. That key is load-bearing
+alongside `recalc_apply`'s `systemPermitted: false`: together they mean a recalculation job
+cannot exist without a real person behind it. A test using an invented id would have been
+asserting against a path production cannot take, so the fix was a real `users` row.
+
+**`tests/unit/cron-no-apply.test.ts` scans every cron route, not just the rate refresher.** The
+next person who needs "just this once, apply it automatically" will reach for whichever handler
+is nearest. The worker route is the single exemption, and the test asserts the exemption's
+PREMISE — `recalc_apply.systemPermitted === false` — rather than just granting it, so the
+exemption cannot outlive its reason.
+
+**The apply performs no arithmetic, asserted by reading the function's own source.** If it
+re-evaluated, a stone cost edited at 4 p.m. or a formula version published at 6 p.m. would
+change what ships at 2 a.m. — while the run detail screen still showed the figures that were
+approved, making the discrepancy invisible in the one place anyone would look. Hence the
+sixteen `proposed_*` columns: the preview carries the whole computation and the apply inserts
+it.
+
+**A fixture that is simpler than the example it claims to reproduce passes for the wrong
+reason.** The recalc test first proposed `3400` where `04 §9.3` says `16000`. Both were
+correct: mine had no `variant_component_costs` rows, so metal + making + markup was the whole
+price. The figures agreed with themselves and with nothing else. Adding the stone and
+other-material costs made the end-to-end pipeline reproduce the document.

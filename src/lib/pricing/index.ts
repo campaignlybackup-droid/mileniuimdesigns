@@ -13,6 +13,20 @@ export { resolvePrice, resolvePriceBatch } from "@/lib/pricing/resolve";
 export type { ResolveLine, ResolveContext } from "@/lib/pricing/resolve";
 export { getDisplayPrice, getProductPriceRanges } from "@/lib/pricing/display";
 export { setManualPrice } from "@/lib/pricing/manual";
+export { evaluateFormula, SCALE } from "@/lib/pricing/formula";
+export type { FormulaInputs, FormulaResult } from "@/lib/pricing/formula";
+export { recordMetalRate, getLatestRates, assertRateUsable } from "@/lib/pricing/rates";
+export type { RecordMetalRateInput, MetalRateRecord, LatestRate } from "@/lib/pricing/rates";
+export {
+  createRecalcPreview,
+  approveRecalcRun,
+  applyRecalcRun,
+  runRecalcApply,
+  getRecalcRun,
+  MAX_LINES,
+  DEFAULT_RATE_MAX_AGE_HOURS,
+} from "@/lib/pricing/recalc";
+export type { RecalcScope, PreviewResult } from "@/lib/pricing/recalc";
 export type { SetManualPriceInput } from "@/lib/pricing/manual";
 export {
   applyRule,

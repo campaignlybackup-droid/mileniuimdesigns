@@ -1,0 +1,11 @@
+-- recalc_runs.unchanged_count — 04 §3.3's second SCHEMA ADDITION to this table.
+--
+-- Its own migration rather than an edit to 20260913140000, which had already been applied:
+-- Prisma records a checksum per migration, so editing an applied one changes nothing in this
+-- database while changing what a fresh deploy produces. The two environments then differ in a
+-- way no test can see, because each is internally consistent.
+--
+-- A run that applied 7,940 of 8,000 lines is not `applied` and is not `failed`. `failed_count`
+-- and `unchanged_count` are how the run detail screen and /admin/system/jobs say so, without
+-- adding a state to `recalc_run_status` that the whole machine would then have to handle.
+ALTER TABLE "recalc_runs" ADD COLUMN "unchanged_count" INTEGER NOT NULL DEFAULT 0;
