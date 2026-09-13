@@ -18,7 +18,6 @@ import { resolvePriceBatch } from "@/lib/pricing";
  */
 
 const stamp = Date.now();
-const slug = (n: number) => `zz-p11-${String(stamp)}-${String(n)}`;
 const MARKET = "US";
 const LINE_COUNTS = [1, 48, 200] as const;
 
