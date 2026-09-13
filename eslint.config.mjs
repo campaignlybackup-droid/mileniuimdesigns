@@ -183,6 +183,27 @@ const eslintConfig = defineConfig([
     },
   },
 
+  // 09 P20 criterion (a): a cart read never returns a cached price. `cached()` and
+  // `unstable_cache` are banned in src/lib/cart/**, because a cart is the one surface where a
+  // stale figure is charged rather than merely displayed — and the read-time revalidation pass
+  // WRITES, so caching it would also silently discard repairs (05 §2.4, 01 §2.4).
+  {
+    files: ["src/lib/cart/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "react", importNames: ["cache"],
+              message: "A cached cart read serves one shopper's bag to another, or serves a price that has since moved. (01 §2.4, 09 P20 (a))" },
+            { name: "next/cache", importNames: ["unstable_cache", "revalidateTag"],
+              message: "A cart is never cached and never tagged. (01 §2.4, 09 P20 (a))" },
+          ],
+        },
+      ],
+    },
+  },
+
   // The exemptions. Each names the single module allowed to do the banned thing.
   {
     files: ["src/lib/money.ts"],

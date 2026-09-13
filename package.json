@@ -31,7 +31,8 @@
     "test:perf": "vitest bench --run tests/perf",
     "gen:markets": "dotenv -e .env.local -e .env -- tsx scripts/gen-market-snapshot.ts",
     "check:brand": "tsx scripts/check-brand-assets.ts",
-    "gen:tokens": "tsx scripts/gen-background-tokens.ts"
+    "gen:tokens": "tsx scripts/gen-background-tokens.ts",
+    "test:clean": "dotenv -e .env -- tsx scripts/clean-test-fixtures.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",

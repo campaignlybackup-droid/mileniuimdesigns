@@ -39,7 +39,7 @@ export async function getDisplayPrice(
   const [resolved, compareAt] = await Promise.all([
     resolvePriceBatch(
       ids.map((variantId) => ({ variantId, marketCode, quantity: 1 })),
-      { at },
+      { at, client: db },
     ),
     readCompareAt(ids, marketCode),
   ]);
@@ -111,7 +111,7 @@ export async function getProductPriceRanges(
   // each is still three queries, not eight hundred.
   const resolved = await resolvePriceBatch(
     variants.map((v) => ({ variantId: v.variant_id, marketCode, quantity: 1 })),
-    { at },
+    { at, client: db },
   );
 
   const out = new Map<string, PriceRange>();

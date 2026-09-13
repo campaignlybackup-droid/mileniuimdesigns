@@ -95,7 +95,7 @@ describe("P11 (d) — the query count does not grow with line count", () => {
         .slice(0, n)
         .map((variantId) => ({ variantId, marketCode: MARKET, quantity: 1 }));
       const count = await countQueries(async () => {
-        const result = await resolvePriceBatch(lines);
+        const result = await resolvePriceBatch(lines, { client: db });
         // The batch must actually have resolved them. A resolver that returned an empty map
         // would issue a constant number of queries too.
         expect(result.size).toBe(n);
@@ -134,7 +134,9 @@ describe("P11 (d) — the query count does not grow with line count", () => {
         .slice(0, n)
         .map((variantId) => ({ variantId, marketCode: MARKET, quantity: 1 }));
       measured.push(
-        await countQueries(() => resolvePriceBatch(lines, { customerId: customer[0]!.id })),
+        await countQueries(() =>
+          resolvePriceBatch(lines, { customerId: customer[0]!.id, client: db }),
+        ),
       );
     }
     expect(new Set(measured).size).toBe(1);

@@ -66,10 +66,11 @@ type PriceRow = {
  * sentinel row to mistake for a price.
  */
 async function readPrices(
+  client: Pick<typeof db, "$queryRaw">,
   variantIds: string[],
   marketCode: MarketCode,
 ): Promise<Map<string, PriceRow>> {
-  const rows = await db.$queryRaw<(PriceRow & { variant_key: string })[]>`
+  const rows = await client.$queryRaw<(PriceRow & { variant_key: string })[]>`
     WITH v AS (
       SELECT id AS variant_id, product_id
         FROM product_variants
@@ -107,11 +108,12 @@ async function readPrices(
  * This predicate is therefore explicit and different, and it is served by `idx_prices_history`.
  */
 async function readPricesAt(
+  client: Pick<typeof db, "$queryRaw">,
   variantIds: string[],
   marketCode: MarketCode,
   at: Date,
 ): Promise<Map<string, PriceRow>> {
-  const rows = await db.$queryRaw<(PriceRow & { variant_key: string })[]>`
+  const rows = await client.$queryRaw<(PriceRow & { variant_key: string })[]>`
     WITH v AS (
       SELECT id AS variant_id, product_id
         FROM product_variants
@@ -143,9 +145,10 @@ async function readPricesAt(
 
 /** Query 2 — every scope every line belongs to, for the whole batch (04 §1.4.1). */
 async function readScopes(
+  client: Pick<typeof db, "$queryRaw">,
   variantIds: string[],
 ): Promise<Map<string, { scopeType: ScopeType; scopeId: string }[]>> {
-  const rows = await db.$queryRaw<
+  const rows = await client.$queryRaw<
     { variant_id: string; scope_type: string; scope_id: string }[]
   >`
     WITH v AS (SELECT id, product_id FROM product_variants WHERE id = ANY(${variantIds}::uuid[]))
@@ -176,8 +179,24 @@ async function readScopes(
  * three times. Keyed on `(marketCode, at)`, and `at` is the same Date INSTANCE from
  * `requestNow()` across the request, so the key is stable.
  */
-const readRules = cache(async (marketCode: MarketCode, at: Date): Promise<PricingRuleRow[]> => {
-  const rows = await db.$queryRaw<Record<string, unknown>[]>`
+const readRules = cache(async (marketCode: MarketCode, at: Date): Promise<PricingRuleRow[]> =>
+  readRulesWith(db, marketCode, at),
+);
+
+/**
+ * The uncached form, for callers inside a transaction.
+ *
+ * `cache()` is keyed on its arguments, and a transaction client is a fresh object every time —
+ * so passing it through the memoised path would key every call uniquely and quietly disable
+ * the memoisation for everyone. Inside a transaction that is the correct behaviour anyway: the
+ * read should see the transaction's own snapshot, not a value captured before it opened.
+ */
+async function readRulesWith(
+  client: Pick<typeof db, "$queryRaw">,
+  marketCode: MarketCode,
+  at: Date,
+): Promise<PricingRuleRow[]> {
+  const rows = await client.$queryRaw<Record<string, unknown>[]>`
     SELECT id::text AS id, name, scope_type::text AS scope_type, scope_id::text AS scope_id,
            adjustment_type::text AS adjustment_type, amount_basis, value_bp, amount_minor,
            priority, is_stackable, created_at
@@ -201,10 +220,29 @@ const readRules = cache(async (marketCode: MarketCode, at: Date): Promise<Pricin
     isStackable: r["is_stackable"] === true,
     createdAt: r["created_at"] as Date,
   }));
-});
+}
 
 export type ResolveLine = { variantId: string; marketCode: MarketCode; quantity: number };
-export type ResolveContext = { customerId?: string; couponCode?: string; at?: Date };
+export type ResolveContext = {
+  customerId?: string;
+  couponCode?: string;
+  at?: Date;
+  /**
+   * The client to read through. Pass the transaction when calling from inside one.
+   *
+   * Reaching for the global `db` inside an open interactive transaction issues the query on a
+   * DIFFERENT connection: on the local single-threaded engine that blocks until the
+   * transaction times out eight seconds later, and on a real Postgres it reads OUTSIDE the
+   * transaction's snapshot — so a price written concurrently could be seen by half a cart.
+   * Both are wrong. Found THREE times: P12 in the recalc preview, P20 in cart revalidation,
+   * and P20 again in the market switcher — which is why this is no longer optional and no
+   * longer defaults to the global. The first two times the lesson was written down here as a
+   * comment; the third time proves a comment is not a control. Passing `db` is still correct
+   * on a request path with no transaction open — but it has to be *said*, so that omitting it
+   * is a type error rather than an eight-second mystery.
+   */
+  client: Pick<typeof db, "$queryRaw">;
+};
 
 /**
  * Resolve a batch. The ONLY implementation — `resolvePrice` is a one-line binding over it, so
@@ -212,14 +250,14 @@ export type ResolveContext = { customerId?: string; couponCode?: string; at?: Da
  */
 export async function resolvePriceBatch(
   lines: ResolveLine[],
-  ctx?: ResolveContext,
+  ctx: ResolveContext,
 ): Promise<Map<string, ResolvedPrice>> {
   const out = new Map<string, ResolvedPrice>();
   if (lines.length === 0) return out;
 
   // Never `new Date()` here — see src/lib/clock.ts. One instant per request means a sale
   // that expires mid-checkout cannot price two lines of one bag on two sides of the boundary.
-  const at = ctx?.at ?? requestNow();
+  const at = ctx.at ?? requestNow();
   const markets = new Set(lines.map((l) => l.marketCode));
   if (markets.size !== 1) {
     // One batch, one market, by construction. A mixed batch would need one rules read per
@@ -229,7 +267,12 @@ export async function resolvePriceBatch(
   }
   const marketCode = lines[0]!.marketCode;
 
-  const market = await readActiveMarket(marketCode);
+  // Memoised ONLY on the request path. `cache()` keyed on a fresh transaction object would
+  // never hit, and would quietly disable memoisation for every other caller in the request.
+  const onGlobal = ctx.client === db;
+  const market = onGlobal
+    ? await readActiveMarket(marketCode)
+    : await readActiveMarketWith(ctx.client, marketCode);
   if (!market) {
     // Never falls back to NEXT_PUBLIC_DEFAULT_MARKET. A wrong market is a 404, not a
     // silently-substituted price in a currency the shopper did not ask for.
@@ -237,12 +280,15 @@ export async function resolvePriceBatch(
   }
 
   const variantIds = [...new Set(lines.map((l) => l.variantId))];
-  const isReplay = ctx?.at !== undefined;
+  const isReplay = ctx.at !== undefined;
+  const client = ctx.client;
   const [prices, scopes, rules, customerGroupId] = await Promise.all([
-    isReplay ? readPricesAt(variantIds, marketCode, at) : readPrices(variantIds, marketCode),
-    readScopes(variantIds),
-    readRules(marketCode, at),
-    readCustomerGroup(ctx?.customerId),
+    isReplay
+      ? readPricesAt(client, variantIds, marketCode, at)
+      : readPrices(client, variantIds, marketCode),
+    readScopes(client, variantIds),
+    onGlobal ? readRules(marketCode, at) : readRulesWith(ctx.client, marketCode, at),
+    readCustomerGroup(client, ctx.customerId),
   ]);
 
   for (const line of lines) {
@@ -263,18 +309,28 @@ export async function resolvePriceBatch(
 
 /** Step 0, memoised per request for the same reason as the rules read. */
 const readActiveMarket = cache(
-  async (marketCode: MarketCode): Promise<{ code: string } | null> => {
-    const rows = await db.$queryRaw<{ code: string }[]>`
-    SELECT code FROM markets WHERE code = ${marketCode} AND is_active
-  `;
-    return rows[0] ?? null;
-  },
+  async (marketCode: MarketCode): Promise<{ code: string } | null> =>
+    readActiveMarketWith(db, marketCode),
 );
 
-async function readCustomerGroup(customerId: string | undefined): Promise<string | null> {
+/** The uncached form, for callers inside a transaction — see `readRulesWith`. */
+async function readActiveMarketWith(
+  client: Pick<typeof db, "$queryRaw">,
+  marketCode: MarketCode,
+): Promise<{ code: string } | null> {
+  const rows = await client.$queryRaw<{ code: string }[]>`
+    SELECT code FROM markets WHERE code = ${marketCode} AND is_active
+  `;
+  return rows[0] ?? null;
+}
+
+async function readCustomerGroup(
+  client: Pick<typeof db, "$queryRaw">,
+  customerId: string | undefined,
+): Promise<string | null> {
   // An anonymous request skips step 6 entirely and never inherits `retail` implicitly.
   if (customerId === undefined) return null;
-  const rows = await db.$queryRaw<{ customer_group_id: string }[]>`
+  const rows = await client.$queryRaw<{ customer_group_id: string }[]>`
     SELECT customer_group_id::text AS customer_group_id FROM customers WHERE id = ${customerId}::uuid
   `;
   return rows[0]?.customer_group_id ?? null;
@@ -347,11 +403,18 @@ export async function resolvePrice(input: {
   customerId?: string;
   couponCode?: string;
   at?: Date;
+  /** As ResolveContext.client. Required here too, or the wrapper is a hole in the same wall. */
+  client: Pick<typeof db, "$queryRaw">;
 }): Promise<ResolvedPrice> {
   const quantity = input.quantity ?? DEFAULT_QUANTITY;
   const batch = await resolvePriceBatch(
     [{ variantId: input.variantId, marketCode: input.marketCode, quantity }],
-    { customerId: input.customerId, couponCode: input.couponCode, at: input.at },
+    {
+      customerId: input.customerId,
+      couponCode: input.couponCode,
+      at: input.at,
+      client: input.client,
+    },
   );
   const resolved = batch.get(input.variantId);
   if (!resolved) {

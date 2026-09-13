@@ -144,7 +144,7 @@ describe("availability sums the FULFILLABLE locations only", () => {
   it("counts 5, not 10 — quarantine stock is real and is not for sale", async () => {
     // Damaged and unsellable returned stock is visible in reports and excluded from every
     // sellable figure. Counting it would advertise pieces nobody can send.
-    const availability = await getAvailability([variantId], marketCode);
+    const availability = await getAvailability([variantId], marketCode, db);
     expect(availability.get(variantId)!.availableQuantity).toBe(5);
     expect(availability.get(variantId)!.band).toBe("in_stock");
   });
@@ -176,7 +176,7 @@ describe("NO SPLIT FULFILMENT at launch", () => {
     await db.$executeRaw`DELETE FROM reservations WHERE cart_id = ${cartId}::uuid`;
     await db.$executeRaw`UPDATE inventory_items SET reserved_quantity = 0 WHERE variant_id = ${variantId}::uuid`;
 
-    const availability = await getAvailability([variantId], marketCode);
+    const availability = await getAvailability([variantId], marketCode, db);
     expect(availability.get(variantId)!.availableQuantity).toBe(5);
 
     await expect(
@@ -227,7 +227,7 @@ describe("made-to-order and untracked variants never reserve", () => {
     expect(reservation.lines).toEqual([]);
 
     // And it renders as `made_to_order`, not `out` — it has no inventory row at all.
-    const availability = await getAvailability([v[0]!.id], marketCode);
+    const availability = await getAvailability([v[0]!.id], marketCode, db);
     expect(availability.get(v[0]!.id)!.band).toBe("made_to_order");
     expect(availability.get(v[0]!.id)!.availableQuantity).toBeNull();
 

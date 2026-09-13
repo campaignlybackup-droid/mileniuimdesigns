@@ -22,10 +22,15 @@ export type Availability = {
 export async function getAvailability(
   variantIds: string[],
   marketCode: string,
+  /**
+   * REQUIRED, and deliberately without a default — see ResolveContext.client for the three
+   * defects that bought this. Pass `tx` inside a transaction, `db` on a request path.
+   */
+  client: Pick<typeof db, "$queryRaw">,
 ): Promise<Map<string, Availability>> {
   if (variantIds.length === 0) return new Map();
 
-  const rows = await db.$queryRaw<
+  const rows = await client.$queryRaw<
     {
       variant_id: string;
       inventory_policy: string;

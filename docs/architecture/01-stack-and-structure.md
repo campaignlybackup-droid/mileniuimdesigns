@@ -3558,3 +3558,149 @@ runs of the made-to-order case. Its cleanup sat at the END OF THE TEST BODY, whi
 when the test throws. Moved to `afterAll`. The assertion that caught it was added at P10 to
 close a hole in a hard-rule-8 guard and has been silently correct ever since; this is the first
 time it had anything to say.
+
+### 6.29 P20 field notes
+
+**The cart is a capability, not an account.** Every mutator resolves the cart through
+`requireCart(tx, token)`; the token is 256 bits of CSPRNG output and only its SHA-256 hash is
+stored, so a leaked database gives an attacker no usable cart. `updateItemQuantity` and
+`removeItem` additionally scope their writes with `AND cart_id = …` — that clause is the
+authorization, not a filter: without it a line id belonging to another shopper's bag would be
+addressable by anyone holding any valid token.
+
+**The transaction-client defect, found for the third time — and fixed properly this time.**
+`switchMarket` called `resolvePriceBatch(…, {})` from inside its own transaction, so the price
+read went to the global client. On the local single-connection engine that blocks until the
+transaction times out eight seconds later, and the error it then raises names the *write* that
+came afterwards rather than the read that caused it. On a real Postgres it would not fail at
+all: it would read outside the transaction's snapshot and price half a cart against data the
+other half cannot see.
+
+This is the same defect as P12 (`getLatestRates` in the recalc preview) and as P20's own cart
+revalidation. Twice the fix was to thread the client through and write the lesson into a
+comment on `ResolveContext.client`. That comment was sitting directly above the parameter the
+third time it was skipped. **A comment is not a control.** The parameter is now required and
+has no default, on `ResolveContext.client`, on `resolvePrice`, and on `getAvailability`:
+omitting it is a compile error. Passing the global is still correct on a request path — it just
+has to be *said*, as `{ client: db }`. The typechecker found nine call sites; exactly one of
+them was in `src/`, and it was the bug.
+
+Memoisation survives the change. `readRules` and `readActiveMarket` stay `cache()`d but are now
+selected by `ctx.client === db` rather than by "was a client passed", because a `cache()` keyed
+on a fresh transaction object would never hit and would quietly disable memoisation for every
+other caller in the same request.
+
+**A guard that passed vacuously, and a guard that disabled itself.** Two in one phase, both
+found the same way — by deliberately breaking the thing the guard is supposed to catch.
+
+The first: the new no-default-client test matched `client\s*(?::[^=;,)]+)?=\s*db`. The
+annotation is `Pick<typeof db, "$queryRaw">`, which contains both a comma and the token `db`,
+so the character class stopped at the comma and never reached the default. It reported green
+against a file that had the default restored.
+
+The second is worse, and is the sixth occurrence of *scan reads its own explanation*. The
+capability-authorization note added to `src/lib/cart/index.ts` contains the words
+"`requirePermission()` has nothing to ask about". `tests/unit/services-authorized.test.ts`
+decided whether a module was authorized by testing the raw source for `requirePermission` — so
+the module became exempt **by virtue of documenting why it was exempt**, and every mutator in
+the cart went unchecked at the moment the documentation was written. The guard now reads
+`stripComments(src)` for anything that looks for CODE, and raw source only for the marker
+strings, which genuinely live in comments. `tests/support/source.ts` has existed since P09 for
+exactly this; this test predated it and was never migrated. Worth auditing the rest for the
+same shape.
+
+**One definition of a line subtotal, in one place.** `unitFinalMinor * BigInt(quantity)` was
+written by hand in the cart's view builder and a third time as `sum(ci.unit_final_minor *
+ci.quantity)` inside the cart-summary SQL. All three agreed, which is the problem rather than
+the reassurance: the SQL one is invisible to the typechecker, so the header badge and the cart
+page could have disagreed with nothing to catch it. `lineSubtotal()` now lives beside
+`reduceToUnit()` in `src/lib/pricing/rules.ts` and all three call it — the summary query selects
+rows and reduces in TypeScript, which is a bounded read because a cart holds at most
+`CART_MAX_LINES` lines.
+
+To be clear about what this was *not*: the arithmetic was correct. `reduceToUnit` defines
+`lineSubtotalMinor` as exactly `unitFinalMinor * q` and carries the rounding residue separately,
+so no shopper was ever quoted a wrong figure. The fix is against drift, not against a live
+defect.
+
+**Merging is an upsert.** `uq_cart_items (cart_id, variant_id)` plus `ON CONFLICT … DO UPDATE
+SET quantity = LEAST(existing + incoming, CART_MAX_QUANTITY)` is what makes two open tabs and
+one sign-in not silently double the bag. Where the customer has no cart at all the guest cart is
+*claimed* rather than copied — cheapest, and it keeps the bag the shopper was actually looking
+at. Cross-market, the **guest's** market wins: that is the market they are browsing right now,
+nothing is converted, and what is not sold there is dropped and reported rather than translated.
+
+**Statement order is forced by the schema, not chosen.** `cart_items` carries
+`FK (cart_id, market_code) → carts (id, market_code) ON UPDATE RESTRICT`, so moving a cart to
+another market while its lines still exist raises a foreign-key error. Lines out, cart moved,
+survivors re-priced back in — in that order, and the database refuses any other.
+
+**The runner was not collecting the file this phase's hardest test lives in.** `09 §1` is
+normative on both halves of a rule that was only ever half-applied: several files commissioned
+in `03`–`08` are named `.spec.ts` inside the Vitest trees, those names are *kept*, and
+`vitest.config` must therefore collect `{test,spec}`. The conventional `*.test.ts`-only glob
+shipped at P02 regardless and was still there at P20 — so `market-switch-cart.spec.ts` would
+have existed on disk, been listed as delivered in the phase table, and been collected by
+nothing. `09` describes that file as "the single test that stops an INR line surviving into a
+USD bag".
+
+The glob is now `tests/{unit,db,integration,api}/**/*.{test,spec}.{ts,tsx}` plus
+`tests/perf/**/*.bench.ts`, scoped to the four Vitest trees rather than `tests/**` because
+`tests/e2e/` and `tests/a11y/` hold **Playwright's** `.spec.ts` files and handing those to
+Vitest would fail for reasons unrelated to the thing under test.
+`tests/unit/test-collection.test.ts` now reads the config's own `include` array and fails if it
+stops collecting either extension, if a tree drops out, or if a file appears under a test tree
+that is neither a test nor a helper. "Helper" is decided by whether the module declares any
+`describe`/`it`/`bench` — a property of the file — rather than by whether it sits under
+`support/`, because `tests/db/schema-coverage.ts` does not and a path-convention check called
+it an orphan.
+
+A test that does not run is worse than one that does not exist: the missing one is visible,
+and the uncollected one is recorded as coverage.
+
+**Stranded fixtures now have a supported way out.** `tests/db/drift.test.ts` asserts the
+development database holds no products but the marked performance fixture. Suites clean up in
+`afterAll`, which survives a failing assertion — but not the database process dying mid-suite,
+and the local engine crashes outright when a statement runs inside an already-aborted
+transaction. One such cascade this phase (triggered by the client deadlock above) stranded 23
+products and 2 categories across the P07, P08, P09, P12 and P19 suites, after which drift
+failed on every subsequent run for reasons unrelated to any change.
+
+Clearing that by hand is how a leak detector gets ignored, so `npm run test:clean` does it:
+dry-run by default, `--apply` to delete, matching only test-fixture slug prefixes, never the
+performance fixture, and refusing outright to run against a `DATABASE_URL` that is not
+localhost — a maintenance script that deletes rows must not be able to reach production by
+inheriting whatever happened to be exported.
+
+**The performance gate is unstable, and one half of that is now fixed.** `pagination-last-page`
+failed three of eight consecutive runs against a query nothing had changed, drifting between 11
+and 15 ms around a 13.34 ms ceiling.
+
+The statistic was the problem. `p95` over 40 samples is the 38th value — the **third-worst** —
+so any run in which three of forty calls are slow moves the gate. That is 7.5 % of samples,
+which a GC pause or an OS scheduling slice produces routinely on a laptop that is also hosting
+a WASM Postgres. The file's own comment claimed "one outlier cannot set the number", which is
+true and beside the point. The reported figure is now the **median of three independent p95
+estimates**, warmed once rather than per repeat: a regression has to show up in the majority of
+runs, while a hiccup does not. Widening `REGRESSION_ALLOWANCE` was rejected — it buys stability
+by making the gate insensitive to real slow-downs too, which is the thing it exists to catch.
+
+**The other half is not fixed, and the baseline was deliberately NOT refreshed.** With the
+statistic stabilised, all three budgeted cases still read 25–50 % above their committed
+baselines — `single-attribute` 32.2 against 25.48, `pagination-last-page` 17.27 against 10.67,
+`facet-counts` 79.85 against 53.61. That is systematic rather than noisy, and it is *not*
+attributable to this phase: the benchmark exercises `src/lib/catalog/facets.ts` and
+`filters.ts`, and neither is touched by P20. `vacuumPerfTables()` already runs `VACUUM ANALYZE`
+over all seven tables in `beforeAll`, so the bloat explanation this fixture was built to close
+is already closed.
+
+What the machine was doing during the measurements: load average 3.0, with Chrome and
+WindowServer together holding roughly 60 % of CPU. A CPU-bound WASM Postgres measures slow
+under that, uniformly, which is the shape observed.
+
+The baseline stays as committed. This file says to refresh it "deliberately, never as a
+reflex", and re-recording it on a loaded machine would bake a slow number in permanently and
+retire the only signal that would show a real regression. **This is carried forward as an open
+item**: re-measure on a quiet machine before either accepting the numbers or re-baselining, and
+treat a confirmed 25–50 % regression across three unrelated queries as a schema or planner
+problem rather than a threshold to adjust.

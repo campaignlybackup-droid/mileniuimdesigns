@@ -79,7 +79,12 @@ async function assertAgreement(label: string): Promise<void> {
     expect(display.size, `${label}: ${m.code} display map`).toBe(variantIds.length);
 
     for (const variantId of variantIds) {
-      const charged = await resolvePrice({ variantId, marketCode: m.code, quantity: 1 });
+      const charged = await resolvePrice({
+        variantId,
+        marketCode: m.code,
+        quantity: 1,
+        client: db,
+      });
       const shown = display.get(variantId)!;
       expect(shown.currencyCode, `${label}: ${m.code} currency`).toBe(charged.currencyCode);
       expect(shown.listMinor, `${label}: ${m.code} ${variantId} list`).toBe(
@@ -96,7 +101,7 @@ async function assertAgreement(label: string): Promise<void> {
     const finals = await Promise.all(
       variantIds.map(
         async (variantId) =>
-          (await resolvePrice({ variantId, marketCode: m.code })).unitFinalMinor,
+          (await resolvePrice({ variantId, marketCode: m.code, client: db })).unitFinalMinor,
       ),
     );
     expect(range.minSaleMinor, `${label}: ${m.code} "from" price`).toBe(
@@ -127,7 +132,11 @@ describe("P11 (e) — what the card says is what the bag charges", () => {
     ruleId = rows[0]!.id;
 
     const display = await getDisplayPrice(variantIds, m.code);
-    const charged = await resolvePrice({ variantId: variantIds[0]!, marketCode: m.code });
+    const charged = await resolvePrice({
+      variantId: variantIds[0]!,
+      marketCode: m.code,
+      client: db,
+    });
     // The rule really did move the number, so the agreement below is not two copies of the
     // undiscounted figure agreeing with each other.
     expect(charged.unitFinalMinor).toBeLessThan(charged.unitSaleMinor);
@@ -140,7 +149,11 @@ describe("P11 (e) — what the card says is what the bag charges", () => {
     // The rule above names markets[0]. If a currency-blind implementation applied it
     // everywhere, this is where a 15% American markdown would appear on Indian prices.
     const other = markets[1]!;
-    const charged = await resolvePrice({ variantId: variantIds[0]!, marketCode: other.code });
+    const charged = await resolvePrice({
+      variantId: variantIds[0]!,
+      marketCode: other.code,
+      client: db,
+    });
     expect(charged.unitFinalMinor).toBe(charged.unitSaleMinor);
     expect(charged.currencyCode).toBe(other.currency);
   });

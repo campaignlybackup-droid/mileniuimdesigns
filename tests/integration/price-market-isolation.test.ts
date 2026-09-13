@@ -247,7 +247,12 @@ describe("P11 (f) — a tax-inclusive market returns the gross figure, unextract
 
     for (const m of markets) {
       const stored = await snapshot(m.code);
-      const resolved = await resolvePrice({ variantId, marketCode: m.code, quantity: 1 });
+      const resolved = await resolvePrice({
+        variantId,
+        marketCode: m.code,
+        quantity: 1,
+        client: db,
+      });
       expect(resolved.unitListMinor, `${m.code} list`).toBe(
         BigInt(stored["list_minor"] as string),
       );

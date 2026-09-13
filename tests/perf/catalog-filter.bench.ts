@@ -35,6 +35,22 @@ const BASELINE_PATH = resolve(process.cwd(), "tests/perf/baselines/catalog-filte
 const REGRESSION_ALLOWANCE = 1.25;
 const ITERATIONS = 40;
 const WARMUP = 8;
+/**
+ * Independent p95 estimates per case; the reported figure is their MEDIAN.
+ *
+ * A single p95 over 40 samples is the 38th value — the third-WORST — so any run in which
+ * three of forty calls are slow moves the gate. That is 7.5% of samples, which a GC pause or
+ * an OS scheduling slice produces routinely on a laptop also hosting a WASM Postgres. The
+ * case that exposed it was `pagination-last-page`, which failed 3 of 8 consecutive runs
+ * against an unchanged query, drifting between 11 and 15 ms around a 13.34 ms ceiling.
+ *
+ * A flaky gate is worse than no gate: it teaches everyone to re-run until green, and the run
+ * where it means something looks exactly like the four before it. Taking the median of three
+ * independent estimates requires the MAJORITY of runs to be slow before it trips — which is
+ * the definition of a regression, as opposed to a hiccup. The alternative, widening
+ * REGRESSION_ALLOWANCE, buys stability by making the gate insensitive to real slow-downs too.
+ */
+const REPEATS = 3;
 
 type Baseline = Record<string, { p95Ms: number }>;
 
@@ -57,19 +73,32 @@ function round2(ms: number): number {
 
 function p95(samples: number[]): number {
   const sorted = [...samples].sort((a, b) => a - b);
-  // Nearest-rank. With 40 samples this is the 38th, so one outlier cannot set the number.
+  // Nearest-rank: the 38th of 40. That is the third-worst sample, NOT a value one outlier
+  // cannot reach — which is why the reported figure is a median of several of these.
   return sorted[Math.min(sorted.length - 1, Math.ceil(0.95 * sorted.length) - 1)]!;
 }
 
+function median(xs: number[]): number {
+  const sorted = [...xs].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
+}
+
 async function measure(run: () => Promise<unknown>): Promise<number> {
+  // Warm once, not per repeat: the repeats exist to resample a warm system, and re-warming
+  // between them would discard exactly the state the measurement is supposed to hold steady.
   for (let i = 0; i < WARMUP; i++) await run();
-  const samples: number[] = [];
-  for (let i = 0; i < ITERATIONS; i++) {
-    const t = performance.now();
-    await run();
-    samples.push(performance.now() - t);
+  const estimates: number[] = [];
+  for (let r = 0; r < REPEATS; r++) {
+    const samples: number[] = [];
+    for (let i = 0; i < ITERATIONS; i++) {
+      const t = performance.now();
+      await run();
+      samples.push(performance.now() - t);
+    }
+    estimates.push(p95(samples));
   }
-  return p95(samples);
+  return median(estimates);
 }
 
 beforeAll(async () => {

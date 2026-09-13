@@ -82,7 +82,12 @@ afterAll(async () => {
 describe("customer-group pricing is a rule, not a second price table", () => {
   it("an anonymous shopper gets the undiscounted price", async () => {
     // Step 6 is skipped entirely with no customerId. It never inherits a group implicitly.
-    const anon = await resolvePrice({ variantId, marketCode: market.code, quantity: 1 });
+    const anon = await resolvePrice({
+      variantId,
+      marketCode: market.code,
+      quantity: 1,
+      client: db,
+    });
     expect(anon.unitFinalMinor).toBe(100000n);
     expect(anon.discountBreakdown).toEqual([]);
   });
@@ -93,6 +98,7 @@ describe("customer-group pricing is a rule, not a second price table", () => {
       marketCode: market.code,
       quantity: 1,
       customerId,
+      client: db,
     });
     expect(member.unitFinalMinor).toBe(70000n);
     expect(member.discountBreakdown).toHaveLength(1);
@@ -101,12 +107,18 @@ describe("customer-group pricing is a rule, not a second price table", () => {
   });
 
   it("the two differ — which is what makes the anonymous assertion mean something", async () => {
-    const anon = await resolvePrice({ variantId, marketCode: market.code, quantity: 1 });
+    const anon = await resolvePrice({
+      variantId,
+      marketCode: market.code,
+      quantity: 1,
+      client: db,
+    });
     const member = await resolvePrice({
       variantId,
       marketCode: market.code,
       quantity: 1,
       customerId,
+      client: db,
     });
     expect(member.unitFinalMinor).toBeLessThan(anon.unitFinalMinor);
   });
@@ -139,6 +151,7 @@ describe("customer-group pricing is a rule, not a second price table", () => {
       marketCode: other[0].code,
       quantity: 1,
       customerId,
+      client: db,
     });
     // The rule names one market. A currency-blind implementation would apply 30% here too.
     expect(elsewhere.unitFinalMinor).toBe(8400000n);

@@ -182,7 +182,7 @@ describe("the piece is sold once, and says so", () => {
     // One of a Kind edit would quietly become a list of unavailable products.
     const market = await db.$queryRaw<{ code: string }[]>`
       SELECT code FROM markets WHERE is_active ORDER BY rank LIMIT 1`;
-    const availability = await getAvailability([variantId], market[0]!.code);
+    const availability = await getAvailability([variantId], market[0]!.code, db);
     expect(availability.get(variantId)!.band).toBe("sold");
   });
 

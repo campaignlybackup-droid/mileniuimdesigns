@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import { stripComments } from "../support/source";
 
 /**
  * Commissioned by 07 §3.7 and 09 P03A exit criterion (d).
@@ -40,6 +41,29 @@ function walk(dir: string, out: string[] = []): string[] {
  */
 const MUTATOR =
   /export\s+(?:async\s+)?function\s+((?:create|update|delete|save|set|apply|approve|reject|publish|unpublish|archive|restore|refund|cancel|adjust|transfer|assign|revoke|grant|import|bulk|enqueue|mint|issue|anonymize|impersonate)[A-Z]\w*)/g;
+
+/**
+ * Mutators authorized by CAPABILITY rather than by actor permission, named one by one.
+ *
+ * A guest shopper has no account, so `requirePermission()` has nothing to ask about. The cart
+ * token authorizes instead: 256 bits of CSPRNG output, stored only as a SHA-256 hash, resolved
+ * server-side on every call before any write. That is a different authority held to the same
+ * standard — not an exemption from one.
+ *
+ * Listed per FUNCTION, not per directory, and deliberately so. A directory-wide exemption
+ * would silently cover the next mutator someone adds to `src/lib/cart/` — including an admin
+ * one that genuinely needs a permission. Under this shape a new mutator fails until someone
+ * both lists it here and states why in the file, which is the point at which the question
+ * "what authorizes this?" actually gets asked.
+ */
+const CAPABILITY: Record<string, string> = {
+  "src/lib/cart/index.ts: createCart":
+    "mints a NEW empty bag and returns its token; there is nothing yet to authorize access to",
+  "src/lib/cart/index.ts: updateItemQuantity":
+    "resolves the cart through requireCart(tx, token) and scopes the write with AND cart_id",
+  "src/lib/cart/revalidate.ts: applyRepairs":
+    "takes an open transaction and line ids its caller already resolved; accepts no identifier from a request",
+};
 
 /** Modules that legitimately hold no permission check. Each entry states why. */
 const EXEMPT: Array<[RegExp, string]> = [
@@ -85,29 +109,92 @@ describe("every exported mutator is authorized server-side", () => {
     for (const file of walk(resolve(ROOT, "src/lib"))) {
       if (exemptReason(file)) continue;
       const src = readFileSync(file, "utf8");
-      const guarded = /requirePermission|requireAll|requireStaffSession/.test(src);
+      // CODE, not prose. A comment EXPLAINING why a module needs no `requirePermission()`
+      // contains the string `requirePermission` — so scanning raw source made the file exempt
+      // by virtue of documenting itself, and the whole cart module went unchecked the moment
+      // its capability-authorization note was written. Caught only by deliberately adding an
+      // unlisted mutator and watching the guard stay green. Sixth occurrence of this class;
+      // `stripComments` is the standing fix.
+      const code = stripComments(src);
+      const guarded = /requirePermission|requireAll|requireStaffSession/.test(code);
       if (guarded) continue;
       // A synchronous module cannot write to the database, so its exported verbs cannot be
       // unauthorized mutations.
-      if (!performsIo(src)) continue;
-      for (const m of src.matchAll(MUTATOR)) {
-        offenders.push(`${relative(ROOT, file)}: ${m[1]}()`);
+      if (!performsIo(code)) continue;
+      const rel = relative(ROOT, file).replace(/\\/g, "/");
+      for (const m of code.matchAll(MUTATOR)) {
+        const key = `${rel}: ${m[1]}`;
+        // Both must agree: the entry below AND the marker in the file itself.
+        if (key in CAPABILITY && src.includes("CAPABILITY AUTHORIZATION")) continue;
+        offenders.push(`${rel}: ${m[1]}()`);
       }
     }
     expect(offenders).toEqual([]);
+  });
+
+  it("every capability-authorized entry is real, and its file says so", () => {
+    // A stale entry is worse than no entry: it exempts a name that no longer exists, and the
+    // next function to be given that name inherits the exemption silently.
+    for (const [key, why] of Object.entries(CAPABILITY)) {
+      const [rel, fn] = key.split(": ");
+      const file = resolve(ROOT, rel!);
+      expect(existsSync(file), `${rel} is listed but does not exist`).toBe(true);
+      const src = readFileSync(file, "utf8");
+      expect(
+        new RegExp(`export\\s+(?:async\\s+)?function\\s+${fn!}\\b`).test(src),
+        `${key} is listed but ${fn!} is not exported from ${rel!}`,
+      ).toBe(true);
+      expect(
+        src,
+        `${rel!} must carry the marker \`CAPABILITY AUTHORIZATION\` stating what authorizes it`,
+      ).toContain("CAPABILITY AUTHORIZATION");
+      expect(why.length, `${key} needs a stated reason`).toBeGreaterThan(20);
+    }
+  });
+
+  it("every cart mutator that takes a token resolves it server-side", () => {
+    // The POSITIVE property behind the list above. The list says these are authorized by
+    // capability; this asserts the capability is actually CHECKED — that no exported function
+    // accepts a token and then writes without resolving the cart through it first.
+    const cart = resolve(ROOT, "src/lib/cart");
+    const files = walk(cart);
+    expect(files.length, "the cart module has moved").toBeGreaterThan(0);
+    let checked = 0;
+    for (const file of files) {
+      const src = readFileSync(file, "utf8");
+      for (const m of src.matchAll(
+        /export\s+(?:async\s+)?function\s+(\w+)\s*\(\s*\n?\s*token: string/g,
+      )) {
+        checked += 1;
+        const body = src.slice(
+          m.index!,
+          src.indexOf("\nexport ", m.index! + 1) + 1 || undefined,
+        );
+        expect(
+          /requireCart\(|findByToken\(|hashCartToken\(|updateItemQuantity\(/.test(body),
+          `${relative(ROOT, file)}: ${m[1]!}() takes a token but never resolves a cart through it`,
+        ).toBe(true);
+      }
+    }
+    // A scan that matched nothing would pass silently.
+    expect(
+      checked,
+      "no token-taking cart function was found — has the signature changed?",
+    ).toBeGreaterThanOrEqual(4);
   });
 
   it("server actions", () => {
     const offenders: string[] = [];
     for (const file of walk(resolve(ROOT, "src/server/actions"))) {
       const src = readFileSync(file, "utf8");
-      if (/requirePermission|requireAll|requireStaffSession|requireCustomerSession/.test(src))
+      const code = stripComments(src);
+      if (/requirePermission|requireAll|requireStaffSession|requireCustomerSession/.test(code))
         continue;
       // An action a signed-out shopper is MEANT to call declares itself with this marker.
       // `tests/unit/actions-shape.test.ts` holds the list of which those are and why, and
       // asserts the marker is present — so neither the list nor the file can drift alone.
       if (src.includes("PUBLIC ACTION")) continue;
-      if (/export\s+(?:async\s+)?function|export\s+const/.test(src)) {
+      if (/export\s+(?:async\s+)?function|export\s+const/.test(code)) {
         offenders.push(relative(ROOT, file));
       }
     }
@@ -120,8 +207,8 @@ describe("every exported mutator is authorized server-side", () => {
       if (!/route\.tsx?$/.test(file)) continue;
       const rel = relative(ROOT, file).replace(/\\/g, "/");
       if (!rel.includes("/admin/")) continue;
-      const src = readFileSync(file, "utf8");
-      if (!/requirePermission|requireAll|requireStaffSession/.test(src)) {
+      const code = stripComments(readFileSync(file, "utf8"));
+      if (!/requirePermission|requireAll|requireStaffSession/.test(code)) {
         offenders.push(rel);
       }
     }

@@ -111,13 +111,13 @@ describe("a third market is rows only", () => {
   });
 
   it("prices render in pounds, independently of the other two", async () => {
-    const gb = await resolvePrice({ variantId, marketCode: "GB", quantity: 1 });
+    const gb = await resolvePrice({ variantId, marketCode: "GB", quantity: 1, client: db });
     expect(gb.currencyCode).toBe("GBP");
     expect(gb.unitListMinor).toBe(18_900n);
 
     // The other markets are untouched, and none of the three is a conversion of another.
-    const us = await resolvePrice({ variantId, marketCode: "US", quantity: 1 });
-    const india = await resolvePrice({ variantId, marketCode: "IN", quantity: 1 });
+    const us = await resolvePrice({ variantId, marketCode: "US", quantity: 1, client: db });
+    const india = await resolvePrice({ variantId, marketCode: "IN", quantity: 1, client: db });
     expect(us.unitListMinor).toBe(24_800n);
     expect(india.unitListMinor).toBe(1_995_000n);
     expect(new Set([us.currencyCode, india.currencyCode, gb.currencyCode]).size).toBe(3);

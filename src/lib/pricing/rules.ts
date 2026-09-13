@@ -164,13 +164,28 @@ export function applyRuleStack(
  * `line_subtotal_minor = unit_final_minor * quantity` exactly, and this is the step that makes
  * that identity and "round once" simultaneously true.
  */
+/**
+ * What a line of `quantity` units at `unitFinalMinor` costs before order-level discounts.
+ *
+ * A one-line function for a one-token expression, because the expression is a DEFINITION and
+ * it was written out by hand in three places: here, in the cart's view builder, and a third
+ * time in SQL inside the cart-summary query. All three agreed — and that is the problem, not
+ * the reassurance. The residue in `reduceToUnit` means "unit times quantity" and "what the
+ * line actually costs" are already two different quantities that happen to coincide at this
+ * step; the moment that stops being true, three call sites have to be found and changed
+ * together, and the SQL one is invisible to the typechecker. (04 §1.1, 09 P11 (b).)
+ */
+export function lineSubtotal(unitFinalMinor: bigint, quantity: number): bigint {
+  return unitFinalMinor * BigInt(quantity);
+}
+
 export function reduceToUnit(
   lineFinalMinor: bigint,
   quantity: number,
 ): { unitFinalMinor: bigint; lineSubtotalMinor: bigint; roundingResidueMinor: bigint } {
   const q = BigInt(quantity);
   const unitFinalMinor = (lineFinalMinor + q - 1n) / q;
-  const lineSubtotalMinor = unitFinalMinor * q;
+  const lineSubtotalMinor = lineSubtotal(unitFinalMinor, quantity);
   return {
     unitFinalMinor,
     lineSubtotalMinor,

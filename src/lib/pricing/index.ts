@@ -32,6 +32,7 @@ export {
   applyRule,
   applyRuleStack,
   compareRules,
+  lineSubtotal,
   reduceToUnit,
   ruleMatches,
   scopeKeysFor,
