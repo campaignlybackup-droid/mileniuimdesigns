@@ -90,6 +90,22 @@ export function integrationStatus(): Record<IntegrationKey, IntegrationState> {
   return out;
 }
 
+/**
+ * Optional server secrets. Not in the boot schema because their absence is a designed
+ * state in local and test — a developer machine should not need a production secret to
+ * run a test — but `check-env.ts` requires them when APP_ENV=production.
+ *
+ * They live HERE because env.ts is the only module permitted to read process.env, and
+ * that rule is worth more than the convenience of reading them where they are used.
+ */
+export function secret(name: "PASSWORD_PEPPER" | "AUTH_SECRET" | "GIFT_CARD_CODE_PEPPER" | "OTP_HASH_PEPPER"): string | undefined {
+  return process.env[name];
+}
+
+export function appEnv(): string {
+  return process.env["APP_ENV"] ?? "local";
+}
+
 export function missingKeysFor(key: IntegrationKey): string[] {
   return INTEGRATION_KEYS[key].filter((k) => !process.env[k]);
 }

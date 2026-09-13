@@ -2,6 +2,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { seedMarkets } from "./01-markets";
 import { seedRoles } from "./02-roles";
+import { seedCustomerGroups } from "./03-customer-groups";
 import { seedSettings } from "./06-settings";
 import { seedEmailTemplates } from "./07-email-templates";
 
@@ -23,29 +24,43 @@ async function main(): Promise<void> {
   const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: url, max: 5 }) });
 
   try {
+    // Counted BEFORE, so the assertion below measures what the SEED did rather than what
+    // is in the database. `npm run create:admin` legitimately creates the first account;
+    // the criterion is that the seed never does (09 P03 (c)).
+    const usersBefore = await db.user.count();
     console.log("seeding markets, currencies, locations…");
     await seedMarkets(db);
     console.log("seeding roles, 73 permissions and the grant matrix…");
     await seedRoles(db);
+    console.log("seeding the default customer group…");
+    await seedCustomerGroups(db);
     console.log("seeding settings and branded state copy…");
     await seedSettings(db);
     console.log("seeding email template shells…");
     await seedEmailTemplates(db);
 
-    const [permissions, roles, grants, users] = await Promise.all([
+    const [permissions, roles, grants, users, groups] = await Promise.all([
       db.permission.count(),
       db.role.count(),
       db.rolePermission.count(),
       db.user.count(),
+      db.customerGroup.count(),
     ]);
     console.log(
-      `\n  permissions ${permissions}   roles ${roles}   grants ${grants}   users ${users}`,
+      `\n  permissions ${permissions}   roles ${roles}   grants ${grants}   ` +
+        `groups ${groups}   users ${users}`,
     );
-    if (users !== 0) {
+    if (groups === 0) {
       throw new Error(
-        `Seed created ${users} user(s). It must create none — the first staff account is ` +
-          `minted by \`npm run create:admin\`, so that a default login cannot reach ` +
-          `production (09 P03 exit criterion (c)).`,
+        "No customer group was seeded. customers.customer_group_id is NOT NULL, so " +
+          "without one no customer — and therefore no order — can ever be created.",
+      );
+    }
+    if (users !== usersBefore) {
+      throw new Error(
+        `Seed created ${users - usersBefore} user(s). It must create none — the first ` +
+          `staff account is minted by \`npm run create:admin\`, so that a seeded default ` +
+          `login cannot reach production (09 P03 exit criterion (c)).`,
       );
     }
     console.log("\n✓ seed complete\n");

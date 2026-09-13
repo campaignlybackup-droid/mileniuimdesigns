@@ -69,6 +69,27 @@ if (appEnv !== "production" && directUrl && databaseUrl && directUrl === databas
   );
 }
 
+// ── 1b. Production-only secrets ───────────────────────────────────────────────────────
+// Absent in local and test by design: a developer machine should not need a production
+// secret to run a test. Absent in PRODUCTION they are a silent downgrade — a password
+// hash with no pepper still verifies, so nothing fails until the database is stolen.
+const PRODUCTION_SECRETS = [
+  "AUTH_SECRET",
+  "PASSWORD_PEPPER",
+  "OTP_HASH_PEPPER",
+] as const;
+
+if (appEnv === "production") {
+  for (const key of PRODUCTION_SECRETS) {
+    const v = process.env[key];
+    if (!v) {
+      failures.push(`${key} is required in production (07 §1.4, §5.5).`);
+    } else if (v.length < 32) {
+      failures.push(`${key} is shorter than 32 characters. Generate one with \`openssl rand -base64 48\`.`);
+    }
+  }
+}
+
 // ── 2. .env.example ←→ Zod schema parity ──────────────────────────────────────────────
 const root = resolve(process.cwd());
 const examplePath = resolve(root, ".env.example");
@@ -113,7 +134,7 @@ if (!existsSync(examplePath)) {
   }
   // Read by the Prisma CLI through prisma7.config.ts, never by the app, so they are
   // legitimately absent from env.ts's boot schema.
-  const CLI_ONLY = ["SHADOW_DATABASE_URL"];
+  const CLI_ONLY = ["SHADOW_DATABASE_URL", "AUTH_SECRET", "PASSWORD_PEPPER", "OTP_HASH_PEPPER", "GIFT_CARD_CODE_PEPPER"];
   const known = new Set([...bootKeys, ...integKeys, ...CLI_ONLY]);
   for (const k of documented) {
     if (!known.has(k)) {

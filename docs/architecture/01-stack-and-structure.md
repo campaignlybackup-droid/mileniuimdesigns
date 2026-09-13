@@ -2381,3 +2381,51 @@ scripts, seeds and tests, where `new Date()` is ordinary. It is now stated posit
 one block, `files: ["src/lib/pricing/**"]`, listing what is banned there. Combined with
 the P01 finding (§6.5), the rule is: **in flat config, state the narrow thing positively;
 never express a restriction as an exclusion.**
+
+### 6.9 P03A field notes
+
+**The seed list omits the one row that makes `customers` insertable.** `09` P03 names
+four seed files; none creates a `customer_groups` row, while `02 §2.3` makes
+`customers.customer_group_id` **NOT NULL**. So no customer could be inserted at all —
+not a registration, not a guest checkout — and it would have surfaced at P18 as "the
+first order fails", fifteen phases from its cause. `prisma/seed/03-customer-groups.ts`
+seeds the `general` group with `is_default = true`, and the seed now asserts at least one
+group exists rather than trusting it.
+
+**The lint rules caught four violations in the auth code I had just written.** All four
+were real and all four were fixed rather than exempted:
+
+- `password.ts` read `PASSWORD_PEPPER` and `APP_ENV` from `process.env` directly. `env.ts`
+  gains `secret()` and `appEnv()`, so it remains the only reader.
+- `ratelimit/index.ts` imported the generated Prisma client. Its *separate connection* is
+  a security property, not a convenience — so the client factory moved to
+  `src/lib/db/ratelimit-client.ts`, which is the layer permitted to import it. The
+  separation survives; the boundary is respected.
+- `actor.ts` declared two module-level caches. Those are worse than useless: a
+  module-level cache leaks one request's actor into the next on a warm serverless
+  instance, which is precisely the session confusion the two-resolver split exists to
+  prevent. Replaced with React `cache()`, which is per request (07 §2.7).
+
+An architecture whose rules only ever catch other people's code is an architecture nobody
+is actually running.
+
+**A test timed out on the connection ceiling, and the fix is also a production note.**
+`tests/integration/ratelimit.test.ts` proves the limiter survives the caller's rollback.
+It first failed by timeout, because the limiter's dedicated client was being created
+lazily *inside* the caller's transaction and its first connect competed for the local
+server's ~10-connection ceiling. Warming it beforehand fixes the test — and the same shape
+exists in production: on a cold serverless instance, the first failed login would create
+the limiter client inside the login flow. **`rateLimitDb()` should be warmed at module
+init on the server**, not on first use, before P24's load testing.
+
+**The TOTP privilege line is derived and the test proves it derives.**
+`rolesRequiringTotp()` returns `owner`, `admin`, `catalog_manager`, `order_manager` —
+exactly what `07 §1.9` predicts — and the test additionally asserts each of those roles
+really does hold a line permission, so the list cannot pass by coincidence.
+
+**`requireStaffSession()` re-evaluates the privilege line per request.** `07 §1.10`
+deliberately does not treat a permission change as a revocation, so an owner granting
+`order.refund` to a role at 10am would otherwise hand every already-signed-in holder the
+most money-adjacent key in the catalogue, on a session that never saw a second factor, for
+up to twelve hours. The response is a step-up challenge, not a logout: the session is
+valid, it simply has not proved the factor it now needs.

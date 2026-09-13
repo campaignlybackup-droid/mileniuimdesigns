@@ -752,3 +752,43 @@ export const ROLE_MATRIX: Record<RoleKey, readonly PermissionKey[]> = {
 export function grantedKeys(): Set<PermissionKey> {
   return new Set(Object.values(ROLE_MATRIX).flat());
 }
+
+/**
+ * The TOTP privilege line — 07 §1.9.
+ *
+ * The brief says "optional". The decision is: optional for roles that cannot move money
+ * or grant access, MANDATORY for roles that can. "Optional" for a role that can issue a
+ * refund means "off", because nobody enrols voluntarily — and a phished password on one
+ * of those accounts is a same-day loss.
+ *
+ * The line is DERIVED from the matrix, not maintained beside it: granting a new role
+ * `order.refund` makes TOTP mandatory for its holders with no second edit and no chance
+ * of the two lists drifting apart.
+ */
+export const TOTP_REQUIRED_PERMISSIONS = [
+  "order.refund",
+  "order.discount_manual",
+  "price.approve_recalc",
+  "price.update",
+  "customer.export",
+  "customer.anonymize",
+  "user.manage",
+  "user.impersonate",
+  "role.manage",
+  "settings.manage",
+  "integration.manage",
+  "market.manage",
+  "media.hard_delete",
+] as const satisfies readonly PermissionKey[];
+
+/** Does this permission set cross the privilege line? */
+export function requiresTotp(permissions: Iterable<PermissionKey>): boolean {
+  const line = new Set<string>(TOTP_REQUIRED_PERMISSIONS);
+  for (const p of permissions) if (line.has(p)) return true;
+  return false;
+}
+
+/** Which of the seven launch roles must enrol. Derived, never hand-listed. */
+export function rolesRequiringTotp(): RoleKey[] {
+  return ROLE_KEYS.filter((r) => requiresTotp(ROLE_MATRIX[r]));
+}
