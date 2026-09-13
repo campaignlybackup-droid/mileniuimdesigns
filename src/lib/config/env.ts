@@ -111,6 +111,16 @@ export function secret(
   return process.env[name];
 }
 
+/** Runtime facts supplied by the host, not secrets. Read here for the same reason
+ *  everything else is: one module owns process.env. */
+export function hostInfo(): { region: string; deploymentId: string; cronSecret?: string } {
+  return {
+    region: process.env["VERCEL_REGION"] ?? "local",
+    deploymentId: process.env["VERCEL_DEPLOYMENT_ID"] ?? String(process.pid),
+    cronSecret: process.env["CRON_SECRET"],
+  };
+}
+
 export function appEnv(): string {
   return process.env["APP_ENV"] ?? "local";
 }

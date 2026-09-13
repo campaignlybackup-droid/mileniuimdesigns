@@ -2518,3 +2518,48 @@ row exists" — but both run against a database that other tests legitimately wr
 honest form measures the SEED: count before, count after, throw if it added any. Both now
 live in `prisma/seed/index.ts`. An assertion that only holds when it happens to run first
 is a flaky test waiting for a colleague.
+
+### 6.12 P04A field notes
+
+**`FOR UPDATE SKIP LOCKED` is the entire concurrency design, and it is worth stating why
+the obvious alternative fails.** A `SELECT … LIMIT 1` followed by an `UPDATE` lets two
+overlapping invocations read the same row and run the job twice — which for `send_email`
+means the customer gets two confirmations, and for `recalc_apply` means a price
+recalculation applied twice. `SKIP LOCKED` makes the second worker *skip* a locked row
+rather than block on it, so it moves to the next job instead of waiting.
+`tests/integration/jobs-worker.test.ts` runs twenty concurrent claims against twelve jobs
+and asserts exactly twelve distinct claims.
+
+**The watchdog resumes; it does not restart.** `requeueStale()` deliberately does not reset
+`progress_current`. A serverless function killed at its timeout writes nothing, so a
+5,000-row batch that reached 4,000 must continue from 4,000 — resetting to zero re-sends
+the first 4,000 emails. `reportProgress()` also touches `locked_at`, so a job that IS
+progressing is never reclaimed by the watchdog mid-flight.
+
+**`systemPermitted` as a per-kind flag, not an allowlist, is now provable.** There is a
+test that enqueues `send_email` with no user and asserts it succeeds, and another that
+enqueues `import_apply` with no user and asserts it is refused. Under the original
+three-kind allowlist the first would have been refused — so no order-confirmation email
+would ever have sent, from the first paid order, silently. The test is three lines and it
+pins the exact regression.
+
+**Two `requeued` counts collided in one response object.** `drainJobs()` returns a
+`requeued` count (jobs that threw and have attempts left) and the watchdog returns another
+(jobs orphaned by a dead invocation). `{ ok: true, requeued, ...stats }` silently
+overwrote the first with the second — TypeScript caught it as *"specified more than once"*,
+which it would not have done had the spread come first. They are now named apart. Worth
+remembering that object-spread precedence makes this class of bug silent in the other
+order.
+
+**zsh does not word-split unquoted variables.** `for c in $CRONS` created a single
+directory named after the whole string. Trivial, but it produced ten cron routes inside
+one folder and the registry test would have caught it as "nine missing handlers" — which
+is a much more confusing message than the cause. Worth using explicit lists in shell loops
+on this machine.
+
+**The cron registry test earns its keep in both directions.** `01 §5.6` shipped with nine
+entries while `04 §5.4` cited a tenth that was simply absent. The test now asserts the
+three copies — `vercel.json#crons`, `src/lib/config/crons.ts`, and the directories under
+`src/app/api/cron/` — are the same set, and additionally that every handler calls
+`assertCronRequest`. A handler with no schedule never runs and reads fine in review; a
+schedule with no handler 404s on a timer nobody watches.
