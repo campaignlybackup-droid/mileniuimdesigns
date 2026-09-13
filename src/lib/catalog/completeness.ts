@@ -60,8 +60,14 @@ export type PublishBlocker = { key: string; label: string; hint: string };
 /** Categories where a stone is not expected. CHAINS is plain metal (03 §1.6 check 7). */
 const NON_STONE_CATEGORIES = new Set(["chains"]);
 
-/** 03 §2.6. A readable, structured SKU rather than a free-text field. */
-export const SKU_PATTERN = /^[A-Z0-9]{2,6}(-[A-Z0-9]{1,6}){1,4}$/;
+/**
+ * Re-exported from the one definition in `src/lib/catalog/sku.ts`.
+ *
+ * P07 declared a LOOSER pattern here (`^[A-Z0-9]{2,6}(-[A-Z0-9]{1,6}){1,4}$`) than
+ * 03 §2.6's canonical one, so completeness check 10 would have passed SKUs the generator
+ * cannot produce — a check that is satisfied by something the system never creates.
+ */
+export { SKU_PATTERN } from "@/lib/catalog/sku";
 
 export function scoreProduct(p: ProductForScoring): CompletenessResult {
   const checks: CompletenessCheck[] = [

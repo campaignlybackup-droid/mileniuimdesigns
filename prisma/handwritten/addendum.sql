@@ -458,3 +458,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS "uq_email_templates"
 
 CREATE INDEX IF NOT EXISTS "idx_analytics_occurred_brin"
   ON "analytics_events" USING BRIN (occurred_at) WITH (pages_per_range = 32);
+
+
+-- ── sku_token uniqueness and case (03 §2.6, added at P08) ────────────────────────
+DO $$ BEGIN
+  ALTER TABLE "stones" ADD CONSTRAINT "chk_stones_sku_token_upper" CHECK (sku_token IS NULL OR sku_token = upper(sku_token));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "materials" ADD CONSTRAINT "chk_materials_sku_token_upper" CHECK (sku_token IS NULL OR sku_token = upper(sku_token));
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_categories_sku_token" ON "categories" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_stones_sku_token" ON "stones" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_materials_sku_token" ON "materials" (sku_token) WHERE sku_token IS NOT NULL AND deleted_at IS NULL;

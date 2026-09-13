@@ -2741,3 +2741,47 @@ action file is matched by a `.strict()`.
 The first version of the "no `getActor()`" check failed on this codebase's own comment
 explaining why `getActor()` must not exist. It now strips comments before matching. Worth
 remembering for every grep-based rule in this repo.
+
+### 6.19 P08 field notes
+
+**Two SKU spellings for one token is two catalogues.** The P05 seed wrote material tokens
+as `14YG` / `14WG` / `14RG`; `03 §2.6`'s SKU example specifies `14KY` / `14KW` / `14KR`.
+Same information, different order — and the result is a SKU that does not match the shape
+the document describes, printed on an invoice and read down a phone line. Corrected in the
+seed and in the seeded rows. The test now pins the full shape
+(`/^MD-RNG-LAB-(14KY|14KW)-0[5-9]$/`) rather than only asserting the pattern matches,
+because a looser assertion would have passed on the wrong tokens.
+
+**A looser pattern in P07 would have let completeness check 10 pass on SKUs the generator
+cannot produce.** `src/lib/catalog/completeness.ts` declared
+`^[A-Z0-9]{2,6}(-[A-Z0-9]{1,6}){1,4}$` where `03 §2.6` specifies
+`^MD-[A-Z]{3}-[A-Z]{3}-[A-Z0-9]{4}-(\d{2}|NA)(-[A-Z0-9]{2})?$`. A check satisfied by
+something the system never creates is not a check. Now re-exported from the one definition
+in `sku.ts`, and the SQL in `gatherForScoring` carries the same expression.
+
+**`sku_token` had no unique index until P08.** `03 §2.6` specifies a partial unique per
+column; P05 created the columns and the `categories` CHECK but not the indexes. Without
+them two stones can both claim `LAB`, the generator produces the same SKU for two
+products, and `idx_variants_sku_live` refuses the second variant with a unique violation
+naming a column the merchandiser never typed. Added through the full P06 workflow —
+migration, addendum, manifest — which is now 115 protected objects.
+
+**`ON DELETE RESTRICT` was telling the truth and the service was wrong.**
+`removeOptionValue` soft-deletes the variants using a value, then deletes the value — and
+the delete failed on `variant_option_values_option_value_id_fkey`. RESTRICT is correct: an
+option value that variants still reference must not vanish and leave them describing a
+selection that no longer exists. Soft-deleting a variant does not remove its join rows, so
+the service now clears the rows for that value first. **A foreign key refusing a write is
+usually a design statement, not an obstacle.**
+
+**The variant matrix carries no availability, and there is a test asserting it carries
+none.** `getVariantMatrix()` feeds the PDP, which is ISR for 900 seconds and CDN-served, so
+every field on it is baked into a shared document for up to fifteen minutes. A
+one-of-a-kind piece that sold ninety seconds ago would read "In stock" to every visitor for
+the rest of the window. The test asserts the absence of `band`, `available` and `quantity`
+— an absence is exactly the kind of property that quietly stops being true.
+
+**Impossible combinations are marked unavailable, never hidden.** `reachableValues()`
+returns what each axis can still reach given a partial selection, and the axis keeps
+offering all five sizes. Hiding "US 5" makes a shopper believe the size does not exist,
+rather than that it is not made in white gold.

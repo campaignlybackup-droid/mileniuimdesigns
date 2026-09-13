@@ -69,6 +69,8 @@ const HANDWRITTEN_CONSTRAINTS = [
   "chk_collection_rules_price_market", "chk_pms_amounts", "fk_pms_market",
   "chk_curated_facets_target", "chk_redirects_not_self", "chk_redirects_status",
   "chk_redirects_paths",
+  // P08
+  "chk_stones_sku_token_upper", "chk_materials_sku_token_upper",
 ] as const;
 
 /** Triggers and generated columns. */

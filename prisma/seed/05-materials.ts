@@ -12,6 +12,12 @@ import type { PrismaClient } from "@/generated/prisma/client";
  * (hard rule 6). The flag only says this material's cost has a market rate behind it.
  *
  * `NMTL` is reserved for "no metal" and is not a row.
+ *
+ * The tokens are `14KY` / `14KW` / `14KR` / `SS92` — 03 §2.6's SKU example, verbatim. An
+ * earlier version of this seed wrote `14YG` / `14WG` / `14RG`, which is the same
+ * information in a different order and produces SKUs that do not match the documented
+ * shape. A SKU is printed on an invoice and read down a phone line; two spellings of one
+ * token is two catalogues.
  */
 const MATERIALS = [
   {
@@ -22,17 +28,17 @@ const MATERIALS = [
   {
     slug: "14k-yellow-gold", name: "14K Yellow Gold", kind: "metal",
     purityLabel: "14K", purityRatio: "0.58333", isRateLinked: true,
-    skuToken: "14YG", rank: 2,
+    skuToken: "14KY", rank: 2,
   },
   {
     slug: "14k-white-gold", name: "14K White Gold", kind: "metal",
     purityLabel: "14K", purityRatio: "0.58333", isRateLinked: true,
-    skuToken: "14WG", rank: 3,
+    skuToken: "14KW", rank: 3,
   },
   {
     slug: "14k-rose-gold", name: "14K Rose Gold", kind: "metal",
     purityLabel: "14K", purityRatio: "0.58333", isRateLinked: true,
-    skuToken: "14RG", rank: 4,
+    skuToken: "14KR", rank: 4,
   },
 ] as const;
 

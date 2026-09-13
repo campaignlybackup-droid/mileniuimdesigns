@@ -300,7 +300,7 @@ export async function gatherForScoring(tx: Tx, productId: string): Promise<Produ
       (SELECT count(DISTINCT v.id) FROM product_variants v JOIN variant_materials vm ON vm.variant_id = v.id AND vm.is_primary
         WHERE v.product_id = p.id AND v.deleted_at IS NULL) AS variants_with_primary_material,
       (SELECT count(*) FROM product_variants v WHERE v.product_id = p.id AND v.deleted_at IS NULL
-         AND v.sku ~ '^[A-Z0-9]{2,6}(-[A-Z0-9]{1,6}){1,4}$') AS variants_with_sku,
+         AND v.sku ~ '^MD-[A-Z]{3}-[A-Z]{3}-[A-Z0-9]{4}-([0-9]{2}|NA)(-[A-Z0-9]{2})?$') AS variants_with_sku,
       (SELECT count(*) FROM product_variants v WHERE v.product_id = p.id AND v.deleted_at IS NULL
          AND v.gross_weight_grams IS NOT NULL) AS variants_with_weight,
       (SELECT count(*) FROM product_variants v WHERE v.product_id = p.id AND v.deleted_at IS NULL
