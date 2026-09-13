@@ -111,6 +111,57 @@ export function allocate(totalMinor: bigint, weights: readonly bigint[]): bigint
   return exact;
 }
 
+/**
+ * THE money formatter. This is the only `Intl.NumberFormat` in the codebase, and
+ * `eslint.config.mjs` enforces that.
+ *
+ * The bug it exists to prevent: `Intl.NumberFormat("en-US", { currency: "INR" })` renders
+ * a lakh as **₹100,000.00** instead of **₹1,00,000.00**. On a jewellery-sized amount in
+ * the secondary market that is a visibly wrong number, and it is the kind of thing four
+ * separate formatters produce exactly once, in the one place nobody looks.
+ *
+ * The locale comes from `markets.locale` — never from the browser, never hardcoded. A
+ * shopper in London browsing the India market sees Indian grouping, because the grouping
+ * belongs to the PRICE, not to the reader.
+ *
+ * Trailing `.00` is always shown. A catalogue that renders `$160` on the card and
+ * `$160.00` in the bag reads as two different numbers to someone comparing them, and the
+ * inconsistency costs more than the two characters save (04 §9).
+ */
+export function formatMoney(
+  amount: Money,
+  opts: { locale: string; minorUnit?: number },
+): string {
+  const minorUnit = opts.minorUnit ?? 2;
+  const divisor = 10 ** minorUnit;
+
+  // The ONLY place a money value becomes a JS number. Safe here and nowhere else:
+  // Intl needs a number, and this value is already final — it is never fed back into
+  // arithmetic. Everything upstream of this line is bigint.
+  const asNumber = Number(amount.minor) / divisor;
+
+  return new Intl.NumberFormat(opts.locale, {
+    style: "currency",
+    currency: amount.currency,
+    minimumFractionDigits: minorUnit,
+    maximumFractionDigits: minorUnit,
+  }).format(asNumber);
+}
+
+/**
+ * Round a rational to an integer minor unit, half-up, AWAY FROM ZERO on a .5.
+ * Currency-independent by design (02 §1.10 rule 5): a rounding direction that varies by
+ * currency is a rounding direction nobody can reason about.
+ */
+export function roundHalfUp(numerator: bigint, denominator: bigint): bigint {
+  if (denominator === 0n) throw new Error("roundHalfUp: division by zero");
+  const negative = numerator < 0n !== denominator < 0n;
+  const n = numerator < 0n ? -numerator : numerator;
+  const d = denominator < 0n ? -denominator : denominator;
+  const q = (n * 2n + d) / (d * 2n);
+  return negative ? -q : q;
+}
+
 /** Money crosses a JSON boundary as a string. `JSON.stringify(1299n)` throws (01 §2.6). */
 export function serialiseMoney(m: Money): { minor: string; currency: CurrencyCode } {
   return { minor: m.minor.toString(), currency: m.currency };

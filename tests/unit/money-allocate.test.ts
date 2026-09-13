@@ -11,8 +11,11 @@ import { addMoney, allocate, applyBp, CurrencyMismatchError, money } from "@/lib
  */
 describe("allocate", () => {
   it("always sums to the total (property sweep)", () => {
+    // 09 P04 exit criterion (a) asks for 10 000 pairs, including negative totals and
+    // zero weights. Deterministic rather than random: a property sweep that cannot be
+    // reproduced from a failure message is a sweep nobody can debug.
     let cases = 0;
-    for (let total = -500; total <= 500; total += 7) {
+    for (let total = -600; total <= 600; total += 3) {
       for (let n = 1; n <= 8; n++) {
         for (let seed = 1; seed <= 5; seed++) {
           const weights = Array.from({ length: n }, (_, i) =>
@@ -25,7 +28,7 @@ describe("allocate", () => {
         }
       }
     }
-    expect(cases).toBeGreaterThan(2000);
+    expect(cases).toBeGreaterThanOrEqual(10_000);
   });
 
   it("breaks ties by lowest index — the caller's ordering is load-bearing", () => {
