@@ -1,5 +1,12 @@
 import "server-only";
-import { createCipheriv, createDecipheriv, createHmac, hkdfSync, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHmac,
+  hkdfSync,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import { hash as argonHash, verify as argonVerify } from "@node-rs/argon2";
 import { secret } from "@/lib/config/env";
 
@@ -70,7 +77,15 @@ function keyFor(version: number): Buffer {
       ? secret("AUTH_SECRET")
       : (secret("AUTH_SECRET_PREVIOUS") ?? secret("AUTH_SECRET"));
   if (!base) throw new Error("AUTH_SECRET is required to encrypt or read a TOTP secret.");
-  return Buffer.from(hkdfSync("sha256", Buffer.from(base), Buffer.alloc(0), Buffer.from("md-totp-v" + version), 32));
+  return Buffer.from(
+    hkdfSync(
+      "sha256",
+      Buffer.from(base),
+      Buffer.alloc(0),
+      Buffer.from("md-totp-v" + version),
+      32,
+    ),
+  );
 }
 
 /** `v<n>:<iv b64>:<tag b64>:<ciphertext b64>` — self-describing, so a rotation is survivable. */
@@ -85,9 +100,16 @@ export function decryptSecret(stored: string): string {
   const m = /^v(\d+):([^:]+):([^:]+):(.+)$/.exec(stored);
   if (!m) throw new Error("Unrecognised TOTP ciphertext format.");
   const version = Number(m[1]);
-  const decipher = createDecipheriv("aes-256-gcm", keyFor(version), Buffer.from(m[2]!, "base64"));
+  const decipher = createDecipheriv(
+    "aes-256-gcm",
+    keyFor(version),
+    Buffer.from(m[2]!, "base64"),
+  );
   decipher.setAuthTag(Buffer.from(m[3]!, "base64"));
-  return Buffer.concat([decipher.update(Buffer.from(m[4]!, "base64")), decipher.final()]).toString("utf8");
+  return Buffer.concat([
+    decipher.update(Buffer.from(m[4]!, "base64")),
+    decipher.final(),
+  ]).toString("utf8");
 }
 
 export function generateSecret(): string {
@@ -126,8 +148,7 @@ export function generateCodeForStep(secretBase32: string, step: number): string 
 }
 
 export type TotpResult =
-  | { ok: true; step: number }
-  | { ok: false; reason: "malformed" | "mismatch" | "replayed" };
+  { ok: true; step: number } | { ok: false; reason: "malformed" | "mismatch" | "replayed" };
 
 /**
  * Verify a code against the ±1 step window, refusing any step at or below the last
@@ -179,7 +200,9 @@ export function generateRecoveryCodes(count = 10, length = 10): string[] {
 }
 
 export async function hashRecoveryCodes(codes: string[]): Promise<string[]> {
-  return Promise.all(codes.map((c) => argonHash(c, { memoryCost: 19_456, timeCost: 2, parallelism: 1 })));
+  return Promise.all(
+    codes.map((c) => argonHash(c, { memoryCost: 19_456, timeCost: 2, parallelism: 1 })),
+  );
 }
 
 /**

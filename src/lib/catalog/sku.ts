@@ -75,7 +75,9 @@ export async function buildSku(tx: Tx, input: BuildSkuInput): Promise<string> {
       select: { skuToken: true, slug: true },
     });
     if (!material?.skuToken) {
-      throw new ValidationError(`Material '${material?.slug ?? input.materialId}' has no sku_token.`);
+      throw new ValidationError(
+        `Material '${material?.slug ?? input.materialId}' has no sku_token.`,
+      );
     }
     metalToken = material.skuToken;
   }

@@ -15,7 +15,12 @@ afterAll(async () => {
 
 describe("counting", () => {
   it("allows up to the limit and refuses beyond it", async () => {
-    const spec = { prefix: "login:ip", limit: 3, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:ip",
+      limit: 3,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     const key = probe("count");
     const results = [];
     for (let i = 0; i < 5; i++) results.push(await consume(spec, key));
@@ -24,7 +29,12 @@ describe("counting", () => {
   });
 
   it("reports Retry-After so a client knows when to come back", async () => {
-    const spec = { prefix: "login:ip", limit: 1, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:ip",
+      limit: 1,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     const key = probe("retry");
     await consume(spec, key);
     const denied = await consume(spec, key);
@@ -34,7 +44,12 @@ describe("counting", () => {
   });
 
   it("throws RateLimitedError with a 429 from enforce()", async () => {
-    const spec = { prefix: "login:ip", limit: 1, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:ip",
+      limit: 1,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     const key = probe("enforce");
     await enforce(spec, key);
     await expect(enforce(spec, key)).rejects.toBeInstanceOf(RateLimitedError);
@@ -46,7 +61,12 @@ describe("counting", () => {
   });
 
   it("keeps separate keys separate", async () => {
-    const spec = { prefix: "login:ip", limit: 1, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:ip",
+      limit: 1,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     expect((await consume(spec, probe("a"))).allowed).toBe(true);
     expect((await consume(spec, probe("b"))).allowed).toBe(true);
   });
@@ -54,7 +74,12 @@ describe("counting", () => {
   it("is atomic under concurrency — two racers cannot both take the last slot", async () => {
     // A read-then-write would let both read `count = limit - 1` and both proceed. The
     // conditional INSERT ... ON CONFLICT DO UPDATE is one statement.
-    const spec = { prefix: "login:ip", limit: 5, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:ip",
+      limit: 5,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     const key = probe("race");
     const results = await Promise.all(Array.from({ length: 20 }, () => consume(spec, key)));
     expect(results.filter((r) => r.allowed).length).toBe(5);
@@ -67,7 +92,12 @@ describe("the limiter survives the caller's rollback", () => {
     // and writes an audit row, then throws. Wrapped in one transaction — the natural way
     // to write it — all three roll back and the counter reads 0 after ten thousand
     // guesses. `consume()` holds its own connection precisely so that cannot happen.
-    const spec = { prefix: "login:email", limit: 3, windowSeconds: 900, onFailure: "closed" } as const;
+    const spec = {
+      prefix: "login:email",
+      limit: 3,
+      windowSeconds: 900,
+      onFailure: "closed",
+    } as const;
     const key = probe("rollback");
 
     // Warm the limiter's own connection BEFORE opening the caller's transaction. The
@@ -115,7 +145,9 @@ describe("key material never identifies a person", () => {
   });
 
   it("is case-insensitive — Shopper@ and shopper@ are one person", () => {
-    expect(hashKeyMaterial("Shopper@Example.test")).toBe(hashKeyMaterial("shopper@example.test"));
+    expect(hashKeyMaterial("Shopper@Example.test")).toBe(
+      hashKeyMaterial("shopper@example.test"),
+    );
   });
 });
 
@@ -123,8 +155,15 @@ describe("the declared limits", () => {
   it("fails CLOSED on every credential, money and token-oracle endpoint", () => {
     // A limiter that fails open on a login endpoint is not a limiter.
     for (const name of [
-      "loginIp", "loginEmail", "otpRequest", "passwordReset",
-      "checkout", "couponApply", "wishlistShare", "backInStockIp", "backInStockEmail",
+      "loginIp",
+      "loginEmail",
+      "otpRequest",
+      "passwordReset",
+      "checkout",
+      "couponApply",
+      "wishlistShare",
+      "backInStockIp",
+      "backInStockEmail",
     ] as const) {
       expect(LIMITS[name].onFailure, `${name} must fail closed`).toBe("closed");
     }

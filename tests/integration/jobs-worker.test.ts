@@ -2,8 +2,13 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { db } from "@/lib/db/client";
 import { withTransaction } from "@/lib/db/transaction";
 import {
-  claimNext, drainJobs, enqueue, markFailed,
-  registerHandler, reportProgress, requeueStale,
+  claimNext,
+  drainJobs,
+  enqueue,
+  markFailed,
+  registerHandler,
+  reportProgress,
+  requeueStale,
 } from "@/lib/jobs";
 import { JOB_KINDS, SINGLETON_KINDS } from "@/lib/jobs/kinds";
 import { ForbiddenError } from "@/lib/errors";
@@ -12,7 +17,9 @@ import { ForbiddenError } from "@/lib/errors";
 const clean = () => db.$executeRaw`DELETE FROM jobs WHERE payload->>'probe' = 'true'`;
 
 beforeEach(clean);
-afterAll(async () => { await clean(); });
+afterAll(async () => {
+  await clean();
+});
 
 const probe = (extra: Record<string, unknown> = {}) => ({ probe: "true", ...extra });
 
@@ -36,8 +43,12 @@ describe("enqueue", () => {
   });
 
   it("dedupes a singleton kind globally", async () => {
-    const a = await withTransaction((tx) => enqueue(tx, { kind: "sitemap_rebuild", payload: probe() }));
-    const b = await withTransaction((tx) => enqueue(tx, { kind: "sitemap_rebuild", payload: probe() }));
+    const a = await withTransaction((tx) =>
+      enqueue(tx, { kind: "sitemap_rebuild", payload: probe() }),
+    );
+    const b = await withTransaction((tx) =>
+      enqueue(tx, { kind: "sitemap_rebuild", payload: probe() }),
+    );
     expect(b.deduped).toBe(true);
     expect(b.id).toBe(a.id);
   });
@@ -45,11 +56,14 @@ describe("enqueue", () => {
   it("dedupes per market, not globally, for a market-scoped kind", async () => {
     // Two markets may rebuild their feeds concurrently; one market may not rebuild twice.
     const us = await withTransaction((tx) =>
-      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:US" }));
+      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:US" }),
+    );
     const inr = await withTransaction((tx) =>
-      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:IN" }));
+      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:IN" }),
+    );
     const usAgain = await withTransaction((tx) =>
-      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:US" }));
+      enqueue(tx, { kind: "feed_rebuild", payload: probe(), dedupeValue: "market:US" }),
+    );
 
     expect(inr.id).not.toBe(us.id);
     expect(usAgain.deduped).toBe(true);
@@ -62,7 +76,9 @@ describe("enqueue", () => {
     `;
     const def = rows[0]!.indexdef;
     for (const k of SINGLETON_KINDS) {
-      expect(def, `${k} declared dedupeKey 'kind' but is not in idx_jobs_singleton`).toContain(k);
+      expect(def, `${k} declared dedupeKey 'kind' but is not in idx_jobs_singleton`).toContain(
+        k,
+      );
     }
   });
 });
@@ -75,7 +91,12 @@ describe("claiming is exactly-once under concurrency", () => {
     const ids: string[] = [];
     for (let i = 0; i < 12; i++) {
       const r = await withTransaction((tx) =>
-        enqueue(tx, { kind: "send_email", payload: probe({ n: i }), dedupeValue: `probe:${i}` }));
+        enqueue(tx, {
+          kind: "send_email",
+          payload: probe({ n: i }),
+          dedupeValue: `probe:${i}`,
+        }),
+      );
       ids.push(r.id);
     }
 
@@ -91,7 +112,8 @@ describe("claiming is exactly-once under concurrency", () => {
 
   it("a claimed job is not re-claimable", async () => {
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "send_email", payload: probe(), dedupeValue: `once:${Date.now()}` }));
+      enqueue(tx, { kind: "send_email", payload: probe(), dedupeValue: `once:${Date.now()}` }),
+    );
     const first = await claimNext("w1");
     expect(first?.id).toBe(id);
     const second = await claimNext("w2");
@@ -101,9 +123,12 @@ describe("claiming is exactly-once under concurrency", () => {
   it("respects run_after — a delayed job is not claimed early", async () => {
     await withTransaction((tx) =>
       enqueue(tx, {
-        kind: "send_email", payload: probe(), dedupeValue: `later:${Date.now()}`,
+        kind: "send_email",
+        payload: probe(),
+        dedupeValue: `later:${Date.now()}`,
         runAfter: new Date(Date.now() + 3_600_000),
-      }));
+      }),
+    );
     expect(await claimNext("w1")).toBeNull();
   });
 });
@@ -111,7 +136,8 @@ describe("claiming is exactly-once under concurrency", () => {
 describe("failure is recorded, never lost", () => {
   it("requeues with backoff while attempts remain", async () => {
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "send_email", payload: probe(), dedupeValue: `fail:${Date.now()}` }));
+      enqueue(tx, { kind: "send_email", payload: probe(), dedupeValue: `fail:${Date.now()}` }),
+    );
     await claimNext("w1");
     const outcome = await markFailed(id, new Error("provider timeout"));
     expect(outcome).toBe("requeued");
@@ -126,7 +152,8 @@ describe("failure is recorded, never lost", () => {
     // 09 P04A criterion (d). A job that throws and vanishes is worse than one that fails
     // loudly — nobody knows the confirmation email was never sent.
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "consistency_check", payload: probe() }));
+      enqueue(tx, { kind: "consistency_check", payload: probe() }),
+    );
     const meta = JOB_KINDS.consistency_check;
     for (let i = 0; i < meta.maxAttempts; i++) {
       await claimNext("w1");
@@ -147,8 +174,13 @@ describe("the watchdog resumes, it does not restart", () => {
     // 09 P04A criterion (b). A serverless function killed at its timeout writes nothing.
     // Resetting progress to zero would re-send the first 4,000 emails of a 5,000-row batch.
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "email_batch", payload: probe(), createdByUserId: null, dedupeValue: null })
-        .catch(() => enqueue(tx, { kind: "analytics_dispatch", payload: probe() })));
+      enqueue(tx, {
+        kind: "email_batch",
+        payload: probe(),
+        createdByUserId: null,
+        dedupeValue: null,
+      }).catch(() => enqueue(tx, { kind: "analytics_dispatch", payload: probe() })),
+    );
 
     await claimNext("doomed-worker");
     await reportProgress(id, 4000, 5000);
@@ -171,7 +203,8 @@ describe("the watchdog resumes, it does not restart", () => {
 
   it("does not touch a job that IS progressing", async () => {
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "analytics_dispatch", payload: probe() }));
+      enqueue(tx, { kind: "analytics_dispatch", payload: probe() }),
+    );
     await claimNext("healthy-worker");
     await reportProgress(id, 1, 10); // touches locked_at
     await requeueStale();
@@ -189,7 +222,8 @@ describe("draining", () => {
     });
 
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "analytics_dispatch", payload: probe() }));
+      enqueue(tx, { kind: "analytics_dispatch", payload: probe() }),
+    );
     const stats = await drainJobs({ workerId: "w1", maxMs: 5000, maxJobs: 5 });
 
     expect(stats.succeeded).toBeGreaterThan(0);
@@ -201,7 +235,8 @@ describe("draining", () => {
 
   it("fails a kind with NO registered handler loudly instead of looping on it", async () => {
     const { id } = await withTransaction((tx) =>
-      enqueue(tx, { kind: "media_orphan_scan", payload: probe() }));
+      enqueue(tx, { kind: "media_orphan_scan", payload: probe() }),
+    );
     await drainJobs({ workerId: "w1", maxMs: 5000, maxJobs: 5 });
     const row = await db.job.findUniqueOrThrow({ where: { id } });
     expect(row.error).toContain("No handler registered");

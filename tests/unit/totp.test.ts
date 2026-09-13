@@ -41,7 +41,12 @@ describe("secret encryption", () => {
   it("is authenticated — tampering is detected, not silently decrypted", () => {
     const enc = encryptSecret(generateSecret());
     const parts = enc.split(":");
-    const tampered = [parts[0], parts[1], parts[2], Buffer.from("evil").toString("base64")].join(":");
+    const tampered = [
+      parts[0],
+      parts[1],
+      parts[2],
+      Buffer.from("evil").toString("base64"),
+    ].join(":");
     expect(() => decryptSecret(tampered)).toThrow();
   });
 

@@ -39,7 +39,11 @@ const FORBID_TAGS = [
   // `<image href="...">` is an outbound request, and a tracking pixel at minimum.
   "image",
   // SMIL animation can carry event handlers and can set attributes post-sanitisation.
-  "animate", "animateTransform", "animateMotion", "set", "handler",
+  "animate",
+  "animateTransform",
+  "animateMotion",
+  "set",
+  "handler",
 ];
 
 const FORBID_ATTR = ["onload", "onerror", "onclick", "onmouseover", "onfocus", "onbegin"];
@@ -111,7 +115,9 @@ export function sanitizeSvg(input: Buffer): SanitiseResult {
 /** A cheap structural check before the expensive parse. */
 export function looksLikeSvg(input: Buffer): boolean {
   const head = input.subarray(0, 1024).toString("utf8").trimStart().toLowerCase();
-  return head.startsWith("<?xml") || head.startsWith("<!doctype svg") || head.startsWith("<svg");
+  return (
+    head.startsWith("<?xml") || head.startsWith("<!doctype svg") || head.startsWith("<svg")
+  );
 }
 
 /** 256 KB. A brand mark or a care symbol is a few KB; anything larger is a raster

@@ -15,11 +15,15 @@ const req = (headers: Record<string, string>) =>
 /** Commissioned by 07 §5.4. */
 describe("assertSameOrigin", () => {
   it("allows a matching Origin", () => {
-    expect(() => assertSameOrigin(req({ origin: "https://millenniumdesigns.test" }))).not.toThrow();
+    expect(() =>
+      assertSameOrigin(req({ origin: "https://millenniumdesigns.test" })),
+    ).not.toThrow();
   });
 
   it("refuses a foreign Origin", () => {
-    expect(() => assertSameOrigin(req({ origin: "https://evil.test" }))).toThrow(ForbiddenError);
+    expect(() => assertSameOrigin(req({ origin: "https://evil.test" }))).toThrow(
+      ForbiddenError,
+    );
   });
 
   it("refuses a look-alike Origin", () => {

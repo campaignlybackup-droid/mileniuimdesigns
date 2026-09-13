@@ -28,8 +28,13 @@ beforeAll(async () => {
 
   const a = await db.user.create({
     data: {
-      email: plainEmail, passwordHash: hash, firstName: "Below", lastName: "Line",
-      isActive: true, passwordChangedAt: new Date(Date.now() - 86_400_000), totpRecoveryCodes: [],
+      email: plainEmail,
+      passwordHash: hash,
+      firstName: "Below",
+      lastName: "Line",
+      isActive: true,
+      passwordChangedAt: new Date(Date.now() - 86_400_000),
+      totpRecoveryCodes: [],
       roles: { create: { roleId: analyst.id } },
     },
     select: { id: true },
@@ -38,8 +43,13 @@ beforeAll(async () => {
 
   const o = await db.user.create({
     data: {
-      email: ownerEmail, passwordHash: hash, firstName: "Above", lastName: "Line",
-      isActive: true, passwordChangedAt: new Date(Date.now() - 86_400_000), totpRecoveryCodes: [],
+      email: ownerEmail,
+      passwordHash: hash,
+      firstName: "Above",
+      lastName: "Line",
+      isActive: true,
+      passwordChangedAt: new Date(Date.now() - 86_400_000),
+      totpRecoveryCodes: [],
       roles: { create: { roleId: owner.id } },
     },
     select: { id: true },
@@ -78,8 +88,16 @@ describe("staff sign-in", () => {
 
   it("gives the SAME answer for a wrong password and an unknown account", async () => {
     // Both are enumeration oracles if they differ.
-    const wrong = await staffLogin({ email: plainEmail, password: "not-the-password", ipAddress: nextIp() });
-    const unknown = await staffLogin({ email: `nobody-${stamp}@test.invalid`, password: PASSWORD, ipAddress: nextIp() });
+    const wrong = await staffLogin({
+      email: plainEmail,
+      password: "not-the-password",
+      ipAddress: nextIp(),
+    });
+    const unknown = await staffLogin({
+      email: `nobody-${stamp}@test.invalid`,
+      password: PASSWORD,
+      ipAddress: nextIp(),
+    });
     expect(wrong).toEqual({ status: "failed" });
     expect(unknown).toEqual({ status: "failed" });
   });
@@ -103,7 +121,9 @@ describe("staff sign-in", () => {
 
   it("refuses a deactivated account", async () => {
     await db.user.update({ where: { id: plainId }, data: { isActive: false } });
-    expect(await staffLogin({ email: plainEmail, password: PASSWORD, ipAddress: nextIp() })).toEqual({ status: "failed" });
+    expect(
+      await staffLogin({ email: plainEmail, password: PASSWORD, ipAddress: nextIp() }),
+    ).toEqual({ status: "failed" });
     await db.user.update({ where: { id: plainId }, data: { isActive: true } });
   });
 });
@@ -142,7 +162,10 @@ describe("failure bookkeeping survives the failure", () => {
   }, 30_000);
 
   it("locks the account after ten failures", async () => {
-    await db.user.update({ where: { id: plainId }, data: { failedLoginCount: 9, lockedUntil: null } });
+    await db.user.update({
+      where: { id: plainId },
+      data: { failedLoginCount: 9, lockedUntil: null },
+    });
     await staffLogin({ email: plainEmail, password: "wrong", ipAddress: nextIp() });
     const after = await db.user.findUniqueOrThrow({
       where: { id: plainId },
@@ -151,8 +174,13 @@ describe("failure bookkeeping survives the failure", () => {
     expect(after.lockedUntil).not.toBeNull();
 
     // And a LOCKED account is indistinguishable from a wrong password.
-    expect(await staffLogin({ email: plainEmail, password: PASSWORD, ipAddress: nextIp() })).toEqual({ status: "failed" });
-    await db.user.update({ where: { id: plainId }, data: { lockedUntil: null, failedLoginCount: 0 } });
+    expect(
+      await staffLogin({ email: plainEmail, password: PASSWORD, ipAddress: nextIp() }),
+    ).toEqual({ status: "failed" });
+    await db.user.update({
+      where: { id: plainId },
+      data: { lockedUntil: null, failedLoginCount: 0 },
+    });
   }, 30_000);
 });
 
@@ -164,7 +192,10 @@ describe("rate limiting", () => {
       try {
         await staffLogin({ email, password: "wrong" });
       } catch (e) {
-        if (e instanceof RateLimitedError) { threw = true; break; }
+        if (e instanceof RateLimitedError) {
+          threw = true;
+          break;
+        }
       }
     }
     expect(threw).toBe(true);

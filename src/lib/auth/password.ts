@@ -43,10 +43,7 @@ export async function hashPassword(plaintext: string): Promise<string> {
   return hash(plaintext, { ...ARGON2_PARAMS, ...(secret ? { secret } : {}) });
 }
 
-export async function verifyPassword(
-  hashString: string,
-  plaintext: string,
-): Promise<boolean> {
+export async function verifyPassword(hashString: string, plaintext: string): Promise<boolean> {
   const secret = pepper();
   try {
     return await verify(hashString, plaintext, {

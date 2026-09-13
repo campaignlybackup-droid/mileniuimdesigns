@@ -105,7 +105,12 @@ describe("permission catalogue", () => {
   });
 
   it("withholds refunds from roles with no financial responsibility", () => {
-    for (const role of ["catalog_manager", "content_editor", "analyst", "inventory_manager"] as const) {
+    for (const role of [
+      "catalog_manager",
+      "content_editor",
+      "analyst",
+      "inventory_manager",
+    ] as const) {
       expect(ROLE_MATRIX[role]).not.toContain("order.refund");
     }
   });

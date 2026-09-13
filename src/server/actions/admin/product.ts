@@ -2,9 +2,7 @@
 
 import { z } from "zod";
 import { requireStaffSession } from "@/lib/auth/actor";
-import {
-  createProduct, publishProduct, saveProduct, setProductSlug,
-} from "@/lib/catalog";
+import { createProduct, publishProduct, saveProduct, setProductSlug } from "@/lib/catalog";
 import { toWireError } from "@/lib/errors";
 import type { Result } from "@/types/result";
 import { err, ok } from "@/types/result";

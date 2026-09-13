@@ -4,10 +4,17 @@ import { db } from "@/lib/db/client";
 import { withTransaction } from "@/lib/db/transaction";
 import { requirePermission, type Actor } from "@/lib/rbac";
 import {
-  ConflictError, NotFoundError, SlugTakenError, StaleWriteError, ValidationError,
+  ConflictError,
+  NotFoundError,
+  SlugTakenError,
+  StaleWriteError,
+  ValidationError,
 } from "@/lib/errors";
 import {
-  getPublishBlockers, scoreProduct, scoreProductSeo, type ProductForScoring,
+  getPublishBlockers,
+  scoreProduct,
+  scoreProductSeo,
+  type ProductForScoring,
 } from "@/lib/catalog/completeness";
 
 /**
@@ -41,11 +48,29 @@ export type SaveProductInput = {
  * one. Refusing produces a bug report on the first attempt instead.
  */
 export const SERVER_AUTHORITATIVE_FIELDS = [
-  "version", "status", "publishedAt", "soldAt", "searchText", "searchVector",
-  "completenessScore", "completenessChecks", "seoScore", "seoChecks", "scoredAt",
-  "deletedAt", "createdAt", "updatedAt", "slug",
+  "version",
+  "status",
+  "publishedAt",
+  "soldAt",
+  "searchText",
+  "searchVector",
+  "completenessScore",
+  "completenessChecks",
+  "seoScore",
+  "seoChecks",
+  "scoredAt",
+  "deletedAt",
+  "createdAt",
+  "updatedAt",
+  "slug",
   // Not columns of `products`, but the shapes an over-eager form would nest in.
-  "price", "prices", "priceMinor", "inventory", "stock", "quantity", "isDemo",
+  "price",
+  "prices",
+  "priceMinor",
+  "inventory",
+  "stock",
+  "quantity",
+  "isDemo",
 ] as const;
 
 export class ServerAuthoritativeFieldError extends ValidationError {
@@ -60,13 +85,16 @@ export class ServerAuthoritativeFieldError extends ValidationError {
 }
 
 export function assertNoServerAuthoritativeFields(payload: Record<string, unknown>): void {
-  const offending = (SERVER_AUTHORITATIVE_FIELDS as readonly string[]).filter(
-    (f) => Object.prototype.hasOwnProperty.call(payload, f),
+  const offending = (SERVER_AUTHORITATIVE_FIELDS as readonly string[]).filter((f) =>
+    Object.prototype.hasOwnProperty.call(payload, f),
   );
   if (offending.length) throw new ServerAuthoritativeFieldError(offending);
 }
 
-export async function saveProduct(actor: Actor, input: SaveProductInput): Promise<{ version: number }> {
+export async function saveProduct(
+  actor: Actor,
+  input: SaveProductInput,
+): Promise<{ version: number }> {
   requirePermission(actor, "product.update");
   assertNoServerAuthoritativeFields(input as unknown as Record<string, unknown>);
 
@@ -75,8 +103,10 @@ export async function saveProduct(actor: Actor, input: SaveProductInput): Promis
     if (input.title !== undefined) data["title"] = input.title.trim();
     if (input.subtitle !== undefined) data["subtitle"] = input.subtitle;
     if (input.descriptionJson !== undefined) data["descriptionJson"] = input.descriptionJson;
-    if (input.careInstructionsJson !== undefined) data["careInstructionsJson"] = input.careInstructionsJson;
-    if (input.primaryCategoryId !== undefined) data["primaryCategoryId"] = input.primaryCategoryId;
+    if (input.careInstructionsJson !== undefined)
+      data["careInstructionsJson"] = input.careInstructionsJson;
+    if (input.primaryCategoryId !== undefined)
+      data["primaryCategoryId"] = input.primaryCategoryId;
     if (input.isOneOfAKind !== undefined) data["isOneOfAKind"] = input.isOneOfAKind;
     if (input.isMadeToOrder !== undefined) data["isMadeToOrder"] = input.isMadeToOrder;
     if (input.leadTimeDays !== undefined) data["leadTimeDays"] = input.leadTimeDays;
@@ -154,7 +184,8 @@ export async function setProductSlug(
       where: { id: input.id, version: input.expectedVersion },
       data: { slug, version: { increment: 1 } },
     });
-    if (updated.count === 0) throw new StaleWriteError("This product was changed by someone else.");
+    if (updated.count === 0)
+      throw new StaleWriteError("This product was changed by someone else.");
 
     // Only a PUBLISHED product has a URL anyone could have linked to. Writing a redirect
     // from a draft slug would fill the table with rows for URLs that never existed.
@@ -179,7 +210,9 @@ export async function setProductSlug(
         data: { toPath: to },
       });
 
-      const existing = await tx.redirect.findFirst({ where: { fromPath: from, isActive: true } });
+      const existing = await tx.redirect.findFirst({
+        where: { fromPath: from, isActive: true },
+      });
       if (existing) {
         await tx.redirect.update({ where: { id: existing.id }, data: { toPath: to } });
       } else {
@@ -198,7 +231,10 @@ export async function setProductSlug(
     }
 
     await reindexProduct(tx, input.id);
-    const after = await tx.product.findUniqueOrThrow({ where: { id: input.id }, select: { version: true } });
+    const after = await tx.product.findUniqueOrThrow({
+      where: { id: input.id },
+      select: { version: true },
+    });
     return { version: after.version, redirectCreated };
   });
 }
@@ -213,10 +249,9 @@ export async function publishProduct(
   const blockers = getPublishBlockers(shape);
   if (blockers.length) {
     // Named, not "incomplete". An editor cannot act on "incomplete".
-    throw new ConflictError(
-      `Cannot publish: ${blockers.map((b) => b.label).join(", ")}.`,
-      { context: { blockers } },
-    );
+    throw new ConflictError(`Cannot publish: ${blockers.map((b) => b.label).join(", ")}.`, {
+      context: { blockers },
+    });
   }
 
   return withTransaction(async (tx) => {
@@ -224,9 +259,13 @@ export async function publishProduct(
       where: { id: input.id, version: input.expectedVersion, deletedAt: null },
       data: { status: "active", publishedAt: new Date(), version: { increment: 1 } },
     });
-    if (updated.count === 0) throw new StaleWriteError("This product was changed by someone else.");
+    if (updated.count === 0)
+      throw new StaleWriteError("This product was changed by someone else.");
     await rescoreProduct(tx, input.id);
-    const after = await tx.product.findUniqueOrThrow({ where: { id: input.id }, select: { version: true } });
+    const after = await tx.product.findUniqueOrThrow({
+      where: { id: input.id },
+      select: { version: true },
+    });
     return { version: after.version };
   });
 }
@@ -260,7 +299,8 @@ export async function rescoreProduct(tx: Tx, productId: string): Promise<void> {
   const shape = await gatherForScoring(tx, productId);
   const completeness = scoreProduct(shape);
   const seo = scoreProductSeo({
-    seoTitle: null, seoDescription: null,
+    seoTitle: null,
+    seoDescription: null,
     slug: shape.primaryCategorySlug ?? "",
     heroHasAlt: shape.mediaMissingAltCount === 0 && shape.heroCount === 1,
     descriptionWordCount: shape.descriptionWordCount,
@@ -316,7 +356,10 @@ export async function gatherForScoring(tx: Tx, productId: string): Promise<Produ
   const r = rows[0];
   if (!r) throw new NotFoundError("No such product.");
 
-  const markets = await tx.market.findMany({ where: { isActive: true }, select: { code: true } });
+  const markets = await tx.market.findMany({
+    where: { isActive: true },
+    select: { code: true },
+  });
   const n = (k: string) => Number(r[k] ?? 0);
 
   return {
@@ -358,7 +401,10 @@ export async function createProduct(
     throw new ValidationError("A slug is lower-case words separated by single hyphens.");
   }
   return withTransaction(async (tx) => {
-    const clash = await tx.product.findFirst({ where: { slug, deletedAt: null }, select: { id: true } });
+    const clash = await tx.product.findFirst({
+      where: { slug, deletedAt: null },
+      select: { id: true },
+    });
     if (clash) throw new SlugTakenError(`The slug '${slug}' is already in use.`);
     const p = await tx.product.create({
       data: { slug, title: input.title.trim(), status: "draft" },
@@ -370,7 +416,10 @@ export async function createProduct(
     // scoring is a server-side write, not an editorial edit, and bumping it would make
     // every autosave conflict with a background rescore. Returning `version + 1` was a
     // guess, and it made every caller's first save look stale.
-    const after = await tx.product.findUniqueOrThrow({ where: { id: p.id }, select: { version: true } });
+    const after = await tx.product.findUniqueOrThrow({
+      where: { id: p.id },
+      select: { version: true },
+    });
     return { id: p.id, version: after.version };
   });
 }

@@ -53,8 +53,15 @@ describe("reserved slugs", () => {
     const slugs = [...seed.matchAll(/slug:\s*"([a-z0-9-]+)"/g)].map((m) => m[1]!);
     expect(slugs).not.toContain("stones");
     expect(slugs).toEqual([
-      "rings", "chains", "pendants", "bracelets", "earrings",
-      "closeouts", "one-of-a-kind", "14k-gold", "lab-grown-diamonds",
+      "rings",
+      "chains",
+      "pendants",
+      "bracelets",
+      "earrings",
+      "closeouts",
+      "one-of-a-kind",
+      "14k-gold",
+      "lab-grown-diamonds",
     ]);
   });
 

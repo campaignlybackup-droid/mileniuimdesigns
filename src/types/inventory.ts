@@ -8,15 +8,14 @@
  *
  * Collapsing `sold` into `out` silently removes the One of a Kind edit's whole point.
  */
-export type AvailabilityBand =
-  | "in_stock"
-  | "low"
-  | "out"
-  | "made_to_order"
-  | "sold";
+export type AvailabilityBand = "in_stock" | "low" | "out" | "made_to_order" | "sold";
 
 export const AVAILABILITY_BANDS: readonly AvailabilityBand[] = [
-  "in_stock", "low", "out", "made_to_order", "sold",
+  "in_stock",
+  "low",
+  "out",
+  "made_to_order",
+  "sold",
 ] as const;
 
 /** The `settings` copy key each band renders through (08 §4.4). */

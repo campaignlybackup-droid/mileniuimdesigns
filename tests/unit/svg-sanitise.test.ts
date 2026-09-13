@@ -28,12 +28,20 @@ describe("hostile SVG", () => {
   });
 
   it("strips on* event handlers, including ones no allowlist enumerates", () => {
-    const out = clean(svg(`<circle r="5" onload="alert(1)" onmouseover="alert(2)" onanimationstart="alert(3)"/>`));
+    const out = clean(
+      svg(
+        `<circle r="5" onload="alert(1)" onmouseover="alert(2)" onanimationstart="alert(3)"/>`,
+      ),
+    );
     expect(out).not.toMatch(/\son\w+=/i);
   });
 
   it("strips <foreignObject>, which wraps arbitrary HTML", () => {
-    const out = clean(svg(`<foreignObject><body xmlns="http://www.w3.org/1999/xhtml"><img src=x onerror=alert(1)></body></foreignObject>`));
+    const out = clean(
+      svg(
+        `<foreignObject><body xmlns="http://www.w3.org/1999/xhtml"><img src=x onerror=alert(1)></body></foreignObject>`,
+      ),
+    );
     expect(out.toLowerCase()).not.toContain("foreignobject");
     expect(out).not.toContain("onerror");
   });
@@ -45,14 +53,18 @@ describe("hostile SVG", () => {
     // pulling in something an editor pasted tomorrow. The href-fragment rule in the
     // attribute hook is the second line, covering every OTHER element that can carry one.
     expect(clean(svg(`<use href="https://evil.test/x.svg#p"/>`))).not.toContain("evil.test");
-    expect(clean(svg(`<defs><circle id="c" r="5"/></defs><use href="#c"/>`))).not.toContain("<use");
+    expect(clean(svg(`<defs><circle id="c" r="5"/></defs><use href="#c"/>`))).not.toContain(
+      "<use",
+    );
   });
 
   it("keeps a same-document fragment on an element that is NOT <use>", () => {
     // A sanitiser that removes everything is easy and useless. `fill="url(#g)"` is the
     // ordinary way a gradient is applied and it must survive.
     const out = clean(
-      svg(`<defs><linearGradient id="g"><stop offset="0" stop-color="#009C17"/></linearGradient></defs><rect fill="url(#g)" width="10" height="10"/>`),
+      svg(
+        `<defs><linearGradient id="g"><stop offset="0" stop-color="#009C17"/></linearGradient></defs><rect fill="url(#g)" width="10" height="10"/>`,
+      ),
     );
     expect(out).toContain("url(#g)");
   });
@@ -63,7 +75,9 @@ describe("hostile SVG", () => {
   });
 
   it("strips javascript: in a style url()", () => {
-    const out = clean(svg(`<rect style="fill:url(javascript:alert(1))" width="10" height="10"/>`));
+    const out = clean(
+      svg(`<rect style="fill:url(javascript:alert(1))" width="10" height="10"/>`),
+    );
     expect(out).not.toContain("javascript:");
   });
 
@@ -73,7 +87,9 @@ describe("hostile SVG", () => {
   });
 
   it("strips SMIL animation that can set attributes after sanitisation", () => {
-    const out = clean(svg(`<circle r="5"><set attributeName="onload" to="alert(1)"/></circle>`));
+    const out = clean(
+      svg(`<circle r="5"><set attributeName="onload" to="alert(1)"/></circle>`),
+    );
     expect(out).not.toContain("onload");
   });
 
@@ -101,7 +117,9 @@ describe("benign SVG survives", () => {
 
   it("keeps gradients and filters — the SVG profile is not a shape-only profile", () => {
     const out = clean(
-      svg(`<defs><linearGradient id="g"><stop offset="0" stop-color="#003D1F"/></linearGradient></defs><rect fill="url(#g)" width="10" height="10"/>`),
+      svg(
+        `<defs><linearGradient id="g"><stop offset="0" stop-color="#003D1F"/></linearGradient></defs><rect fill="url(#g)" width="10" height="10"/>`,
+      ),
     );
     expect(out).toContain("linearGradient");
     expect(out).toContain("#003D1F");

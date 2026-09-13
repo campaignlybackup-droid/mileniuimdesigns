@@ -40,9 +40,7 @@ export type CustomerSessionRow = {
  *   s.created_at >= u.password_changed_at — every session minted before a password
  *                                 change dies with it, including the attacker's
  */
-export async function resolveStaffSession(
-  rawToken: string,
-): Promise<StaffSessionRow | null> {
+export async function resolveStaffSession(rawToken: string): Promise<StaffSessionRow | null> {
   const tokenHash = hashToken(rawToken);
   const rows = await db.$queryRaw<
     { session_id: string; user_id: string; totp_verified_at: Date | null; roles: string[] }[]

@@ -113,7 +113,10 @@ export async function issueOtp(
 
 export type OtpVerification =
   | { ok: true; requestId: string; customerId: string | null; userId: string | null }
-  | { ok: false; reason: "not_found" | "expired" | "consumed" | "too_many_attempts" | "mismatch" };
+  | {
+      ok: false;
+      reason: "not_found" | "expired" | "consumed" | "too_many_attempts" | "mismatch";
+    };
 
 /**
  * Verify a 6-digit code, found by (purpose, identifier) and THEN verified.
@@ -132,8 +135,14 @@ export async function verifyOtpCode(input: {
     where: { purpose: input.purpose, identifier },
     orderBy: { createdAt: "desc" },
     select: {
-      id: true, codeHash: true, attempts: true, maxAttempts: true,
-      consumedAt: true, expiresAt: true, customerId: true, userId: true,
+      id: true,
+      codeHash: true,
+      attempts: true,
+      maxAttempts: true,
+      consumedAt: true,
+      expiresAt: true,
+      customerId: true,
+      userId: true,
     },
   });
   if (!row) return { ok: false, reason: "not_found" };
@@ -188,8 +197,15 @@ export async function verifyOtpLink(input: {
   const row = await db.otpRequest.findUnique({
     where: { id },
     select: {
-      id: true, purpose: true, codeHash: true, attempts: true, maxAttempts: true,
-      consumedAt: true, expiresAt: true, customerId: true, userId: true,
+      id: true,
+      purpose: true,
+      codeHash: true,
+      attempts: true,
+      maxAttempts: true,
+      consumedAt: true,
+      expiresAt: true,
+      customerId: true,
+      userId: true,
     },
   });
   if (!row || row.purpose !== input.purpose) return { ok: false, reason: "not_found" };

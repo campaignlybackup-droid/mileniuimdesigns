@@ -101,9 +101,13 @@ export type ClaimedJob = {
 export async function claimNext(workerId: string): Promise<ClaimedJob | null> {
   const rows = await db.$queryRaw<
     {
-      id: string; kind: JobKindKey; payload: Record<string, unknown>;
-      attempts: number; max_attempts: number;
-      progress_current: number | null; progress_total: number | null;
+      id: string;
+      kind: JobKindKey;
+      payload: Record<string, unknown>;
+      attempts: number;
+      max_attempts: number;
+      progress_current: number | null;
+      progress_total: number | null;
       created_by_user_id: string | null;
     }[]
   >`
@@ -157,7 +161,10 @@ export async function reportProgress(
   });
 }
 
-export async function markSucceeded(jobId: string, result?: Record<string, unknown>): Promise<void> {
+export async function markSucceeded(
+  jobId: string,
+  result?: Record<string, unknown>,
+): Promise<void> {
   await db.job.update({
     where: { id: jobId },
     data: {
@@ -176,7 +183,10 @@ export async function markSucceeded(jobId: string, result?: Record<string, unkno
  * one that fails loudly — nobody knows the confirmation email was never sent
  * (09 P04A criterion (d)).
  */
-export async function markFailed(jobId: string, error: unknown): Promise<"requeued" | "failed"> {
+export async function markFailed(
+  jobId: string,
+  error: unknown,
+): Promise<"requeued" | "failed"> {
   const message = error instanceof Error ? error.message : String(error);
   const job = await db.job.findUniqueOrThrow({
     where: { id: jobId },
@@ -277,7 +287,10 @@ export async function drainJobs(opts: {
     if (!handler) {
       // An unregistered kind is a deployment error, not a data error. Fail it loudly
       // rather than looping on it forever.
-      const outcome = await markFailed(job.id, new Error(`No handler registered for '${job.kind}'`));
+      const outcome = await markFailed(
+        job.id,
+        new Error(`No handler registered for '${job.kind}'`),
+      );
       stats[outcome === "failed" ? "failed" : "requeued"]++;
       continue;
     }

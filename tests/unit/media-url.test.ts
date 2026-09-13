@@ -1,7 +1,13 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import {
-  buildImageUrl, buildSrcSet, DERIVATIVE_WIDTHS, isAcceptedUploadType,
-  mediaKindForMime, nearestWidth, REJECTED_TYPES, UnsizedImageUrlError,
+  buildImageUrl,
+  buildSrcSet,
+  DERIVATIVE_WIDTHS,
+  isAcceptedUploadType,
+  mediaKindForMime,
+  nearestWidth,
+  REJECTED_TYPES,
+  UnsizedImageUrlError,
 } from "@/lib/media/url";
 
 /** Commissioned by 09 P06 exit criteria (a) and (b). */

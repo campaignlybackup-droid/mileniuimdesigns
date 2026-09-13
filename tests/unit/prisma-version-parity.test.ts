@@ -11,9 +11,10 @@ import { resolve } from "node:path";
  * migration, looking like a schema problem.
  */
 describe("Prisma version parity", () => {
-  const pkg = JSON.parse(
-    readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
-  ) as { dependencies: Record<string, string>; devDependencies: Record<string, string> };
+  const pkg = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8")) as {
+    dependencies: Record<string, string>;
+    devDependencies: Record<string, string>;
+  };
 
   const cli = pkg.devDependencies["prisma"];
   const client = pkg.dependencies["@prisma/client"];

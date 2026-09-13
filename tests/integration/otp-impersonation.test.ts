@@ -28,8 +28,13 @@ beforeAll(async () => {
 
   const u = await db.user.create({
     data: {
-      email: `imp-${stamp}@test.invalid`, passwordHash: "x", firstName: "Imp", lastName: "Staff",
-      isActive: true, passwordChangedAt: new Date(), totpRecoveryCodes: [],
+      email: `imp-${stamp}@test.invalid`,
+      passwordHash: "x",
+      firstName: "Imp",
+      lastName: "Staff",
+      isActive: true,
+      passwordChangedAt: new Date(),
+      totpRecoveryCodes: [],
     },
     select: { id: true },
   });
@@ -46,16 +51,25 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await db.otpRequest.deleteMany({ where: { customerId } });
-  await db.session.deleteMany({ where: { OR: [{ customerId }, { impersonatorUserId: staffId }] } });
+  await db.session.deleteMany({
+    where: { OR: [{ customerId }, { impersonatorUserId: staffId }] },
+  });
   await db.customer.update({ where: { id: customerId }, data: { anonymizedAt: new Date() } });
-  await db.user.update({ where: { id: staffId }, data: { deletedAt: new Date(), isActive: false } });
+  await db.user.update({
+    where: { id: staffId },
+    data: { deletedAt: new Date(), isActive: false },
+  });
 });
 
 /** Commissioned by 07 §1.5, §1.7, §1.8. */
 describe("one-time codes", () => {
   it("issues a 6-digit code for a login and verifies it once", async () => {
     const issued = await withTransaction((tx) =>
-      issueOtp(tx, { purpose: "customer_login", identifier: `otp-${stamp}@test.invalid`, customerId }),
+      issueOtp(tx, {
+        purpose: "customer_login",
+        identifier: `otp-${stamp}@test.invalid`,
+        customerId,
+      }),
     );
     expect(issued.deliverable).toMatch(/^\d{6}$/);
 
@@ -80,7 +94,10 @@ describe("one-time codes", () => {
     const issued = await withTransaction((tx) =>
       issueOtp(tx, { purpose: "customer_login", identifier: id, customerId }),
     );
-    const rows = await db.otpRequest.findMany({ where: { identifier: id }, select: { codeHash: true } });
+    const rows = await db.otpRequest.findMany({
+      where: { identifier: id },
+      select: { codeHash: true },
+    });
     expect(rows[0]!.codeHash).toContain("$argon2");
     expect(rows[0]!.codeHash).not.toContain(issued.deliverable);
   }, 30_000);
@@ -94,7 +111,11 @@ describe("one-time codes", () => {
     await withTransaction((tx) =>
       issueOtp(tx, { purpose: "customer_login", identifier: id, customerId }),
     );
-    const old = await verifyOtpCode({ purpose: "customer_login", identifier: id, code: first.deliverable });
+    const old = await verifyOtpCode({
+      purpose: "customer_login",
+      identifier: id,
+      code: first.deliverable,
+    });
     expect(old.ok).toBe(false);
   }, 40_000);
 
@@ -108,7 +129,11 @@ describe("one-time codes", () => {
     for (let i = 0; i < 5; i++) {
       await verifyOtpCode({ purpose: "customer_login", identifier: id, code: "000001" });
     }
-    const after = await verifyOtpCode({ purpose: "customer_login", identifier: id, code: "000002" });
+    const after = await verifyOtpCode({
+      purpose: "customer_login",
+      identifier: id,
+      code: "000002",
+    });
     expect(after).toEqual({ ok: false, reason: "too_many_attempts" });
   }, 60_000);
 
@@ -121,8 +146,13 @@ describe("one-time codes", () => {
       where: { identifier: id },
       data: { expiresAt: new Date(Date.now() - 1000) },
     });
-    expect(await verifyOtpCode({ purpose: "customer_login", identifier: id, code: issued.deliverable }))
-      .toEqual({ ok: false, reason: "expired" });
+    expect(
+      await verifyOtpCode({
+        purpose: "customer_login",
+        identifier: id,
+        code: issued.deliverable,
+      }),
+    ).toEqual({ ok: false, reason: "expired" });
   }, 30_000);
 
   it("is transport-agnostic — an E.164 phone is just another identifier", async () => {
@@ -132,7 +162,11 @@ describe("one-time codes", () => {
     const issued = await withTransaction((tx) =>
       issueOtp(tx, { purpose: "customer_login", identifier: phone, customerId }),
     );
-    const ok = await verifyOtpCode({ purpose: "customer_login", identifier: phone, code: issued.deliverable });
+    const ok = await verifyOtpCode({
+      purpose: "customer_login",
+      identifier: phone,
+      code: issued.deliverable,
+    });
     expect(ok.ok).toBe(true);
   }, 30_000);
 });
@@ -156,14 +190,17 @@ describe("emailed link tokens", () => {
     const issued = await withTransaction((tx) =>
       issueOtp(tx, { purpose: "password_reset", identifier: id, customerId }),
     );
-    expect(await verifyOtpLink({ purpose: "email_verification", value: issued.deliverable }))
-      .toEqual({ ok: false, reason: "not_found" });
+    expect(
+      await verifyOtpLink({ purpose: "email_verification", value: issued.deliverable }),
+    ).toEqual({ ok: false, reason: "not_found" });
   }, 30_000);
 
   it("refuses a bare token with no selector, and an injected selector", async () => {
     for (const v of ["justatoken", "' OR 1=1 --.tok", "../../x.tok"]) {
-      expect(await verifyOtpLink({ purpose: "password_reset", value: v }))
-        .toEqual({ ok: false, reason: "not_found" });
+      expect(await verifyOtpLink({ purpose: "password_reset", value: v })).toEqual({
+        ok: false,
+        reason: "not_found",
+      });
     }
   });
 });
@@ -185,8 +222,11 @@ describe("impersonation", () => {
 
   it("refuses a role without user.impersonate", async () => {
     const analyst: StaffActor = {
-      kind: "staff", userId: staffId, roles: ["analyst"],
-      permissions: permissionsForRoles(["analyst"]), totpVerifiedAt: new Date(),
+      kind: "staff",
+      userId: staffId,
+      roles: ["analyst"],
+      permissions: permissionsForRoles(["analyst"]),
+      totpVerifiedAt: new Date(),
     };
     await expect(
       startImpersonation(analyst, { customerId, reason: "support ticket 4182" }),
@@ -229,7 +269,11 @@ describe("impersonation", () => {
   });
 
   it("refuses the writes that do not LOOK like writes", async () => {
-    const impersonated: CustomerActor = { kind: "customer", customerId, impersonatorUserId: staffId };
+    const impersonated: CustomerActor = {
+      kind: "customer",
+      customerId,
+      impersonatorUserId: staffId,
+    };
     const plain: CustomerActor = { kind: "customer", customerId };
 
     // The obvious ones.
@@ -241,7 +285,10 @@ describe("impersonation", () => {
     // as the customer is a FABRICATED consent record, and consent is the one audit
     // question with a regulator attached to it (07 §1.11).
     for (const a of [
-      "marketing.set_consent", "newsletter.subscribe", "review.submit", "wishlist.share",
+      "marketing.set_consent",
+      "newsletter.subscribe",
+      "review.submit",
+      "wishlist.share",
     ] as const) {
       expect(() => assertNotImpersonated(impersonated, a), a).toThrow(ForbiddenError);
     }

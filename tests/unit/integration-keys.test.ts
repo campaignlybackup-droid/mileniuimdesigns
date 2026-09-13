@@ -22,8 +22,20 @@ describe("integration keys", () => {
   it("contains exactly the registry's members", () => {
     expect([...keys].sort()).toEqual(
       [
-        "cloudinary", "ga4", "google_ads", "gtm", "indexnow", "meta_capi", "meta_pixel",
-        "metal_rate_api", "otp_sms", "razorpay", "resend", "sentry", "stripe", "stripe_tax",
+        "cloudinary",
+        "ga4",
+        "google_ads",
+        "gtm",
+        "indexnow",
+        "meta_capi",
+        "meta_pixel",
+        "metal_rate_api",
+        "otp_sms",
+        "razorpay",
+        "resend",
+        "sentry",
+        "stripe",
+        "stripe_tax",
       ].sort(),
     );
   });

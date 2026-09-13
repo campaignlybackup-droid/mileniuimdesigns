@@ -38,7 +38,9 @@ describe("audit_logs is append-only", () => {
   it("REFUSES an UPDATE", async () => {
     let message = "";
     try {
-      await client.query(`UPDATE audit_logs SET summary = 'tampered' WHERE id = $1`, [insertedId]);
+      await client.query(`UPDATE audit_logs SET summary = 'tampered' WHERE id = $1`, [
+        insertedId,
+      ]);
     } catch (e) {
       message = (e as Error).message;
     }

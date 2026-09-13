@@ -62,9 +62,7 @@ export const getCustomerActor = cache(async (): Promise<CustomerActor | null> =>
   return {
     kind: "customer",
     customerId: session.customerId,
-    ...(session.impersonatorUserId
-      ? { impersonatorUserId: session.impersonatorUserId }
-      : {}),
+    ...(session.impersonatorUserId ? { impersonatorUserId: session.impersonatorUserId } : {}),
   };
 });
 

@@ -124,8 +124,23 @@ export const LIMITS = {
   checkout: { prefix: "checkout:cart", limit: 30, windowSeconds: 600, onFailure: "closed" },
   couponApply: { prefix: "coupon:cart", limit: 20, windowSeconds: 600, onFailure: "closed" },
   search: { prefix: "search:ip", limit: 120, windowSeconds: 60, onFailure: "open" },
-  adminSearch: { prefix: "admin-search:user", limit: 120, windowSeconds: 60, onFailure: "closed" },
-  wishlistShare: { prefix: "wishlist-share:ip", limit: 60, windowSeconds: 3600, onFailure: "closed" },
+  adminSearch: {
+    prefix: "admin-search:user",
+    limit: 120,
+    windowSeconds: 60,
+    onFailure: "closed",
+  },
+  wishlistShare: {
+    prefix: "wishlist-share:ip",
+    limit: 60,
+    windowSeconds: 3600,
+    onFailure: "closed",
+  },
   backInStockIp: { prefix: "bisr:ip", limit: 10, windowSeconds: 3600, onFailure: "closed" },
-  backInStockEmail: { prefix: "bisr:email", limit: 5, windowSeconds: 86_400, onFailure: "closed" },
+  backInStockEmail: {
+    prefix: "bisr:email",
+    limit: 5,
+    windowSeconds: 86_400,
+    onFailure: "closed",
+  },
 } as const satisfies Record<string, RateLimitSpec>;

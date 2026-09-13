@@ -71,18 +71,46 @@ export { SKU_PATTERN } from "@/lib/catalog/sku";
 
 export function scoreProduct(p: ProductForScoring): CompletenessResult {
   const checks: CompletenessCheck[] = [
-    check("title", "Title", 8, p.title.trim().length >= 3, "Give the piece a name of at least 3 characters."),
-    check("description", "Description", 10, p.descriptionWordCount >= 40, "Write at least 40 words."),
-    check("gallery", "Gallery", 12, p.mediaCount >= 3, "Add at least 3 images."),
-    check("hero", "Hero image", 6, p.heroCount === 1, p.heroCount === 0 ? "Choose a hero image." : "More than one hero image is set."),
-    check("alt_text", "Image alt text", 4, p.mediaMissingAltCount === 0, `${p.mediaMissingAltCount} image(s) have no alt text.`),
     check(
-      "primary_category", "Primary category", 6,
+      "title",
+      "Title",
+      8,
+      p.title.trim().length >= 3,
+      "Give the piece a name of at least 3 characters.",
+    ),
+    check(
+      "description",
+      "Description",
+      10,
+      p.descriptionWordCount >= 40,
+      "Write at least 40 words.",
+    ),
+    check("gallery", "Gallery", 12, p.mediaCount >= 3, "Add at least 3 images."),
+    check(
+      "hero",
+      "Hero image",
+      6,
+      p.heroCount === 1,
+      p.heroCount === 0 ? "Choose a hero image." : "More than one hero image is set.",
+    ),
+    check(
+      "alt_text",
+      "Image alt text",
+      4,
+      p.mediaMissingAltCount === 0,
+      `${p.mediaMissingAltCount} image(s) have no alt text.`,
+    ),
+    check(
+      "primary_category",
+      "Primary category",
+      6,
       p.primaryCategoryId !== null && p.hasMatchingCategoryRow,
       "Set a primary category, and make sure the product is linked to it.",
     ),
     check(
-      "stones", "Stones", 6,
+      "stones",
+      "Stones",
+      6,
       // A chain has no stone, and marking it incomplete forever is how a score stops
       // being read.
       NON_STONE_CATEGORIES.has(p.primaryCategorySlug ?? "")
@@ -91,23 +119,45 @@ export function scoreProduct(p: ProductForScoring): CompletenessResult {
       "Link at least one stone and mark exactly one as primary.",
     ),
     check(
-      "materials", "Materials", 6,
+      "materials",
+      "Materials",
+      6,
       p.liveVariantCount > 0 &&
         p.variantsWithMaterials === p.liveVariantCount &&
         p.variantsWithPrimaryMaterial === p.liveVariantCount,
       "Every variant needs at least one material with exactly one marked primary.",
     ),
     pricedCheck(p),
-    check("skus", "SKUs", 5, p.liveVariantCount > 0 && p.variantsWithValidSku === p.liveVariantCount, "Every variant needs a SKU in the house format."),
+    check(
+      "skus",
+      "SKUs",
+      5,
+      p.liveVariantCount > 0 && p.variantsWithValidSku === p.liveVariantCount,
+      "Every variant needs a SKU in the house format.",
+    ),
     stockCheck(p),
-    check("weights", "Weights", 4, p.liveVariantCount > 0 && p.variantsWithWeight === p.liveVariantCount, "Every variant needs a gross weight."),
+    check(
+      "weights",
+      "Weights",
+      4,
+      p.liveVariantCount > 0 && p.variantsWithWeight === p.liveVariantCount,
+      "Every variant needs a gross weight.",
+    ),
     check("tags", "Tags", 3, p.tagCount >= 1, "Add at least one tag."),
     check(
-      "required_attributes", "Required attributes", 6,
+      "required_attributes",
+      "Required attributes",
+      6,
       p.satisfiedRequiredAttributeCount >= p.requiredAttributeCount,
       `${p.requiredAttributeCount - p.satisfiedRequiredAttributeCount} required attribute(s) are unset.`,
     ),
-    check("care", "Care instructions", 4, p.careWordCount >= 15, "Write at least 15 words of care guidance."),
+    check(
+      "care",
+      "Care instructions",
+      4,
+      p.careWordCount >= 15,
+      "Write at least 15 words of care guidance.",
+    ),
   ];
 
   const total = checks.reduce((a, c) => a + c.weight, 0);
@@ -143,18 +193,29 @@ function pricedCheck(p: ProductForScoring): CompletenessCheck {
 function stockCheck(p: ProductForScoring): CompletenessCheck {
   if (p.trackedVariantsWithInventory === null) {
     return {
-      key: "stock", label: "Stock records", weight: 6, passed: false,
+      key: "stock",
+      label: "Stock records",
+      weight: 6,
+      passed: false,
       hint: "Inventory is not available in this build (arrives at P18).",
     };
   }
   return {
-    key: "stock", label: "Stock records", weight: 6,
+    key: "stock",
+    label: "Stock records",
+    weight: 6,
     passed: p.trackedVariantsWithInventory >= p.trackedVariantCount,
     hint: "Every tracked variant needs an inventory record.",
   };
 }
 
-function check(key: string, label: string, weight: number, passed: boolean, hint: string): CompletenessCheck {
+function check(
+  key: string,
+  label: string,
+  weight: number,
+  passed: boolean,
+  hint: string,
+): CompletenessCheck {
   return { key, label, weight, passed, hint: passed ? null : hint };
 }
 
@@ -170,7 +231,11 @@ function check(key: string, label: string, weight: number, passed: boolean, hint
  * ordered, and one missing an attribute an editor explicitly marked required.
  */
 const BLOCKING_KEYS = new Set([
-  "title", "hero", "primary_category", "skus", "required_attributes",
+  "title",
+  "hero",
+  "primary_category",
+  "skus",
+  "required_attributes",
 ]);
 
 /**
@@ -212,12 +277,42 @@ export type SeoForScoring = {
 
 export function scoreProductSeo(s: SeoForScoring): CompletenessResult {
   const checks: CompletenessCheck[] = [
-    check("seo_title", "SEO title", 25, (s.seoTitle ?? "").trim().length >= 15 && (s.seoTitle ?? "").length <= 60, "Write a 15–60 character title."),
-    check("meta_description", "Meta description", 25, (s.seoDescription ?? "").trim().length >= 70 && (s.seoDescription ?? "").length <= 160, "Write a 70–160 character description."),
-    check("slug", "Slug", 15, /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s.slug) && s.slug.length <= 72, "Use a lower-case hyphenated slug of 72 characters or fewer."),
+    check(
+      "seo_title",
+      "SEO title",
+      25,
+      (s.seoTitle ?? "").trim().length >= 15 && (s.seoTitle ?? "").length <= 60,
+      "Write a 15–60 character title.",
+    ),
+    check(
+      "meta_description",
+      "Meta description",
+      25,
+      (s.seoDescription ?? "").trim().length >= 70 && (s.seoDescription ?? "").length <= 160,
+      "Write a 70–160 character description.",
+    ),
+    check(
+      "slug",
+      "Slug",
+      15,
+      /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s.slug) && s.slug.length <= 72,
+      "Use a lower-case hyphenated slug of 72 characters or fewer.",
+    ),
     check("image_alt", "Hero alt text", 15, s.heroHasAlt, "Give the hero image alt text."),
-    check("body_length", "Body copy", 10, s.descriptionWordCount >= 40, "Write at least 40 words of description."),
-    check("og_image", "Share image", 10, s.hasOgImage, "Set a share image, or rely on the hero."),
+    check(
+      "body_length",
+      "Body copy",
+      10,
+      s.descriptionWordCount >= 40,
+      "Write at least 40 words of description.",
+    ),
+    check(
+      "og_image",
+      "Share image",
+      10,
+      s.hasOgImage,
+      "Set a share image, or rely on the hero.",
+    ),
   ];
   const total = checks.reduce((a, c) => a + c.weight, 0);
   const earned = checks.reduce((a, c) => a + (c.passed ? c.weight : 0), 0);

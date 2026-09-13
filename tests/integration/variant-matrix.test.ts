@@ -2,8 +2,13 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "@/lib/db/client";
 import { createProduct } from "@/lib/catalog";
 import {
-  cartesian, generateVariants, getVariantMatrix, optionSignature,
-  reachableValues, removeOptionValue, MAX_GENERATED_VARIANTS,
+  cartesian,
+  generateVariants,
+  getVariantMatrix,
+  optionSignature,
+  reachableValues,
+  removeOptionValue,
+  MAX_GENERATED_VARIANTS,
 } from "@/lib/catalog/variant";
 import { isValidSku, SKU_NO_METAL, SKU_NO_STONE } from "@/lib/catalog/sku";
 import { permissionsForRoles, type StaffActor } from "@/lib/rbac";
@@ -17,8 +22,11 @@ import { ConflictError } from "@/lib/errors";
  */
 const stamp = Date.now();
 const owner: StaffActor = {
-  kind: "staff", userId: "00000000-0000-7000-8000-000000000001",
-  roles: ["owner"], permissions: permissionsForRoles(["owner"]), totpVerifiedAt: new Date(),
+  kind: "staff",
+  userId: "00000000-0000-7000-8000-000000000001",
+  roles: ["owner"],
+  permissions: permissionsForRoles(["owner"]),
+  totpVerifiedAt: new Date(),
 };
 
 let productId = "";
@@ -44,7 +52,15 @@ beforeAll(async () => {
     data: { productId, categoryId: rings.id, isPrimary: true, rank: 0 },
   });
   await db.productStone.create({
-    data: { productId, stoneId: labradorite.id, isPrimary: true, caratWeight: "4.250", stoneCount: 1, cut: "Oval cabochon", position: 0 },
+    data: {
+      productId,
+      stoneId: labradorite.id,
+      isPrimary: true,
+      caratWeight: "4.250",
+      stoneCount: 1,
+      cut: "Oval cabochon",
+      position: 0,
+    },
   });
 
   const metal = await db.productOption.create({
@@ -56,10 +72,12 @@ beforeAll(async () => {
     data: { optionId: metal.id, value: "14K Yellow Gold", materialId: yellow.id, position: 0 },
     select: { id: true },
   });
-  whiteValueId = (await db.productOptionValue.create({
-    data: { optionId: metal.id, value: "14K White Gold", materialId: white.id, position: 1 },
-    select: { id: true },
-  })).id;
+  whiteValueId = (
+    await db.productOptionValue.create({
+      data: { optionId: metal.id, value: "14K White Gold", materialId: white.id, position: 1 },
+      select: { id: true },
+    })
+  ).id;
 
   const size = await db.productOption.create({
     data: { productId, name: "Size", position: 1 },
@@ -79,18 +97,25 @@ afterAll(async () => {
   await db.product.deleteMany({ where: { id: productId } });
 });
 
-const ringSizeMap = () =>
-  Object.fromEntries(sizeValueIds.map((id, i) => [id, 5 + i]));
+const ringSizeMap = () => Object.fromEntries(sizeValueIds.map((id, i) => [id, 5 + i]));
 
 describe("cartesian product", () => {
   it("is the product of its axes", () => {
     // Explicitly annotated: `cartesian<T>` takes ONE element type, and mixed axes are
     // not a case the real caller has — every axis is an option value.
-    expect(cartesian<string | number>([[1, 2], ["a", "b", "c"]])).toHaveLength(6);
+    expect(
+      cartesian<string | number>([
+        [1, 2],
+        ["a", "b", "c"],
+      ]),
+    ).toHaveLength(6);
     expect(cartesian<number>([])).toEqual([[]]);
     expect(cartesian<number>([[1]])).toEqual([[1]]);
     // Order is stable: axis order in, axis order out.
-    expect(cartesian<string>([["a", "b"], ["x"]])).toEqual([["a", "x"], ["b", "x"]]);
+    expect(cartesian<string>([["a", "b"], ["x"]])).toEqual([
+      ["a", "x"],
+      ["b", "x"],
+    ]);
   });
 });
 
@@ -100,11 +125,17 @@ describe("option signature", () => {
     // rather than a join per option.
     const order = ["opt-metal", "opt-size"];
     const a = optionSignature(
-      [{ optionId: "opt-size", optionValueId: "s7" }, { optionId: "opt-metal", optionValueId: "y" }],
+      [
+        { optionId: "opt-size", optionValueId: "s7" },
+        { optionId: "opt-metal", optionValueId: "y" },
+      ],
       order,
     );
     const b = optionSignature(
-      [{ optionId: "opt-metal", optionValueId: "y" }, { optionId: "opt-size", optionValueId: "s7" }],
+      [
+        { optionId: "opt-metal", optionValueId: "y" },
+        { optionId: "opt-size", optionValueId: "s7" },
+      ],
       order,
     );
     expect(a).toBe(b);
@@ -130,7 +161,8 @@ describe("the 03 §2.7 worked example", () => {
 
   it("every SKU matches the canonical pattern", async () => {
     const variants = await db.productVariant.findMany({
-      where: { productId, deletedAt: null }, select: { sku: true },
+      where: { productId, deletedAt: null },
+      select: { sku: true },
     });
     for (const v of variants) {
       expect(isValidSku(v.sku), v.sku).toBe(true);
@@ -192,9 +224,14 @@ describe("the matrix the PDP renders", () => {
 
     // Remove one combination to create a genuine gap.
     const target = m.variants.find(
-      (v) => v.valueIds[metalOptionId] === whiteValueId && v.valueIds[sizeOptionId] === sizeValueIds[0],
+      (v) =>
+        v.valueIds[metalOptionId] === whiteValueId &&
+        v.valueIds[sizeOptionId] === sizeValueIds[0],
     )!;
-    await db.productVariant.update({ where: { id: target.variantId }, data: { isActive: false } });
+    await db.productVariant.update({
+      where: { id: target.variantId },
+      data: { isActive: false },
+    });
 
     const m2 = await getVariantMatrix(productId);
     const reachable = reachableValues(m2, { [metalOptionId]: whiteValueId });
@@ -205,7 +242,10 @@ describe("the matrix the PDP renders", () => {
     expect(reachable[sizeOptionId]!.has(sizeValueIds[0]!)).toBe(false);
     expect(reachable[sizeOptionId]!.has(sizeValueIds[1]!)).toBe(true);
 
-    await db.productVariant.update({ where: { id: target.variantId }, data: { isActive: true } });
+    await db.productVariant.update({
+      where: { id: target.variantId },
+      data: { isActive: true },
+    });
   }, 30_000);
 });
 
@@ -234,12 +274,19 @@ describe("one of a kind", () => {
       data: { isOneOfAKind: true, primaryCategoryId: rings.id },
     });
     const opt = await db.productOption.create({
-      data: { productId: p.id, name: "Size", position: 0 }, select: { id: true },
+      data: { productId: p.id, name: "Size", position: 0 },
+      select: { id: true },
     });
-    await db.productOptionValue.create({ data: { optionId: opt.id, value: "US 6", position: 0 } });
-    await db.productOptionValue.create({ data: { optionId: opt.id, value: "US 7", position: 1 } });
+    await db.productOptionValue.create({
+      data: { optionId: opt.id, value: "US 6", position: 0 },
+    });
+    await db.productOptionValue.create({
+      data: { optionId: opt.id, value: "US 7", position: 1 },
+    });
 
-    await expect(generateVariants(owner, { productId: p.id })).rejects.toBeInstanceOf(ConflictError);
+    await expect(generateVariants(owner, { productId: p.id })).rejects.toBeInstanceOf(
+      ConflictError,
+    );
     await db.product.delete({ where: { id: p.id } });
   }, 30_000);
 });

@@ -117,7 +117,10 @@ function cloudName(): string {
 
 /** Formats accepted for upload. A deliberately short list (06 §7). */
 export const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg", "image/png", "image/webp", "image/avif",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
 ] as const;
 export const ACCEPTED_VECTOR_TYPES = ["image/svg+xml"] as const;
 export const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm"] as const;
@@ -131,7 +134,12 @@ export const ACCEPTED_DOCUMENT_TYPES = ["application/pdf"] as const;
  * HEIC are rejected for a simpler reason — no browser renders them.
  */
 export const REJECTED_TYPES = [
-  "image/gif", "image/tiff", "image/heic", "image/heif", "image/bmp", "image/x-icon",
+  "image/gif",
+  "image/tiff",
+  "image/heic",
+  "image/heif",
+  "image/bmp",
+  "image/x-icon",
 ] as const;
 
 export function isAcceptedUploadType(mime: string): boolean {
@@ -143,7 +151,9 @@ export function isAcceptedUploadType(mime: string): boolean {
   );
 }
 
-export function mediaKindForMime(mime: string): "image" | "video" | "document" | "vector" | null {
+export function mediaKindForMime(
+  mime: string,
+): "image" | "video" | "document" | "vector" | null {
   if ((ACCEPTED_VECTOR_TYPES as readonly string[]).includes(mime)) return "vector";
   if ((ACCEPTED_IMAGE_TYPES as readonly string[]).includes(mime)) return "image";
   if ((ACCEPTED_VIDEO_TYPES as readonly string[]).includes(mime)) return "video";
