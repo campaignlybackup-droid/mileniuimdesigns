@@ -711,3 +711,10 @@ EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "recalc_run_lines" ADD CONSTRAINT "chk_rrl_proposed" CHECK ((status = 'skipped') = (proposed_list_minor IS NULL));
 EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;
+
+-- 03 §6.3 — a rule value is exactly one of a uuid or a text, never both and never neither.
+-- Without it an `in` list can carry a row that names nothing, which evaluates as a silently
+-- narrower rule: the collection is missing pieces and the rule looks correct on screen.
+DO $$ BEGIN
+  ALTER TABLE "collection_rule_values" ADD CONSTRAINT "chk_crv_one_value" CHECK (num_nonnulls(value_uuid, value_text) = 1);
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL; END $$;

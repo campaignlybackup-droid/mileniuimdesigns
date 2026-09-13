@@ -32,6 +32,10 @@ const eslintConfig = defineConfig([
         { type: "config", pattern: "src/lib/config/**" },
         { type: "types", pattern: "src/types/**" },
         { type: "data", pattern: "src/lib/db/**" },
+        // 15 §1.1: `src/lib/rules/` imports NOTHING from a domain module. That is what stops
+        // the shared rule language becoming a second service layer — the moment it can reach
+        // `src/lib/catalog`, the resolver seam stops being a seam.
+        { type: "lib-shared", pattern: "src/lib/rules/**" },
         { type: "middleware", pattern: "src/lib/edge/**" },
         { type: "reporting", pattern: "src/lib/reporting/**" },
         { type: "service", pattern: "src/lib/*/**" },
@@ -54,7 +58,12 @@ const eslintConfig = defineConfig([
             { from: [{ element: { type: "actions" } }],
               allow: [{ to: { element: { type: ["service", "types", "config"] } } }] },
             { from: [{ element: { type: "service" } }],
-              allow: [{ to: { element: { type: ["service", "data", "types", "config"] } } }] },
+              allow: [
+                { to: { element: { type: ["service", "data", "types", "config"] } } },
+                // A service may USE the shared rule language; the shared layer may not
+                // reach back. One direction only is what keeps the dependency a seam.
+                { to: { element: { type: "lib-shared" } } },
+              ] },
             // Reporting is read-only and admin-only: it may read the data layer and other
             // services, but nothing may import IT except src/app/(admin)/** (01 §2.2).
             { from: [{ element: { type: "reporting" } }],
@@ -71,6 +80,13 @@ const eslintConfig = defineConfig([
             // only market source is the generated snapshot (01 §1.4).
             { from: [{ element: { type: "middleware" } }],
               allow: [{ to: { element: { type: ["config", "types"] } } }] },
+            // The shared rule language (15 §1.1). It may reach the SQL tag, because its whole
+            // output is a SQL fragment — and NOTHING else. Not a service, not a domain module,
+            // not the Prisma client. The moment it can import `src/lib/catalog`, the field
+            // resolver stops being a seam and this becomes a second service layer with two
+            // callers, which is precisely the shape 15 §1.1 was written to avoid.
+            { from: [{ element: { type: "lib-shared" } }],
+              allow: [{ to: { element: { type: ["data", "types", "config"] } } }] },
             { from: [{ element: { type: "config" } }],
               allow: [{ to: { element: { type: "types" } } }] },
             { from: [{ element: { type: "types" } }],

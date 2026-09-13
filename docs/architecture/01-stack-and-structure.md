@@ -3339,3 +3339,77 @@ by a named person over the header, the footer and the primitive gallery. `10 §9
 ("could this be any other brand's site with the logo swapped?") is an automatic failure and no
 test detects it. It cannot be walked meaningfully before the marks exist, since the gate is
 largely about how the lockup sits in the composition.
+
+---
+
+### 6.26 P16 field notes
+
+**A correction to my own P14 report: I said P17 was unblocked. It is not** — search depends on
+P15, which needs the client's catalogue and photography. P16 was the only genuinely unblocked
+phase, and that is what this is.
+
+**`collection_rule_values` was specified for P05 and never built.** `02 §7.13` lists it in P05's
+"also builds" column. Nothing noticed for eleven phases, and the reason is instructive:
+`tests/db/drift.test.ts` now derives its expectations from the Prisma schema, so it catches
+**schema↔database** drift — but this table was absent from BOTH, so the derived check had
+nothing to compare. **The check I built at P10 to stop a hand-typed list going stale cannot see
+a table that was never modelled.** `02 §7.13` is the document-side list, and nothing reads it.
+That is the fifth register-vs-implementation gap this build has found.
+
+Without it, an `in` rule ("stone in [labradorite, moonstone]") has nowhere to store its second
+value — the operator would have evaluated against one value and the collection would have been
+quietly narrower than the merchandiser's screen said.
+
+**An empty rule set matches NOTHING, and this is one line that matters a lot.** `AND` over
+nothing is vacuously **true** in logic. Taken literally, a collection whose last rule was just
+deleted would match the entire catalogue — five thousand products appearing on a campaign page
+at 03:00, with no error anywhere, because every layer below did exactly what it was asked. The
+merchandiser's intent when a rule set is empty is "nothing yet", never "everything". The test
+asserts the emitted SQL is the literal `false`.
+
+**Negation is resolved at the field layer, not the operator layer, and the distinction is not
+stylistic.** For a multi-valued relation, `NOT (EXISTS …)` and `EXISTS (… <> …)` mean different
+things: a product with two stones is "not labradorite" only if **neither** stone is, while the
+second spelling asks whether **either** is not — which is true of almost every product with two
+stones. So `productFieldResolver` wraps the whole `EXISTS` rather than passing the negation
+inward.
+
+Two smaller versions of the same care: `not_equals` emits `IS DISTINCT FROM` because `<>` is
+NULL-blind (a product with no status is plainly "not archived", but `col <> 'archived'` does not
+return it), and `is_false` emits `IS NOT TRUE` because a NULL boolean is not true — treating it
+as neither leaves rows in neither half of a two-way rule.
+
+**The union bug has a one-line cause and a day-long blast radius, so it has its own test.** The
+obvious implementation of `refreshCollectionsForProduct` passes the product's CURRENT stone,
+material and tag ids. That refreshes every collection it now qualifies for and **none of the
+ones it just stopped qualifying for**: remove the labradorite link from a ring and
+`stone equals labradorite` is not in the list at all, so the ring stays in Labradorite Rings —
+on a live page, wrong, until the nightly pass. `RuleFieldChange` carries `addedIds` AND
+`removedIds` and the query takes the union. A negated rule needs the same union for the
+mirror-image reason: **gaining** a link is what makes a product leave a negated collection. The
+test asserts a swap refreshes both the collection left and the one joined, in one pass.
+
+**`last_refreshed_at` is stamped by full evaluations only**, and a test asserts the per-product
+path does NOT stamp it. If it did, a collection could look refreshed for weeks while never
+being evaluated as a whole — which is precisely the staleness the 25-hour warning exists to
+catch, hiding behind the mechanism meant to reveal it.
+
+**A test that assumed it owned the database.** The first version created three products, wrote
+one `stone equals X` rule, and asserted two members. It got **716** — the P09 perf fixture's
+5,000 products legitimately carry stones, round-robin over seven. The engine was right and the
+test was wrong. Narrowed to `stone AND tag` with a fixture-specific tag, which also exercises
+the `all` connective with two different field resolvers.
+
+**Two guards from earlier phases caught this phase's code, and both were right.**
+`error-taxonomy.test.ts` refused `class RuleValidationError extends Error {}` — the defect I
+committed four times during the schema phases, where `instanceof` fails across duplicate
+taxonomies so the catch block that means to handle a validation failure does not, and it
+reaches the customer as a 500. And `boundaries/dependencies` refused `lib-shared → data` until
+the policy was written down: the shared rule language may reach the SQL tag, because its entire
+output is a SQL fragment, and **nothing else** — the moment it can import `src/lib/catalog`,
+the field resolver stops being a seam and this becomes a second service layer with two callers,
+which is the exact shape `15 §1.1` exists to prevent. Verified in both directions.
+
+**And a fifth scan-reads-its-own-comment.** `error-taxonomy.test.ts` matched the sentence in
+`predicate.ts` explaining why a second Error base is forbidden. It predates
+`tests/support/source.ts` and now uses it. Every guard written from here starts with `codeOf`.

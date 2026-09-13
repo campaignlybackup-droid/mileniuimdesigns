@@ -33,6 +33,23 @@ model Collection {
 
 /// The rule vocabulary is SHARED with customer_group_rules (15 §1) — one rule language,
 /// not two. A second would drift the day someone adds an operator to only one of them.
+/// The multi-value side of `in` / `not_in`, and ONLY those two operators. Every other
+/// operator reads the value columns on `collection_rules` itself, and `saveCollectionRules()`
+/// asserts that split because a CHECK cannot span two tables (02 §7.2, 03 §6.3).
+model CollectionRuleValue {
+  ruleId    String   @map("rule_id") @db.Uuid
+  valueUuid String?  @map("value_uuid") @db.Uuid
+  valueText String?  @map("value_text")
+  position  Int      @db.SmallInt
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  rule CollectionRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@id([ruleId, position], map: "pk_collection_rule_values")
+  @@index([ruleId, position], map: "idx_crv_rule")
+  @@map("collection_rule_values")
+}
+
 model CollectionRule {
   id              String                 @id @default(uuid(7)) @db.Uuid
   collectionId    String                 @map("collection_id") @db.Uuid
@@ -48,7 +65,8 @@ model CollectionRule {
   position        Int                    @default(0) @db.SmallInt
   createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection Collection            @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  values     CollectionRuleValue[]
 
   @@index([collectionId, position], map: "idx_collection_rules_collection")
   /// The difference between "which collections care about this product's new stone" being

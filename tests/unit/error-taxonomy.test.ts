@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
+import { codeOf } from "../support/source";
 import { join, resolve } from "node:path";
 import {
   AppError,
@@ -109,7 +110,10 @@ describe("there is exactly ONE error base class", () => {
     const offenders: string[] = [];
     for (const file of walk(resolve(process.cwd(), "src"))) {
       if (file.endsWith("lib/errors.ts")) continue;
-      const src = readFileSync(file, "utf8");
+      // Comments stripped (tests/support/source.ts). This guard matched its own explanation
+      // at P16 — the fifth time a scan in this repository has found the prose describing the
+      // thing it forbids. It predates the shared helper; it uses it now.
+      const src = codeOf(file);
       // Extending AppError is CORRECT and expected — 11 §2.1 says domain modules
       // re-export their own classes "from the one base". The offence is extending the
       // built-in Error, which creates a second base.
