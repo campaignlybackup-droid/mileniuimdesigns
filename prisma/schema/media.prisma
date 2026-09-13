@@ -46,6 +46,7 @@ model Media {
 
   folder       MediaFolder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
   productMedia ProductMedia[]
+  tags         MediaTag[]
 
   @@map("media")
 }
@@ -66,4 +67,18 @@ model ProductMedia {
 
   @@index([productId, position], map: "idx_product_media_product")
   @@map("product_media")
+}
+
+/// `02 §7.13` assigns this to P05. It cannot go there: it has a foreign key to `media`,
+/// which P06 creates. Filed here, where its dependency actually exists.
+model MediaTag {
+  mediaId   String   @map("media_id") @db.Uuid
+  tagId     String   @map("tag_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([mediaId, tagId])
+  @@index([tagId, mediaId], map: "idx_media_tags_tag")
+  @@map("media_tags")
 }

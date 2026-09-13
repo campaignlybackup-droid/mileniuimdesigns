@@ -121,6 +121,15 @@ export function hostInfo(): { region: string; deploymentId: string; cronSecret?:
   };
 }
 
+/** Media provider configuration. Read here because env.ts owns process.env. */
+export function mediaConfig(): { cloudName?: string; apiKey?: string; apiSecret?: string } {
+  return {
+    cloudName: process.env["CLOUDINARY_CLOUD_NAME"],
+    apiKey: process.env["CLOUDINARY_API_KEY"],
+    apiSecret: process.env["CLOUDINARY_API_SECRET"],
+  };
+}
+
 export function appEnv(): string {
   return process.env["APP_ENV"] ?? "local";
 }

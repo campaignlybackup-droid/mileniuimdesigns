@@ -25,14 +25,14 @@ CREATE TYPE "product_media_role" AS ENUM ('hero', 'gallery', 'detail', 'lifestyl
 -- CreateEnum
 CREATE TYPE "seo_entity_type" AS ENUM ('product', 'category', 'collection', 'stone', 'material', 'cms_page', 'journal_post', 'curated_facet', 'home');
 
--- DropIndex
-DROP INDEX "idx_analytics_occurred_brin";
+-- (removed) Prisma proposed dropping a hand-written index it cannot express.
+-- DROP INDEX "idx_analytics_occurred_brin";   <- refused by scripts/guard-migration.ts
 
--- DropIndex
-DROP INDEX "uq_email_templates";
+-- (removed) Prisma proposed dropping a hand-written index it cannot express.
+-- DROP INDEX "uq_email_templates";   <- refused by scripts/guard-migration.ts
 
--- DropIndex
-DROP INDEX "uq_settings_key_market";
+-- (removed) Prisma proposed dropping a hand-written index it cannot express.
+-- DROP INDEX "uq_settings_key_market";   <- refused by scripts/guard-migration.ts
 
 -- CreateTable
 CREATE TABLE "attributes" (

@@ -2626,3 +2626,66 @@ structure is complete and the site has nothing to say until they supply the cont
 `tests/db/drift.test.ts` asserts this actively — that no seeded stone has a description
 and none is published — so "we added some placeholder copy to make it look better" fails
 CI rather than shipping.
+
+### 6.16 P06 — the constraint-destruction problem, solved structurally
+
+§6.13 recorded that `prisma migrate dev` dropped three hand-written objects. In P06 it
+reproduced far worse: **a migration whose only schema change was adding one table
+(`media_tags`) proposed dropping FOURTEEN**, including `fk_pms_market` (the composite FK
+that stops a row claiming a currency its market does not use), `idx_products_search_vector`,
+and both composite uniques. It partially applied before failing on a dependency error,
+leaving the database with real damage that the manifest test then reported.
+
+**Detection was not enough.** A test that tells you the constraints are gone, every time,
+is a test that trains people to re-run a repair script. The fix has three parts:
+
+1. **`prisma/handwritten/addendum.sql`** — every hand-written object in ONE idempotent
+   file. `CREATE … IF NOT EXISTS` for indexes; `DO $$ … EXCEPTION WHEN duplicate_object OR
+   duplicate_table THEN NULL; END $$` for constraints (the `duplicate_table` arm matters —
+   `ADD CONSTRAINT … UNIQUE` creates a backing index and raises on the index name, not the
+   constraint name); `DROP TRIGGER IF EXISTS` before `CREATE TRIGGER`.
+2. **`npm run db:guard`** (`scripts/guard-migration.ts`) — refuses a migration that drops
+   anything the addendum creates, with the exact file and line to delete. It deliberately
+   **edits nothing**: a script that silently rewrote generated SQL would be a worse problem
+   than the one it solves. It is wired into `npm run verify`.
+3. **`tests/db/handwritten-constraints.test.ts`** — the manifest, as the last line.
+
+**The workflow is now:**
+
+```
+npx prisma migrate dev --create-only --name <name>
+npm run db:guard            # refuses the DROPs; delete the lines it names
+npx prisma migrate deploy && npm run db:addendum
+```
+
+`npm run db:deploy` does the last line as one step.
+
+**Verified on a fresh database.** After neutralising the three historical DROP lines in the
+Schema II migration, `prisma migrate reset` replayed the entire history from scratch and
+`handwritten-constraints.test.ts` passed **before** the addendum was re-applied — which is
+the actual claim worth making. The history is clean, not merely patched. (The reset needed
+explicit consent; Prisma refuses destructive operations without it, correctly.)
+
+### 6.17 P06 field notes
+
+**`<use>` is forbidden outright, not filtered.** 06 §7.10 lists it in `FORBID_TAGS` *and*
+specifies an href-fragment rule. Those are two layers, not one: `<use>` is the element
+whose entire purpose is to pull in another subtree, and a same-document reference today is
+one `id` collision away from pulling in something an editor pasted tomorrow. The
+href-fragment hook then covers every OTHER element that can carry one — `fill="url(#g)"`
+survives, which matters because that is how every gradient works.
+
+**`changed` and `removed` are different questions.** DOMPurify re-serialises `<path/>` as
+`<path></path>`, so a completely benign SVG comes back with `changed === true` and
+`removed === []`. A "we modified your file" message must key on `removed`; keying it on
+`changed` would be technically true and useless on every upload.
+
+**The error-taxonomy guard caught a fourth violation** — `UnsizedImageUrlError extends
+Error`. That guard has now found four classes across three phases, every one written by me
+and every one looking entirely reasonable in isolation. It has more than paid for its three
+lines.
+
+**`buildImageUrl` throws rather than falling back.** A URL with no width serves the
+original — a 10 MB master file on a phone — and it RENDERS CORRECTLY, so only the transfer
+size is wrong and nothing in review catches it. Throwing is the only way that failure is
+visible.
