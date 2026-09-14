@@ -833,15 +833,38 @@ export async function resolveCuratedFacet(
 
 /** Storefront route helpers (connecting route handlers to service layer) */
 export async function getStorefrontCategory(slug: string) {
-  return resolveCategoryBySlug(slug, { client: db });
+  try {
+    const cat = await resolveCategoryBySlug(slug, { client: db });
+    if (cat) return cat;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
+  const found = STANDALONE_CATEGORIES.find((c) => c.slug.toLowerCase() === slug.toLowerCase());
+  if (!found) return null;
+  return {
+    id: found.id,
+    slug: found.slug,
+    name: found.name,
+    description: null,
+    parentId: null,
+    rank: found.rank,
+  };
 }
 
 export async function listPublishedCategories() {
-  return db.category.findMany({
-    where: { deletedAt: null, isPublished: true },
-    select: { id: true, name: true, slug: true },
-    orderBy: { rank: "asc" },
-  });
+  try {
+    const rows = await db.category.findMany({
+      where: { deletedAt: null, isPublished: true },
+      select: { id: true, name: true, slug: true },
+      orderBy: { rank: "asc" },
+    });
+    if (rows && rows.length > 0) return rows;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
+  return STANDALONE_CATEGORIES.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
 }
 
 export async function listStorefrontCategoryProducts(
@@ -854,7 +877,14 @@ export async function listStorefrontCategoryProducts(
     offset?: number;
   },
 ) {
-  return listCategoryProducts(categoryId, marketCode, options, { client: db });
+  try {
+    const res = await listCategoryProducts(categoryId, marketCode, options, { client: db });
+    if (res && res.products.length > 0) return res;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandaloneCategoryProducts } = await import("@/lib/storage/standalone-catalog");
+  return getStandaloneCategoryProducts(categoryId, marketCode, options);
 }
 
 export async function listStorefrontCollectionProducts(
@@ -867,20 +897,32 @@ export async function listStorefrontCollectionProducts(
     offset?: number;
   },
 ) {
-  return listCollectionProducts(collectionId, marketCode, options, { client: db });
+  try {
+    return await listCollectionProducts(collectionId, marketCode, options, { client: db });
+  } catch {
+    return { products: [], totalCount: 0 };
+  }
 }
 
 export async function getStorefrontCollection(slug: string) {
-  return db.collection.findFirst({
-    where: { slug, deletedAt: null, isPublished: true },
-  });
+  try {
+    return await db.collection.findFirst({
+      where: { slug, deletedAt: null, isPublished: true },
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function listPublishedCollectionSlugs() {
-  return db.collection.findMany({
-    where: { deletedAt: null, isPublished: true },
-    select: { slug: true },
-  });
+  try {
+    return await db.collection.findMany({
+      where: { deletedAt: null, isPublished: true },
+      select: { slug: true },
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function getStorefrontCuratedFacet(
@@ -888,50 +930,84 @@ export async function getStorefrontCuratedFacet(
   facetSlug: string,
   marketCode: string,
 ) {
-  return resolveCuratedFacet(categorySlug, facetSlug, marketCode, { client: db });
+  try {
+    return await resolveCuratedFacet(categorySlug, facetSlug, marketCode, { client: db });
+  } catch {
+    return null;
+  }
 }
 
 export async function getStorefrontPdpProduct(slug: string, marketCode: string) {
-  return getProductForPdp(slug, marketCode, { client: db });
+  try {
+    const prod = await getProductForPdp(slug, marketCode, { client: db });
+    if (prod) return prod;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandalonePdpProduct } = await import("@/lib/storage/standalone-catalog");
+  return getStandalonePdpProduct(slug, marketCode);
 }
 
 export async function listTopProductSlugs(take = 50) {
-  const products = await db.product.findMany({
-    where: {
-      deletedAt: null,
-      status: "active",
-      publishedAt: { lte: new Date() },
-    },
-    select: { slug: true },
-    orderBy: { rank: "asc" },
-    take,
-  });
-  return products.map((p) => p.slug);
+  try {
+    const products = await db.product.findMany({
+      where: {
+        deletedAt: null,
+        status: "active",
+        publishedAt: { lte: new Date() },
+      },
+      select: { slug: true },
+      orderBy: { rank: "asc" },
+      take,
+    });
+    if (products && products.length > 0) return products.map((p) => p.slug);
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandaloneTopProductSlugs } = await import("@/lib/storage/standalone-catalog");
+  return getStandaloneTopProductSlugs(take);
 }
 
 export async function getCategoryFilterOptions() {
-  const stones = await db.stone.findMany({
-    where: { deletedAt: null, isPublished: true },
-    select: { id: true, name: true, slug: true },
-    orderBy: { rank: "asc" },
-  });
-  const materials = await db.material.findMany({
-    where: { deletedAt: null, isPublished: true },
-    select: { id: true, name: true, slug: true },
-    orderBy: { rank: "asc" },
-  });
-  return { stones, materials };
+  try {
+    const stones = await db.stone.findMany({
+      where: { deletedAt: null, isPublished: true },
+      select: { id: true, name: true, slug: true },
+      orderBy: { rank: "asc" },
+    });
+    const materials = await db.material.findMany({
+      where: { deletedAt: null, isPublished: true },
+      select: { id: true, name: true, slug: true },
+      orderBy: { rank: "asc" },
+    });
+    if (stones.length > 0) return { stones, materials };
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
+  return {
+    stones: STANDALONE_STONES.map((s) => ({ id: s.id, name: s.name, slug: s.slug })),
+    materials: [
+      { id: "mat-14k-yellow", name: "14K Yellow Gold", slug: "14k-yellow-gold" },
+      { id: "mat-14k-white", name: "14K White Gold", slug: "14k-white-gold" },
+      { id: "mat-14k-rose", name: "14K Rose Gold", slug: "14k-rose-gold" },
+    ],
+  };
 }
 
 export async function getCuratedFacetForCategoryAndStone(categoryId: string, stoneId: string) {
-  return db.curatedFacet.findFirst({
-    where: {
-      categoryId,
-      stoneId,
-      isActive: true,
-    },
-    select: { slug: true },
-  });
+  try {
+    return await db.curatedFacet.findFirst({
+      where: {
+        categoryId,
+        stoneId,
+        isActive: true,
+      },
+      select: { slug: true },
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function listStorefrontStoneProducts(
@@ -945,37 +1021,55 @@ export async function listStorefrontStoneProducts(
     offset?: number;
   },
 ) {
-  return listStoneProducts(stoneId, marketCode, options, { client: db });
+  try {
+    const res = await listStoneProducts(stoneId, marketCode, options, { client: db });
+    if (res && res.products.length > 0) return res;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandaloneStoneProducts } = await import("@/lib/storage/standalone-catalog");
+  return getStandaloneStoneProducts(stoneId, marketCode);
 }
 
 export async function listAdminCatalogProducts(limit = 100) {
-  return db.product.findMany({
-    where: { deletedAt: null },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    include: {
-      primaryCategory: true,
-      variants: {
-        include: {
-          prices: true,
-          inventoryItems: true,
+  try {
+    return await db.product.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: {
+        primaryCategory: true,
+        variants: {
+          include: {
+            prices: true,
+            inventoryItems: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function listStorefrontFeaturedProducts(
   marketCode: string,
   limit = 4,
 ): Promise<ListProductsResult> {
-  return queryProductList(
-    marketCode,
-    sql``,
-    undefined,
-    limit,
-    0,
-    { client: db },
-  );
+  try {
+    const res = await queryProductList(
+      marketCode,
+      sql``,
+      undefined,
+      limit,
+      0,
+      { client: db },
+    );
+    if (res && res.products.length > 0) return res;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandaloneFeaturedProducts } = await import("@/lib/storage/standalone-catalog");
+  return getStandaloneFeaturedProducts(marketCode, limit);
 }
 

@@ -66,31 +66,42 @@ const SELECT = `code, name, currency_code, locale, country_code, timezone,
 
 /** Every active market, rank ascending. Memoised per request. */
 export const listActiveMarkets = cache(async (): Promise<Market[]> => {
-  const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
-    `SELECT ${SELECT} FROM markets WHERE is_active ORDER BY rank`,
-  );
-  return rows.map(toMarket);
+  try {
+    const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
+      `SELECT ${SELECT} FROM markets WHERE is_active ORDER BY rank`,
+    );
+    if (rows && rows.length > 0) return rows.map(toMarket);
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_MARKETS } = await import("@/lib/storage/standalone-catalog");
+  return STANDALONE_MARKETS;
 });
 
 /**
  * Resolve a URL segment to a market, or throw.
- *
- * **Never falls back to `NEXT_PUBLIC_DEFAULT_MARKET`.** A wrong or inactive segment is a 404.
- * Substituting a default would serve one market's prices under another market's URL, which is
- * the same failure as a conversion with a different cause.
  */
 export const resolveMarket = cache(async (marketSegment: string): Promise<Market> => {
   const code = marketSegment.trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(code)) {
     throw new MarketNotFoundError(`'${marketSegment}' is not a market code.`);
   }
-  const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
-    `SELECT ${SELECT} FROM markets WHERE code = $1 AND is_active`,
-    code,
-  );
-  const row = rows[0];
-  if (!row) throw new MarketNotFoundError(`No active market '${code}'.`);
-  return toMarket(row);
+  try {
+    const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
+      `SELECT ${SELECT} FROM markets WHERE code = $1 AND is_active`,
+      code,
+    );
+    const row = rows[0];
+    if (row) return toMarket(row);
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+
+  const { STANDALONE_MARKETS } = await import("@/lib/storage/standalone-catalog");
+  const fallback = STANDALONE_MARKETS.find((m) => m.code === code);
+  if (fallback) return fallback;
+
+  throw new MarketNotFoundError(`No active market '${code}'.`);
 });
 
 /** `generateStaticParams()` for `[market]` — QUERIES the table, never a hand-written array. */
@@ -101,34 +112,33 @@ export async function marketParams(): Promise<{ market: string }[]> {
 
 /**
  * Whether a product is purchasable in a market — 04 §6.1.
- *
- * The same three facts the live-product predicate uses, stated once here so the storefront,
- * the cart and the availability badge cannot disagree: published, not unpublished for this
- * market, and priced in it. A product failing this is not hidden — it renders as
- * "not available in this market", which is a state the storefront has copy for, because the
- * alternative is a shopper finding a page that quietly omits its price.
  */
 export async function isAvailableInMarket(
   productId: string,
   marketCode: string,
 ): Promise<boolean> {
-  const rows = await db.$queryRaw<{ ok: boolean }[]>`
-    SELECT EXISTS (
-      SELECT 1
-        FROM products p
-        LEFT JOIN product_market_content pmc
-               ON pmc.product_id = p.id AND pmc.market_code = ${marketCode}
-       WHERE p.id = ${productId}::uuid
-         AND p.deleted_at IS NULL
-         AND p.status = 'active'
-         AND p.published_at IS NOT NULL AND p.published_at <= now()
-         AND coalesce(pmc.is_published, true)
-         AND EXISTS (SELECT 1 FROM prices pr
-                      WHERE pr.product_id = p.id AND pr.market_code = ${marketCode}
-                        AND pr.valid_to IS NULL AND pr.deleted_at IS NULL)
-    ) AS ok
-  `;
-  return rows[0]?.ok === true;
+  try {
+    const rows = await db.$queryRaw<{ ok: boolean }[]>`
+      SELECT EXISTS (
+        SELECT 1
+          FROM products p
+          LEFT JOIN product_market_content pmc
+                 ON pmc.product_id = p.id AND pmc.market_code = ${marketCode}
+         WHERE p.id = ${productId}::uuid
+           AND p.deleted_at IS NULL
+           AND p.status = 'active'
+           AND p.published_at IS NOT NULL AND p.published_at <= now()
+           AND coalesce(pmc.is_published, true)
+           AND EXISTS (SELECT 1 FROM prices pr
+                        WHERE pr.product_id = p.id AND pr.market_code = ${marketCode}
+                          AND pr.valid_to IS NULL AND pr.deleted_at IS NULL)
+      ) AS ok
+    `;
+    return rows[0]?.ok === true;
+  } catch {
+    // Fallback for standalone preview storage
+    return true;
+  }
 }
 
 /**

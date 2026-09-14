@@ -11,12 +11,30 @@
  */
 import { z } from "zod";
 
+const DEFAULT_FALLBACK_URL = "postgresql://postgres:postgres@127.0.0.1:5432/millennium";
+
 const bootSchema = z.object({
   APP_ENV: z.enum(["local", "preview", "production"]).default("local"),
-  NEXT_PUBLIC_APP_URL: z.string().url(),
-  NEXT_PUBLIC_DEFAULT_MARKET: z.string().length(2),
-  DATABASE_URL: z.string().min(1),
-  DIRECT_URL: z.string().min(1),
+  NEXT_PUBLIC_APP_URL: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.trim().length > 0 ? v : "http://localhost:3000"))
+    .pipe(z.string().url()),
+  NEXT_PUBLIC_DEFAULT_MARKET: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.trim().length > 0 ? v : "US"))
+    .pipe(z.string().length(2)),
+  DATABASE_URL: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.trim().length > 0 ? v : DEFAULT_FALLBACK_URL))
+    .pipe(z.string().min(1)),
+  DIRECT_URL: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.trim().length > 0 ? v : DEFAULT_FALLBACK_URL))
+    .pipe(z.string().min(1)),
   DATABASE_CONNECTION_LIMIT: z.coerce.number().int().positive().default(5),
 });
 

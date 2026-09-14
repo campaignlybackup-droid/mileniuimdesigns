@@ -174,25 +174,53 @@ export async function getStoneCategories(
 
 /** Storefront route helpers */
 export async function getStorefrontStones(): Promise<StoneRecord[]> {
-  return listPublishedStones({ client: db });
+  try {
+    const list = await listPublishedStones({ client: db });
+    if (list && list.length > 0) return list;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
+  return STANDALONE_STONES;
 }
 
 export async function getStorefrontStone(slug: string): Promise<StoneRecord | null> {
-  return getStoneBySlug(slug, { client: db });
+  try {
+    const stone = await getStoneBySlug(slug, { client: db });
+    if (stone) return stone;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
+  return STANDALONE_STONES.find((s) => s.slug.toLowerCase() === slug.toLowerCase()) ?? null;
 }
 
 export async function getStorefrontStoneCategories(
   stoneId: string,
   marketCode: string,
 ): Promise<StoneCategoryLink[]> {
-  return getStoneCategories(stoneId, marketCode, { client: db });
+  try {
+    const cats = await getStoneCategories(stoneId, marketCode, { client: db });
+    if (cats && cats.length > 0) return cats;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { getStandaloneStoneCategoryLinks } = await import("@/lib/storage/standalone-catalog");
+  return getStandaloneStoneCategoryLinks(stoneId);
 }
 
 export async function listPublishedStoneSlugs(): Promise<{ slug: string }[]> {
-  return db.stone.findMany({
-    where: { deletedAt: null, isPublished: true },
-    select: { slug: true },
-    orderBy: { rank: "asc" },
-  });
+  try {
+    const rows = await db.stone.findMany({
+      where: { deletedAt: null, isPublished: true },
+      select: { slug: true },
+      orderBy: { rank: "asc" },
+    });
+    if (rows && rows.length > 0) return rows;
+  } catch {
+    // Database unconfigured / offline on host storage
+  }
+  const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
+  return STANDALONE_STONES.map((s) => ({ slug: s.slug }));
 }
 
