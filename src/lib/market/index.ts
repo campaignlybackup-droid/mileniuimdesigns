@@ -156,3 +156,13 @@ export async function alternatesFor(
 
   return { languages, canonical: urlFor(primary), xDefault: urlFor(primary) };
 }
+
+export async function listAdminCurrenciesAndMarkets() {
+  const currencies = await db.currency.findMany({
+    orderBy: { code: "asc" },
+  });
+  const markets = await db.market.findMany({
+    orderBy: { rank: "asc" },
+  });
+  return { currencies, markets };
+}

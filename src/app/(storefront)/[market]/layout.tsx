@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { env } from "@/lib/config/env";
-import { alternatesFor, marketParams, resolveMarket } from "@/lib/market";
+import { alternatesFor, listActiveMarkets, marketParams, resolveMarket } from "@/lib/market";
+import { listPublishedCategories } from "@/lib/catalog";
+import { SiteHeader } from "@/components/storefront/SiteHeader";
+import { SiteFooter } from "@/components/storefront/SiteFooter";
+import { CartProvider } from "@/components/storefront/CartContext";
+import { CartDrawer } from "@/components/storefront/CartDrawer";
 
 /**
  * The storefront's market layout — 01 §1.4. Owned by P13; the pages inside it are P15's.
@@ -55,12 +60,76 @@ export default async function MarketLayout({
   params: Promise<{ market: string }>;
 }): Promise<React.ReactElement> {
   const { market } = await params;
+  let resolved;
   try {
     // Reads the DATABASE, not the edge snapshot: deactivating a market 404s immediately
     // rather than at the next deployment.
-    await resolveMarket(market);
+    resolved = await resolveMarket(market);
   } catch {
     notFound();
   }
-  return <>{children}</>;
+
+  const [activeMarkets, categories] = await Promise.all([
+    listActiveMarkets(),
+    listPublishedCategories(),
+  ]);
+
+  const primary = activeMarkets[0];
+  const isPrimary = primary ? resolved.code === primary.code : false;
+  const marketSegment = isPrimary ? "" : resolved.code.toLowerCase();
+
+  const navigation = [
+    ...categories.map((c) => ({
+      label: c.name.toUpperCase(),
+      href: `/${c.slug}`,
+    })),
+    { label: "STONES", href: "/stones" },
+  ];
+
+  const marketOptions = activeMarkets.map((m) => {
+    const mIsPrimary = primary ? m.code === primary.code : false;
+    const mHref = mIsPrimary ? "/" : `/${m.code.toLowerCase()}`;
+    return {
+      code: m.code,
+      label: `${m.code} · ${m.currencyCode}`,
+      href: mHref,
+      active: m.code === resolved.code,
+    };
+  });
+
+  const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
+  const footerColumns = [
+    {
+      heading: "COLLECTIONS",
+      links: categories.map((c) => ({
+        label: c.name,
+        href: `${prefix}/${c.slug}`,
+      })),
+    },
+    {
+      heading: "EXPLORE",
+      links: [
+        { label: "Stones Explorer", href: `${prefix}/stones` },
+        { label: "One of a Kind", href: `${prefix}/one-of-a-kind` },
+        { label: "Closeouts", href: `${prefix}/closeouts` },
+      ],
+    },
+  ];
+
+  return (
+    <CartProvider>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <SiteHeader
+          marketSegment={marketSegment}
+          navigation={navigation}
+          markets={marketOptions}
+        />
+        <main id="main" style={{ flexGrow: 1 }}>
+          {children}
+        </main>
+        <SiteFooter year={2026} columns={footerColumns} />
+        <CartDrawer marketCode={resolved.code} />
+      </div>
+    </CartProvider>
+  );
 }

@@ -90,3 +90,11 @@ function bandQuantity(r: Row): number | null {
   if (r.inventory_policy !== "tracked") return null;
   return r.available ?? 0;
 }
+
+export async function getStorefrontAvailability(
+  variantIds: string[],
+  marketCode: string,
+): Promise<Map<string, Availability>> {
+  return getAvailability(variantIds, marketCode, db);
+}
+

@@ -15,14 +15,20 @@ import Image from "next/image";
 export type LogoVariant = "wordmark" | "monogram";
 export type LogoTone = "green" | "ivory";
 
-const SOURCES: Record<LogoVariant, string> = {
-  wordmark: "/brand/wordmark.svg",
-  monogram: "/brand/monogram.svg",
+const SOURCES: Record<LogoVariant, Record<LogoTone, string>> = {
+  wordmark: {
+    green: "/brand/wordmark-green.png",
+    ivory: "/brand/wordmark-ivory.png",
+  },
+  monogram: {
+    green: "/brand/monogram.png",
+    ivory: "/brand/monogram.png",
+  },
 };
 
 /** Intrinsic ratios of the supplied artwork, used only to reserve layout space. */
 const RATIO: Record<LogoVariant, number> = {
-  wordmark: 6.4,
+  wordmark: 9.57,
   monogram: 1,
 };
 
@@ -45,7 +51,7 @@ export function Logo({
   const width = Math.round(height * RATIO[variant]);
   return (
     <Image
-      src={SOURCES[variant]}
+      src={SOURCES[variant][tone]}
       // The alt text is the company's name, not a description of the artwork. A screen reader
       // announcing "green M monogram with crescent" is reading the design, not the brand.
       alt="MILLENNIUM DESIGNS"

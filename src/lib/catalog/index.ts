@@ -423,3 +423,6 @@ export async function createProduct(
     return { id: p.id, version: after.version };
   });
 }
+
+export * from "@/lib/catalog/products";
+export * from "@/lib/catalog/tags";

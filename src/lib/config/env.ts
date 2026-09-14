@@ -106,7 +106,14 @@ export function secret(
      *  use the new key, so rotating does not lock out every enrolled staff member. */
     | "AUTH_SECRET_PREVIOUS"
     | "GIFT_CARD_CODE_PEPPER"
-    | "OTP_HASH_PEPPER",
+    | "OTP_HASH_PEPPER"
+    | "RAZORPAY_KEY_ID"
+    | "RAZORPAY_KEY_SECRET"
+    | "RAZORPAY_WEBHOOK_SECRET"
+    | "STRIPE_SECRET_KEY"
+    | "STRIPE_WEBHOOK_SECRET"
+    | "META_CAPI_ACCESS_TOKEN"
+    | "NEXT_PUBLIC_META_PIXEL_ID",
 ): string | undefined {
   return process.env[name];
 }

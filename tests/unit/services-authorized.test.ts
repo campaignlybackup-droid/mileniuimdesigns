@@ -63,6 +63,8 @@ const CAPABILITY: Record<string, string> = {
     "resolves the cart through requireCart(tx, token) and scopes the write with AND cart_id",
   "src/lib/cart/revalidate.ts: applyRepairs":
     "takes an open transaction and line ids its caller already resolved; accepts no identifier from a request",
+  "src/lib/orders/index.ts: createOrderFromCart":
+    "authorizes through possession of the cart token, verified server-side against the cart row",
 };
 
 /** Modules that legitimately hold no permission check. Each entry states why. */

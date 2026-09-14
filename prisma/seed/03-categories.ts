@@ -28,10 +28,11 @@ const CATEGORIES = [
 
 /** First path segments the router owns. A category may never take one of these. */
 export const RESERVED_SLUGS = [
-  "stones", "collections", "products", "search", "cart", "checkout", "account",
+  "stones", "collections", "products", "search", "cart", "checkout", "account", "login",
   "orders", "wishlist", "heritage", "about", "journal", "api", "admin", "_preview",
-  "sitemap.xml", "robots.txt",
+  "pages", "sitemaps", "sitemap.xml", "robots.txt",
 ] as const;
+
 
 export async function seedCategories(db: PrismaClient): Promise<void> {
   for (const c of CATEGORIES) {

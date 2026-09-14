@@ -102,7 +102,7 @@ const SETTINGS: SettingSeed[] = [
   // ── Branded error copy (08 §4.4) ────────────────────────────────────────────────
   {
     key: "copy.error.generic.headline",
-    value: "SOMETHING WENT WRONG",
+    value: "Something went wrong",
     valueType: "string",
     groupKey: "copy_errors",
     label: "Generic error — headline",
@@ -122,10 +122,11 @@ const SETTINGS: SettingSeed[] = [
     label: "Generic error — action",
   },
 
-  // ── Branded empty and error states (10 §5.6 owns the voice) ─────────────────────
+  // ── Branded empty and error states (10 §5.6 owns the voice, 08 §4.4 owns storage) ──
+  // 1. not_found
   {
     key: "copy.state.not_found.headline",
-    value: "NOTHING FOUND",
+    value: "Nothing found",
     valueType: "string",
     groupKey: "copy_states",
     label: "404 — headline",
@@ -145,75 +146,171 @@ const SETTINGS: SettingSeed[] = [
     label: "404 — action",
   },
 
+  // 2. gone (410)
   {
-    key: "copy.state.empty_cart.headline",
-    value: "YOUR BAG IS WAITING.",
+    key: "copy.state.gone.headline",
+    value: "No longer available",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "410 gone — headline",
+  },
+  {
+    key: "copy.state.gone.body",
+    value: "This piece is no longer available.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "410 gone — body",
+  },
+  {
+    key: "copy.state.gone.action",
+    value: "SEE SIMILAR PIECES",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "410 gone — action",
+  },
+
+  // 3. server_error (500)
+  {
+    key: "copy.state.server_error.headline",
+    value: "Something went wrong",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "500 server error — headline",
+  },
+  {
+    key: "copy.state.server_error.body",
+    value: "We have been notified. Please try again shortly.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "500 server error — body",
+  },
+  {
+    key: "copy.state.server_error.action",
+    value: "RETURN HOME",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "500 server error — action",
+  },
+
+  // 4. global_error
+  {
+    key: "copy.state.global_error.headline",
+    value: "Something went wrong",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Global error — headline",
+  },
+  {
+    key: "copy.state.global_error.body",
+    value: "We have been notified. Please reload the page.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Global error — body",
+  },
+  {
+    key: "copy.state.global_error.action",
+    value: "RELOAD",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Global error — action",
+  },
+
+  // 5. cart_empty
+  {
+    key: "copy.state.cart_empty.headline",
+    value: "Your bag is waiting.",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty bag — headline",
   },
   {
-    key: "copy.state.empty_cart.body",
+    key: "copy.state.cart_empty.body",
     value: "",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty bag — body",
   },
   {
-    key: "copy.state.empty_cart.action",
+    key: "copy.state.cart_empty.action",
     value: "EXPLORE THE COLLECTION",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty bag — action",
   },
 
+  // 6. wishlist_empty
   {
-    key: "copy.state.empty_wishlist.headline",
-    value: "YOUR COLLECTION BEGINS HERE.",
+    key: "copy.state.wishlist_empty.headline",
+    value: "Your collection begins here.",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty wishlist — headline",
   },
   {
-    key: "copy.state.empty_wishlist.body",
-    value: "",
+    key: "copy.state.wishlist_empty.body",
+    value: "Select the outline heart on any piece to keep it here.",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty wishlist — body",
   },
   {
-    key: "copy.state.empty_wishlist.action",
+    key: "copy.state.wishlist_empty.action",
     value: "EXPLORE THE COLLECTION",
     valueType: "string",
     groupKey: "copy_states",
     label: "Empty wishlist — action",
   },
 
+  // 7. search_empty
   {
-    key: "copy.state.no_results.headline",
-    value: "NOTHING MATCHED YOUR SEARCH.",
+    key: "copy.state.search_empty.headline",
+    value: "Nothing matched your search.",
     valueType: "string",
     groupKey: "copy_states",
     label: "No search results — headline",
   },
   {
-    key: "copy.state.no_results.body",
-    value: "",
+    key: "copy.state.search_empty.body",
+    value: "No pieces match your query.",
     valueType: "string",
     groupKey: "copy_states",
     label: "No search results — body",
   },
   {
-    key: "copy.state.no_results.action",
+    key: "copy.state.search_empty.action",
     value: "",
     valueType: "string",
     groupKey: "copy_states",
     label: "No search results — action",
   },
 
+  // 8. filters_empty
+  {
+    key: "copy.state.filters_empty.headline",
+    value: "Nothing matched these filters.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Filtered empty — headline",
+  },
+  {
+    key: "copy.state.filters_empty.body",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Filtered empty — body",
+  },
+  {
+    key: "copy.state.filters_empty.action",
+    value: "CLEAR FILTERS",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Filtered empty — action",
+  },
+
+  // 9. out_of_stock
   {
     key: "copy.state.out_of_stock.headline",
-    value: "CURRENTLY UNAVAILABLE",
+    value: "Currently unavailable",
     valueType: "string",
     groupKey: "copy_states",
     label: "Out of stock — headline",
@@ -227,17 +324,16 @@ const SETTINGS: SettingSeed[] = [
   },
   {
     key: "copy.state.out_of_stock.action",
-    value: "",
+    value: "NOTIFY ME",
     valueType: "string",
     groupKey: "copy_states",
     label: "Out of stock — action",
   },
 
-  // AvailabilityBand has five values; `sold` is the one-of-a-kind case and it is NOT the
-  // same as out of stock. A sold piece has found its owner and stays visible as archive.
+  // 10. sold
   {
     key: "copy.state.sold.headline",
-    value: "SOLD",
+    value: "Sold",
     valueType: "string",
     groupKey: "copy_states",
     label: "Sold (one of a kind) — headline",
@@ -256,7 +352,169 @@ const SETTINGS: SettingSeed[] = [
     groupKey: "copy_states",
     label: "Sold (one of a kind) — action",
   },
+
+  // 11. made_to_order
+  {
+    key: "copy.state.made_to_order.headline",
+    value: "Made to order",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Made to order — headline",
+  },
+  {
+    key: "copy.state.made_to_order.body",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Made to order — body",
+  },
+  {
+    key: "copy.state.made_to_order.action",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Made to order — action",
+  },
+
+  // 12. unavailable_in_market
+  {
+    key: "copy.state.unavailable_in_market.headline",
+    value: "Not sold in this market",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Unavailable in market — headline",
+  },
+  {
+    key: "copy.state.unavailable_in_market.body",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Unavailable in market — body",
+  },
+  {
+    key: "copy.state.unavailable_in_market.action",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Unavailable in market — action",
+  },
+
+  // 13. insufficient_stock
+  {
+    key: "copy.state.insufficient_stock.headline",
+    value: "This piece has just been taken.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Insufficient stock — headline",
+  },
+  {
+    key: "copy.state.insufficient_stock.body",
+    value: "It has been removed from your bag.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Insufficient stock — body",
+  },
+  {
+    key: "copy.state.insufficient_stock.action",
+    value: "REVIEW BAG",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Insufficient stock — action",
+  },
+
+  // 14. price_changed
+  {
+    key: "copy.state.price_changed.headline",
+    value: "Prices have been updated.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Price changed — headline",
+  },
+  {
+    key: "copy.state.price_changed.body",
+    value: "Please review your bag before continuing.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Price changed — body",
+  },
+  {
+    key: "copy.state.price_changed.action",
+    value: "REVIEW BAG",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Price changed — action",
+  },
+
+  // 15. market_changed
+  {
+    key: "copy.state.market_changed.headline",
+    value: "Your bag has been repriced for {market}.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Market changed — headline",
+  },
+  {
+    key: "copy.state.market_changed.body",
+    value: "",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Market changed — body",
+  },
+  {
+    key: "copy.state.market_changed.action",
+    value: "CONTINUE",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Market changed — action",
+  },
+
+  // 16. payments_unconfigured
+  {
+    key: "copy.state.payments_unconfigured.headline",
+    value: "Payment is not yet available here.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payments unconfigured — headline",
+  },
+  {
+    key: "copy.state.payments_unconfigured.body",
+    value: "Online payment is not yet available for this region. No order has been created.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payments unconfigured — body",
+  },
+  {
+    key: "copy.state.payments_unconfigured.action",
+    value: "RETURN TO BAG",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payments unconfigured — action",
+  },
+
+  // 17. payment_pending
+  {
+    key: "copy.state.payment_pending.headline",
+    value: "We are still confirming your payment.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payment pending — headline",
+  },
+  {
+    key: "copy.state.payment_pending.body",
+    value: "You will receive an email as soon as it completes.",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payment pending — body",
+  },
+  {
+    key: "copy.state.payment_pending.action",
+    value: "CHECK AGAIN",
+    valueType: "string",
+    groupKey: "copy_states",
+    label: "Payment pending — action",
+  },
 ];
+
 
 export async function seedSettings(db: PrismaClient): Promise<void> {
   for (const s of SETTINGS) {

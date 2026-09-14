@@ -26,6 +26,8 @@ const BYPASS = [
   "/admin",
   "/_next",
   "/_vercel",
+  "/brand",
+  "/images",
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
@@ -47,7 +49,10 @@ export const MARKET_COOKIE = "md_market";
 export function middleware(req: NextRequest): NextResponse {
   const { pathname, search } = req.nextUrl;
 
-  if (BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+  if (
+    BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|avif|css|js|woff2?)$/.test(pathname)
+  ) {
     return NextResponse.next();
   }
 

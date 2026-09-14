@@ -101,6 +101,25 @@ export function buildSrcSet(
     .join(", ");
 }
 
+/**
+ * Convenience helper for storefront rendering.
+ * Catches unconfigured provider errors gracefully so an unconfigured Cloudinary
+ * renders empty media boxes rather than 500-ing the entire storefront.
+ */
+export function imageUrl(
+  publicId: string,
+  opts: ImageUrlOptions,
+): string | null {
+  if (publicId.startsWith("/") || publicId.startsWith("http")) {
+    return publicId;
+  }
+  try {
+    return buildImageUrl({ provider: "cloudinary", publicId }, opts);
+  } catch {
+    return null;
+  }
+}
+
 function cloudName(): string {
   const name = mediaConfig().cloudName;
   if (!name) {

@@ -32,6 +32,8 @@
 
 html {
   background-color: var(--md-bg);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -41,6 +43,8 @@ body {
   font-size: var(--md-t-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /*
@@ -70,3 +74,147 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* Card hover and image transitions */
+.md-product-card {
+  transition: transform var(--md-dur, 320ms) var(--md-ease);
+}
+
+.md-product-card:hover .md-card-primary-image {
+  transform: scale(1.04);
+}
+
+.md-product-card:hover .md-card-alternate-image {
+  opacity: 1 !important;
+  transform: scale(1.04);
+}
+
+/* Gemstone card hover transitions */
+.md-stone-card {
+  transition: transform var(--md-dur, 320ms) var(--md-ease), box-shadow var(--md-dur, 320ms) var(--md-ease);
+}
+
+.md-stone-card:hover {
+  transform: translateY(-4px);
+}
+
+.md-stone-card:hover img {
+  transform: scale(1.06);
+}
+
+/* Responsive product grid */
+.md-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--md-space-3);
+}
+
+@media (min-width: 640px) {
+  .md-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--md-space-6);
+  }
+}
+
+/* Tone styling for brand logos on dark surfaces */
+img[data-tone="ivory"] {
+  filter: brightness(0) invert(1);
+}
+
+/* Header layout: 2-tier luxury desktop + clean 1-row mobile */
+.md-header-top-row {
+  max-width: var(--md-container);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  min-height: 56px;
+  padding-block: var(--md-space-2);
+}
+
+.md-desktop-left-tag {
+  display: none !important;
+}
+
+.md-header-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.md-header-logo-mobile {
+  display: flex !important;
+  align-items: center;
+}
+
+.md-header-logo-desktop {
+  display: none !important;
+}
+
+.md-desktop-markets {
+  display: none !important;
+}
+
+.md-desktop-nav-tier {
+  display: none !important;
+}
+
+.md-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--md-space-2);
+  justify-self: end;
+}
+
+@media (max-width: 520px) {
+  .md-desktop-account {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .md-header-top-row {
+    grid-template-columns: 1fr auto 1fr;
+    min-height: 64px;
+    padding-block: var(--md-space-3);
+  }
+
+  .md-mobile-trigger {
+    display: none !important;
+  }
+
+  .md-desktop-left-tag {
+    display: flex !important;
+    justify-self: start;
+  }
+
+  .md-header-logo-mobile {
+    display: none !important;
+  }
+
+  .md-header-logo-desktop {
+    display: flex !important;
+    align-items: center;
+  }
+
+  .md-desktop-markets {
+    display: flex !important;
+  }
+
+  .md-desktop-account {
+    display: flex !important;
+  }
+
+  .md-desktop-nav-tier {
+    display: block !important;
+    padding-inline: var(--md-gutter);
+    padding-block: var(--md-space-2);
+    border-top: 1px solid var(--md-rule);
+    background: var(--md-bg);
+  }
+}
+
+
+
+
+
