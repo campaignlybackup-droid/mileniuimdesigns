@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
     "src/generated/**",
     "tests/lint/boundaries.fixture/**",
     "next-env.d.ts",
+    "server.js",
   ]),
 
   ...nextVitals,
