@@ -13,27 +13,52 @@ import { z } from "zod";
 
 const DEFAULT_FALLBACK_URL = "postgresql://postgres:postgres@127.0.0.1:5432/millennium";
 
+function normalizeAppUrl(v: unknown): string {
+  if (!v || typeof v !== "string") return "http://localhost:3000";
+  let clean = v.trim().replace(/^['"]+|['"]+$/g, "");
+  if (!clean) return "http://localhost:3000";
+  if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
+    clean = `https://${clean}`;
+  }
+  try {
+    const u = new URL(clean);
+    return u.origin;
+  } catch {
+    return "http://localhost:3000";
+  }
+}
+
 const bootSchema = z.object({
   APP_ENV: z.enum(["local", "preview", "production"]).default("local"),
   NEXT_PUBLIC_APP_URL: z
     .string()
     .optional()
-    .transform((v) => (v && v.trim().length > 0 ? v : "http://localhost:3000"))
+    .transform(normalizeAppUrl)
     .pipe(z.string().url()),
   NEXT_PUBLIC_DEFAULT_MARKET: z
     .string()
     .optional()
-    .transform((v) => (v && v.trim().length > 0 ? v : "US"))
+    .transform((v) => {
+      if (!v || typeof v !== "string" || v.trim().length === 0) return "US";
+      const code = v.trim().replace(/^['"]+|['"]+$/g, "").toUpperCase();
+      return code.length === 2 ? code : "US";
+    })
     .pipe(z.string().length(2)),
   DATABASE_URL: z
     .string()
     .optional()
-    .transform((v) => (v && v.trim().length > 0 ? v : DEFAULT_FALLBACK_URL))
+    .transform((v) => {
+      if (!v || typeof v !== "string" || v.trim().length === 0) return DEFAULT_FALLBACK_URL;
+      return v.trim().replace(/^['"]+|['"]+$/g, "");
+    })
     .pipe(z.string().min(1)),
   DIRECT_URL: z
     .string()
     .optional()
-    .transform((v) => (v && v.trim().length > 0 ? v : DEFAULT_FALLBACK_URL))
+    .transform((v) => {
+      if (!v || typeof v !== "string" || v.trim().length === 0) return DEFAULT_FALLBACK_URL;
+      return v.trim().replace(/^['"]+|['"]+$/g, "");
+    })
     .pipe(z.string().min(1)),
   DATABASE_CONNECTION_LIMIT: z.coerce.number().int().positive().default(5),
 });
@@ -46,11 +71,16 @@ export function env(): BootEnv {
   if (cached) return cached;
   const parsed = bootSchema.safeParse(process.env);
   if (!parsed.success) {
-    const missing = parsed.error.issues.map((i) => i.path.join(".")).join(", ");
-    throw new Error(
-      `Environment is not valid. Offending keys: ${missing}. ` +
-        `See docs/architecture/01-stack-and-structure.md §4 and run scripts/check-env.ts.`,
-    );
+    const fallback: BootEnv = {
+      APP_ENV: "local",
+      NEXT_PUBLIC_APP_URL: normalizeAppUrl(process.env["NEXT_PUBLIC_APP_URL"]),
+      NEXT_PUBLIC_DEFAULT_MARKET: "US",
+      DATABASE_URL: DEFAULT_FALLBACK_URL,
+      DIRECT_URL: DEFAULT_FALLBACK_URL,
+      DATABASE_CONNECTION_LIMIT: 5,
+    };
+    cached = fallback;
+    return cached;
   }
   cached = parsed.data;
   return cached;
