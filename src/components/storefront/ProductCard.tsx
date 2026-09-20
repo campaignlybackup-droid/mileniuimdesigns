@@ -157,6 +157,31 @@ export function ProductCard({
 
       {/* Details below image */}
       <div style={{ paddingTop: "var(--md-space-3)", display: "flex", flexDirection: "column", gap: "3px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+          <span
+            style={{
+              fontSize: "0.625rem",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "var(--md-fg-muted)",
+              fontFamily: "var(--md-font-crest), Georgia, serif",
+            }}
+          >
+            JAIPUR ATELIER
+          </span>
+          <span
+            style={{
+              fontSize: "0.625rem",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--md-champagne)",
+              fontWeight: 600,
+            }}
+          >
+            925 SILVER
+          </span>
+        </div>
+
         <h3
           style={{
             margin: 0,

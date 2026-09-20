@@ -1,39 +1,49 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, Cinzel } from "next/font/google";
+import { Bodoni_Moda, Italiana, Cinzel, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 /**
- * Brand display font — Cormorant Garamond (Haute Joaillerie Serif).
- * Weights 300, 400, 500, 600, 700 with italics for editorial luxury.
+ * Primary Haute Joaillerie Display Font — Bodoni Moda.
+ * Extreme high-contrast luxury serif used in Italian haute couture and high-jewelry monographs.
  */
-const cormorant = Cormorant_Garamond({
+const bodoni = Bodoni_Moda({
   variable: "--md-font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
   display: "swap",
 });
 
 /**
- * Modern luxury UI & body font — Plus Jakarta Sans.
- * Replaces generic AI builder fonts with clean, geometric luxury proportions.
+ * Classical Roman Grace & Accent Font — Italiana.
+ * Evokes classical Mediterranean sculpture and museum curation.
  */
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--md-font-sans",
+const italiana = Italiana({
+  variable: "--md-font-accent",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400"],
   display: "swap",
 });
 
 /**
- * Heritage Monogram & Royal Crest font — Cinzel.
- * Used for regal hallmarks, historical dating, and atelier insignia.
+ * Imperial Crest & Hallmarking Font — Cinzel.
+ * Used for royal hallmarks, archival dates, and atelier seals.
  */
 const cinzel = Cinzel({
   variable: "--md-font-crest",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+/**
+ * Refined Modern Luxury Sans — Plus Jakarta Sans.
+ * Clear, crisp geometric proportions for technical gemological notes and prices.
+ */
+const sans = Plus_Jakarta_Sans({
+  variable: "--md-font-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -49,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${cinzel.variable} h-full antialiased`}
+      className={`${bodoni.variable} ${italiana.variable} ${cinzel.variable} ${sans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

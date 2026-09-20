@@ -23,6 +23,7 @@
   --color-fg-inverse: var(--md-fg-inverse);
 
   --font-display: var(--md-font-display);
+  --font-accent: var(--md-font-accent);
   --font-sans: var(--md-font-sans);
   --font-crest: var(--md-font-crest);
 
@@ -35,10 +36,15 @@
   font-family: var(--md-font-crest), Georgia, serif;
 }
 
+.md-font-accent {
+  font-family: var(--md-font-accent), "Italiana", Georgia, serif;
+}
+
 .md-font-display {
-  font-family: var(--md-font-display), Georgia, serif;
+  font-family: var(--md-font-display), "Bodoni Moda", Georgia, serif;
   font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
 }
+
 
 .md-gold-gradient {
   background: linear-gradient(135deg, #f5e7c8 0%, #c8b27a 50%, #a88c55 100%);
