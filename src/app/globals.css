@@ -582,5 +582,111 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Our Story Maison & Editorial Architectures ────────────────────────── */
+.md-story-container {
+  max-width: 1180px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.md-milestones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 2.5vw, 28px);
+}
+
+@media (max-width: 960px) {
+  .md-milestones-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.md-milestone-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(24px, 3vw, 32px);
+  background: var(--md-ivory);
+  border-radius: var(--md-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent);
+  border-top: 2px solid var(--md-gold-antique);
+  box-sizing: border-box;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.md-milestone-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* 4 Hallmark Pillars: Why Connoisseurs Choose Our Jewellery */
+.md-connoisseur-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 1.8vw, 22px);
+  width: 100%;
+}
+
+@media (max-width: 1080px) and (min-width: 681px) {
+  .md-connoisseur-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 680px) {
+  .md-connoisseur-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.md-connoisseur-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(18px, 2vw, 24px) clamp(16px, 1.8vw, 20px);
+  background: color-mix(in srgb, var(--md-green-black) 65%, transparent);
+  border-radius: var(--md-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--md-champagne) 22%, transparent);
+  border-top: 2px solid var(--md-champagne);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-sizing: border-box;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.md-connoisseur-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--md-champagne) 45%, transparent);
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.3);
+}
+
+.md-global-presence-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(32px, 4vw, 56px);
+  align-items: center;
+}
+
+@media (max-width: 960px) {
+  .md-global-presence-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+.md-atelier-card {
+  padding: clamp(24px, 3.5vw, 36px);
+  background: var(--md-ivory);
+  border-radius: var(--md-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--md-champagne) 28%, transparent);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+
 
 

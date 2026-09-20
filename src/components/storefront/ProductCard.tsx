@@ -214,18 +214,20 @@ export function ProductCard({
           </Link>
         </h3>
 
-        {stoneOrMaterial && (
-          <div
-            style={{
-              fontSize: "0.8125rem",
-              color: "var(--md-fg-secondary)",
-              lineHeight: 1.3,
-              letterSpacing: "0.01em",
-            }}
-          >
-            {stoneOrMaterial}
-          </div>
-        )}
+        <div
+          style={{
+            fontSize: "0.8125rem",
+            color: "var(--md-fg-secondary)",
+            lineHeight: 1.3,
+            letterSpacing: "0.01em",
+            minHeight: "1.3em",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {stoneOrMaterial || "\u00A0"}
+        </div>
 
         <div style={{ marginTop: "var(--md-space-1)", fontSize: "0.9375rem" }}>
           {isSold ? (

@@ -183,17 +183,12 @@ export default async function OurStoryPage({
         data-surface="ivory-soft"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(56px, 7vw, 96px)",
           background: "var(--md-bg)",
         }}
       >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-          }}
-        >
-          <div style={{ textAlign: "center", maxWidth: "700px", marginInline: "auto", marginBottom: "clamp(40px, 6vw, 72px)" }}>
+        <div className="md-story-container">
+          <div style={{ textAlign: "center", maxWidth: "680px", marginInline: "auto", marginBottom: "clamp(36px, 5vw, 56px)" }}>
             <span
               style={{
                 fontSize: "0.6875rem",
@@ -212,7 +207,7 @@ export default async function OurStoryPage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                fontSize: "clamp(1.85rem, 3.5vw, 2.75rem)",
                 lineHeight: 1.15,
                 fontWeight: 400,
                 color: "var(--md-fg)",
@@ -224,235 +219,191 @@ export default async function OurStoryPage({
           </div>
 
           {/* Three Clean Milestone Cards */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
-              gap: "clamp(24px, 3.5vw, 40px)",
-            }}
-          >
+          <div className="md-milestones-grid">
             {/* Step 1: 1961 */}
-            <div
-              style={{
-                padding: "clamp(24px, 4vw, 36px)",
-                background: "var(--md-ivory)",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "2.5rem",
-                    color: "var(--md-gold-antique)",
-                    lineHeight: 1,
-                    display: "block",
-                    marginBottom: "12px",
-                  }}
-                >
-                  1961
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--md-fg-muted)",
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: 600,
-                  }}
-                >
-                  The Beginning · Pushpak Jewels
-                </span>
-                <h3
-                  style={{
-                    margin: "0 0 14px",
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "1.375rem",
-                    fontWeight: 400,
-                    lineHeight: 1.25,
-                    color: "var(--md-fg)",
-                  }}
-                >
-                  Grandfather B. L. Agarwal
-                </h3>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9375rem",
-                    lineHeight: 1.75,
-                    color: "var(--md-fg-secondary)",
-                  }}
-                >
-                  Our story began in the gemstone corridors of Jaipur. Grandfather B. L. Agarwal
-                  founded Pushpak Jewels with a focus on natural emeralds. He built the brand on three
-                  unshakeable pillars: authentic gemstones, trust with patrons, and meticulous
-                  hand-craftsmanship.
-                </p>
-              </div>
+            <div className="md-milestone-card">
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "2.25rem",
+                  color: "var(--md-gold-antique)",
+                  lineHeight: 1,
+                  display: "block",
+                  marginBottom: "10px",
+                }}
+              >
+                1961
+              </span>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted)",
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 600,
+                  minHeight: "1.2em",
+                }}
+              >
+                The Beginning · Pushpak Jewels
+              </span>
+              <h3
+                style={{
+                  margin: "0 0 12px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "1.25rem",
+                  fontWeight: 400,
+                  lineHeight: 1.25,
+                  color: "var(--md-fg)",
+                  minHeight: "1.4em",
+                }}
+              >
+                Grandfather B. L. Agarwal
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.7,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                Our story began in the gemstone corridors of Jaipur. Grandfather B. L. Agarwal
+                founded Pushpak Jewels with a focus on natural emeralds. He built the brand on three
+                unshakeable pillars: authentic gemstones, trust with patrons, and meticulous
+                hand-craftsmanship.
+              </p>
             </div>
 
             {/* Step 2: 1999 */}
-            <div
-              style={{
-                padding: "clamp(24px, 4vw, 36px)",
-                background: "var(--md-ivory)",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "2.5rem",
-                    color: "var(--md-gold-antique)",
-                    lineHeight: 1,
-                    display: "block",
-                    marginBottom: "12px",
-                  }}
-                >
-                  1999
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--md-fg-muted)",
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: 600,
-                  }}
-                >
-                  The Next Generation · Going Global
-                </span>
-                <h3
-                  style={{
-                    margin: "0 0 14px",
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "1.375rem",
-                    fontWeight: 400,
-                    lineHeight: 1.25,
-                    color: "var(--md-fg)",
-                  }}
-                >
-                  Amit &amp; Saket Agarwal
-                </h3>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9375rem",
-                    lineHeight: 1.75,
-                    color: "var(--md-fg-secondary)",
-                  }}
-                >
-                  Brothers Amit &amp; Saket expanded into international 925 sterling silver fine jewellery.
-                  They developed our proprietary anti-tarnish alloy and presented collections at private
-                  expositions in New York, London, and Milan &mdash; earning the trust of fine jewellery
-                  collectors worldwide.
-                </p>
-              </div>
+            <div className="md-milestone-card">
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "2.25rem",
+                  color: "var(--md-gold-antique)",
+                  lineHeight: 1,
+                  display: "block",
+                  marginBottom: "10px",
+                }}
+              >
+                1999
+              </span>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted)",
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 600,
+                  minHeight: "1.2em",
+                }}
+              >
+                The Next Generation · Going Global
+              </span>
+              <h3
+                style={{
+                  margin: "0 0 12px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "1.25rem",
+                  fontWeight: 400,
+                  lineHeight: 1.25,
+                  color: "var(--md-fg)",
+                  minHeight: "1.4em",
+                }}
+              >
+                Amit &amp; Saket Agarwal
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.7,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                Brothers Amit &amp; Saket expanded into international 925 sterling silver fine jewellery.
+                They developed our proprietary anti-tarnish alloy and presented collections at private
+                expositions across New York, London, and Milan &mdash; earning the trust of fine jewellery
+                collectors worldwide.
+              </p>
             </div>
 
             {/* Step 3: Today */}
-            <div
-              style={{
-                padding: "clamp(24px, 4vw, 36px)",
-                background: "var(--md-ivory)",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 36%, transparent)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "2.5rem",
-                    color: "var(--md-forest)",
-                    lineHeight: 1,
-                    display: "block",
-                    marginBottom: "12px",
-                  }}
-                >
-                  Today
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--md-forest)",
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: 600,
-                  }}
-                >
-                  Millennium Designs · In-House Atelier
-                </span>
-                <h3
-                  style={{
-                    margin: "0 0 14px",
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "1.375rem",
-                    fontWeight: 400,
-                    lineHeight: 1.25,
-                    color: "var(--md-fg)",
-                  }}
-                >
-                  Complete In-House Facility
-                </h3>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.9375rem",
-                    lineHeight: 1.75,
-                    color: "var(--md-fg-secondary)",
-                  }}
-                >
-                  Operating from our own dedicated workshop at Noor Plaza, Chameliwala Market in Jaipur.
-                  Every single design is sketched, cast in silver, stone-set, and polished under one roof.
-                  Nothing is ever outsourced.
-                </p>
-              </div>
+            <div className="md-milestone-card" style={{ borderTop: "2px solid var(--md-forest)" }}>
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "2.25rem",
+                  color: "var(--md-forest)",
+                  lineHeight: 1,
+                  display: "block",
+                  marginBottom: "10px",
+                }}
+              >
+                Today
+              </span>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--md-forest)",
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 600,
+                  minHeight: "1.2em",
+                }}
+              >
+                Millennium Designs · In-House Atelier
+              </span>
+              <h3
+                style={{
+                  margin: "0 0 12px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "1.25rem",
+                  fontWeight: 400,
+                  lineHeight: 1.25,
+                  color: "var(--md-fg)",
+                  minHeight: "1.4em",
+                }}
+              >
+                Complete In-House Facility
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.7,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                Operating from our own dedicated workshop at Noor Plaza, Chameliwala Market in Jaipur.
+                Every single design is sketched, cast in silver, stone-set, and hand polished under one roof.
+                Nothing is ever outsourced.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 3. FOUR CLEAR DIFFERENTIATORS (WHAT MAKES US SPECIAL) ─────── */}
+      {/* ── 3. FOUR CLEAR DIFFERENTIATORS (WHY CONNOISSEURS CHOOSE US) ─── */}
       <section
         data-surface="forest"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(56px, 6.5vw, 84px)",
           background: "var(--md-forest)",
           color: "var(--md-fg-inverse)",
           borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
           borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
         }}
       >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-          }}
-        >
-          <div style={{ textAlign: "center", maxWidth: "700px", marginInline: "auto", marginBottom: "clamp(40px, 6vw, 64px)" }}>
+        <div className="md-story-container">
+          <div style={{ textAlign: "center", maxWidth: "680px", marginInline: "auto", marginBottom: "clamp(32px, 4.5vw, 48px)" }}>
             <span
               style={{
                 fontSize: "0.6875rem",
@@ -465,13 +416,13 @@ export default async function OurStoryPage({
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              THE MILLENNIUM DIFFERENCE
+              ✦ THE MILLENNIUM ADVANTAGE ✦
             </span>
             <h2
               style={{
-                margin: 0,
+                margin: "0 0 10px",
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                fontSize: "clamp(1.85rem, 3.5vw, 2.75rem)",
                 lineHeight: 1.15,
                 fontWeight: 400,
                 color: "var(--md-fg-inverse)",
@@ -480,15 +431,19 @@ export default async function OurStoryPage({
             >
               Why Connoisseurs Choose Our Jewellery
             </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.875rem",
+                lineHeight: 1.65,
+                color: "var(--md-fg-inverse-muted)",
+              }}
+            >
+              Four defining principles that set our Jaipur family atelier apart from commercial distributors.
+            </p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-              gap: "clamp(24px, 3.5vw, 40px)",
-            }}
-          >
+          <div className="md-connoisseur-grid">
             {[
               {
                 number: "01",
@@ -497,64 +452,82 @@ export default async function OurStoryPage({
               },
               {
                 number: "02",
-                title: "100% In-House Made",
-                desc: "Everything is crafted in our Jaipur factory. From lost-wax casting to stone setting and hand polishing, our artisans control every step so quality is never compromised.",
+                title: "100% In-House Atelier",
+                desc: "Every step is performed in our Jaipur workshop. From lost-wax casting and lapidary gem cutting to hand setting and final polishing, our artisans control complete quality.",
               },
               {
                 number: "03",
-                title: "Natural Untreated Gems",
-                desc: "Authentic earth minerals — unheated emeralds, glowing rainbow moonstones, and deep royal amethysts — faceted by hand in our Jaipur lapidary for chromatic vibrancy.",
+                title: "Natural Earth Gems",
+                desc: "Hand-selected authentic natural gems — untreated emeralds, glowing rainbow moonstones, and royal amethysts — faceted for maximum chromatic vibrancy and fire.",
               },
               {
                 number: "04",
-                title: "Direct Factory Pricing",
-                desc: "You purchase directly from the creators in Jaipur. With no middlemen, retail distributors, or showroom markups, you receive exceptional fine jewellery at genuine manufacturer prices.",
+                title: "Direct Workshop Pricing",
+                desc: "Acquire directly from the makers in Jaipur. With no middlemen, licensing tiers, or showroom overheads, you receive genuine master-jeweller pricing.",
               },
             ].map((col) => (
-              <div
-                key={col.number}
-                style={{
-                  padding: "clamp(24px, 3vw, 32px)",
-                  background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
-                  borderRadius: "var(--md-radius-sm)",
-                  border: "1px solid color-mix(in srgb, var(--md-champagne) 22%, transparent)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "12px",
-                }}
-              >
-                <span
+              <div key={col.number} className="md-connoisseur-card">
+                <div
                   style={{
-                    fontFamily: "var(--md-font-crest), Georgia, serif",
-                    fontSize: "0.875rem",
-                    color: "var(--md-champagne)",
-                    fontWeight: 600,
-                    letterSpacing: "0.14em",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "12px",
                   }}
                 >
-                  {col.number}
-                </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--md-font-crest), Georgia, serif",
+                      fontSize: "0.75rem",
+                      color: "var(--md-champagne)",
+                      fontWeight: 600,
+                      letterSpacing: "0.18em",
+                    }}
+                  >
+                    {col.number}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.625rem",
+                      color: "color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+                    }}
+                  >
+                    ✦
+                  </span>
+                </div>
                 <h3
                   style={{
-                    margin: 0,
+                    margin: "0 0 10px",
                     fontFamily: "var(--md-font-display)",
-                    fontSize: "1.25rem",
+                    fontSize: "1.0625rem",
                     fontWeight: 400,
+                    lineHeight: 1.3,
                     color: "var(--md-fg-inverse)",
+                    minHeight: "2.6em",
+                    display: "flex",
+                    alignItems: "flex-end",
                   }}
                 >
                   {col.title}
                 </h3>
-                <p
+                <div
                   style={{
-                    margin: 0,
-                    fontSize: "0.875rem",
-                    lineHeight: 1.7,
-                    color: "var(--md-fg-inverse-muted)",
+                    borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 15%, transparent)",
+                    paddingTop: "12px",
+                    flexGrow: 1,
                   }}
                 >
-                  {col.desc}
-                </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.8125rem",
+                      lineHeight: 1.65,
+                      color: "var(--md-fg-inverse-muted)",
+                    }}
+                  >
+                    {col.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -566,152 +539,158 @@ export default async function OurStoryPage({
         data-surface="ivory"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 100px)",
+          paddingBlock: "clamp(56px, 7vw, 90px)",
           background: "var(--md-ivory)",
           borderBottom: "1px solid var(--md-rule)",
         }}
       >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(32px, 5vw, 64px)",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-gold-antique)",
-                fontWeight: 600,
-                display: "block",
-                marginBottom: "8px",
-                fontFamily: "var(--md-font-crest), Georgia, serif",
-              }}
-            >
-              INTERNATIONAL PRESENCE
-            </span>
-            <h2
-              style={{
-                margin: "0 0 16px",
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-                lineHeight: 1.15,
-                fontWeight: 400,
-                color: "var(--md-fg)",
-              }}
-            >
-              Crafted in Jaipur, Cherished Globally
-            </h2>
-            <p
-              style={{
-                margin: "0 0 16px",
-                fontSize: "var(--md-t-body-lg)",
-                lineHeight: 1.8,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              Our pieces are designed according to the aesthetic preferences of international
-              buyers &mdash; with clean lines, comfortable daily-wear silhouettes, and substantial
-              heft. Our primary patrons are women and collectors aged 30 and above who value genuine
-              gemstones and enduring precious metalwork.
-            </p>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "var(--md-t-body)",
-                lineHeight: 1.75,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              We proudly ship to discerning clients and fine boutiques across:
-            </p>
+        <div className="md-story-container">
+          <div className="md-global-presence-grid">
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "var(--md-gold-antique)",
+                  fontWeight: 600,
+                  display: "block",
+                  marginBottom: "8px",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                }}
+              >
+                INTERNATIONAL PRESENCE
+              </span>
+              <h2
+                style={{
+                  margin: "0 0 14px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.85rem, 3.5vw, 2.75rem)",
+                  lineHeight: 1.15,
+                  fontWeight: 400,
+                  color: "var(--md-fg)",
+                }}
+              >
+                Crafted in Jaipur, Cherished Globally
+              </h2>
+              <p
+                style={{
+                  margin: "0 0 14px",
+                  fontSize: "0.9375rem",
+                  lineHeight: 1.75,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                Our pieces are tailored according to the discerning taste of international
+                patrons &mdash; clean contemporary lines, substantial silver heft, and durable
+                anti-tarnish finishes. Our primary collectors are women and connoisseurs aged 30
+                and above across the world.
+              </p>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.6,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                We proudly ship our handcrafted creations directly to collectors in:
+              </p>
 
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                  marginTop: "16px",
+                }}
+              >
+                {[
+                  "United States",
+                  "United Kingdom",
+                  "Australia",
+                  "Germany",
+                  "Italy",
+                  "Canada",
+                  "Russia",
+                  "Ukraine",
+                  "India",
+                ].map((country) => (
+                  <span
+                    key={country}
+                    style={{
+                      padding: "5px 12px",
+                      borderRadius: "var(--md-radius-sm)",
+                      background: "var(--md-bg)",
+                      border: "1px solid var(--md-rule)",
+                      fontSize: "0.75rem",
+                      color: "var(--md-fg)",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {country}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Founders Guarantee Card */}
             <div
               style={{
+                padding: "clamp(24px, 3.5vw, 36px)",
+                background: "var(--md-bg)",
+                borderRadius: "var(--md-radius-sm)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                borderTop: "2px solid var(--md-gold-antique)",
+                boxShadow: "0 10px 24px -8px rgba(0, 0, 0, 0.04)",
                 display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginTop: "18px",
+                flexDirection: "column",
+                gap: "14px",
               }}
             >
-              {[
-                "United States",
-                "United Kingdom",
-                "Australia",
-                "Germany",
-                "Italy",
-                "Canada",
-                "Russia",
-                "Ukraine",
-                "India",
-              ].map((country) => (
-                <span
-                  key={country}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "var(--md-radius-sm)",
-                    background: "var(--md-bg)",
-                    border: "1px solid var(--md-rule)",
-                    fontSize: "0.8125rem",
-                    color: "var(--md-fg)",
-                    fontWeight: 500,
-                  }}
-                >
-                  {country}
+              <span
+                style={{
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--md-gold-antique)",
+                  fontWeight: 600,
+                }}
+              >
+                ✦ FOUNDERS PLEDGE ✦
+              </span>
+              <h3
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "1.375rem",
+                  fontWeight: 400,
+                  color: "var(--md-fg)",
+                }}
+              >
+                Direct From The Agarwal Family
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.7,
+                  color: "var(--md-fg-secondary)",
+                }}
+              >
+                &ldquo;Unlike commercial brands that broker mass-produced stock, we remain craftsmen
+                first. Every customer receives our personal guarantee of pure 925 silver, authentic
+                gemstones, and transparent workshop pricing.&rdquo;
+              </p>
+              <div style={{ paddingTop: "12px", borderTop: "1px solid var(--md-rule)" }}>
+                <span style={{ fontFamily: "var(--md-font-display)", fontSize: "1.0625rem", fontStyle: "italic", display: "block" }}>
+                  Amit Agarwal &amp; Saket Agarwal
                 </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Fact Callout */}
-          <div
-            style={{
-              padding: "clamp(28px, 4vw, 44px)",
-              background: "var(--md-bg)",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-              boxShadow: "0 8px 24px -6px rgba(0, 0, 0, 0.04)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "1.5rem",
-                fontWeight: 400,
-                color: "var(--md-fg)",
-              }}
-            >
-              Direct From The Agarwal Family
-            </h3>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.9375rem",
-                lineHeight: 1.75,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              &ldquo;Unlike commercial brands that broker mass-produced stock, we remain craftsmen
-              first. Every customer receives our personal guarantee of pure 925 silver, authentic
-              gemstones, and transparent workshop pricing.&rdquo;
-            </p>
-            <div style={{ paddingTop: "12px", borderTop: "1px solid var(--md-rule)" }}>
-              <span style={{ fontFamily: "var(--md-font-display)", fontSize: "1.125rem", fontStyle: "italic", display: "block" }}>
-                Amit Agarwal &amp; Saket Agarwal
-              </span>
-              <span style={{ fontSize: "0.75rem", color: "var(--md-gold-antique)", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
-                Managing Directors · Millennium Designs
-              </span>
+                <span style={{ fontSize: "0.6875rem", color: "var(--md-gold-antique)", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600 }}>
+                  Managing Directors · Millennium Designs
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -722,13 +701,13 @@ export default async function OurStoryPage({
         data-surface="ivory-soft"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 100px)",
+          paddingBlock: "clamp(56px, 7vw, 90px)",
           background: "var(--md-bg)",
         }}
       >
         <div
           style={{
-            maxWidth: "960px",
+            maxWidth: "760px",
             marginInline: "auto",
             textAlign: "center",
             display: "flex",
@@ -748,14 +727,14 @@ export default async function OurStoryPage({
               fontFamily: "var(--md-font-crest), Georgia, serif",
             }}
           >
-            VISIT OR CONNECT
+            ✦ VISIT OR CONNECT ✦
           </span>
 
           <h2
             style={{
-              margin: "0 0 16px",
+              margin: "0 0 12px",
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2rem, 4vw, 3.25rem)",
+              fontSize: "clamp(1.85rem, 3.5vw, 2.75rem)",
               lineHeight: 1.15,
               fontWeight: 400,
               color: "var(--md-fg)",
@@ -766,11 +745,11 @@ export default async function OurStoryPage({
 
           <p
             style={{
-              margin: "0 0 28px",
-              fontSize: "1.0625rem",
+              margin: "0 0 24px",
+              fontSize: "0.9375rem",
               lineHeight: 1.7,
               color: "var(--md-fg-secondary)",
-              maxWidth: "600px",
+              maxWidth: "580px",
             }}
           >
             Whether you are inquiring about a custom commission, wholesale catalog, or an heirloom
@@ -779,12 +758,10 @@ export default async function OurStoryPage({
 
           {/* Physical Address Card */}
           <div
+            className="md-atelier-card"
             style={{
-              padding: "20px 32px",
-              background: "var(--md-ivory)",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-              marginBottom: "32px",
+              width: "100%",
+              marginBottom: "28px",
               display: "flex",
               flexDirection: "column",
               gap: "8px",
@@ -800,14 +777,14 @@ export default async function OurStoryPage({
                 fontWeight: 500,
               }}
             >
-              <strong>Millenium Designs</strong>
+              <strong style={{ fontSize: "1.0625rem", color: "var(--md-forest)" }}>Millenium Designs</strong>
               <br />
               5, Noor Plaza, Chameliwala Market, M.I. Road, Jaipur, 302001
               <br />
               Rajasthan, India
             </address>
 
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center", fontSize: "0.875rem", marginTop: "4px" }}>
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center", fontSize: "0.875rem", marginTop: "6px" }}>
               <a href="tel:+919828156465" style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}>
                 📞 +91 98281 56465
               </a>
@@ -829,8 +806,8 @@ export default async function OurStoryPage({
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
-                height: "48px",
-                paddingInline: "28px",
+                height: "46px",
+                paddingInline: "26px",
                 background: "var(--md-forest)",
                 color: "var(--md-champagne)",
                 borderRadius: "var(--md-radius-sm)",
@@ -851,7 +828,7 @@ export default async function OurStoryPage({
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "48px",
+                height: "46px",
                 paddingInline: "24px",
                 background: "transparent",
                 color: "var(--md-fg)",
