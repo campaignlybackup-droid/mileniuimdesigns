@@ -86,7 +86,8 @@ export default async function StonesIndexPage({
               fontSize: "var(--md-t-label, 0.75rem)",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "var(--md-fg-muted)",
+              color: "var(--md-fg-secondary)",
+              fontWeight: 500,
             }}
           >
             Gemmology & Craft
@@ -94,6 +95,7 @@ export default async function StonesIndexPage({
           <h1
             style={{
               margin: "var(--md-space-2) 0 0 0",
+              fontFamily: "var(--md-font-display)",
               fontSize: "var(--md-t-display, 2rem)",
               fontWeight: 400,
               letterSpacing: "-0.01em",
@@ -105,20 +107,20 @@ export default async function StonesIndexPage({
 
         <div style={{ paddingTop: "var(--md-space-8)" }}>
           {stones.length > 0 ? (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
-                gap: "var(--md-space-8) var(--md-space-6)",
-              }}
-            >
-              {stones.map((stone) => (
-                <StoneCard
-                  key={stone.id}
-                  stone={stone}
-                  marketSegment={resolvedMarket.code.toLowerCase() === "us" ? "" : resolvedMarket.code.toLowerCase()}
-                />
-              ))}
+            <div className="md-stones-mosaic">
+              {stones.map((stone, idx) => {
+                const rem = idx % 7;
+                const variant =
+                  rem === 0 ? "featured" : rem === 1 || rem === 5 || rem === 6 ? "wide" : "standard";
+                return (
+                  <StoneCard
+                    key={stone.id}
+                    stone={stone}
+                    variant={variant}
+                    marketSegment={resolvedMarket.code.toLowerCase() === "us" ? "" : resolvedMarket.code.toLowerCase()}
+                  />
+                );
+              })}
             </div>
           ) : (
             <EmptyState

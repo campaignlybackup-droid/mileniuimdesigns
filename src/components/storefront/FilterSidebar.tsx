@@ -106,7 +106,7 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
             style={{
               background: "transparent",
               border: "none",
-              color: "var(--md-fg-muted)",
+              color: "var(--md-fg-secondary)",
               fontSize: "0.75rem",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
@@ -128,7 +128,7 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
                 fontSize: "var(--md-t-label, 0.75rem)",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
                 marginBottom: "var(--md-space-1)",
               }}
             >
@@ -146,7 +146,7 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
                       gap: "var(--md-space-2)",
                       fontSize: "0.875rem",
                       cursor: "pointer",
-                      color: selected ? "var(--md-fg)" : "var(--md-fg-muted)",
+                      color: selected ? "var(--md-fg)" : "var(--md-fg-secondary)",
                     }}
                   >
                     <input

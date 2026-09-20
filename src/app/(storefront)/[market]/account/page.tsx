@@ -184,7 +184,7 @@ export default function AccountPage() {
                           textTransform: "uppercase",
                           letterSpacing: "0.08em",
                           padding: "2px 8px",
-                          borderRadius: 3,
+                          borderRadius: "var(--md-radius-sm)",
                           background: "var(--md-bg-subtle, var(--md-rule))",
                           color: "var(--md-green)",
                           fontWeight: 600,
@@ -204,7 +204,7 @@ export default function AccountPage() {
                             position: "relative",
                             width: 50,
                             height: 60,
-                            background: "var(--md-surface, #f5f2eb)",
+                            background: "var(--md-bg-raised)",
                             flexShrink: 0,
                             overflow: "hidden",
                           }}
@@ -213,7 +213,7 @@ export default function AccountPage() {
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: 500, fontSize: "0.875rem" }}>{item.productTitle}</div>
-                          <div style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)" }}>
+                          <div style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)" }}>
                             Qty: {item.quantity} • SKU: {item.sku}
                           </div>
                         </div>

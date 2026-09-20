@@ -63,7 +63,7 @@ function OrderConfirmationContent() {
           border: "1px solid var(--md-rule)",
           padding: "var(--md-space-8) var(--md-space-6)",
           textAlign: "center",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.03)",
+          borderRadius: "var(--md-radius-sm)",
         }}
       >
         {/* Success Icon */}
@@ -107,7 +107,7 @@ function OrderConfirmationContent() {
             color: "var(--md-fg)",
           }}
         >
-          ORDER PLACED SUCCESSFULLY
+          Order Confirmed
         </h1>
 
         <p
@@ -127,15 +127,15 @@ function OrderConfirmationContent() {
             display: "inline-flex",
             alignItems: "center",
             gap: "var(--md-space-4)",
-            background: "var(--md-bg-subtle, #f8f6f0)",
+            background: "var(--md-bg-raised)",
             padding: "var(--md-space-3) var(--md-space-6)",
-            borderRadius: 4,
+            borderRadius: "var(--md-radius-sm)",
             border: "1px solid var(--md-rule)",
             marginBottom: "var(--md-space-6)",
           }}
         >
           <div>
-            <div style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", textTransform: "uppercase" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)", textTransform: "uppercase" }}>
               Order Number
             </div>
             <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--md-fg)" }}>
@@ -144,7 +144,7 @@ function OrderConfirmationContent() {
           </div>
           <div style={{ width: 1, height: 32, background: "var(--md-rule)" }} />
           <div>
-            <div style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", textTransform: "uppercase" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)", textTransform: "uppercase" }}>
               Total Paid
             </div>
             <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--md-fg)" }}>
@@ -182,7 +182,7 @@ function OrderConfirmationContent() {
                       position: "relative",
                       width: 56,
                       height: 70,
-                      background: "var(--md-surface, #f5f2eb)",
+                      background: "var(--md-bg-raised)",
                       overflow: "hidden",
                       flexShrink: 0,
                     }}
@@ -192,7 +192,7 @@ function OrderConfirmationContent() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 500, fontSize: "0.9375rem" }}>{item.productTitle}</div>
                     {item.variantTitle && (
-                      <div style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)" }}>{item.variantTitle}</div>
+                      <div style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)" }}>{item.variantTitle}</div>
                     )}
                     <div style={{ fontSize: "0.8125rem", color: "var(--md-fg-secondary)" }}>
                       Qty: {item.quantity} • SKU: {item.sku}
@@ -210,11 +210,12 @@ function OrderConfirmationContent() {
         {/* Support & WhatsApp — Prompt §28 & §29 */}
         <div
           style={{
-            background: "var(--md-bg-subtle, #fcfaf5)",
+            background: "var(--md-bg)",
             border: "1px solid var(--md-rule)",
             padding: "var(--md-space-6)",
             marginBlock: "var(--md-space-6)",
             textAlign: "center",
+            borderRadius: "var(--md-radius-sm)",
           }}
         >
           <h3

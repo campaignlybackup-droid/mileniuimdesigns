@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { CartProvider } from "@/components/storefront/CartContext";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
+import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 
 /**
  * The storefront's market layout — 01 §1.4. Owned by P13; the pages inside it are P15's.
@@ -84,6 +85,7 @@ export default async function MarketLayout({
       href: `/${c.slug}`,
     })),
     { label: "STONES", href: "/stones" },
+    { label: "OUR STORY", href: "/our-story" },
   ];
 
   const marketOptions = activeMarkets.map((m) => {
@@ -112,6 +114,13 @@ export default async function MarketLayout({
         { label: "Stones Explorer", href: `${prefix}/stones` },
         { label: "One of a Kind", href: `${prefix}/one-of-a-kind` },
         { label: "Closeouts", href: `${prefix}/closeouts` },
+      ],
+    },
+    {
+      heading: "COMPANY",
+      links: [
+        { label: "Our Story", href: `${prefix}/our-story` },
+        { label: "Wholesale Enquiry", href: buildWhatsAppInquiryUrl({ topic: "wholesale" }) },
       ],
     },
   ];

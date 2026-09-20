@@ -29,8 +29,9 @@ export function AvailabilityBadge({
             fontSize: "var(--md-t-label)",
             textTransform: "uppercase",
             letterSpacing: "0.1em",
-            color: "var(--md-sold, var(--md-fg-muted))",
+            color: "var(--md-sold, var(--md-fg-secondary))",
             border: "1px solid var(--md-sold, var(--md-rule))",
+            borderRadius: "var(--md-radius-sm)",
             padding: "var(--md-space-1) var(--md-space-2)",
           }}
         >
@@ -44,7 +45,7 @@ export function AvailabilityBadge({
           className={className}
           style={{
             fontSize: "0.875rem",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
           }}
         >
           Currently unavailable
@@ -73,7 +74,7 @@ export function AvailabilityBadge({
           className={className}
           style={{
             fontSize: "0.875rem",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
           }}
         >
           Made to order{leadTimeDays ? ` · ${leadTimeDays} days lead time` : ""}
@@ -87,7 +88,7 @@ export function AvailabilityBadge({
           className={className}
           style={{
             fontSize: "0.875rem",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
           }}
         >
           In stock

@@ -49,7 +49,18 @@ export function SiteFooter({
                 <ul style={{ listStyle: "none", margin: "var(--md-space-4) 0 0", padding: 0 }}>
                   {column.links.map((link) => (
                     <li key={link.href} style={{ marginBlockEnd: "var(--md-space-2)" }}>
-                      <a href={link.href}>{link.label}</a>
+                      <a
+                        href={link.href}
+                        className="md-nav-link"
+                        style={{
+                          color: "var(--md-fg-inverse-muted)",
+                          textDecoration: "none",
+                          fontSize: "var(--md-t-small)",
+                          transition: "color var(--md-dur-fast) ease",
+                        }}
+                      >
+                        {link.label}
+                      </a>
                     </li>
                   ))}
                 </ul>

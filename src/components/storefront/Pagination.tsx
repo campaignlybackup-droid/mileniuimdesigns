@@ -64,10 +64,16 @@ export function Pagination({
           href={buildPageUrl(currentPage - 1)}
           rel="prev"
           style={{
-            padding: "var(--md-space-2) var(--md-space-4)",
+            minHeight: 44,
+            minWidth: 44,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 var(--md-space-4)",
             border: "1px solid var(--md-rule)",
             color: "var(--md-fg)",
             textDecoration: "none",
+            borderRadius: "var(--md-radius-sm)",
           }}
         >
           Previous
@@ -75,10 +81,16 @@ export function Pagination({
       ) : (
         <span
           style={{
-            padding: "var(--md-space-2) var(--md-space-4)",
+            minHeight: 44,
+            minWidth: 44,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 var(--md-space-4)",
             border: "1px solid var(--md-rule)",
-            color: "var(--md-fg-muted)",
-            opacity: 0.5,
+            color: "var(--md-fg-secondary)",
+            opacity: 0.4,
+            borderRadius: "var(--md-radius-sm)",
           }}
         >
           Previous
@@ -88,7 +100,17 @@ export function Pagination({
       {pages.map((p, idx) => {
         if (p === "...") {
           return (
-            <span key={`dots-${idx}`} style={{ padding: "var(--md-space-2)", color: "var(--md-fg-muted)" }}>
+            <span
+              key={`dots-${idx}`}
+              style={{
+                minHeight: 44,
+                minWidth: 32,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--md-fg-secondary)",
+              }}
+            >
               …
             </span>
           );
@@ -100,13 +122,18 @@ export function Pagination({
             href={buildPageUrl(p)}
             aria-current={isActive ? "page" : undefined}
             style={{
-              padding: "var(--md-space-2) var(--md-space-3)",
+              minHeight: 44,
+              minWidth: 44,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 var(--md-space-3)",
               border: `1px solid ${isActive ? "var(--md-fg)" : "var(--md-rule)"}`,
               background: isActive ? "var(--md-fg)" : "transparent",
               color: isActive ? "var(--md-bg)" : "var(--md-fg)",
               textDecoration: "none",
-              minWidth: 36,
               textAlign: "center",
+              borderRadius: "var(--md-radius-sm)",
             }}
           >
             {p}
@@ -119,10 +146,16 @@ export function Pagination({
           href={buildPageUrl(currentPage + 1)}
           rel="next"
           style={{
-            padding: "var(--md-space-2) var(--md-space-4)",
+            minHeight: 44,
+            minWidth: 44,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 var(--md-space-4)",
             border: "1px solid var(--md-rule)",
             color: "var(--md-fg)",
             textDecoration: "none",
+            borderRadius: "var(--md-radius-sm)",
           }}
         >
           Next
@@ -130,10 +163,16 @@ export function Pagination({
       ) : (
         <span
           style={{
-            padding: "var(--md-space-2) var(--md-space-4)",
+            minHeight: 44,
+            minWidth: 44,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 var(--md-space-4)",
             border: "1px solid var(--md-rule)",
-            color: "var(--md-fg-muted)",
-            opacity: 0.5,
+            color: "var(--md-fg-secondary)",
+            opacity: 0.4,
+            borderRadius: "var(--md-radius-sm)",
           }}
         >
           Next

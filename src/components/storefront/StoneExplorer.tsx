@@ -55,7 +55,8 @@ export function StoneExplorer({
               fontSize: "var(--md-t-label, 0.75rem)",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "var(--md-fg-muted)",
+              color: "var(--md-fg-secondary)",
+              fontWeight: 500,
             }}
           >
             The Stone
@@ -63,6 +64,7 @@ export function StoneExplorer({
           <h1
             style={{
               margin: "var(--md-space-2) 0 0 0",
+              fontFamily: "var(--md-font-display)",
               fontSize: "var(--md-t-display, 2.5rem)",
               fontWeight: 400,
               lineHeight: 1.15,
@@ -76,7 +78,7 @@ export function StoneExplorer({
               style={{
                 marginTop: "var(--md-space-4)",
                 fontSize: "1.125rem",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
                 lineHeight: 1.6,
                 maxWidth: "50ch",
               }}
@@ -97,13 +99,13 @@ export function StoneExplorer({
           >
             {stone.hardnessMohs && (
               <div>
-                <span style={{ color: "var(--md-fg-muted)", display: "block" }}>Mohs Hardness</span>
+                <span style={{ color: "var(--md-fg-secondary)", display: "block" }}>Mohs Hardness</span>
                 <span style={{ fontWeight: 500 }}>{stone.hardnessMohs}</span>
               </div>
             )}
             {stone.isLabGrown && (
               <div>
-                <span style={{ color: "var(--md-fg-muted)", display: "block" }}>Origin</span>
+                <span style={{ color: "var(--md-fg-secondary)", display: "block" }}>Origin</span>
                 <span style={{ fontWeight: 500 }}>Lab-grown</span>
               </div>
             )}
@@ -114,7 +116,8 @@ export function StoneExplorer({
           <div
             style={{
               aspectRatio: "16 / 10",
-              background: "var(--md-bg-subtle, var(--md-rule))",
+              background: "var(--md-bg-raised)",
+              borderRadius: "var(--md-radius-sm)",
               overflow: "hidden",
             }}
           >
@@ -135,7 +138,7 @@ export function StoneExplorer({
             alignItems: "center",
             gap: "var(--md-space-3)",
             borderBottom: "1px solid var(--md-rule)",
-            paddingBottom: "var(--md-space-3)",
+            paddingBottom: "var(--md-space-1)",
             overflowX: "auto",
           }}
         >
@@ -143,12 +146,15 @@ export function StoneExplorer({
             href={`${prefix}/stones/${stone.slug}`}
             style={{
               padding: "var(--md-space-2) var(--md-space-3)",
+              minHeight: 44,
+              display: "inline-flex",
+              alignItems: "center",
               fontSize: "var(--md-t-label, 0.75rem)",
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               textDecoration: "none",
-              color: !activeCategorySlug ? "var(--md-fg)" : "var(--md-fg-muted)",
-              borderBottom: !activeCategorySlug ? "2px solid var(--md-fg)" : "none",
+              color: !activeCategorySlug ? "var(--md-fg)" : "var(--md-fg-secondary)",
+              borderBottom: !activeCategorySlug ? "2px solid var(--md-fg)" : "2px solid transparent",
               whiteSpace: "nowrap",
             }}
           >
@@ -163,12 +169,15 @@ export function StoneExplorer({
                 href={`${prefix}/stones/${stone.slug}/${c.slug}`}
                 style={{
                   padding: "var(--md-space-2) var(--md-space-3)",
+                  minHeight: 44,
+                  display: "inline-flex",
+                  alignItems: "center",
                   fontSize: "var(--md-t-label, 0.75rem)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   textDecoration: "none",
-                  color: isActive ? "var(--md-fg)" : "var(--md-fg-muted)",
-                  borderBottom: isActive ? "2px solid var(--md-fg)" : "none",
+                  color: isActive ? "var(--md-fg)" : "var(--md-fg-secondary)",
+                  borderBottom: isActive ? "2px solid var(--md-fg)" : "2px solid transparent",
                   whiteSpace: "nowrap",
                 }}
               >

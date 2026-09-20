@@ -42,7 +42,7 @@ export function AddToBag({
           style={{
             padding: "var(--md-space-3) var(--md-space-4)",
             background: "var(--md-bg-subtle, var(--md-rule))",
-            color: "var(--md-sold, var(--md-fg-muted))",
+            color: "var(--md-sold, var(--md-fg-secondary))",
             fontSize: "var(--md-t-label)",
             textTransform: "uppercase",
             letterSpacing: "0.1em",
@@ -63,7 +63,7 @@ export function AddToBag({
           style={{
             padding: "var(--md-space-3) var(--md-space-4)",
             background: "var(--md-bg-subtle, var(--md-rule))",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
             fontSize: "0.875rem",
             textAlign: "center",
           }}
@@ -110,6 +110,7 @@ export function AddToBag({
                     background: "transparent",
                     color: "var(--md-fg)",
                     fontSize: "0.875rem",
+                    borderRadius: "var(--md-radius-sm)",
                   }}
                 />
                 <Button type="submit" variant="primary" size="md">
@@ -119,7 +120,7 @@ export function AddToBag({
             )}
           </div>
         ) : (
-          <div style={{ fontSize: "0.875rem", color: "var(--md-fg-muted)", textAlign: "center" }}>
+          <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", textAlign: "center" }}>
             We will email you when this piece returns.
           </div>
         )}
@@ -163,7 +164,7 @@ export function AddToBag({
         {added ? "Added to Bag" : loading ? "Adding…" : "Add to Bag"}
       </Button>
 
-      <div style={{ border: "1px solid var(--md-rule)", padding: "var(--md-space-2)", height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ border: "1px solid var(--md-rule)", borderRadius: "var(--md-radius-sm)", padding: "var(--md-space-2)", height: 48, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <WishlistButton productId={productId} variantId={variantId ?? undefined} size="md" />
       </div>
     </div>

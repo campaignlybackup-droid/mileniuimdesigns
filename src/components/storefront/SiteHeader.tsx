@@ -29,7 +29,6 @@ export function SiteHeader({
       data-surface="ivory-soft"
       style={{
         borderBottom: "1px solid var(--md-rule)",
-        paddingInline: "var(--md-gutter)",
         background: "var(--md-bg)",
         position: "sticky",
         top: 0,
@@ -77,7 +76,7 @@ export function SiteHeader({
                 letterSpacing: "0.16em",
               }}
             >
-              FINE JEWELLERY · EST. 1984
+              925 SILVER · EST. 1961
             </span>
           </div>
 

@@ -53,7 +53,6 @@ export default async function StorefrontHomePage({
   // Read featured stones from DB
   const stones = await getStorefrontStones();
 
-  const firstCategorySlug = categories[0]?.slug ?? "rings";
   const whatsappConsultationUrl = buildWhatsAppInquiryUrl({ topic: "bespoke" });
 
   return (
@@ -114,7 +113,7 @@ export default async function StorefrontHomePage({
               alignItems: "center",
               gap: "var(--md-space-3)",
               padding: "6px 16px",
-              borderRadius: "999px",
+              borderRadius: "var(--md-radius-sm)",
               border: "1px solid color-mix(in srgb, var(--md-champagne) 32%, transparent)",
               background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
               fontSize: "0.6875rem",
@@ -124,34 +123,34 @@ export default async function StorefrontHomePage({
               fontWeight: 500,
             }}
           >
-            HAUTE JOAILLERIE · ATELIER EST. 1984
+            JAIPUR · EST. 1961
           </div>
 
           <h1
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2.4rem, 6vw, 4.75rem)",
+              fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)",
               lineHeight: 1.08,
               fontWeight: 400,
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.015em",
               color: "var(--md-fg-inverse)",
+              textWrap: "balance",
             }}
           >
-            Timeless Artistry &amp; Exceptional Gemstones
+            Handcrafted Silver Jewellery from the Heart of Jaipur
           </h1>
 
           <p
             style={{
               margin: 0,
-              maxWidth: "640px",
-              fontSize: "clamp(1rem, 1.8vw, 1.1875rem)",
+              fontSize: "clamp(1rem, 1.6vw, 1.25rem)",
               lineHeight: 1.6,
               color: "var(--md-fg-inverse-muted)",
-              fontWeight: 300,
+              maxWidth: "580px",
             }}
           >
-            Sculpted from certified 18-karat hallmarked gold, ethical solitaires, and vivid natural emeralds. Four decades of bespoke legacy.
+            Crafted in 925 sterling silver with an anti-tarnish alloy. A legacy of over 60 years in fine jewellery — made in-house in our Jaipur workshops and delivered worldwide.
           </p>
 
           <div
@@ -159,26 +158,25 @@ export default async function StorefrontHomePage({
               display: "flex",
               flexWrap: "wrap",
               gap: "var(--md-space-4)",
-              justifyContent: "center",
-              marginTop: "var(--md-space-3)",
+              paddingTop: "var(--md-space-2)",
             }}
           >
             <Link
-              href={`${prefix}/${firstCategorySlug}`}
+              href={`${prefix}/shop`}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
                 height: 48,
-                paddingInline: "28px",
-                background: "var(--md-green)",
+                paddingInline: "32px",
+                background: "var(--md-bg-inverse)",
                 color: "var(--md-ivory-soft)",
                 fontSize: "0.8125rem",
                 fontWeight: 600,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 textDecoration: "none",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 transition: "opacity 200ms ease",
               }}
             >
@@ -203,7 +201,7 @@ export default async function StorefrontHomePage({
                 fontWeight: 500,
                 letterSpacing: "0.08em",
                 textDecoration: "none",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 transition: "border-color 200ms ease",
               }}
             >
@@ -227,13 +225,16 @@ export default async function StorefrontHomePage({
             }}
           >
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ BIS Hallmarked Gold
+              ✦ 925 Sterling Silver
             </span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ GIA &amp; IGI Certified
+              ✦ Anti-tarnish Alloy
             </span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ Insured Global Courier
+              ✦ In-house Crafted, Jaipur
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              ✦ 60+ Year Legacy
             </span>
           </div>
         </div>
@@ -374,7 +375,7 @@ export default async function StorefrontHomePage({
                   justifyContent: "flex-end",
                   padding: "var(--md-space-6)",
                   background: "var(--md-bg-raised)",
-                  borderRadius: "2px",
+                  borderRadius: "var(--md-radius-sm)",
                 }}
               >
                 <img
@@ -457,8 +458,7 @@ export default async function StorefrontHomePage({
               position: "relative",
               aspectRatio: "4 / 5",
               overflow: "hidden",
-              borderRadius: "2px",
-              boxShadow: "0 16px 40px -12px color-mix(in srgb, var(--md-charcoal) 16%, transparent)",
+              borderRadius: "var(--md-radius-sm)",
             }}
           >
             <Image
@@ -501,7 +501,7 @@ export default async function StorefrontHomePage({
                 fontWeight: 600,
               }}
             >
-              THE ATELIER HERITAGE
+              THE ATELIER — SINCE 1961
             </span>
 
             <h2
@@ -514,7 +514,7 @@ export default async function StorefrontHomePage({
                 color: "var(--md-fg)",
               }}
             >
-              Four Decades of Master Goldsmithing
+              60+ Years of Craft from Jaipur to the World
             </h2>
 
             <p
@@ -525,7 +525,7 @@ export default async function StorefrontHomePage({
                 color: "var(--md-fg-secondary)",
               }}
             >
-              Founded in 1984, Millennium Designs creates high jewellery that transcends fleeting trends. Every piece is brought to life by master artisans who cut, sculpt, and hand-set each rare natural stone with exacting precision.
+              Our roots trace back to 1961, when B. L. Agarwal founded Pushpak Jewels in Jaipur, specialising in emerald jewellery. Since 1999, the second generation has grown a global silver jewellery business — every piece still made in-house in our own Jaipur workshop.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)", marginTop: "var(--md-space-2)" }}>
@@ -533,10 +533,10 @@ export default async function StorefrontHomePage({
                 <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
                 <div>
                   <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    Uncompromising Authenticity
+                    Pure 925 Sterling Silver
                   </div>
                   <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    Every diamond and colored gemstone is ethically sourced and independently graded by international gemological institutes.
+                    Every piece is crafted in 925 sterling silver with an anti-tarnish alloy, so it stays bright season after season.
                   </div>
                 </div>
               </div>
@@ -545,10 +545,10 @@ export default async function StorefrontHomePage({
                 <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
                 <div>
                   <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    Artisanal Bench Execution
+                    In-house Manufacturing
                   </div>
                   <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    Hand-finished in our dedicated workshops using traditional gold alloy formulations and mirror-finished settings.
+                    From design to finishing, every stage happens under one roof in our own Jaipur facility — nothing is outsourced.
                   </div>
                 </div>
               </div>
@@ -557,10 +557,10 @@ export default async function StorefrontHomePage({
                 <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
                 <div>
                   <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    Lifetime Stewardship
+                    Global Reach, Direct Pricing
                   </div>
                   <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    Complimentary ultrasonic cleansing, annual prong inspection, and bespoke resizing for all family acquisitions.
+                    Serving buyers across the USA, UK, Europe, Russia, and Australia — at direct-from-manufacturer pricing, without middlemen.
                   </div>
                 </div>
               </div>
@@ -690,7 +690,7 @@ export default async function StorefrontHomePage({
                 padding: "var(--md-space-6)",
                 background: "var(--md-bg)",
                 border: "1px solid var(--md-rule)",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--md-space-2)",
@@ -698,10 +698,10 @@ export default async function StorefrontHomePage({
             >
               <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
               <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Government Hallmarked
+                925 Sterling Silver
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Every precious metal piece bears official BIS Hallmark accreditation verifying precise 18K and 22K alloy purity.
+                Every piece is made in genuine 925 sterling silver — the international standard for fine silver jewellery.
               </p>
             </div>
 
@@ -710,7 +710,7 @@ export default async function StorefrontHomePage({
                 padding: "var(--md-space-6)",
                 background: "var(--md-bg)",
                 border: "1px solid var(--md-rule)",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--md-space-2)",
@@ -718,10 +718,10 @@ export default async function StorefrontHomePage({
             >
               <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
               <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Armored Transit Courier
+                Anti-tarnish Alloy
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Complimentary 100% insured delivery in tamper-evident security cases across India and the United States.
+                Our silver is alloyed to resist tarnish — staying bright and lustrous without the need for constant polishing.
               </p>
             </div>
 
@@ -730,7 +730,7 @@ export default async function StorefrontHomePage({
                 padding: "var(--md-space-6)",
                 background: "var(--md-bg)",
                 border: "1px solid var(--md-rule)",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--md-space-2)",
@@ -738,10 +738,10 @@ export default async function StorefrontHomePage({
             >
               <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
               <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Certified Gemological Dossier
+                In-house Manufacturing
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Solitaires and colored center gems are accompanied by genuine GIA or IGI certificates detailing color, cut, and clarity.
+                Designed, cast, set, and finished entirely within our own Jaipur workshop. Nothing is outsourced.
               </p>
             </div>
 
@@ -750,7 +750,7 @@ export default async function StorefrontHomePage({
                 padding: "var(--md-space-6)",
                 background: "var(--md-bg)",
                 border: "1px solid var(--md-rule)",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--md-space-2)",
@@ -758,10 +758,10 @@ export default async function StorefrontHomePage({
             >
               <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
               <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Private Concierge Access
+                Direct Wholesale Pricing
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Direct access to our senior gemologists for bespoke requests, private salon appointments, and anniversary commissions.
+                We manufacture and sell directly. No intermediaries means the lowest possible price for the quality you receive.
               </p>
             </div>
           </div>
@@ -771,7 +771,7 @@ export default async function StorefrontHomePage({
       {/* ── 7. BESPOKE ATELIER CALL TO ACTION ─────────────────────────── */}
       <section
         style={{
-          background: "var(--md-bg-inverse, #003d1f)",
+          background: "var(--md-bg-inverse)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
           paddingBlock: "var(--md-space-10) var(--md-space-10)",
@@ -841,7 +841,7 @@ export default async function StorefrontHomePage({
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 textDecoration: "none",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 transition: "opacity 200ms ease",
               }}
             >
@@ -917,7 +917,7 @@ export default async function StorefrontHomePage({
               background: "var(--md-bg)",
               color: "var(--md-fg)",
               fontSize: "0.875rem",
-              borderRadius: "2px",
+              borderRadius: "var(--md-radius-sm)",
               outline: "none",
             }}
           />
@@ -929,7 +929,7 @@ export default async function StorefrontHomePage({
               background: "var(--md-fg)",
               color: "var(--md-ivory-soft)",
               border: "none",
-              borderRadius: "2px",
+              borderRadius: "var(--md-radius-sm)",
               fontSize: "0.75rem",
               fontWeight: 600,
               letterSpacing: "0.1em",

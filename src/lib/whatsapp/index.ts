@@ -8,7 +8,7 @@ export const MILLENNIUM_WHATSAPP_NUMBER = "919820000000"; // Official Millennium
 export function buildWhatsAppInquiryUrl(options: {
   orderNumber?: string;
   productTitle?: string;
-  topic?: "order" | "bespoke" | "general";
+  topic?: "order" | "bespoke" | "wholesale" | "general";
 }): string {
   let text = "Hello Millennium Designs, ";
 
@@ -18,6 +18,8 @@ export function buildWhatsAppInquiryUrl(options: {
     text += `I am inquiring about the ${options.productTitle} creation and would like to know more details.`;
   } else if (options.topic === "bespoke") {
     text += "I would like to schedule a private atelier consultation for a bespoke jewellery commission.";
+  } else if (options.topic === "wholesale") {
+    text += "I would like to enquire about wholesale / trade pricing for 925 sterling silver jewellery.";
   } else {
     text += "I would like to speak with a jewellery concierge.";
   }

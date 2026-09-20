@@ -1028,7 +1028,7 @@ export async function listStorefrontStoneProducts(
     // Database unconfigured / offline on host storage
   }
   const { getStandaloneStoneProducts } = await import("@/lib/storage/standalone-catalog");
-  return getStandaloneStoneProducts(stoneId, marketCode);
+  return getStandaloneStoneProducts(stoneId, marketCode, options);
 }
 
 export async function listAdminCatalogProducts(limit = 100) {

@@ -146,8 +146,8 @@ export default function CheckoutPage() {
           >
             Secure Checkout
           </h1>
-          <p style={{ fontSize: "0.875rem", color: "var(--md-fg-muted)", margin: "4px 0 0" }}>
-            Complimentary insured delivery & certified authenticity
+          <p style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", margin: "4px 0 0" }}>
+            Direct from our Jaipur workshop · Anti-tarnish 925 sterling silver
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
             gap: "var(--md-space-2)",
             background: "var(--md-bg-subtle, var(--md-rule))",
             padding: "var(--md-space-2) var(--md-space-4)",
-            borderRadius: 4,
+            borderRadius: "var(--md-radius-sm)",
             fontSize: "0.8125rem",
             color: "var(--md-fg)",
             fontWeight: 500,
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
             border: "1px solid var(--md-rule)",
             color: "var(--md-sold, var(--md-fg))",
             padding: "var(--md-space-3) var(--md-space-4)",
-            borderRadius: 4,
+            borderRadius: "var(--md-radius-sm)",
             marginBottom: "var(--md-space-6)",
             fontSize: "0.875rem",
           }}
@@ -465,7 +465,7 @@ export default function CheckoutPage() {
             <div
               style={{
                 border: "1px solid var(--md-green)",
-                background: "var(--md-bg-subtle, #f8f6f0)",
+                background: "var(--md-bg-raised)",
                 padding: "var(--md-space-4)",
                 display: "flex",
                 justifyContent: "space-between",
@@ -596,7 +596,7 @@ export default function CheckoutPage() {
                     position: "relative",
                     width: 56,
                     height: 68,
-                    background: "var(--md-surface, #f5f2eb)",
+                    background: "var(--md-bg-raised)",
                     flexShrink: 0,
                     overflow: "hidden",
                   }}

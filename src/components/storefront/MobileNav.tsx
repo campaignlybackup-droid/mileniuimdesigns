@@ -121,7 +121,7 @@ export function MobileNav({
           flexDirection: "column",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 320ms cubic-bezier(0.16, 1, 0.3, 1)",
-          boxShadow: isOpen ? "8px 0 32px color-mix(in srgb, var(--md-charcoal) 20%, transparent)" : "none",
+          boxShadow: isOpen ? "var(--md-shadow-drawer)" : "none",
         }}
         role="dialog"
         aria-modal="true"
@@ -175,7 +175,7 @@ export function MobileNav({
                 height: 42,
                 paddingLeft: "36px",
                 paddingRight: "12px",
-                borderRadius: "2px",
+                borderRadius: "var(--md-radius-sm)",
                 border: "1px solid var(--md-rule-strong)",
                 background: "var(--md-bg-raised)",
                 color: "var(--md-fg)",
@@ -317,7 +317,7 @@ export function MobileNav({
           {/* Region / Currency Switcher */}
           {markets.length > 1 && (
             <div style={{ marginTop: "var(--md-space-6)", borderTop: "1px solid var(--md-rule)", padding: "var(--md-space-5) var(--md-space-5) var(--md-space-2)" }}>
-              <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-fg-muted)", fontWeight: 600, marginBottom: 10 }}>
+              <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-fg-secondary)", fontWeight: 600, marginBottom: 10 }}>
                 CURRENCY &amp; REGION
               </div>
               <div style={{ display: "flex", gap: "var(--md-space-2)" }}>
@@ -330,7 +330,7 @@ export function MobileNav({
                       flex: 1,
                       textAlign: "center",
                       padding: "8px 12px",
-                      borderRadius: "2px",
+                      borderRadius: "var(--md-radius-sm)",
                       fontSize: "0.75rem",
                       fontWeight: 600,
                       letterSpacing: "0.08em",
@@ -369,13 +369,13 @@ export function MobileNav({
               justifyContent: "center",
               gap: 8,
               height: 44,
-              background: "var(--md-green)",
+              background: "var(--md-emerald-deep)",
               color: "var(--md-ivory-soft)",
               fontSize: "0.8125rem",
               fontWeight: 600,
               letterSpacing: "0.06em",
               textDecoration: "none",
-              borderRadius: "2px",
+              borderRadius: "var(--md-radius-sm)",
             }}
           >
             <span>WhatsApp Concierge</span>

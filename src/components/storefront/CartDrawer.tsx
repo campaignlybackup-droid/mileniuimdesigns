@@ -43,7 +43,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
         style={{
           position: "fixed",
           inset: 0,
-          background: "rgba(0, 0, 0, 0.45)",
+          background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
           backdropFilter: "blur(4px)",
           transition: "opacity 0.3s ease",
         }}
@@ -61,7 +61,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
           maxWidth: 460,
           height: "100%",
           background: "var(--md-bg)",
-          boxShadow: "-8px 0 32px rgba(0, 0, 0, 0.15)",
+          boxShadow: "var(--md-shadow-drawer)",
           display: "flex",
           flexDirection: "column",
           zIndex: 101,
@@ -93,7 +93,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
             <span
               style={{
                 fontSize: "0.875rem",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
               }}
             >
               ({cart?.totalQuantity ?? 0})
@@ -150,7 +150,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "var(--md-fg-muted)",
+                  color: "var(--md-fg-secondary)",
                 }}
               >
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
@@ -169,7 +169,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
               >
                 Your bag is empty
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--md-fg-muted)", maxWidth: 260, margin: 0 }}>
+              <p style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", maxWidth: 260, margin: 0 }}>
                 Explore our curated fine jewellery creations and discover your next signature heirloom.
               </p>
               <Button variant="outline" size="md" onClick={closeCart} style={{ marginTop: "var(--md-space-2)" }}>
@@ -196,7 +196,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                       position: "relative",
                       width: 80,
                       height: 100,
-                      background: "var(--md-surface, #f5f2eb)",
+                      background: "var(--md-bg-raised)",
                       flexShrink: 0,
                       overflow: "hidden",
                     }}
@@ -234,7 +234,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                         </h4>
                       </Link>
                       {line.variantTitle && (
-                        <p style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", margin: "4px 0 0" }}>
+                        <p style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)", margin: "4px 0 0" }}>
                           {line.variantTitle}
                         </p>
                       )}
@@ -318,7 +318,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                           border: "none",
                           cursor: "pointer",
                           fontSize: "0.75rem",
-                          color: "var(--md-fg-muted)",
+                          color: "var(--md-fg-secondary)",
                           textDecoration: "underline",
                           padding: "var(--md-space-1)",
                         }}
@@ -367,8 +367,8 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
               </span>
             </div>
 
-            <p style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", margin: 0 }}>
-              Complimentary insured global delivery & applicable taxes confirmed at checkout.
+            <p style={{ fontSize: "0.75rem", color: "var(--md-fg-secondary)", margin: 0 }}>
+              Shipping and taxes calculated at checkout.
             </p>
 
             <Link href={checkoutHref} onClick={closeCart} style={{ textDecoration: "none" }}>
@@ -384,7 +384,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                 justifyContent: "center",
                 gap: "var(--md-space-3)",
                 fontSize: "0.6875rem",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
                 marginTop: "var(--md-space-1)",

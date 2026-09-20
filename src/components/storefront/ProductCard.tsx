@@ -112,7 +112,8 @@ export function ProductCard({
               fontSize: "var(--md-t-label)",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "var(--md-sold, var(--md-fg-muted))",
+              color: "var(--md-sold, var(--md-fg-secondary))",
+              borderRadius: "var(--md-radius-sm)",
             }}
           >
             Sold
@@ -157,7 +158,7 @@ export function ProductCard({
           <div
             style={{
               fontSize: "0.875rem",
-              color: "var(--md-fg-muted)",
+              color: "var(--md-fg-secondary)",
               lineHeight: 1.3,
             }}
           >
@@ -167,7 +168,7 @@ export function ProductCard({
 
         <div style={{ marginTop: "var(--md-space-1)", fontSize: "0.9375rem" }}>
           {isSold ? (
-            <span style={{ color: "var(--md-sold, var(--md-fg-muted))", fontSize: "var(--md-t-label)", textTransform: "uppercase" }}>
+            <span style={{ color: "var(--md-sold, var(--md-fg-secondary))", fontSize: "var(--md-t-label)", textTransform: "uppercase" }}>
               Archive
             </span>
           ) : (

@@ -78,7 +78,7 @@ export function StickyAddToBag({
         alignItems: "center",
         justifyContent: "space-between",
         gap: "var(--md-space-4)",
-        boxShadow: "var(--md-shadow-drawer, 0 -4px 12px rgba(0,0,0,0.05))",
+        boxShadow: "var(--md-shadow-drawer)",
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>

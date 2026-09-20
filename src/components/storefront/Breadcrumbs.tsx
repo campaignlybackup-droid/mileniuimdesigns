@@ -23,7 +23,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps): JSX.Element
         fontSize: "var(--md-t-label, 0.75rem)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
-        color: "var(--md-fg-muted)",
+        color: "var(--md-fg-secondary)",
       }}
     >
       <ol
@@ -44,10 +44,11 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps): JSX.Element
               key={`${item.label}-${idx}`}
               style={{ display: "inline-flex", alignItems: "center", gap: "var(--md-space-2)" }}
             >
-              {idx > 0 && <span aria-hidden="true" style={{ opacity: 0.5 }}>/</span>}
+              {idx > 0 && <span aria-hidden="true" style={{ opacity: 0.4 }}>/</span>}
               {item.href && !isLast ? (
                 <Link
                   href={item.href}
+                  className="md-nav-link"
                   style={{
                     color: "inherit",
                     textDecoration: "none",

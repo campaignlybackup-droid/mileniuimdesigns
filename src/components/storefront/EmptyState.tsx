@@ -69,7 +69,7 @@ export function EmptyState({
           style={{
             margin: "var(--md-space-4) 0 0 0",
             fontSize: "var(--md-t-body-lg, 1.125rem)",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
             maxWidth: "46ch",
             lineHeight: 1.5,
           }}

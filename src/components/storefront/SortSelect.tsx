@@ -51,7 +51,7 @@ export function SortSelect({
         textTransform: "uppercase",
       }}
     >
-      <label htmlFor="plp-sort-select" style={{ color: "var(--md-fg-muted)" }}>
+      <label htmlFor="plp-sort-select" style={{ color: "var(--md-fg-secondary)", fontWeight: 500 }}>
         Sort by
       </label>
       <select
@@ -66,7 +66,8 @@ export function SortSelect({
           fontSize: "inherit",
           letterSpacing: "inherit",
           cursor: "pointer",
-          borderRadius: 0,
+          borderRadius: "var(--md-radius-sm)",
+          minHeight: 44,
         }}
       >
         {SORT_OPTIONS.map((opt) => (

@@ -141,6 +141,7 @@ export default async function CuratedFacetPage({
           <h1
             style={{
               margin: 0,
+              fontFamily: "var(--md-font-display)",
               fontSize: "var(--md-t-display, 2rem)",
               fontWeight: 400,
               letterSpacing: "-0.01em",
@@ -154,7 +155,7 @@ export default async function CuratedFacetPage({
               style={{
                 margin: "var(--md-space-3) 0 0 0",
                 fontSize: "1.125rem",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
                 maxWidth: "60ch",
                 lineHeight: 1.5,
               }}

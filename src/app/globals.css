@@ -89,17 +89,17 @@ body {
   transform: scale(1.04);
 }
 
-/* Gemstone card hover transitions */
+/* Gemstone card hover — subtle lift only, no scale */
 .md-stone-card {
-  transition: transform var(--md-dur, 320ms) var(--md-ease), box-shadow var(--md-dur, 320ms) var(--md-ease);
+  transition: transform var(--md-dur, 320ms) var(--md-ease);
 }
 
 .md-stone-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 .md-stone-card:hover img {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
 /* Responsive product grid */
@@ -116,12 +116,81 @@ body {
   }
 }
 
+/* 10 §4.2: One of a kind is 1-up on mobile, 2-up on desktop */
+.md-product-grid.md-grid-2 {
+  grid-template-columns: 1fr;
+  gap: var(--md-space-6);
+}
+
+@media (min-width: 768px) {
+  .md-product-grid.md-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--md-space-10) var(--md-space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .md-product-grid.md-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--md-space-8) var(--md-space-6);
+  }
+
+  .md-product-grid.md-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--md-space-6) var(--md-space-4);
+  }
+}
+
+/* ── Stones Mosaic (10 §4.1: deliberately non-uniform mosaic) ───────────── */
+.md-stones-mosaic {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--md-space-8) var(--md-space-6);
+}
+
+.md-stones-mosaic > :nth-child(7n + 1) {
+  grid-column: span 12;
+}
+
+@media (min-width: 900px) {
+  .md-stones-mosaic > :nth-child(7n + 1) {
+    grid-column: span 7;
+  }
+  .md-stones-mosaic > :nth-child(7n + 2) {
+    grid-column: span 5;
+  }
+  .md-stones-mosaic > :nth-child(7n + 3),
+  .md-stones-mosaic > :nth-child(7n + 4),
+  .md-stones-mosaic > :nth-child(7n + 5) {
+    grid-column: span 4;
+  }
+  .md-stones-mosaic > :nth-child(7n + 6),
+  .md-stones-mosaic > :nth-child(7n + 7) {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 899px) and (min-width: 600px) {
+  .md-stones-mosaic > * {
+    grid-column: span 6 !important;
+  }
+  .md-stones-mosaic > :nth-child(7n + 1) {
+    grid-column: span 12 !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .md-stones-mosaic > * {
+    grid-column: span 12 !important;
+  }
+}
+
 /* Tone styling for brand logos on dark surfaces */
 img[data-tone="ivory"] {
   filter: brightness(0) invert(1);
 }
 
-/* Header layout: 2-tier luxury desktop + clean 1-row mobile */
+/* ── Header layout: 2-tier luxury desktop + clean 1-row mobile ──────────── */
 .md-header-top-row {
   max-width: var(--md-container);
   margin-inline: auto;
@@ -214,7 +283,94 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Responsive helpers ──────────────────────────────────────────────────── */
+.md-mobile-only {
+  display: block;
+}
 
+.md-desktop-only {
+  display: none;
+}
 
+@media (min-width: 1024px) {
+  .md-mobile-only {
+    display: none !important;
+  }
+
+  .md-desktop-only {
+    display: block !important;
+  }
+}
+
+/* ── PDP layout — true single column below 1024px ───────────────────────── */
+.md-pdp-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--md-space-6);
+}
+
+@media (min-width: 1024px) {
+  .md-pdp-layout {
+    grid-template-columns: 7fr 5fr;
+    gap: var(--md-space-8);
+    align-items: flex-start;
+  }
+}
+
+/* ── Section entrance reveal (IntersectionObserver applies .md-reveal-done) */
+.md-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--md-dur-reveal, 900ms) var(--md-ease),
+    transform var(--md-dur-reveal, 900ms) var(--md-ease);
+}
+
+.md-reveal.md-reveal-done {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced-motion: sections are immediately visible so no JS failure hides content. */
+@media (prefers-reduced-motion: reduce) {
+  .md-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Cart drawer animation ───────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ── Nav link active/hover underline ─────────────────────────────────────── */
+.md-nav-link {
+  position: relative;
+  text-decoration: none;
+  color: var(--md-fg);
+}
+
+.md-nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--md-fg);
+  transition: width var(--md-dur-fast, 160ms) var(--md-ease);
+}
+
+.md-nav-link:hover::after,
+.md-nav-link[aria-current="page"]::after {
+  width: 100%;
+}
 
 

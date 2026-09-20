@@ -82,7 +82,7 @@ export default function LoginPage() {
           background: "var(--md-bg)",
           border: "1px solid var(--md-rule)",
           padding: "var(--md-space-8) var(--md-space-6)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.04)",
+          borderRadius: "var(--md-radius-sm)",
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "var(--md-space-6)" }}>
@@ -109,7 +109,7 @@ export default function LoginPage() {
           >
             {step === "identifier" ? "Sign In / Register" : "Enter Verification Code"}
           </h1>
-          <p style={{ fontSize: "0.875rem", color: "var(--md-fg-muted)", marginTop: "var(--md-space-2)" }}>
+          <p style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: "var(--md-space-2)" }}>
             {step === "identifier"
               ? "Access your private bespoke portfolio and order history."
               : `We sent a 6-digit code to ${identifier}`}
@@ -123,7 +123,7 @@ export default function LoginPage() {
               border: "1px solid var(--md-rule)",
               color: "var(--md-sold, var(--md-fg))",
               padding: "var(--md-space-3) var(--md-space-4)",
-              borderRadius: 4,
+              borderRadius: "var(--md-radius-sm)",
               marginBottom: "var(--md-space-5)",
               fontSize: "0.875rem",
               textAlign: "center",
@@ -140,7 +140,7 @@ export default function LoginPage() {
               border: "1px solid var(--md-green)",
               color: "var(--md-green)",
               padding: "var(--md-space-2) var(--md-space-3)",
-              borderRadius: 4,
+              borderRadius: "var(--md-radius-sm)",
               marginBottom: "var(--md-space-4)",
               fontSize: "0.8125rem",
               textAlign: "center",
@@ -169,6 +169,7 @@ export default function LoginPage() {
                   background: "transparent",
                   color: "var(--md-fg)",
                   fontSize: "0.9375rem",
+                  borderRadius: "var(--md-radius-sm)",
                 }}
               />
             </div>
@@ -199,6 +200,7 @@ export default function LoginPage() {
                   fontSize: "1.25rem",
                   letterSpacing: "0.3em",
                   textAlign: "center",
+                  borderRadius: "var(--md-radius-sm)",
                 }}
               />
             </div>
@@ -217,7 +219,7 @@ export default function LoginPage() {
               style={{
                 background: "transparent",
                 border: "none",
-                color: "var(--md-fg-muted)",
+                color: "var(--md-fg-secondary)",
                 fontSize: "0.8125rem",
                 cursor: "pointer",
                 textAlign: "center",

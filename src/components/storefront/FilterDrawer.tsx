@@ -30,7 +30,8 @@ export function FilterDrawer({ groups, className }: FilterDrawerProps): JSX.Elem
             marginTop: "var(--md-space-4)",
             padding: "var(--md-space-4)",
             border: "1px solid var(--md-rule)",
-            background: "var(--md-bg-subtle, var(--md-bg))",
+            borderRadius: "var(--md-radius-sm)",
+            background: "var(--md-bg-raised)",
           }}
         >
           <FilterSidebar groups={groups} />

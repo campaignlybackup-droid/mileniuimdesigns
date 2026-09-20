@@ -8,20 +8,29 @@ export type StoneCardProps = {
   stone: StoneRecord;
   marketSegment?: string;
   className?: string;
+  variant?: "featured" | "wide" | "standard";
 };
 
 export function StoneCard({
   stone,
   marketSegment = "",
   className,
+  variant = "standard",
 }: StoneCardProps): JSX.Element {
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
   const href = `${prefix}/stones/${stone.slug}`;
 
+  const isFeatured = variant === "featured";
+  const isWide = variant === "wide";
+
   const imgUrl = stone.heroPublicId
-    ? (imageUrl(stone.heroPublicId, { width: 640, crop: "fill" }) ?? getStoneImage(stone.slug))
+    ? (imageUrl(stone.heroPublicId, {
+        width: isFeatured ? 1024 : 640,
+        crop: "fill",
+      }) ?? getStoneImage(stone.slug))
     : getStoneImage(stone.slug);
 
+  const aspectRatio = isFeatured ? "16 / 10" : isWide ? "16 / 10" : "1 / 1";
 
   return (
     <Link
@@ -34,21 +43,22 @@ export function StoneCard({
         color: "inherit",
         position: "relative",
         background: "var(--md-bg-raised)",
-        border: "1px solid var(--md-rule)",
-        borderRadius: "4px",
+        borderRadius: "var(--md-radius-sm)",
         overflow: "hidden",
-        padding: "var(--md-space-3)",
-        textAlign: "center",
+        padding: isFeatured ? "var(--md-space-5)" : "var(--md-space-3)",
+        textAlign: isFeatured ? "left" : "center",
+        height: "100%",
+        boxSizing: "border-box",
       }}
     >
       <div
         style={{
           width: "100%",
-          aspectRatio: "1 / 1",
+          aspectRatio,
           background: "var(--md-bg)",
           overflow: "hidden",
           position: "relative",
-          borderRadius: "2px",
+          borderRadius: "var(--md-radius-sm)",
         }}
       >
         <img
@@ -65,30 +75,88 @@ export function StoneCard({
         />
       </div>
 
-      <div style={{ paddingTop: "var(--md-space-3)", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <h3
-          style={{
-            margin: 0,
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--md-fg)",
-          }}
-        >
-          {stone.name}
-        </h3>
+      <div
+        style={{
+          paddingTop: isFeatured ? "var(--md-space-4)" : "var(--md-space-3)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: isFeatured ? "flex-start" : "center",
+          flex: 1,
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          {isFeatured && (
+            <span
+              style={{
+                fontSize: "var(--md-t-label, 0.6875rem)",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--md-green)",
+                fontWeight: 600,
+                display: "block",
+                marginBottom: "var(--md-space-1)",
+              }}
+            >
+              Featured Gemstone
+            </span>
+          )}
+
+          <h3
+            style={{
+              margin: 0,
+              fontFamily: "var(--md-font-display)",
+              fontSize: isFeatured ? "clamp(1.5rem, 2.5vw, 2rem)" : isWide ? "1.25rem" : "1.125rem",
+              fontWeight: 400,
+              letterSpacing: "-0.01em",
+              color: "var(--md-fg)",
+              lineHeight: 1.2,
+            }}
+          >
+            {stone.name}
+          </h3>
+
+          {isFeatured && stone.shortDescription && (
+            <p
+              style={{
+                margin: "var(--md-space-2) 0 0 0",
+                fontSize: "0.875rem",
+                color: "var(--md-fg-secondary)",
+                lineHeight: 1.5,
+                maxWidth: "48ch",
+              }}
+            >
+              {stone.shortDescription}
+            </p>
+          )}
+
+          {isFeatured && stone.hardnessMohs && (
+            <div
+              style={{
+                display: "inline-flex",
+                gap: "var(--md-space-3)",
+                marginTop: "var(--md-space-2)",
+                fontSize: "0.75rem",
+                color: "var(--md-fg-secondary)",
+              }}
+            >
+              <span>Mohs Hardness: <strong>{stone.hardnessMohs}</strong></span>
+              {stone.isLabGrown && <span>• Lab-grown</span>}
+            </div>
+          )}
+        </div>
+
         <span
           style={{
-            marginTop: "var(--md-space-1)",
+            marginTop: "var(--md-space-3)",
             fontSize: "0.6875rem",
             letterSpacing: "0.14em",
             textTransform: "uppercase",
             color: "var(--md-green)",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
-          View Collection →
+          {isFeatured ? "Explore Stone & Collections →" : "View Collection →"}
         </span>
       </div>
     </Link>

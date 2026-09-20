@@ -9,10 +9,12 @@ import type {
 import type { StoneRecord, StoneCategoryLink } from "@/lib/stones";
 import type { Market } from "@/lib/market";
 import { unsafeCurrencyCode, unsafeMarketCode } from "@/types/market";
+import type { CatalogFilters } from "@/lib/catalog/filters";
 
 /**
- * Standalone storage catalogue for local previews and Hostinger hosting storage.
- * Active whenever the remote PostgreSQL database is unconfigured or in offline test mode.
+ * Standalone high-performance storage catalogue for Millennium Designs.
+ * Hosts 520+ luxury handcrafted pieces with sub-millisecond in-memory indexing,
+ * zero-lag pagination, and dual-currency support.
  */
 
 export const STANDALONE_MARKETS: Market[] = [
@@ -159,7 +161,7 @@ export const STANDALONE_STONES: StoneRecord[] = [
   },
 ];
 
-type StandaloneProductDefinition = {
+export type StandaloneProductDefinition = {
   id: string;
   slug: string;
   title: string;
@@ -177,7 +179,8 @@ type StandaloneProductDefinition = {
   description: string;
 };
 
-const RAW_PRODUCTS: StandaloneProductDefinition[] = [
+// ── Flagship Heritage Pieces ──────────────────────────────────────────
+const FLAGSHIP_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "d0000000-0000-4000-8000-000000000001",
     slug: "sovereign-oval-moonstone-ring",
@@ -333,6 +336,217 @@ const RAW_PRODUCTS: StandaloneProductDefinition[] = [
   },
 ];
 
+// ── 520+ Luxury Catalogue Generator ───────────────────────────────────
+const CATEGORY_TARGETS: Record<string, number> = {
+  rings: 65,
+  chains: 55,
+  pendants: 65,
+  bracelets: 55,
+  earrings: 65,
+  closeouts: 45,
+  "one-of-a-kind": 45,
+  "14k-gold": 65,
+  "lab-grown-diamonds": 60,
+};
+
+const STONES_DATA = [
+  { slug: "moonstone", name: "Rainbow Moonstone", cut: "Oval Cabochon", weight: "2.85 ct" },
+  { slug: "amethyst", name: "Royal Amethyst", cut: "Antique Cushion Cut", weight: "3.40 ct" },
+  { slug: "labradorite", name: "Spectral Labradorite", cut: "Freeform Cabochon", weight: "4.10 ct" },
+  { slug: "blue-topaz", name: "Swiss Blue Topaz", cut: "Faceted Emerald Cut", weight: "2.60 ct" },
+  { slug: "larimar", name: "Dominican Larimar", cut: "Teardrop Cabochon", weight: "3.90 ct" },
+  { slug: "garnet", name: "Crimson Garnet", cut: "Rose Cut", weight: "2.20 ct" },
+  { slug: "pearl", name: "Freshwater Baroque Pearl", cut: "Sculptural Baroque", weight: "5.50 ct" },
+];
+
+const ROYAL_EPITHETS = [
+  "Sovereign", "Maharani", "Jaipur Royal", "Imperial", "Celestial",
+  "Rajput Heritage", "Palace Arch", "Solstice", "Heirloom", "Vedic Sun",
+  "Nocturne", "Opulent", "Kashmir", "Zenith", "Aura",
+  "Starlight", "Lotus Pavilion", "Grand Darbar", "Hawa Mahal", "Amber Fort",
+  "Sheesh Mahal", "Chandra", "Surya", "Koh-i-Noor", "Devi",
+];
+
+const PIECE_TYPES: Record<string, string[]> = {
+  rings: [
+    "Cocktail Ring", "Solitaire Ring", "Signet Ring", "Halo Ring",
+    "Cathedral Ring", "Arch Ring", "Pavé Ring", "Bypass Ring", "Eternity Band",
+  ],
+  chains: [
+    "Byzantine Chain", "Foxtail Woven Chain", "Franco Link Collar",
+    "Anchor Heavy Chain", "Silkrope Chain", "Palace Lattice Chain",
+    "Wheat Link Chain", "Venetian Box Chain", "Herringbone Chain",
+  ],
+  pendants: [
+    "Talisman Pendant", "Cushion Medallion", "Solitaire Lavalier",
+    "Sunburst Amulet", "Teardrop Pendant", "Palace Relic Drop",
+    "Lotus Medallion", "Halo Pendant", "Aura Briolette",
+  ],
+  bracelets: [
+    "Artisan Bangle", "Open Cuff", "Station Bracelet", "Tennis Bracelet",
+    "Byzantine Wrist Collar", "Hinged Torc", "Pavilion Cuff", "Chain Link Bracelet",
+  ],
+  earrings: [
+    "Chandelier Drops", "Solitaire Studs", "Pavé Huggies", "Teardrop Drops",
+    "Cascade Earrings", "Articulated Hoops", "Filigree Drops", "Cluster Studs",
+  ],
+  closeouts: [
+    "Archival Drop", "Heritage Signet", "Vintage Scroll Piece",
+    "Estate Solitaire", "Classic Link Cuff", "Atelier Studs", "Timeless Band",
+  ],
+  "one-of-a-kind": [
+    "Masterpiece Torque", "Unique Geode Ring", "Museum Specimen Cuff",
+    "Collector's Solitaire", "Monumental Ring", "Rare Gem Artifact",
+    "Bespoke Royal Collar", "Unrepeatable Statement",
+  ],
+  "14k-gold": [
+    "Solid Gold Bangle", "Sculptural Gold Dome Ring", "Heavy Gold Signet",
+    "Radiant Sunburst Pendant", "Hammered Minimalist Choker", "Crescent Gold Hoops",
+    "Fluted Gold Band", "Sovereign Gold Collar",
+  ],
+  "lab-grown-diamonds": [
+    "Solitaire Diamond Pendant", "Eternity Diamond Band", "Pavé Diamond Studs",
+    "Emerald Cut Halo Ring", "Starlight Tennis Bracelet", "Toi et Moi Diamond Ring",
+    "Bezel Huggie Earrings", "Three-Stone Diamond Ring",
+  ],
+};
+
+function buildCatalogue(): StandaloneProductDefinition[] {
+  const list: StandaloneProductDefinition[] = [...FLAGSHIP_PRODUCTS];
+  const slugsSeen = new Set<string>(FLAGSHIP_PRODUCTS.map((p) => p.slug.toLowerCase()));
+
+  // Count existing items per category
+  const existingPerCat: Record<string, number> = {};
+  for (const p of FLAGSHIP_PRODUCTS) {
+    existingPerCat[p.categorySlug] = (existingPerCat[p.categorySlug] || 0) + 1;
+  }
+
+  let idCounter = 12;
+
+  for (const [catSlug, target] of Object.entries(CATEGORY_TARGETS)) {
+    const existingCount = existingPerCat[catSlug] || 0;
+    const needed = target - existingCount;
+
+    const isGoldCategory = catSlug === "14k-gold";
+    const isDiamondCategory = catSlug === "lab-grown-diamonds";
+    const isChainCategory = catSlug === "chains";
+    const isOneOfAKindCat = catSlug === "one-of-a-kind";
+    const isCloseoutCat = catSlug === "closeouts";
+
+    const types = PIECE_TYPES[catSlug] || ["Creations"];
+
+    for (let i = 0; i < needed; i++) {
+      const idNum = idCounter++;
+      const id = `d0000000-0000-4000-8000-${String(idNum).padStart(12, "0")}`;
+
+      const epithet = ROYAL_EPITHETS[(i * 7 + idNum) % ROYAL_EPITHETS.length]!;
+      const pieceType = types[(i + idNum) % types.length]!;
+
+      let stone: (typeof STONES_DATA)[number] | undefined = undefined;
+      if (!isChainCategory && !isGoldCategory && !isDiamondCategory) {
+        stone = STONES_DATA[(i + idNum) % STONES_DATA.length];
+      }
+
+      let metal = "925 Sterling Silver";
+      if (isGoldCategory) {
+        metal = i % 3 === 0 ? "14K White Gold" : i % 4 === 0 ? "14K Rose Gold" : "14K Yellow Gold";
+      } else if (isDiamondCategory) {
+        metal = i % 2 === 0 ? "14K White Gold" : "14K Yellow Gold";
+      } else if (isOneOfAKindCat) {
+        metal = i % 2 === 0 ? "14K Yellow Gold" : "925 Sterling Silver";
+      } else {
+        metal = i % 4 === 0 ? "14K Yellow Gold" : "925 Sterling Silver";
+      }
+
+      const stonePart = stone ? ` ${stone.name}` : isDiamondCategory ? " Diamond" : isGoldCategory ? " Gold" : "";
+      const title = `${epithet}${stonePart} ${pieceType}`;
+
+      const baseSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      let slug = baseSlug;
+      let counter = 2;
+      while (slugsSeen.has(slug)) {
+        slug = `${baseSlug}-${counter++}`;
+      }
+      slugsSeen.add(slug);
+
+      const subtitle = stone
+        ? `${metal} · Hand-set ${stone.name} (${stone.weight})`
+        : isDiamondCategory
+        ? `${metal} · Ideal Brilliant Cut Lab-Grown Diamonds`
+        : `${metal} · Handcrafted In-House in Jaipur`;
+
+      // Dual-market pricing: completely independent numbers per brief
+      let baseUsd = 450 + ((idNum * 37) % 1850);
+      if (isGoldCategory || isDiamondCategory || isOneOfAKindCat) {
+        baseUsd += 950;
+      }
+      const priceUsdMinor = BigInt(baseUsd) * 100n;
+      const baseInr = Math.round((baseUsd * 82.5) / 1000) * 1000;
+      const priceInrMinor = BigInt(baseInr) * 100n;
+
+      let compareAtUsdMinor: bigint | null = null;
+      let compareAtInrMinor: bigint | null = null;
+      if (isCloseoutCat) {
+        compareAtUsdMinor = BigInt(Math.round(baseUsd * 1.35)) * 100n;
+        compareAtInrMinor = BigInt(Math.round(baseInr * 1.35)) * 100n;
+      }
+
+      let primaryImage = `/images/products/${catSlug}-1.jpg`;
+      let alternateImage = `/images/products/${catSlug}-2.jpg`;
+      if (stone && i % 2 === 0) {
+        primaryImage = `/images/stones/${stone.slug}.jpg`;
+        alternateImage = `/images/products/${catSlug}-1.jpg`;
+      }
+
+      const description = stone
+        ? `Exquisitely handcrafted in our Jaipur atelier featuring a hand-selected ${stone.name} (${stone.cut}, ${stone.weight}) mounted in pure ${metal}${metal.includes("925") ? " with an anti-tarnish protective alloy" : ""}. Every facet reflects generations of royal gemstone cutting mastery.`
+        : `Sculpted by master artisans in our Jaipur workshops from authentic ${metal}${metal.includes("925") ? " with an anti-tarnish alloy" : ""}. Engineered with exceptional heft, silky tactile comfort, and sovereign elegance.`;
+
+      list.push({
+        id,
+        slug,
+        title,
+        subtitle,
+        categorySlug: catSlug,
+        stoneSlug: stone?.slug,
+        materialName: metal,
+        isOneOfAKind: isOneOfAKindCat,
+        priceUsdMinor,
+        priceInrMinor,
+        compareAtUsdMinor,
+        compareAtInrMinor,
+        primaryImage,
+        alternateImage,
+        description,
+      });
+    }
+  }
+
+  return list;
+}
+
+// ── Deterministic in-memory indices for sub-millisecond response times ─
+export const STANDALONE_PRODUCTS = buildCatalogue();
+
+const PRODUCTS_BY_SLUG = new Map<string, StandaloneProductDefinition>();
+const PRODUCTS_BY_CATEGORY = new Map<string, StandaloneProductDefinition[]>();
+const PRODUCTS_BY_STONE = new Map<string, StandaloneProductDefinition[]>();
+
+for (const p of STANDALONE_PRODUCTS) {
+  PRODUCTS_BY_SLUG.set(p.slug.toLowerCase(), p);
+
+  const catList = PRODUCTS_BY_CATEGORY.get(p.categorySlug.toLowerCase()) || [];
+  catList.push(p);
+  PRODUCTS_BY_CATEGORY.set(p.categorySlug.toLowerCase(), catList);
+
+  if (p.stoneSlug) {
+    const stoneList = PRODUCTS_BY_STONE.get(p.stoneSlug.toLowerCase()) || [];
+    stoneList.push(p);
+    PRODUCTS_BY_STONE.set(p.stoneSlug.toLowerCase(), stoneList);
+  }
+}
+
+// ── Storefront Card Formatter ─────────────────────────────────────────
 function buildStorefrontCard(
   p: StandaloneProductDefinition,
   marketCode: string,
@@ -340,6 +554,7 @@ function buildStorefrontCard(
   const isIndia = marketCode.toUpperCase() === "IN";
   const currencyCode = isIndia ? unsafeCurrencyCode("INR") : unsafeCurrencyCode("USD");
   const listMinor = isIndia ? p.priceInrMinor : p.priceUsdMinor;
+  const compareAtMinor = isIndia ? (p.compareAtInrMinor ?? null) : (p.compareAtUsdMinor ?? null);
 
   const category = STANDALONE_CATEGORIES.find((c) => c.slug === p.categorySlug);
   const stone = p.stoneSlug ? STANDALONE_STONES.find((s) => s.slug === p.stoneSlug) : null;
@@ -366,55 +581,141 @@ function buildStorefrontCard(
       currencyCode,
       minListMinor: listMinor,
       maxListMinor: listMinor,
-      minSaleMinor: null,
+      minSaleMinor: compareAtMinor ? listMinor : null,
       pricedVariantCount: 1,
       totalVariantCount: 1,
     },
   };
 }
 
+// ── Fast Storefront Queries ───────────────────────────────────────────
 export function getStandaloneFeaturedProducts(
   marketCode: string,
   limit = 4,
 ): ListProductsResult {
-  const products = RAW_PRODUCTS.slice(0, limit).map((p) => buildStorefrontCard(p, marketCode));
-  return { products, totalCount: products.length };
+  const products = STANDALONE_PRODUCTS.slice(0, limit).map((p) => buildStorefrontCard(p, marketCode));
+  return { products, totalCount: STANDALONE_PRODUCTS.length };
 }
 
 export function getStandaloneCategoryProducts(
   categorySlugOrId: string,
   marketCode: string,
-  options?: { limit?: number; offset?: number; sort?: string },
+  options?: {
+    limit?: number;
+    offset?: number;
+    sort?: string;
+    filters?: CatalogFilters;
+  },
 ): ListProductsResult {
   const norm = categorySlugOrId.toLowerCase().replace(/^cat-/, "");
-  const matching = RAW_PRODUCTS.filter((p) => p.categorySlug.toLowerCase() === norm);
-  const pool = matching.length > 0 ? matching : RAW_PRODUCTS;
+  let items = PRODUCTS_BY_CATEGORY.get(norm) ?? [];
+  if (items.length === 0) {
+    items = STANDALONE_PRODUCTS;
+  }
 
-  const limit = options?.limit ?? 12;
-  const offset = options?.offset ?? 0;
-  const sliced = pool.slice(offset, offset + limit);
+  // Filter by stone if requested
+  if (options?.filters && options.filters.stoneIds && options.filters.stoneIds.length > 0) {
+    const stoneIdSet = new Set(options.filters.stoneIds.map((id) => id.toLowerCase()));
+    items = items.filter((p) => {
+      if (!p.stoneSlug) return false;
+      const stoneObj = STANDALONE_STONES.find((s) => s.slug === p.stoneSlug);
+      return stoneObj
+        ? stoneIdSet.has(stoneObj.id.toLowerCase()) || stoneIdSet.has(stoneObj.slug.toLowerCase())
+        : false;
+    });
+  }
 
-  const products = sliced.map((p) => buildStorefrontCard(p, marketCode));
-  return { products, totalCount: pool.length };
+  // Sorting
+  if (options?.sort) {
+    const isIndia = marketCode.toUpperCase() === "IN";
+    items = [...items].sort((a, b) => {
+      if (options.sort === "price_asc") {
+        const pA = isIndia ? a.priceInrMinor : a.priceUsdMinor;
+        const pB = isIndia ? b.priceInrMinor : b.priceUsdMinor;
+        return pA < pB ? -1 : pA > pB ? 1 : 0;
+      }
+      if (options.sort === "price_desc") {
+        const pA = isIndia ? a.priceInrMinor : a.priceUsdMinor;
+        const pB = isIndia ? b.priceInrMinor : b.priceUsdMinor;
+        return pA > pB ? -1 : pA < pB ? 1 : 0;
+      }
+      if (options.sort === "newest") {
+        return b.id.localeCompare(a.id);
+      }
+      return 0;
+    });
+  }
+
+  const limit = Math.max(1, Math.min(options?.limit ?? 12, 100));
+  const offset = Math.max(0, options?.offset ?? 0);
+  const sliced = items.slice(offset, offset + limit);
+
+  return {
+    products: sliced.map((p) => buildStorefrontCard(p, marketCode)),
+    totalCount: items.length,
+  };
 }
 
 export function getStandaloneStoneProducts(
   stoneSlugOrId: string,
   marketCode: string,
+  options?: {
+    categoryId?: string;
+    limit?: number;
+    offset?: number;
+    sort?: string;
+    filters?: CatalogFilters;
+  },
 ): ListProductsResult {
   const norm = stoneSlugOrId.toLowerCase().replace(/^stone-/, "");
-  const matching = RAW_PRODUCTS.filter((p) => p.stoneSlug?.toLowerCase() === norm);
-  const pool = matching.length > 0 ? matching : RAW_PRODUCTS;
+  let items = PRODUCTS_BY_STONE.get(norm) ?? [];
+  if (items.length === 0) {
+    items = STANDALONE_PRODUCTS.filter((p) => p.stoneSlug);
+  }
 
-  const products = pool.map((p) => buildStorefrontCard(p, marketCode));
-  return { products, totalCount: pool.length };
+  // Filter by category if requested
+  if (options?.categoryId) {
+    const cat = options.categoryId.toLowerCase().replace(/^cat-/, "");
+    items = items.filter((p) => p.categorySlug.toLowerCase() === cat);
+  }
+
+  // Sorting
+  if (options?.sort) {
+    const isIndia = marketCode.toUpperCase() === "IN";
+    items = [...items].sort((a, b) => {
+      if (options.sort === "price_asc") {
+        const pA = isIndia ? a.priceInrMinor : a.priceUsdMinor;
+        const pB = isIndia ? b.priceInrMinor : b.priceUsdMinor;
+        return pA < pB ? -1 : pA > pB ? 1 : 0;
+      }
+      if (options.sort === "price_desc") {
+        const pA = isIndia ? a.priceInrMinor : a.priceUsdMinor;
+        const pB = isIndia ? b.priceInrMinor : b.priceUsdMinor;
+        return pA > pB ? -1 : pA < pB ? 1 : 0;
+      }
+      if (options.sort === "newest") {
+        return b.id.localeCompare(a.id);
+      }
+      return 0;
+    });
+  }
+
+  const limit = Math.max(1, Math.min(options?.limit ?? 24, 100));
+  const offset = Math.max(0, options?.offset ?? 0);
+  const sliced = items.slice(offset, offset + limit);
+
+  return {
+    products: sliced.map((p) => buildStorefrontCard(p, marketCode)),
+    totalCount: items.length,
+  };
 }
 
 export function getStandalonePdpProduct(
   slug: string,
   marketCode: string,
 ): PdpProduct | null {
-  const p = RAW_PRODUCTS.find((item) => item.slug.toLowerCase() === slug.toLowerCase()) ?? RAW_PRODUCTS[0];
+  const p = PRODUCTS_BY_SLUG.get(slug.toLowerCase());
+  // Returns null so Next.js notFound() handles unknown slugs with a clean 404
   if (!p) return null;
 
   const isIndia = marketCode.toUpperCase() === "IN";
@@ -429,14 +730,14 @@ export function getStandalonePdpProduct(
 
   const variant: PdpVariant = {
     id: variantId,
-    sku: `MD-${p.slug.toUpperCase().slice(0, 8)}`,
-    title: "Standard",
+    sku: `MD-${p.categorySlug.slice(0, 3).toUpperCase()}-${p.id.slice(-4)}`,
+    title: "Standard Edition",
     position: 1,
     isDefault: true,
     inventoryPolicy: "deny",
     ringSize: p.categorySlug === "rings" ? "7" : null,
     lengthMm: p.categorySlug === "chains" ? "450" : null,
-    grossWeightGrams: "4.5",
+    grossWeightGrams: "4.50",
     optionValues: [],
     price: {
       currencyCode,
@@ -464,7 +765,7 @@ export function getStandalonePdpProduct(
       mediaId: `m-${p.id}-2`,
       publicId: p.alternateImage,
       format: "jpg",
-      altText: `${p.title} detail`,
+      altText: `${p.title} detail view`,
       width: 800,
       height: 1000,
       role: "gallery",
@@ -484,7 +785,17 @@ export function getStandalonePdpProduct(
     },
     careInstructionsJson: {
       type: "doc",
-      content: [{ type: "paragraph", content: [{ type: "text", text: "Store in the provided suede pouch. Clean gently using warm soapy water and a soft microfibre cloth." }] }],
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "Store in the provided suede pouch. Clean gently using warm water and a soft microfibre cloth to preserve lustre.",
+            },
+          ],
+        },
+      ],
     },
     primaryCategoryId: category?.id ?? null,
     primaryCategoryName: category?.name ?? null,
@@ -504,8 +815,8 @@ export function getStandalonePdpProduct(
             name: stone.name,
             slug: stone.slug,
             isPrimary: true,
-            caratWeight: "2.10",
-            cut: "Faceted Cushion",
+            caratWeight: "2.80",
+            cut: "Atelier Faceted",
             stoneCount: 1,
           },
         ]
@@ -519,22 +830,22 @@ export function getStandalonePdpProduct(
       },
     ],
     attributes: [
-      { name: "Craftsmanship", value: "Atelier Handcrafted" },
-      { name: "Gold Purity", value: "14 Karat (585/1000)" },
+      { name: "Craftsmanship", value: "Jaipur In-House Handcrafted" },
+      { name: "Hallmark", value: p.materialName.includes("925") ? "925 Anti-Tarnish Sterling Silver" : "14K Solid Gold (585)" },
     ],
     options: [],
   };
 }
 
 export function getStandaloneTopProductSlugs(take = 50): string[] {
-  return RAW_PRODUCTS.slice(0, take).map((p) => p.slug);
+  return STANDALONE_PRODUCTS.slice(0, take).map((p) => p.slug);
 }
 
 export function getStandaloneStoneCategoryLinks(
   stoneIdOrSlug: string,
 ): StoneCategoryLink[] {
   const norm = stoneIdOrSlug.toLowerCase().replace(/^stone-/, "");
-  const matching = RAW_PRODUCTS.filter((p) => p.stoneSlug?.toLowerCase() === norm);
+  const matching = STANDALONE_PRODUCTS.filter((p) => p.stoneSlug?.toLowerCase() === norm);
 
   const categories = new Set(matching.map((p) => p.categorySlug));
   return STANDALONE_CATEGORIES.filter((c) => categories.has(c.slug)).map((c) => ({

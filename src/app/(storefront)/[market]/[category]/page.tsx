@@ -179,7 +179,6 @@ export default async function CategoryPage({
               fontFamily: "var(--md-font-display)",
               fontWeight: 400,
               letterSpacing: "-0.01em",
-              textTransform: isOneOfAKind ? "uppercase" : "none",
             }}
           >
             {cat.name}

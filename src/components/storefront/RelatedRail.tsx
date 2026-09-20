@@ -36,7 +36,7 @@ export function RelatedRail({
             fontSize: "var(--md-t-label, 0.75rem)",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
           }}
         >
           {title}
@@ -44,10 +44,8 @@ export function RelatedRail({
       </div>
 
       <div
+        className="md-product-grid md-grid-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 240px), 1fr))",
-          gap: "var(--md-space-6) var(--md-space-4)",
           width: "100%",
         }}
       >

@@ -77,9 +77,11 @@ export function WishlistButton({
       style={{
         background: "transparent",
         border: "none",
+        minWidth: 44,
+        minHeight: 44,
         padding: "var(--md-space-2)",
         cursor: "pointer",
-        color: isSaved ? "var(--md-emerald, var(--md-fg))" : "var(--md-fg-muted)",
+        color: isSaved ? "var(--md-green, var(--md-fg))" : "var(--md-fg-secondary)",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",

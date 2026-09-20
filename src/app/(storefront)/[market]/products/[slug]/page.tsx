@@ -196,11 +196,7 @@ export default async function ProductDetailPage({
         <div
           className="md-pdp-layout"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "var(--md-space-12) var(--md-space-8)",
             paddingTop: "var(--md-space-6)",
-            alignItems: "flex-start",
           }}
         >
           {/* Mobile Gallery */}

@@ -30,7 +30,7 @@ const CATEGORIES = [
 export const RESERVED_SLUGS = [
   "stones", "collections", "products", "search", "cart", "checkout", "account", "login",
   "orders", "wishlist", "heritage", "about", "journal", "api", "admin", "_preview",
-  "pages", "sitemaps", "sitemap.xml", "robots.txt",
+  "pages", "sitemaps", "sitemap.xml", "robots.txt", "our-story",
 ] as const;
 
 

@@ -72,7 +72,7 @@ export function ProductInfo({
     accordions.push({
       key: "story",
       title: "The Story",
-      content: <div style={{ lineHeight: 1.6, color: "var(--md-fg-muted)" }}>{descriptionText}</div>,
+      content: <div style={{ lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>{descriptionText}</div>,
     });
   }
 
@@ -84,7 +84,7 @@ export function ProductInfo({
         <dl style={{ margin: 0, display: "grid", gridTemplateColumns: "auto 1fr", gap: "var(--md-space-2) var(--md-space-4)", fontSize: "0.875rem" }}>
           {product.attributes.map((attr, i) => (
             <div key={i} style={{ display: "contents" }}>
-              <dt style={{ color: "var(--md-fg-muted)" }}>{attr.name}</dt>
+              <dt style={{ color: "var(--md-fg-secondary)" }}>{attr.name}</dt>
               <dd style={{ margin: 0, color: "var(--md-fg)" }}>{attr.value}</dd>
             </div>
           ))}
@@ -98,7 +98,7 @@ export function ProductInfo({
       key: "material",
       title: "Material",
       content: (
-        <div style={{ lineHeight: 1.6, color: "var(--md-fg-muted)" }}>
+        <div style={{ lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>
           {product.materials.map((m) => m.name).join(", ")}
         </div>
       ),
@@ -110,7 +110,7 @@ export function ProductInfo({
       key: "stone",
       title: "Stone",
       content: (
-        <div style={{ lineHeight: 1.6, color: "var(--md-fg-muted)" }}>
+        <div style={{ lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>
           {product.stones.map((s, idx) => (
             <div key={idx}>
               <Link
@@ -132,7 +132,7 @@ export function ProductInfo({
     accordions.push({
       key: "care",
       title: "Care",
-      content: <div style={{ lineHeight: 1.6, color: "var(--md-fg-muted)" }}>{careText}</div>,
+      content: <div style={{ lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>{careText}</div>,
     });
   }
 
@@ -154,7 +154,7 @@ export function ProductInfo({
             fontSize: "var(--md-t-label, 0.75rem)",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "var(--md-fg-muted)",
+            color: "var(--md-fg-secondary)",
           }}
         >
           {product.primaryCategorySlug ? (
@@ -185,7 +185,7 @@ export function ProductInfo({
           {product.title}
         </h1>
         {product.subtitle && (
-          <p style={{ margin: "var(--md-space-1) 0 0 0", color: "var(--md-fg-muted)", fontSize: "1rem" }}>
+          <p style={{ margin: "var(--md-space-1) 0 0 0", color: "var(--md-fg-secondary)", fontSize: "1rem" }}>
             {product.subtitle}
           </p>
         )}
@@ -198,7 +198,7 @@ export function ProductInfo({
 
       {/* Stone & Material line */}
       {stoneAndMaterial && (
-        <div style={{ fontSize: "0.875rem", color: "var(--md-fg-muted)" }}>
+        <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)" }}>
           {stoneAndMaterial}
         </div>
       )}
@@ -239,7 +239,7 @@ export function ProductInfo({
           padding: "var(--md-space-4)",
           background: "var(--md-bg-raised)",
           border: "1px solid var(--md-rule)",
-          borderRadius: "2px",
+          borderRadius: "var(--md-radius-sm)",
           marginTop: "var(--md-space-4)",
           fontSize: "0.75rem",
           letterSpacing: "0.04em",
@@ -248,19 +248,19 @@ export function ProductInfo({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>BIS Hallmarked Pure Gold</span>
+          <span>925 Sterling Silver</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>GIA &amp; IGI Certified</span>
+          <span>Anti-tarnish Alloy</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>Insured Transit Courier</span>
+          <span>In-house Crafted, Jaipur</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>Complimentary Resizing</span>
+          <span>Direct from Manufacturer</span>
         </div>
       </div>
 
