@@ -69,11 +69,12 @@ export default async function StorefrontHomePage({
     >
       {/* ── 1. HAUTE JOAILLERIE ARCHITECTURAL HERO ───────────────────── */}
       <section
+        data-surface="green-black"
         style={{
           position: "relative",
           width: "100%",
           minHeight: "clamp(480px, 68vh, 660px)",
-          background: "radial-gradient(ellipse at 50% 15%, #00381c 0%, #062416 50%, #030e08 100%)",
+          background: "radial-gradient(ellipse at 50% 15%, var(--md-emerald-deep) 0%, var(--md-forest) 50%, var(--md-green-black) 100%)",
           color: "var(--md-fg-inverse)",
           display: "flex",
           flexDirection: "column",
@@ -947,8 +948,9 @@ export default async function StorefrontHomePage({
 
       {/* ── 7. BESPOKE COMMISSION SALON & VIP CONCIERGE ───────────────── */}
       <section
+        data-surface="green-black"
         style={{
-          background: "radial-gradient(ellipse at 50% 50%, #062e1b 0%, #040e09 100%)",
+          background: "radial-gradient(ellipse at 50% 50%, var(--md-forest) 0%, var(--md-green-black) 100%)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
           paddingBlock: "clamp(44px, 6vw, 76px)",

@@ -63,6 +63,7 @@ export default async function OurStoryPage({
     >
       {/* ── 1. THE HERO BROADSIDE: PURE EDITORIAL TYPOGRAPHY ───────────── */}
       <header
+        data-surface="ivory-soft"
         style={{
           borderBottom: "1px solid var(--md-rule-strong)",
           paddingInline: "var(--md-gutter)",
@@ -231,6 +232,7 @@ export default async function OurStoryPage({
       {/* ── 2. THE THREE GENERATION CHRONICLE (SWISS ASYMMETRICAL TIMELINE) ─ */}
       <section
         id="the-chronicle"
+        data-surface="ivory-soft"
         style={{
           paddingInline: "var(--md-gutter)",
           paddingBlock: "clamp(64px, 9vw, 128px)",
@@ -719,10 +721,11 @@ export default async function OurStoryPage({
 
       {/* ── 4. TECHNICAL SPECIFICATION TABLE (SWISS ASSAY LEDGER) ───────── */}
       <section
+        data-surface="ivory"
         style={{
           paddingInline: "var(--md-gutter)",
           paddingBlock: "clamp(64px, 9vw, 120px)",
-          background: "var(--md-ivory-soft)",
+          background: "var(--md-ivory)",
           borderBottom: "1px solid var(--md-rule)",
         }}
       >
@@ -911,6 +914,7 @@ export default async function OurStoryPage({
 
       {/* ── 5. FOUNDERS' COLOPHON & ATELIER INVITATION ──────────────────── */}
       <footer
+        data-surface="ivory-soft"
         style={{
           paddingInline: "var(--md-gutter)",
           paddingTop: "clamp(64px, 9vw, 120px)",
