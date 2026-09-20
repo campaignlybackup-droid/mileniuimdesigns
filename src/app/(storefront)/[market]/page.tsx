@@ -12,6 +12,7 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { HeroGemstoneCanvas } from "@/components/storefront/HeroGemstoneCanvas";
+import { Interactive3DVault } from "@/components/storefront/Interactive3DVault";
 
 export const revalidate = 300;
 
@@ -198,7 +199,7 @@ export default async function StorefrontHomePage({
                   transition: "transform 200ms ease, box-shadow 200ms ease",
                 }}
               >
-                View The Maison Portfolio →
+                Explore The Collections →
               </Link>
 
               <a
@@ -248,10 +249,7 @@ export default async function StorefrontHomePage({
                 ✦ Anti-Tarnish Metallurgy
               </span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                ✦ 100% In-House Atelier
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                ✦ BIS 925 Hallmarked
+                ✦ Insured Worldwide Delivery
               </span>
             </div>
           </div>
@@ -287,7 +285,7 @@ export default async function StorefrontHomePage({
         </div>
       </section>
 
-      {/* ── 2. THE MASTERPIECE PORTFOLIO SUITES ───────────────────────── */}
+      {/* ── 2. THE MASTERPIECE CREATION SUITES ───────────────────────── */}
       {featuredProducts.length > 0 && (
         <section
           style={{
@@ -317,7 +315,7 @@ export default async function StorefrontHomePage({
                 marginBottom: 8,
               }}
             >
-              MAISON PORTFOLIO · SUITE NO. 01
+              HAUTE JOAILLERIE · SUITE NO. 01
             </span>
             <h2
               style={{
@@ -355,6 +353,9 @@ export default async function StorefrontHomePage({
           </div>
         </section>
       )}
+
+      {/* ── 3D GEMOLOGICAL INSPECTION VAULT ────────────────────────────── */}
+      <Interactive3DVault marketPrefix={prefix.replace(/^\//, "")} />
 
       {/* ── 3. THE FOUR PILLARS OF HIGH GOLDSMITHING (EDITORIAL SPREAD) ── */}
       <section
@@ -573,7 +574,7 @@ export default async function StorefrontHomePage({
         </div>
       </section>
 
-      {/* ── 4. THE HOUSE PORTFOLIOS (CURATED CATEGORIES) ─────────────── */}
+      {/* ── 4. THE HOUSE ATELIER SUITES (CURATED CATEGORIES) ───────── */}
       {categories.length > 0 && (
         <section
           style={{
@@ -603,7 +604,7 @@ export default async function StorefrontHomePage({
                 marginBottom: 8,
               }}
             >
-              MAISON PORTFOLIO
+              THE ATELIER SUITES
             </span>
             <h2
               style={{
@@ -625,7 +626,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.6,
               }}
             >
-              From Venetian box link weaves to courtly emerald solitaires, explore our categorized portfolios.
+              From Venetian box link weaves to courtly emerald solitaires, explore our signature collections.
             </p>
           </div>
 
@@ -690,7 +691,7 @@ export default async function StorefrontHomePage({
                       fontFamily: "var(--md-font-crest), Georgia, serif",
                     }}
                   >
-                    PORTFOLIO ARCHIVE
+                    SIGNATURE ARCHIVE
                   </div>
                   <h3
                     style={{
@@ -717,7 +718,7 @@ export default async function StorefrontHomePage({
                       gap: 6,
                     }}
                   >
-                    <span>View Portfolio Selection</span>
+                    <span>Explore The Collection</span>
                     <span>→</span>
                   </div>
                 </div>

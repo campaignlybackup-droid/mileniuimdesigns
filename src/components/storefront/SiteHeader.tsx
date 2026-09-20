@@ -17,22 +17,29 @@ export function SiteHeader({
   marketSegment,
   navigation = [],
   markets = [],
+  ourStoryHref,
 }: {
   /** "" for the primary market, which has no prefix. */
   marketSegment: string;
   navigation?: { label: string; href: string }[];
   markets?: { code: string; label: string; href: string; active: boolean }[];
+  ourStoryHref?: string;
 }): React.ReactElement {
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
+  const resolvedStoryHref = ourStoryHref || `${prefix}/our-story`;
+
   return (
     <header
       data-surface="ivory-soft"
       style={{
-        borderBottom: "1px solid var(--md-rule)",
-        background: "var(--md-bg)",
+        borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 22%, var(--md-rule))",
+        background: "color-mix(in srgb, var(--md-bg) 92%, transparent)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
         position: "sticky",
         top: 0,
         zIndex: 40,
+        boxShadow: "0 4px 20px -8px rgba(0, 0, 0, 0.04)",
       }}
     >
       {/* The first focusable element on every page (10 §8.2). */}
@@ -52,6 +59,41 @@ export function SiteHeader({
         Skip to content
       </a>
 
+      {/* PRESTIGE ATELIER TOP RIBBON */}
+      <div
+        style={{
+          background: "var(--md-green-black)",
+          color: "var(--md-fg-inverse)",
+          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
+          paddingBlock: "5px",
+          paddingInline: "var(--md-gutter)",
+          fontSize: "0.625rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          fontFamily: "var(--md-font-crest), Georgia, serif",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px" }}>
+            <span>✦</span> JOHARI BAZAAR, JAIPUR · EST. 1961
+          </span>
+          <span style={{ marginInline: "auto", textAlign: "center", letterSpacing: "0.14em" }}>
+            COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS
+          </span>
+          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)" }}>
+            ANTI-TARNISH 925 SILVER
+          </span>
+        </div>
+      </div>
+
       {/* TIER 1: BRAND LOCKUP & UTILITIES BAR */}
       <div
         style={{
@@ -66,18 +108,32 @@ export function SiteHeader({
             <MobileNav marketPrefix={prefix} navigation={navigation} markets={markets} />
           </div>
 
-          {/* Desktop Left: Atelier heritage hallmark */}
+          {/* Desktop Left: Refined Our Story Crest Button */}
           <div className="md-desktop-left-tag" style={{ display: "flex", alignItems: "center" }}>
-            <span
-              className="md-label"
+            <Link
+              href={resolvedStoryHref}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "4px 10px",
+                borderRadius: "var(--md-radius-sm)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 32%, transparent)",
+                background: "color-mix(in srgb, var(--md-champagne) 8%, transparent)",
+                color: "var(--md-fg)",
                 fontSize: "0.6875rem",
-                color: "var(--md-fg-muted)",
-                letterSpacing: "0.16em",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+                transition: "all 180ms ease",
+                lineHeight: 1,
               }}
             >
-              925 SILVER · EST. 1961
-            </span>
+              <span style={{ color: "var(--md-champagne)", fontSize: "0.6875rem", lineHeight: 1 }}>✦</span>
+              <span>Our Story · 1961</span>
+            </Link>
           </div>
 
           {/* Center Brand Logo (Desktop and Mobile) */}
@@ -134,7 +190,7 @@ export function SiteHeader({
         </div>
       </div>
 
-      {/* TIER 2: DESKTOP CATEGORY NAVIGATION RAIL (Visible on desktop >= 1024px) */}
+      {/* TIER 2: DESKTOP CATEGORY NAVIGATION RAIL */}
       <div className="md-desktop-nav-tier">
         <nav aria-label="Primary" style={{ width: "100%", maxWidth: "var(--md-container)", marginInline: "auto" }}>
           <VisuallyHidden>Primary navigation</VisuallyHidden>
@@ -143,24 +199,40 @@ export function SiteHeader({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "clamp(12px, 2.2vw, 32px)",
+              gap: "clamp(12px, 2.2vw, 28px)",
               listStyle: "none",
               margin: 0,
               padding: 0,
-              flexWrap: "wrap",
+              flexWrap: "nowrap",
             }}
           >
-            {navigation.map((item) => (
-              <li key={item.href}>
+            {navigation.map((item, idx) => (
+              <li
+                key={item.href}
+                style={{ display: "inline-flex", alignItems: "center", gap: "clamp(12px, 2.2vw, 28px)" }}
+              >
+                {idx > 0 && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
+                      fontSize: "0.4375rem",
+                      userSelect: "none",
+                      lineHeight: 1,
+                    }}
+                  >
+                    ✦
+                  </span>
+                )}
                 <Link
                   href={`${prefix}${item.href}`}
                   className="md-label"
                   style={{
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.14em",
+                    fontSize: "0.71875rem",
+                    letterSpacing: "0.18em",
                     textDecoration: "none",
                     color: "var(--md-fg)",
-                    paddingBlock: "6px",
+                    paddingBlock: "4px",
                     display: "inline-block",
                     whiteSpace: "nowrap",
                     transition: "color 150ms ease",

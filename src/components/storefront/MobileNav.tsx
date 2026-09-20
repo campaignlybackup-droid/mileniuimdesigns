@@ -388,7 +388,7 @@ export function MobileNav({
               onClick={() => setIsOpen(false)}
               style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 500 }}
             >
-              My Account / Portfolio
+              My Account / Client Vault
             </Link>
             <Link
               href={`${marketPrefix}/login`}

@@ -111,7 +111,7 @@ export default function LoginPage() {
           </h1>
           <p style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: "var(--md-space-2)" }}>
             {step === "identifier"
-              ? "Access your private bespoke portfolio and order history."
+              ? "Access your private bespoke acquisitions and order history."
               : `We sent a 6-digit code to ${identifier}`}
           </p>
         </div>

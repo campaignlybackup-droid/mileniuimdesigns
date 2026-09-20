@@ -84,8 +84,7 @@ export default async function MarketLayout({
       label: c.name.toUpperCase(),
       href: `/${c.slug}`,
     })),
-    { label: "STONES", href: "/stones" },
-    { label: "OUR STORY", href: "/our-story" },
+    { label: "GEMSTONES", href: "/stones" },
   ];
 
   const marketOptions = activeMarkets.map((m) => {
@@ -132,6 +131,7 @@ export default async function MarketLayout({
           marketSegment={marketSegment}
           navigation={navigation}
           markets={marketOptions}
+          ourStoryHref={`${prefix}/our-story`}
         />
         <main id="main" style={{ flexGrow: 1 }}>
           {children}
