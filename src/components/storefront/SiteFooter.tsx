@@ -66,6 +66,63 @@ export function SiteFooter({
                 </ul>
               </nav>
             ))}
+
+            {/* Atelier Contact & Location */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-3)" }}>
+              <h2 className="md-label" style={{ color: "var(--md-fg-secondary)" }}>
+                JAIPUR ATELIER &amp; CONTACT
+              </h2>
+              <address style={{ fontStyle: "normal", color: "var(--md-fg-inverse-muted)", fontSize: "var(--md-t-small)", lineHeight: 1.6 }}>
+                Millenium Designs<br />
+                5, Noor Plaza, Chameliwala Market<br />
+                M.I. Road, Jaipur, 302001<br />
+                Rajasthan, India
+              </address>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "4px" }}>
+                <a
+                  href="tel:+919828156465"
+                  style={{
+                    color: "var(--md-champagne)",
+                    textDecoration: "none",
+                    fontSize: "var(--md-t-small)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  <span>📞</span> +91 98281 56465
+                </a>
+                <a
+                  href="tel:+919829056597"
+                  style={{
+                    color: "var(--md-champagne)",
+                    textDecoration: "none",
+                    fontSize: "var(--md-t-small)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  <span>📞</span> +91 98290 56597
+                </a>
+                <a
+                  href="https://wa.me/919828156465?text=Hello%20Millennium%20Designs,%20I%20would%20like%20to%20enquire%20about%20your%20jewellery%20creations."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "var(--md-green)",
+                    textDecoration: "none",
+                    fontSize: "var(--md-t-small)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontWeight: 600,
+                  }}
+                >
+                  <span>💬</span> Official WhatsApp Concierge
+                </a>
+              </div>
+            </div>
           </div>
         )}
 

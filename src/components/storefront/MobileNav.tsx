@@ -414,7 +414,7 @@ export function MobileNav({
               onClick={() => setIsOpen(false)}
               style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 500 }}
             >
-              My Account / Client Vault
+              My Account
             </Link>
             <Link
               href={`${marketPrefix}/login`}
@@ -423,6 +423,16 @@ export function MobileNav({
             >
               Sign In
             </Link>
+          </div>
+
+          <div style={{ display: "flex", gap: "8px", fontSize: "0.75rem", justifyContent: "center", paddingTop: "4px", borderTop: "1px solid var(--md-rule)" }}>
+            <a href="tel:+919828156465" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
+              📞 +91 98281 56465
+            </a>
+            <span style={{ color: "var(--md-fg-muted)" }}>·</span>
+            <a href="tel:+919829056597" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
+              +91 98290 56597
+            </a>
           </div>
         </div>
       </div>

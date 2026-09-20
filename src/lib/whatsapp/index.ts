@@ -3,7 +3,9 @@
  * Provides pre-filled concierge links, order assistance, and server-side notification stubs.
  */
 
-export const MILLENNIUM_WHATSAPP_NUMBER = "919820000000"; // Official Millennium Designs Concierge
+export const MILLENNIUM_WHATSAPP_NUMBER = "919828156465"; // Official Millennium Designs Concierge (+91 98281 56465)
+export const MILLENNIUM_SECONDARY_PHONE = "919829056597"; // Secondary Concierge (+91 98290 56597)
+export const MILLENNIUM_ADDRESS = "Millenium Designs, 5, Noor Plaza, Chameliwala Market, M.I. Road, Jaipur, 302001";
 
 export function buildWhatsAppInquiryUrl(options: {
   orderNumber?: string;

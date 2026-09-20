@@ -49,7 +49,7 @@ export default function AccountPage() {
   if (loading) {
     return (
       <div style={{ padding: "80px var(--md-gutter)", textAlign: "center" }}>
-        <p style={{ color: "var(--md-fg-muted)" }}>Accessing client vault…</p>
+        <p style={{ color: "var(--md-fg-muted)" }}>Accessing client account…</p>
       </div>
     );
   }
@@ -86,7 +86,7 @@ export default function AccountPage() {
               margin: "0 0 var(--md-space-2)",
             }}
           >
-            Private Client Vault
+            My Account
           </p>
           <h1
             style={{

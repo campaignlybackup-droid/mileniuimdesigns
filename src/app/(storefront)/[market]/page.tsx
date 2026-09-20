@@ -232,7 +232,7 @@ export default async function StorefrontHomePage({
                 transition: "border-color 180ms ease, background 180ms ease",
               }}
             >
-              <span>Private Vault Appointment</span>
+              <span>WhatsApp Atelier Consultation</span>
             </a>
           </div>
 
@@ -241,7 +241,7 @@ export default async function StorefrontHomePage({
             <Link href={`${prefix}/rings`} className="md-hero-door-card">
               <div>
                 <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
-                  SUITE NO. 01
+                  01 · FINE JEWELLERY
                 </span>
                 <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
                   High Jewellery Rings
@@ -251,14 +251,14 @@ export default async function StorefrontHomePage({
                 </p>
               </div>
               <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
-                Explore Suite →
+                Shop Rings →
               </span>
             </Link>
 
             <Link href={`${prefix}/pendants`} className="md-hero-door-card">
               <div>
                 <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
-                  SUITE NO. 02
+                  02 · FINE JEWELLERY
                 </span>
                 <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
                   Courtly Pendants &amp; Chains
@@ -268,31 +268,31 @@ export default async function StorefrontHomePage({
                 </p>
               </div>
               <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
-                Explore Suite →
+                Shop Pendants →
               </span>
             </Link>
 
             <Link href={`${prefix}/stones`} className="md-hero-door-card">
               <div>
                 <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
-                  SUITE NO. 03
+                  03 · NATURAL MINERALS
                 </span>
                 <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
-                  Natural Gemstone Vault
+                  Natural Gemstones
                 </h3>
                 <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "var(--md-fg-inverse-muted)", lineHeight: 1.4 }}>
                   Archival unheated stones &amp; minerals
                 </p>
               </div>
               <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
-                Explore Vault →
+                Explore Stones →
               </span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── 2. THE MASTERPIECE CREATION SUITES ───────────────────────── */}
+      {/* ── 2. THE MASTERPIECE CREATIONS ───────────────────────── */}
       {featuredProducts.length > 0 && (
         <section
           style={{
@@ -322,7 +322,7 @@ export default async function StorefrontHomePage({
                 marginBottom: 8,
               }}
             >
-              HAUTE JOAILLERIE · SUITE NO. 01
+              HAUTE JOAILLERIE · MASTERPIECES
             </span>
             <h2
               style={{
@@ -602,7 +602,7 @@ export default async function StorefrontHomePage({
                 marginBottom: 8,
               }}
             >
-              THE ATELIER SUITES
+              SIGNATURE COLLECTIONS
             </span>
             <h2
               style={{
@@ -624,7 +624,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.6,
               }}
             >
-              From Venetian box link weaves to courtly emerald solitaires, explore our signature suites.
+              From Venetian box link weaves to courtly emerald solitaires, explore our signature collections.
             </p>
           </div>
 
@@ -716,7 +716,7 @@ export default async function StorefrontHomePage({
                       gap: 6,
                     }}
                   >
-                    <span>Explore Suite</span>
+                    <span>Shop Collection</span>
                     <span>→</span>
                   </div>
                 </div>
@@ -901,7 +901,7 @@ export default async function StorefrontHomePage({
                 marginBottom: 8,
               }}
             >
-              THE MINERALOGICAL VAULT
+              NATURAL GEMSTONE COLLECTION
             </span>
             <h2
               style={{
@@ -1002,7 +1002,7 @@ export default async function StorefrontHomePage({
               maxWidth: "680px",
             }}
           >
-            Collaborate directly with Amit &amp; Saket Agarwal and our master bench goldsmiths. Whether creating a custom bridal suite, resetting an heirloom emerald, or crafting a bespoke signature piece, our Jaipur atelier brings your vision to life.
+            Collaborate directly with Amit &amp; Saket Agarwal and our master bench goldsmiths. Whether creating a custom bridal jewellery set, resetting an heirloom emerald, or crafting a bespoke signature piece, our Jaipur atelier brings your vision to life.
           </p>
 
           <div
@@ -1035,7 +1035,7 @@ export default async function StorefrontHomePage({
                 boxShadow: "0 10px 28px -6px rgba(0, 156, 23, 0.45)",
               }}
             >
-              <span>Connect with VIP Concierge</span>
+              <span>WhatsApp Atelier Concierge</span>
               <span>→</span>
             </a>
 
@@ -1057,6 +1057,38 @@ export default async function StorefrontHomePage({
             >
               Explore Atelier Techniques
             </Link>
+          </div>
+
+          {/* Official Atelier Address & Direct Phone Card */}
+          <div
+            style={{
+              marginTop: "var(--md-space-3)",
+              padding: "16px 24px",
+              borderRadius: "var(--md-radius-sm)",
+              background: "rgba(4, 14, 9, 0.65)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "clamp(12px, 3vw, 28px)",
+              fontSize: "0.8125rem",
+              color: "var(--md-fg-inverse-muted)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ color: "var(--md-champagne)" }}>📍</span>
+              <span>Millenium Designs, 5, Noor Plaza, Chameliwala Market, M.I. Road, Jaipur, 302001</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <a href="tel:+919828156465" style={{ color: "var(--md-champagne)", textDecoration: "none", fontWeight: 600 }}>
+                📞 +91 98281 56465
+              </a>
+              <span>·</span>
+              <a href="tel:+919829056597" style={{ color: "var(--md-champagne)", textDecoration: "none", fontWeight: 600 }}>
+                +91 98290 56597
+              </a>
+            </div>
           </div>
         </div>
       </section>
