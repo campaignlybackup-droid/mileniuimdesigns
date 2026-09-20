@@ -196,7 +196,7 @@ export default async function ProductDetailPage({
         <div
           className="md-pdp-layout"
           style={{
-            paddingTop: "var(--md-space-6)",
+            paddingTop: "clamp(12px, 2.5vw, 24px)",
           }}
         >
           {/* Mobile Gallery */}

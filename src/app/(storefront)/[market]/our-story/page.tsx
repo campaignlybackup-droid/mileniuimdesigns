@@ -55,7 +55,7 @@ export default async function OurStoryPage({
         style={{
           position: "relative",
           width: "100%",
-          minHeight: "clamp(560px, 82vh, 920px)",
+          minHeight: "clamp(460px, 68vh, 780px)",
           background:
             "radial-gradient(ellipse at 60% 20%, var(--md-emerald-deep) 0%, var(--md-forest) 45%, var(--md-green-black) 100%)",
           display: "flex",
@@ -63,7 +63,7 @@ export default async function OurStoryPage({
           justifyContent: "center",
           alignItems: "flex-start",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-10) var(--md-space-9)",
+          paddingBlock: "clamp(48px, 6vw, 96px)",
           overflow: "hidden",
         }}
       >

@@ -168,7 +168,7 @@ export default async function CategoryPage({
         {/* Header section */}
         <header
           style={{
-            paddingBlock: "var(--md-space-8) var(--md-space-6)",
+            paddingBlock: "clamp(16px, 3vw, 36px) clamp(12px, 2.5vw, 24px)",
             borderBottom: isOneOfAKind ? "1px solid var(--md-green, var(--md-rule))" : "1px solid var(--md-rule)",
           }}
         >
@@ -187,8 +187,8 @@ export default async function CategoryPage({
           {isOneOfAKind && (
             <p
               style={{
-                margin: "var(--md-space-3) 0 0 0",
-                fontSize: "1.125rem",
+                margin: "var(--md-space-2) 0 0 0",
+                fontSize: "1.0625rem",
                 fontStyle: "italic",
                 opacity: 0.85,
               }}
@@ -203,9 +203,9 @@ export default async function CategoryPage({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginTop: "var(--md-space-6)",
+              marginTop: "clamp(12px, 2vw, 20px)",
               flexWrap: "wrap",
-              gap: "var(--md-space-4)",
+              gap: "var(--md-space-3)",
             }}
           >
             <div className="md-mobile-only" style={{ display: filterGroups.length > 0 ? "block" : "none" }}>
@@ -223,7 +223,7 @@ export default async function CategoryPage({
           style={{
             display: "flex",
             gap: "var(--md-space-8)",
-            paddingTop: "var(--md-space-8)",
+            paddingTop: "clamp(16px, 2.5vw, 32px)",
             alignItems: "flex-start",
           }}
         >

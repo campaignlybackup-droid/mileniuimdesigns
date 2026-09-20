@@ -67,19 +67,22 @@ export default async function StorefrontHomePage({
         boxSizing: "border-box",
       }}
     >
-      {/* ── 1. HAUTE JOAILLERIE MOTION GRAPHIC HERO ─────────────────── */}
+      {/* ── 1. HAUTE JOAILLERIE ARCHITECTURAL HERO ───────────────────── */}
       <section
         style={{
           position: "relative",
           width: "100%",
-          minHeight: "clamp(640px, 90vh, 960px)",
-          background: "radial-gradient(ellipse at 50% 20%, #003d1f 0%, #062e1b 45%, #040e09 100%)",
+          minHeight: "clamp(480px, 68vh, 660px)",
+          background: "radial-gradient(ellipse at 50% 15%, #00381c 0%, #062416 50%, #030e08 100%)",
           color: "var(--md-fg-inverse)",
           display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-10) var(--md-space-8)",
+          paddingBlock: "clamp(36px, 5vw, 56px)",
           overflow: "hidden",
+          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
         }}
       >
         {/* Sacred Geometry Celestial Grid Watermark */}
@@ -90,7 +93,23 @@ export default async function StorefrontHomePage({
             inset: 0,
             opacity: 0.035,
             backgroundImage: "radial-gradient(circle at 50% 50%, var(--md-champagne) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundSize: "36px 36px",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Ambient Warm Golden Ray */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "-10%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "clamp(320px, 60vw, 700px)",
+            height: "260px",
+            background: "radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--md-champagne) 18%, transparent) 0%, transparent 70%)",
+            filter: "blur(40px)",
             pointerEvents: "none",
           }}
         />
@@ -102,284 +121,173 @@ export default async function StorefrontHomePage({
             width: "100%",
             maxWidth: "var(--md-container)",
             marginInline: "auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(36px, 6vw, 80px)",
+            display: "flex",
+            flexDirection: "column",
             alignItems: "center",
+            textAlign: "center",
           }}
         >
-          {/* Left Column: Minimal, High-Impact Luxury Narrative */}
+          {/* Heritage Archival Seal */}
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "var(--md-space-4)",
-              textAlign: "left",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "5px 14px",
+              borderRadius: "var(--md-radius-sm)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
+              background: "color-mix(in srgb, var(--md-green-black) 75%, transparent)",
+              fontSize: "0.6875rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--md-champagne)",
+              fontWeight: 600,
+              fontFamily: "var(--md-font-crest), Georgia, serif",
+              marginBottom: "var(--md-space-3)",
             }}
           >
-            {/* Heritage Archival Seal */}
-            <div
-              style={{
-                alignSelf: "flex-start",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 16px",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
-                background: "color-mix(in srgb, var(--md-green-black) 75%, transparent)",
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                fontWeight: 600,
-                fontFamily: "var(--md-font-crest), Georgia, serif",
-              }}
-            >
-              <span>✦ JOHARI BAZAAR · JAIPUR · EST. 1961</span>
-            </div>
-
-            <h1
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2.5rem, 5.2vw, 4.5rem)",
-                lineHeight: 1.08,
-                fontWeight: 400,
-                letterSpacing: "-0.015em",
-                color: "var(--md-fg-inverse)",
-                textWrap: "balance",
-              }}
-            >
-              Rare Emeralds.
-              <br />
-              Ancestral Jaipur Fire.
-            </h1>
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
-                lineHeight: 1.65,
-                color: "var(--md-fg-inverse-muted)",
-                maxWidth: "520px",
-              }}
-            >
-              Sixty-five years of Johari lineage. Forged in sovereign anti-tarnish 925 silver, crowned with courtly Colombian emeralds, and hallmarked under our own Jaipur roof.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "var(--md-space-4)",
-                paddingTop: "var(--md-space-2)",
-              }}
-            >
-              <Link
-                href={`${prefix}/rings`}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: 50,
-                  paddingInline: "34px",
-                  background: "var(--md-bg-inverse)",
-                  color: "var(--md-ivory-soft)",
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  borderRadius: "var(--md-radius-sm)",
-                  border: "1px solid color-mix(in srgb, var(--md-champagne) 45%, transparent)",
-                  boxShadow: "0 10px 30px -8px rgba(0, 61, 31, 0.6)",
-                  transition: "transform 200ms ease, box-shadow 200ms ease",
-                }}
-              >
-                Explore The Collections →
-              </Link>
-
-              <a
-                href={whatsappConsultationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                  height: 50,
-                  paddingInline: "26px",
-                  border: "1px solid color-mix(in srgb, var(--md-fg-inverse) 32%, transparent)",
-                  background: "color-mix(in srgb, var(--md-green-black) 50%, transparent)",
-                  color: "var(--md-fg-inverse)",
-                  fontSize: "0.8125rem",
-                  fontWeight: 500,
-                  letterSpacing: "0.08em",
-                  textDecoration: "none",
-                  borderRadius: "var(--md-radius-sm)",
-                  transition: "border-color 200ms ease, background 200ms ease",
-                }}
-              >
-                <span>Private Vault Appointment</span>
-              </a>
-            </div>
-
-            {/* Archival Lineage Assurance */}
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "clamp(16px, 2.5vw, 32px)",
-                marginTop: "var(--md-space-4)",
-                paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
-                fontSize: "0.75rem",
-                letterSpacing: "0.08em",
-                color: "var(--md-fg-inverse-muted)",
-              }}
-            >
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                ✦ 1961 Johari Lineage
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                ✦ Anti-Tarnish Metallurgy
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                ✦ Insured Worldwide Delivery
-              </span>
-            </div>
+            <span>✦ JOHARI BAZAAR, JAIPUR · EST. 1961 ✦</span>
           </div>
 
-          {/* Right Column: Museum-Grade High Jewelry Showcase */}
-          <div
+          <h1
             style={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
+              margin: 0,
+              fontFamily: "var(--md-font-display)",
+              fontSize: "clamp(2.35rem, 5.2vw, 4.25rem)",
+              lineHeight: 1.08,
+              fontWeight: 400,
+              letterSpacing: "-0.015em",
+              color: "var(--md-fg-inverse)",
+              maxWidth: "920px",
+              textWrap: "balance",
             }}
           >
-            {/* Ambient Golden Halo */}
-            <div
+            The Haute Joaillerie Atelier of Jaipur
+          </h1>
+
+          <p
+            style={{
+              margin: "var(--md-space-3) auto 0",
+              fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
+              lineHeight: 1.65,
+              color: "var(--md-fg-inverse-muted)",
+              maxWidth: "560px",
+            }}
+          >
+            Courtly Colombian emeralds and cold-forged anti-tarnish 925 silver. Cast, set, and hallmarked under our own roof since 1961.
+          </p>
+
+          {/* Primary Action Buttons */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "var(--md-space-3)",
+              justifyContent: "center",
+              paddingTop: "var(--md-space-4)",
+            }}
+          >
+            <Link
+              href={`${prefix}/rings`}
               style={{
-                position: "absolute",
-                inset: "-20px",
-                background: "radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--md-champagne) 20%, transparent) 0%, transparent 68%)",
-                pointerEvents: "none",
-                filter: "blur(24px)",
-              }}
-            />
-
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: "520px",
-                aspectRatio: "4 / 3",
-                overflow: "hidden",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
-                boxShadow: "0 28px 64px -16px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--md-champagne) 20%, transparent)",
-              }}
-            >
-              <Image
-                src="/images/hero-emerald-ring.jpg"
-                alt="The Sovereign Colombian Emerald & Sculpted Silver Ring — Jaipur Atelier 1961"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 520px"
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center",
-                  transition: "transform 800ms var(--md-ease)",
-                }}
-              />
-
-              {/* Refined atelier provenance overlay */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(to top, rgba(6, 19, 13, 0.85) 0%, transparent 40%)",
-                  pointerEvents: "none",
-                }}
-              />
-
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "16px",
-                  left: "20px",
-                  right: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                }}
-              >
-                <div>
-                  <span
-                    style={{
-                      fontSize: "0.5625rem",
-                      letterSpacing: "0.22em",
-                      textTransform: "uppercase",
-                      color: "var(--md-champagne)",
-                      fontFamily: "var(--md-font-crest), Georgia, serif",
-                      display: "block",
-                      marginBottom: "2px",
-                    }}
-                  >
-                    ARCHIVAL MASTERPIECE
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--md-font-display)",
-                      fontSize: "1.0625rem",
-                      color: "var(--md-fg-inverse)",
-                      fontWeight: 400,
-                      letterSpacing: "0.02em",
-                    }}
-                  >
-                    The Sovereign Emerald Ring
-                  </span>
-                </div>
-
-                <div
-                  style={{
-                    fontSize: "0.625rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--md-champagne)",
-                    background: "rgba(6, 19, 13, 0.85)",
-                    border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-                    padding: "3px 8px",
-                    borderRadius: "2px",
-                    fontFamily: "var(--md-font-crest), Georgia, serif",
-                  }}
-                >
-                  925 Silver · 18K Gold
-                </div>
-              </div>
-            </div>
-
-            {/* Subtle Archival Caption */}
-            <div
-              style={{
-                marginTop: "var(--md-space-3)",
-                textAlign: "center",
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 48,
+                paddingInline: "32px",
+                background: "var(--md-champagne)",
+                color: "var(--md-green-black)",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                fontFamily: "var(--md-font-crest), Georgia, serif",
-                opacity: 0.9,
+                textDecoration: "none",
+                borderRadius: "var(--md-radius-sm)",
+                transition: "transform 180ms ease, box-shadow 180ms ease",
+                boxShadow: "0 8px 24px -6px rgba(200, 178, 122, 0.45)",
               }}
             >
-              <span>COLOMBIAN STEP-CUT EMERALD · COLD-FORGED JAIPUR 1961</span>
-            </div>
+              Explore Creations →
+            </Link>
+
+            <a
+              href={whatsappConsultationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                height: 48,
+                paddingInline: "24px",
+                border: "1px solid color-mix(in srgb, var(--md-fg-inverse) 32%, transparent)",
+                background: "color-mix(in srgb, var(--md-green-black) 50%, transparent)",
+                color: "var(--md-fg-inverse)",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+                borderRadius: "var(--md-radius-sm)",
+                transition: "border-color 180ms ease, background 180ms ease",
+              }}
+            >
+              <span>Private Vault Appointment</span>
+            </a>
+          </div>
+
+          {/* Integrated Three-Door Architectural Discovery Portal */}
+          <div className="md-hero-doors" style={{ marginTop: "clamp(28px, 4vw, 44px)" }}>
+            <Link href={`${prefix}/rings`} className="md-hero-door-card">
+              <div>
+                <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
+                  SUITE NO. 01
+                </span>
+                <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
+                  High Jewellery Rings
+                </h3>
+                <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "var(--md-fg-inverse-muted)", lineHeight: 1.4 }}>
+                  Colombian emeralds &amp; sculpted silver
+                </p>
+              </div>
+              <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
+                Explore Suite →
+              </span>
+            </Link>
+
+            <Link href={`${prefix}/pendants`} className="md-hero-door-card">
+              <div>
+                <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
+                  SUITE NO. 02
+                </span>
+                <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
+                  Courtly Pendants &amp; Chains
+                </h3>
+                <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "var(--md-fg-inverse-muted)", lineHeight: 1.4 }}>
+                  Byzantine weaves &amp; royal seals
+                </p>
+              </div>
+              <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
+                Explore Suite →
+              </span>
+            </Link>
+
+            <Link href={`${prefix}/stones`} className="md-hero-door-card">
+              <div>
+                <span style={{ fontSize: "0.5625rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--md-champagne)", fontFamily: "var(--md-font-crest), Georgia, serif", display: "block", marginBottom: "4px" }}>
+                  SUITE NO. 03
+                </span>
+                <h3 style={{ margin: 0, fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", fontWeight: 400 }}>
+                  Natural Gemstone Vault
+                </h3>
+                <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "var(--md-fg-inverse-muted)", lineHeight: 1.4 }}>
+                  Archival unheated stones &amp; minerals
+                </p>
+              </div>
+              <span style={{ marginTop: "12px", fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
+                Explore Vault →
+              </span>
+            </Link>
           </div>
         </div>
       </section>
@@ -391,7 +299,7 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "var(--md-space-11) var(--md-space-9)",
+            paddingBlock: "clamp(40px, 5vw, 68px)",
           }}
         >
           <div
@@ -400,7 +308,7 @@ export default async function StorefrontHomePage({
               flexDirection: "column",
               alignItems: "center",
               textAlign: "center",
-              marginBottom: "var(--md-space-8)",
+              marginBottom: "clamp(24px, 3.5vw, 36px)",
             }}
           >
             <span
@@ -436,7 +344,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.6,
               }}
             >
-              Individually documented creations, hallmarked and archived for private collectors and haute joaillerie connoisseurs.
+              Individually documented creations, hallmarked and archived for private collectors and connoisseurs.
             </p>
           </div>
 
@@ -460,7 +368,7 @@ export default async function StorefrontHomePage({
           borderTop: "1px solid var(--md-rule)",
           borderBottom: "1px solid var(--md-rule)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-11) var(--md-space-11)",
+          paddingBlock: "clamp(40px, 5vw, 68px)",
         }}
       >
         <div
@@ -472,7 +380,7 @@ export default async function StorefrontHomePage({
           <div
             style={{
               textAlign: "center",
-              marginBottom: "var(--md-space-9)",
+              marginBottom: "clamp(24px, 3.5vw, 36px)",
             }}
           >
             <span
@@ -507,7 +415,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.6,
               }}
             >
-              How our grandfather’s 1961 founding doctrine in Johari Bazaar continues to govern every creation forged in our Jaipur atelier.
+              How our 1961 founding doctrine in Johari Bazaar continues to govern every creation forged in our Jaipur atelier.
             </p>
           </div>
 
@@ -546,7 +454,7 @@ export default async function StorefrontHomePage({
                 The Johari Emerald Lineage
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
-                Founded in 1961 by B. L. Agarwal in Jaipur’s historic jewel quarter, curating rare Colombian and Zambian emeralds with uncompromising authenticity.
+                Founded in 1961 in Jaipur’s historic jewel quarter, curating rare Colombian and Zambian emeralds with uncompromising authenticity.
               </p>
             </div>
 
@@ -654,10 +562,10 @@ export default async function StorefrontHomePage({
                   color: "var(--md-fg)",
                 }}
               >
-                Direct Artisan Bench Provenance
+                Direct Bench Provenance
               </h3>
               <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
-                Over 25 years presenting at Basel, Vicenza, and New York. Collectors acquire museum-grade jewellery directly from the master bench.
+                Over 25 years presenting at Basel, Vicenza, and New York. Collectors acquire museum-grade pieces directly from our master bench.
               </p>
             </div>
           </div>
@@ -671,7 +579,7 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "var(--md-space-11) var(--md-space-11)",
+            paddingBlock: "clamp(40px, 5vw, 68px)",
           }}
         >
           <div
@@ -680,7 +588,7 @@ export default async function StorefrontHomePage({
               flexDirection: "column",
               alignItems: "center",
               textAlign: "center",
-              marginBottom: "var(--md-space-9)",
+              marginBottom: "clamp(24px, 3.5vw, 36px)",
             }}
           >
             <span
@@ -716,7 +624,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.6,
               }}
             >
-              From Venetian box link weaves to courtly emerald solitaires, explore our signature collections.
+              From Venetian box link weaves to courtly emerald solitaires, explore our signature suites.
             </p>
           </div>
 
@@ -724,7 +632,7 @@ export default async function StorefrontHomePage({
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))",
-              gap: "var(--md-space-6)",
+              gap: "clamp(16px, 2.5vw, 24px)",
             }}
           >
             {categories.map((c) => (
@@ -808,7 +716,7 @@ export default async function StorefrontHomePage({
                       gap: 6,
                     }}
                   >
-                    <span>Explore The Collection</span>
+                    <span>Explore Suite</span>
                     <span>→</span>
                   </div>
                 </div>
@@ -818,13 +726,13 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 5. THE GENERATIONAL MONOGRAPH (HISTORICAL NARRATIVE) ─────── */}
+      {/* ── 5. THE ATELIER HERITAGE TEASER (NON-DUPLICATIVE) ─────── */}
       <section
         style={{
           background: "var(--md-bg-inverse)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-11) var(--md-space-11)",
+          paddingBlock: "clamp(44px, 6vw, 76px)",
           position: "relative",
           overflow: "hidden",
         }}
@@ -834,13 +742,13 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(36px, 6vw, 80px)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))",
+            gap: "clamp(32px, 5vw, 64px)",
             alignItems: "center",
           }}
         >
-          {/* Historical Narrative */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-5)" }}>
+          {/* Historical Teaser & Philosophy */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
             <span
               style={{
                 fontSize: "0.75rem",
@@ -851,64 +759,55 @@ export default async function StorefrontHomePage({
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              MONOGRAPH · PUSHPAK JEWELS TO MILLENNIUM DESIGNS
+              THE JAIPUR MAISON · EST. 1961
             </span>
 
             <h2
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2.25rem, 4vw, 3.5rem)",
-                lineHeight: 1.1,
+                fontSize: "clamp(2rem, 3.6vw, 3.125rem)",
+                lineHeight: 1.15,
                 fontWeight: 400,
                 color: "var(--md-fg-inverse)",
+                fontStyle: "italic",
               }}
             >
-              A Sixty-Five Year Legacy of Jaipur Mastery
+              “We do not forge for fleeting seasons. We sculpt sovereign heirlooms for generations.”
             </h2>
 
             <p
               style={{
                 margin: 0,
-                fontSize: "1.0625rem",
+                fontSize: "1rem",
                 lineHeight: 1.7,
                 color: "var(--md-fg-inverse-muted)",
               }}
             >
-              The story began in 1961, when our grandfather B. L. Agarwal founded Pushpak Jewels in Jaipur. Specializing in royal court emerald jewelry, he built a business rooted in trust, mineral authenticity, and exceptional craftsmanship.
+              From our grandfather&apos;s 1961 beginnings in Jaipur&apos;s Johari Bazaar to international salons across Basel and New York, our family has practiced single-roof goldsmithing for over six decades.
             </p>
 
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.9375rem",
-                lineHeight: 1.7,
-                color: "var(--md-fg-inverse-muted)",
-              }}
-            >
-              In 1999, the next generation—Amit Agarwal and Saket Agarwal—expanded the family dynasty into international fine silver jewelry. Showcasing at Basel, Vicenza, and New York, Pushpak Jewels transformed into Millennium Designs: uniting generational stone mastery with world-class metallurgy and design.
-            </p>
-
-            <div style={{ marginTop: "var(--md-space-3)", display: "flex", gap: "var(--md-space-4)", flexWrap: "wrap" }}>
+            <div style={{ marginTop: "var(--md-space-2)", display: "flex", gap: "var(--md-space-4)", flexWrap: "wrap" }}>
               <Link
                 href={`${prefix}/our-story`}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  height: 50,
-                  paddingInline: "32px",
+                  height: 48,
+                  paddingInline: "28px",
                   background: "var(--md-champagne)",
                   color: "var(--md-green-black)",
-                  fontSize: "0.8125rem",
+                  fontSize: "0.75rem",
                   fontWeight: 600,
-                  letterSpacing: "0.12em",
+                  letterSpacing: "0.14em",
                   textTransform: "uppercase",
                   textDecoration: "none",
                   borderRadius: "var(--md-radius-sm)",
+                  transition: "transform 180ms ease, box-shadow 180ms ease",
                 }}
               >
-                Read The Full Monograph →
+                Read The Full Heritage Monograph →
               </Link>
             </div>
           </div>
@@ -926,7 +825,7 @@ export default async function StorefrontHomePage({
           >
             <Image
               src="/images/categories/pendants.jpg"
-              alt="Pushpak Jewels and Millennium Designs Archival Craftsmanship"
+              alt="Pushpak Jewels to Millennium Designs Archival Craftsmanship"
               fill
               sizes="(max-width: 768px) 100vw, 500px"
               style={{ objectFit: "cover" }}
@@ -942,10 +841,10 @@ export default async function StorefrontHomePage({
             <div
               style={{
                 position: "absolute",
-                bottom: 24,
-                left: 24,
-                right: 24,
-                padding: "18px 24px",
+                bottom: 20,
+                left: 20,
+                right: 20,
+                padding: "16px 20px",
                 background: "rgba(4, 14, 9, 0.88)",
                 backdropFilter: "blur(14px)",
                 borderRadius: "var(--md-radius-sm)",
@@ -957,14 +856,14 @@ export default async function StorefrontHomePage({
               }}
             >
               <div>
-                <div style={{ fontSize: "0.6875rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--md-champagne)" }}>
-                  FOUNDED IN JOHARI BAZAAR
+                <div style={{ fontSize: "0.625rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--md-champagne)" }}>
+                  JOHARI BAZAAR ARCHIVES
                 </div>
-                <div style={{ fontFamily: "var(--md-font-display)", fontSize: "1.125rem", marginTop: 2 }}>
-                  Pushpak Jewels · 1961
+                <div style={{ fontFamily: "var(--md-font-display)", fontSize: "1.0625rem", marginTop: 2 }}>
+                  Pushpak Jewels to Millennium Designs
                 </div>
               </div>
-              <span style={{ fontSize: "0.875rem", color: "var(--md-champagne)", fontWeight: 600, fontFamily: "var(--md-font-crest), Georgia, serif" }}>
+              <span style={{ fontSize: "0.8125rem", color: "var(--md-champagne)", fontWeight: 600, fontFamily: "var(--md-font-crest), Georgia, serif" }}>
                 EST. 1961
               </span>
             </div>
@@ -979,7 +878,7 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "var(--md-space-11) var(--md-space-11)",
+            paddingBlock: "clamp(40px, 5vw, 68px)",
           }}
         >
           <div
@@ -988,7 +887,7 @@ export default async function StorefrontHomePage({
               flexDirection: "column",
               alignItems: "center",
               textAlign: "center",
-              marginBottom: "var(--md-space-9)",
+              marginBottom: "clamp(24px, 3.5vw, 36px)",
             }}
           >
             <span
@@ -1032,7 +931,7 @@ export default async function StorefrontHomePage({
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 140px), 1fr))",
-              gap: "var(--md-space-4)",
+              gap: "clamp(10px, 1.8vw, 16px)",
             }}
           >
             {stones.map((stone) => (
@@ -1052,7 +951,7 @@ export default async function StorefrontHomePage({
           background: "radial-gradient(ellipse at 50% 50%, #062e1b 0%, #040e09 100%)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-11) var(--md-space-11)",
+          paddingBlock: "clamp(44px, 6vw, 76px)",
           borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
           borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
         }}
@@ -1065,7 +964,7 @@ export default async function StorefrontHomePage({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "var(--md-space-5)",
+            gap: "clamp(16px, 2.5vw, 24px)",
           }}
         >
           <span
@@ -1103,16 +1002,16 @@ export default async function StorefrontHomePage({
               maxWidth: "680px",
             }}
           >
-            Collaborate directly with Amit &amp; Saket Agarwal and our master bench goldsmiths. Whether creating a custom bridal suite, resetting an heirloom emerald, or crafting a bespoke signature monogram, our Jaipur atelier brings your distinct vision to life.
+            Collaborate directly with Amit &amp; Saket Agarwal and our master bench goldsmiths. Whether creating a custom bridal suite, resetting an heirloom emerald, or crafting a bespoke signature piece, our Jaipur atelier brings your vision to life.
           </p>
 
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "var(--md-space-4)",
+              gap: "var(--md-space-3)",
               justifyContent: "center",
-              marginTop: "var(--md-space-3)",
+              marginTop: "var(--md-space-2)",
             }}
           >
             <a
@@ -1123,8 +1022,8 @@ export default async function StorefrontHomePage({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                height: 52,
-                paddingInline: "36px",
+                height: 50,
+                paddingInline: "32px",
                 background: "var(--md-green)",
                 color: "var(--md-ivory-soft)",
                 fontSize: "0.8125rem",
@@ -1145,7 +1044,7 @@ export default async function StorefrontHomePage({
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                height: 52,
+                height: 50,
                 paddingInline: "28px",
                 border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
                 color: "var(--md-champagne)",
@@ -1168,7 +1067,7 @@ export default async function StorefrontHomePage({
           maxWidth: "var(--md-container-text)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-11) var(--md-space-11)",
+          paddingBlock: "clamp(40px, 5vw, 68px)",
           textAlign: "center",
         }}
       >
@@ -1197,7 +1096,7 @@ export default async function StorefrontHomePage({
         </h2>
         <p
           style={{
-            margin: "10px auto 28px",
+            margin: "10px auto 24px",
             maxWidth: "480px",
             fontSize: "0.9375rem",
             color: "var(--md-fg-secondary)",

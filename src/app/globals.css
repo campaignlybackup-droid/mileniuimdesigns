@@ -350,7 +350,7 @@ img[data-tone="ivory"] {
 .md-pdp-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--md-space-6);
+  gap: clamp(16px, 3.5vw, 28px);
 }
 
 @media (min-width: 1024px) {
@@ -379,6 +379,49 @@ img[data-tone="ivory"] {
   .md-four-pillars-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: clamp(24px, 3vw, 40px);
+  }
+}
+
+/* ── Hero Architectural Discovery Doors ── */
+.md-hero-doors {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .md-hero-doors {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+.md-hero-door-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: color-mix(in srgb, var(--md-green-black) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-champagne) 26%, transparent);
+  border-radius: var(--md-radius-sm);
+  text-decoration: none;
+  transition: all 220ms ease;
+}
+
+.md-hero-door-card:hover {
+  background: color-mix(in srgb, var(--md-champagne) 14%, transparent);
+  border-color: var(--md-champagne);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 639px) {
+  :root {
+    --md-gutter: 14px;
+  }
+  
+  .md-product-grid {
+    gap: 12px !important;
   }
 }
 
