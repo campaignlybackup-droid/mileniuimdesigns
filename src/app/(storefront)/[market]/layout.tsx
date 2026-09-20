@@ -79,13 +79,51 @@ export default async function MarketLayout({
   const isPrimary = primary ? resolved.code === primary.code : false;
   const marketSegment = isPrimary ? "" : resolved.code.toLowerCase();
 
-  const navigation = [
-    ...categories.map((c) => ({
-      label: c.name.toUpperCase(),
-      href: `/${c.slug}`,
-    })),
-    { label: "GEMSTONES", href: "/stones" },
-  ];
+  // User-specified exact taxonomy order:
+  // Ring, Pendant, Earrings, Jewellery Set, Stones, Closeouts, 14 Carat Gold, Lab Grown Diamond, One of a Kind, Chain
+  const orderRank: Record<string, number> = {
+    rings: 1,
+    pendants: 2,
+    earrings: 3,
+    "jewellery-sets": 4,
+    bracelets: 4,
+    stones: 5,
+    closeouts: 6,
+    "14k-gold": 7,
+    "lab-grown-diamonds": 8,
+    "one-of-a-kind": 9,
+    chains: 10,
+  };
+
+  const navMap = new Map<string, { label: string; href: string; rank: number }>();
+  for (const c of categories) {
+    const slugKey = c.slug === "bracelets" ? "jewellery-sets" : c.slug;
+    const nameLabel =
+      c.slug === "bracelets" || c.slug === "jewellery-sets"
+        ? "JEWELLERY SETS"
+        : c.slug === "14k-gold"
+          ? "14 CARAT GOLD"
+          : c.slug === "lab-grown-diamonds"
+            ? "LAB GROWN DIAMOND"
+            : c.name.toUpperCase();
+    if (!navMap.has(slugKey)) {
+      navMap.set(slugKey, {
+        label: nameLabel,
+        href: `/${slugKey}`,
+        rank: orderRank[c.slug] ?? 99,
+      });
+    }
+  }
+
+  navMap.set("stones", {
+    label: "STONES",
+    href: "/stones",
+    rank: 5,
+  });
+
+  const navigation = Array.from(navMap.values())
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ label, href }) => ({ label, href }));
 
   const marketOptions = activeMarkets.map((m) => {
     const mIsPrimary = primary ? m.code === primary.code : false;
@@ -102,10 +140,15 @@ export default async function MarketLayout({
   const footerColumns = [
     {
       heading: "COLLECTIONS",
-      links: categories.map((c) => ({
-        label: c.name,
-        href: `${prefix}/${c.slug}`,
-      })),
+      links: [
+        { label: "Rings", href: `${prefix}/rings` },
+        { label: "Pendants", href: `${prefix}/pendants` },
+        { label: "Earrings", href: `${prefix}/earrings` },
+        { label: "Jewellery Sets", href: `${prefix}/jewellery-sets` },
+        { label: "Chains", href: `${prefix}/chains` },
+        { label: "14 Carat Gold", href: `${prefix}/14k-gold` },
+        { label: "Lab Grown Diamond", href: `${prefix}/lab-grown-diamonds` },
+      ],
     },
     {
       heading: "EXPLORE",

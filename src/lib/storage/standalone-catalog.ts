@@ -50,14 +50,15 @@ export const STANDALONE_MARKETS: Market[] = [
 
 export const STANDALONE_CATEGORIES = [
   { id: "c0000000-0000-4000-8000-000000000001", slug: "rings", name: "Rings", rank: 1 },
-  { id: "c0000000-0000-4000-8000-000000000002", slug: "chains", name: "Chains", rank: 2 },
-  { id: "c0000000-0000-4000-8000-000000000003", slug: "pendants", name: "Pendants", rank: 3 },
-  { id: "c0000000-0000-4000-8000-000000000004", slug: "bracelets", name: "Bracelets", rank: 4 },
-  { id: "c0000000-0000-4000-8000-000000000005", slug: "earrings", name: "Earrings", rank: 5 },
-  { id: "c0000000-0000-4000-8000-000000000006", slug: "closeouts", name: "Close Outs", rank: 6 },
-  { id: "c0000000-0000-4000-8000-000000000007", slug: "one-of-a-kind", name: "One of a Kind", rank: 7 },
-  { id: "c0000000-0000-4000-8000-000000000008", slug: "14k-gold", name: "14K Gold", rank: 8 },
-  { id: "c0000000-0000-4000-8000-000000000009", slug: "lab-grown-diamonds", name: "Lab Grown Diamonds", rank: 9 },
+  { id: "c0000000-0000-4000-8000-000000000003", slug: "pendants", name: "Pendants", rank: 2 },
+  { id: "c0000000-0000-4000-8000-000000000005", slug: "earrings", name: "Earrings", rank: 3 },
+  { id: "c0000000-0000-4000-8000-000000000004", slug: "jewellery-sets", name: "Jewellery Sets", rank: 4 },
+  { id: "c0000000-0000-4000-8000-000000000006", slug: "closeouts", name: "Closeouts", rank: 5 },
+  { id: "c0000000-0000-4000-8000-000000000008", slug: "14k-gold", name: "14 Carat Gold", rank: 6 },
+  { id: "c0000000-0000-4000-8000-000000000009", slug: "lab-grown-diamonds", name: "Lab Grown Diamond", rank: 7 },
+  { id: "c0000000-0000-4000-8000-000000000007", slug: "one-of-a-kind", name: "One of a Kind", rank: 8 },
+  { id: "c0000000-0000-4000-8000-000000000002", slug: "chains", name: "Chains", rank: 9 },
+  { id: "c0000000-0000-4000-8000-000000000004", slug: "bracelets", name: "Jewellery Sets", rank: 10 },
 ] as const;
 
 export const STANDALONE_STONES: StoneRecord[] = [
@@ -538,6 +539,12 @@ for (const p of STANDALONE_PRODUCTS) {
   const catList = PRODUCTS_BY_CATEGORY.get(p.categorySlug.toLowerCase()) || [];
   catList.push(p);
   PRODUCTS_BY_CATEGORY.set(p.categorySlug.toLowerCase(), catList);
+
+  if (p.categorySlug.toLowerCase() === "bracelets") {
+    const jList = PRODUCTS_BY_CATEGORY.get("jewellery-sets") || [];
+    jList.push(p);
+    PRODUCTS_BY_CATEGORY.set("jewellery-sets", jList);
+  }
 
   if (p.stoneSlug) {
     const stoneList = PRODUCTS_BY_STONE.get(p.stoneSlug.toLowerCase()) || [];

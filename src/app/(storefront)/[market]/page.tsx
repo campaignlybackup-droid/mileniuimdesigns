@@ -1092,7 +1092,7 @@ export default async function StorefrontHomePage({
             color: "var(--md-fg)",
           }}
         >
-          Private Previews &amp; Seasonal Releases
+          Private Previews &amp; Atelier Releases
         </h2>
         <p
           style={{

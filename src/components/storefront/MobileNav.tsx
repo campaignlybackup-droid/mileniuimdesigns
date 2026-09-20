@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
+import { CurrencyToggle } from "@/components/storefront/CurrencyToggle";
 
 const STONES_LIST = [
   { name: "Moonstone", slug: "moonstone" },
@@ -196,6 +197,31 @@ export function MobileNav({
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </form>
+        </div>
+
+        {/* Quick Currency Switcher for Mobile Connoisseurs */}
+        <div
+          style={{
+            padding: "10px var(--md-space-5)",
+            background: "var(--md-bg-raised)",
+            borderBottom: "1px solid var(--md-rule)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.6875rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "var(--md-fg-secondary)",
+              fontWeight: 600,
+            }}
+          >
+            CURRENCY
+          </span>
+          <CurrencyToggle activeCode={marketPrefix.replace(/^\//, "").toUpperCase() || "US"} />
         </div>
 
         {/* Scrollable Navigation Links */}

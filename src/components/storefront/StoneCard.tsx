@@ -98,7 +98,7 @@ export function StoneCard({
                 marginBottom: "var(--md-space-1)",
               }}
             >
-              Featured Gemstone
+              Signature Gemstone
             </span>
           )}
 

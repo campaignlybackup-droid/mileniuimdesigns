@@ -515,8 +515,8 @@ export default async function OurStoryPage({
               },
               {
                 icon: "✦",
-                title: "Legacy Pricing",
-                body: "Premium quality at honest prices. Six decades of direct, in-house manufacturing means we pass every saving on to you — no middlemen, no mark-ups.",
+                title: "Direct Factory Pricing",
+                body: "Lowest direct prices with zero middleman markup. Pure 925 sterling silver with proprietary anti-tarnish alloy and 100% in-house manufacturing means we pass every saving directly on to you.",
               },
             ].map((pillar) => (
               <div
@@ -693,7 +693,7 @@ export default async function OurStoryPage({
               },
               {
                 label: "Brand Positioning",
-                value: "Affordable luxury — premium without pretension",
+                value: "Direct manufacturer fine jewellery — pure 925 silver anti-tarnish alloy with zero middleman markup",
                 icon: "◇",
               },
               {

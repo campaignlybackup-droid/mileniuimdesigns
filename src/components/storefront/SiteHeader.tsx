@@ -3,6 +3,7 @@ import { Logo } from "@/components/ui/Logo";
 import { VisuallyHidden } from "@/components/ui/VisuallyHidden";
 import { HeaderActions } from "@/components/storefront/HeaderActions";
 import { MobileNav } from "@/components/storefront/MobileNav";
+import { CurrencyToggle } from "@/components/storefront/CurrencyToggle";
 
 /**
  * The header shell — 10 §5.1. P14 builds the SHELL; P15 fills the navigation from
@@ -152,38 +153,9 @@ export function SiteHeader({
             </Link>
           </div>
 
-          {/* Right Section: Markets Switcher + Header Actions */}
-          <div className="md-header-right">
-            {markets.length > 1 && (
-              <div
-                className="md-desktop-markets"
-                style={{
-                  alignItems: "center",
-                  gap: "var(--md-space-2)",
-                  paddingRight: "var(--md-space-3)",
-                  borderRight: "1px solid var(--md-rule)",
-                }}
-                aria-label="Market selection"
-              >
-                {markets.map((m) => (
-                  <Link
-                    key={m.code}
-                    href={m.href}
-                    className="md-label"
-                    style={{
-                      fontSize: "0.6875rem",
-                      color: m.active ? "var(--md-fg)" : "var(--md-fg-secondary)",
-                      borderBottom: m.active ? "1.5px solid var(--md-fg)" : "1.5px solid transparent",
-                      paddingBottom: "1px",
-                      textDecoration: "none",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {m.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+          {/* Right Section: Direct Currency Switcher + Header Actions */}
+          <div className="md-header-right" style={{ display: "flex", alignItems: "center", gap: "clamp(6px, 1.5vw, 14px)" }}>
+            <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
 
             <HeaderActions marketPrefix={prefix} />
           </div>
