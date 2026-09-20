@@ -753,7 +753,7 @@ export default async function OurStoryPage({
             }}
           >
             Whether you are inquiring about a custom commission, wholesale catalog, or an heirloom
-            emerald piece, Amit &amp; Saket Agarwal are available to assist you directly.
+            emerald piece, our Jaipur workshop welcomes your inquiry.
           </p>
 
           {/* Physical Address Card */}
