@@ -11,8 +11,6 @@ import { StoneCard } from "@/components/storefront/StoneCard";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
-import { HeroGemstoneCanvas } from "@/components/storefront/HeroGemstoneCanvas";
-import { Interactive3DVault } from "@/components/storefront/Interactive3DVault";
 
 export const revalidate = 300;
 
@@ -110,12 +108,12 @@ export default async function StorefrontHomePage({
             alignItems: "center",
           }}
         >
-          {/* Left Column: World-Class Editorial Stanza */}
+          {/* Left Column: Minimal, High-Impact Luxury Narrative */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "var(--md-space-5)",
+              gap: "var(--md-space-4)",
               textAlign: "left",
             }}
           >
@@ -125,49 +123,49 @@ export default async function StorefrontHomePage({
                 alignSelf: "flex-start",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "var(--md-space-3)",
-                padding: "8px 20px",
+                gap: "8px",
+                padding: "6px 16px",
                 borderRadius: "var(--md-radius-sm)",
                 border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
                 background: "color-mix(in srgb, var(--md-green-black) 75%, transparent)",
                 fontSize: "0.6875rem",
-                letterSpacing: "0.26em",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-champagne)",
                 fontWeight: 600,
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              <span>PUSHPAK JEWELS · JAIPUR 1961</span>
-              <span style={{ opacity: 0.35 }}>—</span>
-              <span>ATELIER ARCHIVE</span>
+              <span>✦ JOHARI BAZAAR · JAIPUR · EST. 1961</span>
             </div>
 
             <h1
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2.75rem, 5.5vw, 4.75rem)",
-                lineHeight: 1.05,
+                fontSize: "clamp(2.5rem, 5.2vw, 4.5rem)",
+                lineHeight: 1.08,
                 fontWeight: 400,
                 letterSpacing: "-0.015em",
                 color: "var(--md-fg-inverse)",
                 textWrap: "balance",
               }}
             >
-              Forged in Royal Johari. Defined by Colombian Emeralds &amp; Sculpted Silver.
+              Rare Emeralds.
+              <br />
+              Ancestral Jaipur Fire.
             </h1>
 
             <p
               style={{
                 margin: 0,
-                fontSize: "clamp(1rem, 1.5vw, 1.1875rem)",
-                lineHeight: 1.7,
+                fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
+                lineHeight: 1.65,
                 color: "var(--md-fg-inverse-muted)",
-                maxWidth: "580px",
+                maxWidth: "520px",
               }}
             >
-              Born in the historic jewel quarter of Jaipur in 1961, our family atelier marries ancestral gem-cutting with cold-forged 925 anti-tarnish metallurgy. Each creation is cast, set, and hallmarked under our own roof — creating sovereign heirlooms for the world’s most discerning collectors.
+              Sixty-five years of Johari lineage. Forged in sovereign anti-tarnish 925 silver, crowned with courtly Colombian emeralds, and hallmarked under our own Jaipur roof.
             </p>
 
             <div
@@ -184,8 +182,8 @@ export default async function StorefrontHomePage({
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  height: 52,
-                  paddingInline: "36px",
+                  height: 50,
+                  paddingInline: "34px",
                   background: "var(--md-bg-inverse)",
                   color: "var(--md-ivory-soft)",
                   fontSize: "0.8125rem",
@@ -211,8 +209,8 @@ export default async function StorefrontHomePage({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "10px",
-                  height: 52,
-                  paddingInline: "28px",
+                  height: 50,
+                  paddingInline: "26px",
                   border: "1px solid color-mix(in srgb, var(--md-fg-inverse) 32%, transparent)",
                   background: "color-mix(in srgb, var(--md-green-black) 50%, transparent)",
                   color: "var(--md-fg-inverse)",
@@ -234,8 +232,8 @@ export default async function StorefrontHomePage({
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "clamp(16px, 2.5vw, 32px)",
-                marginTop: "var(--md-space-6)",
-                paddingTop: "var(--md-space-5)",
+                marginTop: "var(--md-space-4)",
+                paddingTop: "var(--md-space-4)",
                 borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
                 fontSize: "0.75rem",
                 letterSpacing: "0.08em",
@@ -254,7 +252,7 @@ export default async function StorefrontHomePage({
             </div>
           </div>
 
-          {/* Right Column: 3D Interactive Gemstone Refractor Motion Graphic */}
+          {/* Right Column: Museum-Grade High Jewelry Showcase */}
           <div
             style={{
               position: "relative",
@@ -262,24 +260,125 @@ export default async function StorefrontHomePage({
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              width: "100%",
             }}
           >
-            <HeroGemstoneCanvas />
+            {/* Ambient Golden Halo */}
+            <div
+              style={{
+                position: "absolute",
+                inset: "-20px",
+                background: "radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--md-champagne) 20%, transparent) 0%, transparent 68%)",
+                pointerEvents: "none",
+                filter: "blur(24px)",
+              }}
+            />
+
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "520px",
+                aspectRatio: "4 / 3",
+                overflow: "hidden",
+                borderRadius: "var(--md-radius-sm)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
+                boxShadow: "0 28px 64px -16px rgba(0, 0, 0, 0.7), 0 0 0 1px color-mix(in srgb, var(--md-champagne) 20%, transparent)",
+              }}
+            >
+              <Image
+                src="/images/hero-emerald-ring.jpg"
+                alt="The Sovereign Colombian Emerald & Sculpted Silver Ring — Jaipur Atelier 1961"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 520px"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  transition: "transform 800ms var(--md-ease)",
+                }}
+              />
+
+              {/* Refined atelier provenance overlay */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to top, rgba(6, 19, 13, 0.85) 0%, transparent 40%)",
+                  pointerEvents: "none",
+                }}
+              />
+
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "16px",
+                  left: "20px",
+                  right: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: "0.5625rem",
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: "var(--md-champagne)",
+                      fontFamily: "var(--md-font-crest), Georgia, serif",
+                      display: "block",
+                      marginBottom: "2px",
+                    }}
+                  >
+                    ARCHIVAL MASTERPIECE
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--md-font-display)",
+                      fontSize: "1.0625rem",
+                      color: "var(--md-fg-inverse)",
+                      fontWeight: 400,
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    The Sovereign Emerald Ring
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "0.625rem",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--md-champagne)",
+                    background: "rgba(6, 19, 13, 0.85)",
+                    border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                    padding: "3px 8px",
+                    borderRadius: "2px",
+                    fontFamily: "var(--md-font-crest), Georgia, serif",
+                  }}
+                >
+                  925 Silver · 18K Gold
+                </div>
+              </div>
+            </div>
 
             {/* Subtle Archival Caption */}
             <div
               style={{
-                marginTop: "var(--md-space-2)",
+                marginTop: "var(--md-space-3)",
                 textAlign: "center",
                 fontSize: "0.6875rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-champagne)",
                 fontFamily: "var(--md-font-crest), Georgia, serif",
-                opacity: 0.85,
+                opacity: 0.9,
               }}
             >
-              <span>THE JAIPUR OCTAGONAL REFRACTOR · CAUSTIC PRISM SYSTEM</span>
+              <span>COLOMBIAN STEP-CUT EMERALD · COLD-FORGED JAIPUR 1961</span>
             </div>
           </div>
         </div>
@@ -354,10 +453,7 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 3D GEMOLOGICAL INSPECTION VAULT ────────────────────────────── */}
-      <Interactive3DVault marketPrefix={prefix.replace(/^\//, "")} />
-
-      {/* ── 3. THE FOUR PILLARS OF HIGH GOLDSMITHING (EDITORIAL SPREAD) ── */}
+      {/* ── 3. THE FOUR PILLARS OF HIGH GOLDSMITHING ── */}
       <section
         style={{
           background: "var(--md-bg-raised)",
@@ -376,7 +472,7 @@ export default async function StorefrontHomePage({
           <div
             style={{
               textAlign: "center",
-              marginBottom: "var(--md-space-10)",
+              marginBottom: "var(--md-space-9)",
             }}
           >
             <span
@@ -405,24 +501,18 @@ export default async function StorefrontHomePage({
             <p
               style={{
                 margin: "10px auto 0",
-                maxWidth: "600px",
+                maxWidth: "540px",
                 fontSize: "0.9375rem",
                 color: "var(--md-fg-secondary)",
-                lineHeight: 1.65,
+                lineHeight: 1.6,
               }}
             >
-              How our grandfather’s 1961 founding doctrine in Johari Bazaar continues to govern every ingot cast and stone set in our Jaipur atelier.
+              How our grandfather’s 1961 founding doctrine in Johari Bazaar continues to govern every creation forged in our Jaipur atelier.
             </p>
           </div>
 
-          {/* Asymmetric Editorial Monograph Spread */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-              gap: "clamp(28px, 4vw, 48px)",
-            }}
-          >
+          {/* Symmetrical Four Pillars Grid (4 cols on desktop, 2x2 on tablet, 1 on mobile) */}
+          <div className="md-four-pillars-grid">
             {/* Pillar 01 */}
             <div
               style={{
@@ -430,13 +520,13 @@ export default async function StorefrontHomePage({
                 flexDirection: "column",
                 gap: "var(--md-space-3)",
                 paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "2rem",
+                  fontSize: "1.75rem",
                   color: "var(--md-champagne)",
                   lineHeight: 1,
                   fontStyle: "italic",
@@ -448,15 +538,15 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
+                  fontSize: "1.1875rem",
                   fontWeight: 500,
                   color: "var(--md-fg)",
                 }}
               >
                 The Johari Emerald Lineage
               </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.7 }}>
-                In 1961, amidst the ancient arches of Johari Bazaar, B. L. Agarwal founded Pushpak Jewels. Specializing exclusively in royal emerald curation, he established the family doctrine of unyielding gem authenticity, deep mineralogical knowledge, and intimate patron relationships.
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
+                Founded in 1961 by B. L. Agarwal in Jaipur’s historic jewel quarter, curating rare Colombian and Zambian emeralds with uncompromising authenticity.
               </p>
             </div>
 
@@ -467,13 +557,13 @@ export default async function StorefrontHomePage({
                 flexDirection: "column",
                 gap: "var(--md-space-3)",
                 paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "2rem",
+                  fontSize: "1.75rem",
                   color: "var(--md-champagne)",
                   lineHeight: 1,
                   fontStyle: "italic",
@@ -485,15 +575,15 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
+                  fontSize: "1.1875rem",
                   fontWeight: 500,
                   color: "var(--md-fg)",
                 }}
               >
-                Proprietary Cold-Forged Metallurgy
+                Cold-Forged Anti-Tarnish Alloy
               </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.7 }}>
-                Fine silver is noble, yet historically susceptible to oxidation. Through decades of metallurgical refinement, our atelier perfected a proprietary anti-tarnish alloy: capturing the intense, moonlit luster of 925 silver while shielding it indefinitely from atmospheric patina.
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
+                A proprietary 925 sterling alloy shielding the mirror brilliance of fine silver indefinitely from atmospheric oxidation.
               </p>
             </div>
 
@@ -504,13 +594,13 @@ export default async function StorefrontHomePage({
                 flexDirection: "column",
                 gap: "var(--md-space-3)",
                 paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "2rem",
+                  fontSize: "1.75rem",
                   color: "var(--md-champagne)",
                   lineHeight: 1,
                   fontStyle: "italic",
@@ -522,15 +612,15 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
+                  fontSize: "1.1875rem",
                   fontWeight: 500,
                   color: "var(--md-fg)",
                 }}
               >
-                The Single-Roof Jaipur Atelier
+                Single-Roof Jaipur Atelier
               </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.7 }}>
-                We reject the fragmented supply chains of modern commercial retail. From the first hand-drawn gouache rendering and precision wax carving to lost-wax casting and microscopic prong setting, every single step is executed under our own roof in Jaipur.
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
+                From hand-drawn gouache sketches and lost-wax casting to microscopic claw setting, every creation is forged entirely under our own roof.
               </p>
             </div>
 
@@ -541,13 +631,13 @@ export default async function StorefrontHomePage({
                 flexDirection: "column",
                 gap: "var(--md-space-3)",
                 paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
               }}
             >
               <div
                 style={{
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "2rem",
+                  fontSize: "1.75rem",
                   color: "var(--md-champagne)",
                   lineHeight: 1,
                   fontStyle: "italic",
@@ -559,15 +649,15 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
+                  fontSize: "1.1875rem",
                   fontWeight: 500,
                   color: "var(--md-fg)",
                 }}
               >
-                Direct Atelier Provenance
+                Direct Artisan Bench Provenance
               </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.7 }}>
-                For over twenty-five years, Amit &amp; Saket Agarwal have presented our collections at premier trade salons across Basel, Vicenza, and New York. Collectors acquire museum-grade jewelry directly from the artisan bench — bypassing intermediaries and inflated retail markups.
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
+                Over 25 years presenting at Basel, Vicenza, and New York. Collectors acquire museum-grade jewellery directly from the master bench.
               </p>
             </div>
           </div>

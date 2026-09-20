@@ -361,6 +361,27 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Four Pillars Grid — balanced 4-column desktop, 2x2 tablet, 1 col mobile ── */
+.md-four-pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--md-space-6);
+}
+
+@media (min-width: 640px) {
+  .md-four-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--md-space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .md-four-pillars-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(24px, 3vw, 40px);
+  }
+}
+
 /* ── Section entrance reveal (IntersectionObserver applies .md-reveal-done) */
 .md-reveal {
   opacity: 0;
