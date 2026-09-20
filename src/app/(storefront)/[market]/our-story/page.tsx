@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { resolveMarket } from "@/lib/market";
 import { buildCanonicalAndAlternates } from "@/lib/seo";
 import {
@@ -26,9 +25,9 @@ export async function generateMetadata({
   });
 
   return {
-    title: "Our Story · The 1961 Jaipur Atelier Chronicle | Millennium Designs",
+    title: "Our Story · Pushpak Jewels 1961 to Millennium Designs Jaipur",
     description:
-      "The archival chronicle of Millennium Designs. Founded in 1961 by B. L. Agarwal as Pushpak Jewels, now led by Amit & Saket Agarwal — 60+ years of natural emeralds and proprietary anti-tarnish 925 silver craftsmanship, 100% in-house in Jaipur.",
+      "Three generations of Jaipur fine jewellery craftsmanship. Founded in 1961 by B. L. Agarwal, continued by Amit & Saket Agarwal. 100% in-house manufacturing, natural emeralds, and pure anti-tarnish 925 sterling silver.",
     alternates: {
       canonical,
       languages,
@@ -47,200 +46,194 @@ export default async function OurStoryPage({
     resolved.code.toLowerCase() === "us" ? "" : `/${resolved.code.toLowerCase()}`;
   const whatsappUrl = buildWhatsAppInquiryUrl({
     topic: "bespoke",
-    customMessage: "Hello Amit & Saket, I am reading your atelier chronicle and would love to enquire about your jewellery creations.",
+    customMessage:
+      "Hello Amit & Saket, I am reading your atelier chronicle and would like to speak directly with you regarding your jewellery.",
   });
 
   return (
-    <div
+    <article
       style={{
         width: "100%",
         maxWidth: "100%",
         boxSizing: "border-box",
         background: "var(--md-bg)",
         color: "var(--md-fg)",
+        overflowX: "hidden",
       }}
     >
-      {/* ── PROLOGUE: THE JAIPUR MONOGRAPH HERO ───────────────────────── */}
-      <section
-        data-surface="green-black"
+      {/* ── 1. THE HERO BROADSIDE: PURE EDITORIAL TYPOGRAPHY ───────────── */}
+      <header
         style={{
-          position: "relative",
-          width: "100%",
-          minHeight: "clamp(520px, 75vh, 840px)",
-          background:
-            "radial-gradient(ellipse at 50% 30%, var(--md-emerald-deep) 0%, var(--md-forest) 55%, var(--md-green-black) 100%)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          borderBottom: "1px solid var(--md-rule-strong)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 120px)",
-          overflow: "hidden",
-          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 18%, transparent)",
+          paddingTop: "clamp(60px, 9vw, 120px)",
+          paddingBottom: "clamp(48px, 6vw, 84px)",
+          background: "linear-gradient(180deg, var(--md-bg) 0%, var(--md-ivory) 100%)",
         }}
       >
-        {/* Subtle Archival Grid lines */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0.04,
-            backgroundImage:
-              "radial-gradient(circle at 50% 50%, var(--md-champagne) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: "clamp(24px, 8vw, 140px)",
-            bottom: 0,
-            width: "1px",
-            background:
-              "linear-gradient(to bottom, transparent, color-mix(in srgb, var(--md-champagne) 30%, transparent), transparent)",
-          }}
-        />
-
         <div
           style={{
-            position: "relative",
-            zIndex: 2,
             maxWidth: "var(--md-container)",
             marginInline: "auto",
-            width: "100%",
           }}
         >
+          {/* Running Masthead Header */}
           <div
             style={{
-              display: "inline-flex",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: "12px",
-              padding: "6px 16px",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 32%, transparent)",
-              background: "rgba(4, 14, 9, 0.5)",
+              gap: "16px",
+              paddingBottom: "clamp(20px, 3vw, 32px)",
+              borderBottom: "1px solid var(--md-rule)",
               fontSize: "0.6875rem",
               letterSpacing: "0.26em",
               textTransform: "uppercase",
-              color: "var(--md-champagne)",
               fontFamily: "var(--md-font-crest), Georgia, serif",
-              marginBottom: "var(--md-space-6)",
+              color: "var(--md-fg-muted)",
             }}
           >
-            <span>ARCHIVAL MONOGRAPH</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>JAIPUR, EST. 1961</span>
+            <span>THE AGARWAL CHRONICLE · JAIPUR, INDIA</span>
+            <span>FOUNDED 1961 · JOHARI BAZAAR &amp; M.I. ROAD</span>
+            <span>EDITION · MCMXI</span>
           </div>
 
-          <h1
-            style={{
-              margin: "0 0 var(--md-space-5)",
-              fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2.5rem, 6vw, 5.25rem)",
-              lineHeight: 1.08,
-              fontWeight: 400,
-              letterSpacing: "-0.015em",
-              color: "var(--md-fg-inverse)",
-              maxWidth: "960px",
-            }}
-          >
-            A Six-Decade Dialogue Between Earth, Fire &amp; Sterling Silver
-          </h1>
-
-          <p
-            style={{
-              margin: "0 0 var(--md-space-8)",
-              maxWidth: "680px",
-              fontSize: "clamp(1.0625rem, 1.8vw, 1.25rem)",
-              lineHeight: 1.75,
-              color: "var(--md-fg-inverse-muted)",
-              fontWeight: 300,
-            }}
-          >
-            From a solitary emerald cutting atelier in Jaipur’s historic Johari corridors to
-            heirloom 925 sterling silver cherished across six continents — the story of
-            Millennium Designs is written in stone, fire, and an unbroken commitment to
-            crafting every single jewel under our own roof.
-          </p>
-
-          {/* Archival Ledger Strip */}
+          {/* Grand Hero Statement */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "clamp(20px, 4vw, 48px)",
-              paddingTop: "var(--md-space-7)",
-              borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
+              paddingBlock: "clamp(36px, 6vw, 72px)",
             }}
           >
-            {[
-              {
-                period: "1961",
-                label: "Pushpak Jewels Founded",
-                detail: "B. L. Agarwal establishes the family's emerald lapidary in Jaipur.",
-              },
-              {
-                period: "1999",
-                label: "Global Expansion",
-                detail: "Amit & Saket Agarwal introduce anti-tarnish 925 silver to international buyers.",
-              },
-              {
-                period: "100%",
-                label: "In-House Foundry",
-                detail: "From rough stone faceting to final hallmarking — zero outsourcing.",
-              },
-              {
-                period: "30+ Yrs",
-                label: "Global Connoisseurs",
-                detail: "Crafted specifically for the exacting standards of clients worldwide.",
-              },
-            ].map((col) => (
-              <div key={col.period} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <span
+            <p
+              style={{
+                fontSize: "clamp(0.75rem, 1.2vw, 0.875rem)",
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color: "var(--md-gold-antique)",
+                fontWeight: 600,
+                margin: "0 0 clamp(16px, 2.5vw, 24px)",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+              }}
+            >
+              Pushpak Jewels · 1961 &mdash; Millennium Designs · Present
+            </p>
+
+            <h1
+              style={{
+                margin: "0 0 clamp(24px, 4vw, 40px)",
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(2.75rem, 7.5vw, 6.75rem)",
+                lineHeight: 0.98,
+                letterSpacing: "-0.025em",
+                fontWeight: 400,
+                color: "var(--md-fg)",
+                maxWidth: "1100px",
+              }}
+            >
+              Three generations.
+              <br />
+              One roof in Jaipur.
+              <br />
+              <span
+                style={{
+                  fontStyle: "italic",
+                  fontFamily: "var(--md-font-display)",
+                  color: "var(--md-forest)",
+                }}
+              >
+                Zero outsourcing.
+              </span>
+            </h1>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",
+                gap: "clamp(24px, 5vw, 64px)",
+                alignItems: "baseline",
+                paddingTop: "clamp(20px, 3vw, 36px)",
+                borderTop: "1px solid var(--md-rule)",
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(1.125rem, 2vw, 1.375rem)",
+                  lineHeight: 1.65,
+                  fontFamily: "var(--md-font-display)",
+                  color: "var(--md-fg)",
+                  fontWeight: 400,
+                }}
+              >
+                We do not broker jewellery from commercial trading houses.
+                We melt our own silver, cut our own natural gemstones, and fabricate
+                every setting by hand inside Chameliwala Market.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <p
                   style={{
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "clamp(1.75rem, 2.5vw, 2.25rem)",
-                    fontWeight: 400,
-                    color: "var(--md-champagne)",
-                    lineHeight: 1,
+                    margin: 0,
+                    fontSize: "0.9375rem",
+                    lineHeight: 1.8,
+                    color: "var(--md-fg-secondary)",
                   }}
                 >
-                  {col.period}
-                </span>
-                <span
+                  What grandfather <strong>B. L. Agarwal</strong> began as an emerald atelier in 1961,
+                  brothers <strong>Amit &amp; Saket Agarwal</strong> transformed into an international
+                  workshop serving collectors across New York, London, Sydney, and Milan.
+                </p>
+
+                <div
                   style={{
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--md-fg-inverse)",
-                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "16px",
+                    marginTop: "8px",
                   }}
                 >
-                  {col.label}
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.8125rem",
-                    color: "var(--md-fg-inverse-muted)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {col.detail}
-                </span>
+                  <a
+                    href="#the-chronicle"
+                    style={{
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--md-forest)",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                      borderBottom: "1px solid currentColor",
+                      paddingBottom: "2px",
+                    }}
+                  >
+                    Read The Chronicle ↓
+                  </a>
+                  <span style={{ color: "var(--md-fg-muted)" }}>·</span>
+                  <a
+                    href="#the-manifesto"
+                    style={{
+                      fontSize: "0.75rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--md-fg-secondary)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    The In-House Manifesto
+                  </a>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* ── CHAPTER I: THE FOUNDATION (1961) ─────────────────────────── */}
+      {/* ── 2. THE THREE GENERATION CHRONICLE (SWISS ASYMMETRICAL TIMELINE) ─ */}
       <section
+        id="the-chronicle"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(64px, 9vw, 128px)",
           background: "var(--md-bg)",
         }}
       >
@@ -248,149 +241,488 @@ export default async function OurStoryPage({
           style={{
             maxWidth: "var(--md-container)",
             marginInline: "auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(36px, 6vw, 84px)",
-            alignItems: "center",
           }}
         >
-          {/* Left: Archival Prose */}
-          <div>
-            <div
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.24em",
-                textTransform: "uppercase",
-                color: "var(--md-gold-antique)",
-                fontWeight: 600,
-                marginBottom: "var(--md-space-3)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <span>CHAPTER I</span>
-              <span>·</span>
-              <span>1961 : THE PUSHPAK ORIGINS</span>
-            </div>
-
-            <h2
-              style={{
-                margin: "0 0 var(--md-space-5)",
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-                lineHeight: 1.14,
-                fontWeight: 400,
-                color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              The Lapidary of Jaipur &amp; The Emerald Benchmark
-            </h2>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-4)",
-                fontSize: "var(--md-t-body-lg)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              In the winter of 1961, our grandfather, <strong>B. L. Agarwal</strong>, founded
-              Pushpak Jewels amidst the centuries-old gemstone alleys of Jaipur. At a time when
-              the city was celebrated as the world’s lapidary capital for rough emeralds, he set
-              apart his workshop by cultivating direct relationships with miners in Zambia and
-              Colombia, cutting each crystal not for maximum carats, but for chromatic fire and
-              inner luminosity.
-            </p>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-6)",
-                fontSize: "var(--md-t-body)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              He operated under three unyielding principles: <em>Satya</em> (gemological truth),{" "}
-              <em>Vishwas</em> (unconditional trade trust), and <em>Parishodhan</em> (relentless
-              lapidary refinement). Every emerald parcel that passed across his bench was examined
-              under northern daylight with a handheld brass loupe. Over four decades, Pushpak
-              Jewels became a quiet cornerstone for royal houses and discerning jewel merchants
-              who demanded unheated, ethically cut gemstones.
-            </p>
-
-            <div className="md-editorial-pullquote">
-              <p
+          {/* Section Heading */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              gap: "24px",
+              paddingBottom: "clamp(24px, 3vw, 40px)",
+              borderBottom: "2px solid var(--md-fg)",
+              marginBottom: "clamp(36px, 6vw, 72px)",
+            }}
+          >
+            <div>
+              <span
                 style={{
-                  margin: 0,
-                  fontSize: "clamp(1.0625rem, 1.5vw, 1.25rem)",
-                  color: "var(--md-charcoal)",
-                }}
-              >
-                &ldquo;A jeweler’s standing is never built on a showroom facade. It is forged in the
-                geometry of the facet, the integrity of the alloy, and the word given to the patron.&rdquo;
-              </p>
-              <cite
-                style={{
-                  display: "block",
-                  marginTop: "10px",
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.14em",
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.24em",
                   textTransform: "uppercase",
-                  fontStyle: "normal",
                   color: "var(--md-gold-antique)",
                   fontWeight: 600,
+                  display: "block",
+                  marginBottom: "8px",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
                 }}
               >
-                — B. L. Agarwal · Founder, Pushpak Jewels (1961)
-              </cite>
+                RECORD OF SUCCESSION
+              </span>
+              <h2
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(2rem, 4.5vw, 3.75rem)",
+                  lineHeight: 1.05,
+                  fontWeight: 400,
+                  color: "var(--md-fg)",
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                The Chronicle: 1961 to Present
+              </h2>
+            </div>
+
+            <span
+              style={{
+                fontFamily: "var(--md-font-display)",
+                fontStyle: "italic",
+                fontSize: "1.125rem",
+                color: "var(--md-fg-secondary)",
+              }}
+            >
+              Over 60 years of continuity
+            </span>
+          </div>
+
+          {/* Epoch 01: 1961 */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "clamp(120px, 20vw, 240px) 1fr",
+              gap: "clamp(24px, 5vw, 64px)",
+              paddingBlock: "clamp(32px, 5vw, 64px)",
+              borderBottom: "1px solid var(--md-rule)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                  lineHeight: 1,
+                  fontWeight: 400,
+                  color: "var(--md-gold-antique)",
+                  display: "block",
+                }}
+              >
+                1961
+              </span>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted)",
+                  marginTop: "6px",
+                  display: "block",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                }}
+              >
+                Jaipur · Johari Bazaar
+              </span>
+            </div>
+
+            <div>
+              <h3
+                style={{
+                  margin: "0 0 16px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)",
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  color: "var(--md-fg)",
+                }}
+              >
+                Pushpak Jewels &amp; The Natural Emerald Lapidary
+              </h3>
+
+              <div
+                style={{
+                  maxWidth: "760px",
+                  fontSize: "clamp(0.9375rem, 1.4vw, 1.0625rem)",
+                  lineHeight: 1.85,
+                  color: "var(--md-fg-secondary)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
+                <p style={{ margin: 0 }}>
+                  Our grandfather, <strong>B. L. Agarwal</strong>, founded Pushpak Jewels in the
+                  historic gemstone heart of the Pink City. Specialising exclusively in high-calibre
+                  natural emeralds, he bypassed speculative middle-traders to source rough crystals
+                  directly from Colombian and Zambian veins.
+                </p>
+                <p style={{ margin: 0 }}>
+                  His operating creed was austere: examine every facet under northern daylight with a
+                  brass loupe; never heat, dye, or chemically alter a crystal; and stake the entire
+                  family name on the authenticity of every stone sold. Within two decades, Pushpak
+                  Jewels became a private resource for royal families and master jewel houses.
+                </p>
+
+                <blockquote
+                  style={{
+                    margin: "12px 0 0",
+                    paddingLeft: "20px",
+                    borderLeft: "2px solid var(--md-gold-antique)",
+                    fontFamily: "var(--md-font-display)",
+                    fontStyle: "italic",
+                    fontSize: "1.125rem",
+                    color: "var(--md-charcoal)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  &ldquo;A jeweler’s reputation is not won on the street. It is forged on the lapidary wheel, in the purity of the metal, and in keeping one’s word.&rdquo;
+                  <cite
+                    style={{
+                      display: "block",
+                      fontStyle: "normal",
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--md-gold-antique)",
+                      marginTop: "8px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    &mdash; B. L. Agarwal (1961)
+                  </cite>
+                </blockquote>
+              </div>
             </div>
           </div>
 
-          {/* Right: Authentic Lapidary Visual Plate */}
-          <div style={{ position: "relative" }}>
-            <div className="md-editorial-frame" style={{ aspectRatio: "4/3", width: "100%" }}>
-              <Image
-                src="/images/story/atelier_emerald_lapidary.jpg"
-                alt="Master lapidary craftsman examining an emerald rough at a traditional wooden workbench in Jaipur"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
-                priority
-              />
+          {/* Epoch 02: 1999 */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "clamp(120px, 20vw, 240px) 1fr",
+              gap: "clamp(24px, 5vw, 64px)",
+              paddingBlock: "clamp(32px, 5vw, 64px)",
+              borderBottom: "1px solid var(--md-rule)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                  lineHeight: 1,
+                  fontWeight: 400,
+                  color: "var(--md-gold-antique)",
+                  display: "block",
+                }}
+              >
+                1999
+              </span>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted)",
+                  marginTop: "6px",
+                  display: "block",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                }}
+              >
+                Global Expansion
+              </span>
             </div>
-            <div
-              style={{
-                marginTop: "14px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "baseline",
-                fontSize: "0.75rem",
-                color: "var(--md-fg-muted)",
-                borderTop: "1px solid var(--md-rule)",
-                paddingTop: "8px",
-              }}
-            >
-              <span style={{ fontStyle: "italic", fontFamily: "var(--md-font-display)" }}>
-                Plate I: Natural emerald stone grading at our Jaipur lapidary
+
+            <div>
+              <h3
+                style={{
+                  margin: "0 0 16px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)",
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  color: "var(--md-fg)",
+                }}
+              >
+                Amit &amp; Saket Agarwal: 925 Sterling Silver for the World
+              </h3>
+
+              <div
+                style={{
+                  maxWidth: "760px",
+                  fontSize: "clamp(0.9375rem, 1.4vw, 1.0625rem)",
+                  lineHeight: 1.85,
+                  color: "var(--md-fg-secondary)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
+                <p style={{ margin: 0 }}>
+                  Brothers <strong>Amit Agarwal and Saket Agarwal</strong> took the helm with an
+                  ambitious directive: bridge Jaipur’s centuries-old bench silversmithing to the
+                  exacting taste of international connoisseurs in the United States, Europe, and
+                  Australia. They christened this global identity <strong>Millennium Designs</strong>.
+                </p>
+                <p style={{ margin: 0 }}>
+                  Rather than producing lightweight tourist trinkets, they developed an in-house
+                  foundry standard: pure certified 925 sterling silver alloyed with anti-tarnish
+                  elements, cast with architectural heft, and hand-fitted with natural untreated
+                  gemstones. Collections debuted across trade expositions in Milan, London, and New
+                  York, establishing long-term relationships with international boutiques.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Epoch 03: Present */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "clamp(120px, 20vw, 240px) 1fr",
+              gap: "clamp(24px, 5vw, 64px)",
+              paddingBlock: "clamp(32px, 5vw, 64px)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                  lineHeight: 1,
+                  fontWeight: 400,
+                  color: "var(--md-forest)",
+                  display: "block",
+                }}
+              >
+                NOW
               </span>
-              <span style={{ letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.6875rem" }}>
-                Archival Record · BL-1961
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted)",
+                  marginTop: "6px",
+                  display: "block",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                }}
+              >
+                5, Noor Plaza · M.I. Road
               </span>
+            </div>
+
+            <div>
+              <h3
+                style={{
+                  margin: "0 0 16px",
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)",
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  color: "var(--md-fg)",
+                }}
+              >
+                Millennium Designs Today: The Sovereign In-House Atelier
+              </h3>
+
+              <div
+                style={{
+                  maxWidth: "760px",
+                  fontSize: "clamp(0.9375rem, 1.4vw, 1.0625rem)",
+                  lineHeight: 1.85,
+                  color: "var(--md-fg-secondary)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
+                <p style={{ margin: 0 }}>
+                  Today, while over 90% of commercial jewellery brands function merely as marketing
+                  labels that outsource manufacturing to disparate contract factories, Millennium
+                  Designs remains fully self-sufficient.
+                </p>
+                <p style={{ margin: 0 }}>
+                  Every jewel is created inside our facility at <strong>5, Noor Plaza, Chameliwala Market, M.I. Road, Jaipur</strong>.
+                  From initial graphite concept and lost-wax vacuum induction casting, to hand-prong
+                  setting and microscopic quality audits, our clients acquire jewellery straight from
+                  the hands that forged it.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CHAPTER II: THE NEXT GENERATION (1999) ───────────────────── */}
+      {/* ── 3. THE MANIFESTO OF COMPLETE CUSTODY (DARK EDITORIAL SPREAD) ── */}
       <section
-        data-surface="ivory-soft"
+        id="the-manifesto"
+        data-surface="green-black"
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(72px, 10vw, 140px)",
+          background: "var(--md-green-black)",
+          color: "var(--md-fg-inverse)",
+          borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
+          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+          }}
+        >
+          <div style={{ maxWidth: "800px", marginBottom: "clamp(48px, 6vw, 84px)" }}>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.26em",
+                textTransform: "uppercase",
+                color: "var(--md-champagne)",
+                fontWeight: 600,
+                display: "block",
+                marginBottom: "12px",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+              }}
+            >
+              OUR UNCOMPROMISED POSITION
+            </span>
+            <h2
+              style={{
+                margin: "0 0 24px",
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(2.5rem, 5.5vw, 4.75rem)",
+                lineHeight: 1.05,
+                fontWeight: 400,
+                letterSpacing: "-0.02em",
+                color: "var(--md-fg-inverse)",
+              }}
+            >
+              The Atelier Manifesto
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "clamp(1rem, 1.6vw, 1.25rem)",
+                lineHeight: 1.7,
+                color: "var(--md-fg-inverse-muted)",
+                fontWeight: 300,
+              }}
+            >
+              Why we refuse modern shortcuts, commercial brokerages, and contract outsourcing.
+            </p>
+          </div>
+
+          {/* Large Typographic Tenets (Clean Editorial, No Cards) */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 15%, transparent)",
+            }}
+          >
+            {[
+              {
+                num: "01",
+                statement: "We Do Not Outsource",
+                detail:
+                  "Third-party contract factories dilute metallurgy, compromise stone setting, and inflate costs. We maintain complete custody: the foundry, the lapidary, the bench goldsmiths, and the polishers all work under our own roof in Chameliwala Market.",
+              },
+              {
+                num: "02",
+                statement: "Pure 925 Silver With Anti-Tarnish Metallurgy",
+                detail:
+                  "Commercial silver darkens because of crude copper alloys. We formulate our certified 925 sterling silver with a proprietary anti-tarnish alloy developed for global climates. It remains mirror-bright, 100% hypoallergenic, and nickel-free.",
+              },
+              {
+                num: "03",
+                statement: "Untreated Earth Gems Sourced at Origin",
+                detail:
+                  "We believe jewelry begins in the earth. From unheated Zambian emeralds to genuine rainbow moonstones and African amethysts, our stones are cut in-house to celebrate optical character rather than synthetic perfection.",
+              },
+              {
+                num: "04",
+                statement: "Direct Factory Pricing With Zero Speculation",
+                detail:
+                  "Traditional luxury retail inflates prices by 5x to 8x to pay for prime city avenue leases and multi-tier distributors. We ship directly from our Jaipur workshop to buyers worldwide with transparent, honest manufacturing margins.",
+              },
+              {
+                num: "05",
+                statement: "Crafted Specifically for the International Eye",
+                detail:
+                  "Our collections are calibrated for patrons aged 30+ across the USA, Europe, and Australia. We engineer balanced weight distributions, smooth low-profile bezel settings, and ergonomic bands designed for everyday luxury.",
+              },
+            ].map((tenet) => (
+              <div
+                key={tenet.num}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "clamp(60px, 10vw, 100px) clamp(240px, 32vw, 380px) 1fr",
+                  gap: "clamp(20px, 4vw, 48px)",
+                  paddingBlock: "clamp(28px, 4vw, 44px)",
+                  borderBottom: "1px solid color-mix(in srgb, var(--md-fg-inverse) 12%, transparent)",
+                  alignItems: "baseline",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.5rem",
+                    color: "var(--md-champagne)",
+                    fontWeight: 400,
+                  }}
+                >
+                  {tenet.num}
+                </span>
+
+                <h3
+                  style={{
+                    margin: 0,
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "clamp(1.25rem, 2vw, 1.625rem)",
+                    lineHeight: 1.25,
+                    fontWeight: 400,
+                    color: "var(--md-fg-inverse)",
+                  }}
+                >
+                  {tenet.statement}
+                </h3>
+
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.9375rem",
+                    lineHeight: 1.75,
+                    color: "var(--md-fg-inverse-muted)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  {tenet.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. TECHNICAL SPECIFICATION TABLE (SWISS ASSAY LEDGER) ───────── */}
+      <section
+        style={{
+          paddingInline: "var(--md-gutter)",
+          paddingBlock: "clamp(64px, 9vw, 120px)",
           background: "var(--md-ivory-soft)",
-          borderTop: "1px solid var(--md-rule)",
           borderBottom: "1px solid var(--md-rule)",
         }}
       >
@@ -400,201 +732,189 @@ export default async function OurStoryPage({
             marginInline: "auto",
           }}
         >
-          <div style={{ maxWidth: "780px", marginBottom: "var(--md-space-8)" }}>
-            <div
+          <div style={{ maxWidth: "700px", marginBottom: "clamp(36px, 5vw, 60px)" }}>
+            <span
               style={{
                 fontSize: "0.6875rem",
                 letterSpacing: "0.24em",
                 textTransform: "uppercase",
                 color: "var(--md-gold-antique)",
                 fontWeight: 600,
-                marginBottom: "var(--md-space-3)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
+                display: "block",
+                marginBottom: "8px",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              <span>CHAPTER II</span>
-              <span>·</span>
-              <span>1999 : THE GLOBAL HORIZON</span>
-            </div>
-
+              METALLURGICAL ASSAY
+            </span>
             <h2
               style={{
-                margin: "0 0 var(--md-space-5)",
+                margin: "0 0 12px",
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-                lineHeight: 1.14,
+                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                lineHeight: 1.1,
                 fontWeight: 400,
                 color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
               }}
             >
-              Amit &amp; Saket Agarwal: Bridging Jaipur Craftsmanship to the World
+              The Atelier Standard vs. Commercial Market
             </h2>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-4)",
-                fontSize: "var(--md-t-body-lg)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              By the close of the twentieth century, the global jewelry landscape was undergoing
-              a quiet transformation. Discerning buyers in the United States, Europe, and Australia
-              were seeking the architectural permanence of fine jewelry without the speculative
-              artifice of five-figure retail markups.
-            </p>
-
             <p
               style={{
                 margin: 0,
-                fontSize: "var(--md-t-body)",
-                lineHeight: 1.85,
+                fontSize: "0.9375rem",
+                lineHeight: 1.7,
                 color: "var(--md-fg-secondary)",
               }}
             >
-              Taking the helm in 1999, <strong>Amit Agarwal and Saket Agarwal</strong> recognized
-              that Jaipur’s centuries-old bench techniques — lost-wax casting, micro-filigree,
-              chased metalwork, and precision prong setting — could be unified with modern Western
-              silhouettes. They christened this global vision <strong>Millennium Designs</strong>,
-              presenting collections at private expositions in Milan, London, and New York.
+              A transparent comparison of metallurgical and lapidary standards practiced in our
+              Jaipur facility compared to standard commercial wholesale jewelry.
             </p>
           </div>
 
-          {/* Editorial Monograph Grid: 3 Pillars of Global Design */}
+          {/* Assay Comparison Table */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "clamp(24px, 4vw, 48px)",
-              paddingTop: "var(--md-space-6)",
-              borderTop: "1px solid var(--md-rule)",
+              width: "100%",
+              overflowX: "auto",
+              borderTop: "2px solid var(--md-fg)",
             }}
           >
-            <div>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  fontFamily: "var(--md-font-crest), Georgia, serif",
-                  color: "var(--md-gold-antique)",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  display: "block",
-                  marginBottom: "8px",
-                }}
-              >
-                01 · THE WESTERN SILHOUETTE
-              </span>
-              <h3
-                style={{
-                  margin: "0 0 10px",
-                  fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
-                  fontWeight: 400,
-                  color: "var(--md-fg)",
-                }}
-              >
-                Ergonomics &amp; Daily Wear
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.875rem",
-                  lineHeight: 1.7,
-                  color: "var(--md-fg-secondary)",
-                }}
-              >
-                Low-profile bezel settings, smooth interior comfort-bands, and balanced center of
-                gravity designed specifically for Western lifestyles, professional settings, and daily wear.
-              </p>
-            </div>
-
-            <div>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  fontFamily: "var(--md-font-crest), Georgia, serif",
-                  color: "var(--md-gold-antique)",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  display: "block",
-                  marginBottom: "8px",
-                }}
-              >
-                02 · NATURAL COLOR HARMONY
-              </span>
-              <h3
-                style={{
-                  margin: "0 0 10px",
-                  fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
-                  fontWeight: 400,
-                  color: "var(--md-fg)",
-                }}
-              >
-                Untreated Earth Minerals
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.875rem",
-                  lineHeight: 1.7,
-                  color: "var(--md-fg-secondary)",
-                }}
-              >
-                Pairing vibrant royal blue lapis, deep African amethysts, iridescent rainbow
-                moonstones, and Zambian emeralds directly with anti-tarnish precious metals.
-              </p>
-            </div>
-
-            <div>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  fontFamily: "var(--md-font-crest), Georgia, serif",
-                  color: "var(--md-gold-antique)",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  display: "block",
-                  marginBottom: "8px",
-                }}
-              >
-                03 · FACTORY-DIRECT HONESTY
-              </span>
-              <h3
-                style={{
-                  margin: "0 0 10px",
-                  fontFamily: "var(--md-font-display)",
-                  fontSize: "1.25rem",
-                  fontWeight: 400,
-                  color: "var(--md-fg)",
-                }}
-              >
-                Direct Jaipur Atelier Value
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.875rem",
-                  lineHeight: 1.7,
-                  color: "var(--md-fg-secondary)",
-                }}
-              >
-                Eliminating domestic distributors, overseas importers, and middleman traders.
-                Connoisseurs receive atelier-direct pricing with pure metallurgical transparency.
-              </p>
-            </div>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+                minWidth: "640px",
+              }}
+            >
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--md-rule-strong)" }}>
+                  <th
+                    style={{
+                      padding: "16px 12px",
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--md-fg-muted)",
+                      fontWeight: 600,
+                      width: "30%",
+                    }}
+                  >
+                    Benchmark Parameter
+                  </th>
+                  <th
+                    style={{
+                      padding: "16px 12px",
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--md-forest)",
+                      fontWeight: 700,
+                      width: "40%",
+                    }}
+                  >
+                    Millennium Designs Atelier
+                  </th>
+                  <th
+                    style={{
+                      padding: "16px 12px",
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--md-fg-muted)",
+                      fontWeight: 500,
+                      width: "30%",
+                    }}
+                  >
+                    Commercial Mass Market
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    param: "Precious Alloy Base",
+                    millennium: "Certified 92.5% pure elemental silver + anti-tarnish compound",
+                    commercial: "Standard 925 alloyed with high-copper (oxidises rapidly)",
+                  },
+                  {
+                    param: "Manufacturing Custody",
+                    millennium: "100% in-house at 5 Noor Plaza, Chameliwala Market",
+                    commercial: "Outsourced to third-party contract jobbers",
+                  },
+                  {
+                    param: "Skin Biocompatibility",
+                    millennium: "100% Nickel-free, Lead-free, Cadmium-free (Hypoallergenic)",
+                    commercial: "Often contains trace nickel to add rigidity",
+                  },
+                  {
+                    param: "Gemstone Calibre",
+                    millennium: "Natural untreated rough cut & faceted in our own lapidary",
+                    commercial: "Bulk pre-faceted commercial lots or synthetic glass",
+                  },
+                  {
+                    param: "Pricing Transparency",
+                    millennium: "Direct factory rates; no distributor or storefront markup",
+                    commercial: "Multi-tier markups (up to 500% over factory cost)",
+                  },
+                  {
+                    param: "Patron Access",
+                    millennium: "Direct dialogue with founders Amit & Saket Agarwal",
+                    commercial: "Impersonal call centers or retail intermediaries",
+                  },
+                ].map((row, idx) => (
+                  <tr
+                    key={row.param}
+                    style={{
+                      borderBottom: "1px solid var(--md-rule)",
+                      background: idx % 2 === 0 ? "transparent" : "rgba(0, 0, 0, 0.015)",
+                    }}
+                  >
+                    <td
+                      style={{
+                        padding: "18px 12px",
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--md-fg)",
+                      }}
+                    >
+                      {row.param}
+                    </td>
+                    <td
+                      style={{
+                        padding: "18px 12px",
+                        fontSize: "0.875rem",
+                        color: "var(--md-fg)",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      <strong style={{ color: "var(--md-forest)" }}>✓</strong> {row.millennium}
+                    </td>
+                    <td
+                      style={{
+                        padding: "18px 12px",
+                        fontSize: "0.875rem",
+                        color: "var(--md-fg-muted)",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {row.commercial}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* ── CHAPTER III: THE METALLURGICAL CODEX (PURE 925) ───────────── */}
-      <section
+      {/* ── 5. FOUNDERS' COLOPHON & ATELIER INVITATION ──────────────────── */}
+      <footer
         style={{
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingTop: "clamp(64px, 9vw, 120px)",
+          paddingBottom: "clamp(64px, 8vw, 100px)",
           background: "var(--md-bg)",
         }}
       >
@@ -605,458 +925,159 @@ export default async function OurStoryPage({
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
             gap: "clamp(36px, 6vw, 84px)",
-            alignItems: "center",
-          }}
-        >
-          {/* Left: Authentic Bench Silversmith Visual Plate */}
-          <div style={{ position: "relative", order: 2 }}>
-            <div className="md-editorial-frame" style={{ aspectRatio: "4/3", width: "100%" }}>
-              <Image
-                src="/images/story/atelier_bench_silversmith.jpg"
-                alt="Master bench silversmith hand-filing and shaping a 925 sterling silver ring in Jaipur"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-            <div
-              style={{
-                marginTop: "14px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "baseline",
-                fontSize: "0.75rem",
-                color: "var(--md-fg-muted)",
-                borderTop: "1px solid var(--md-rule)",
-                paddingTop: "8px",
-              }}
-            >
-              <span style={{ fontStyle: "italic", fontFamily: "var(--md-font-display)" }}>
-                Plate II: Hand-carving 925 anti-tarnish silver at the bench pin
-              </span>
-              <span style={{ letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.6875rem" }}>
-                Atelier Chameliwala · MD-JAIPUR
-              </span>
-            </div>
-          </div>
-
-          {/* Right: Technical Metallurgical Narrative */}
-          <div style={{ order: 1 }}>
-            <div
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.24em",
-                textTransform: "uppercase",
-                color: "var(--md-gold-antique)",
-                fontWeight: 600,
-                marginBottom: "var(--md-space-3)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <span>CHAPTER III</span>
-              <span>·</span>
-              <span>METALLURGY &amp; ALLOY INTEGRITY</span>
-            </div>
-
-            <h2
-              style={{
-                margin: "0 0 var(--md-space-5)",
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-                lineHeight: 1.14,
-                fontWeight: 400,
-                color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Pure 925 Sterling Silver &amp; The Anti-Tarnish Formulation
-            </h2>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-4)",
-                fontSize: "var(--md-t-body-lg)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              Standard commercial sterling silver is alloyed with raw copper, which reacts rapidly
-              with airborne sulphur and moisture, causing dark oxide discolouration within months of
-              exposure. Many mass brands mask this flaw with ephemeral flash-coatings that wear off
-              with gentle friction.
-            </p>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-5)",
-                fontSize: "var(--md-t-body)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              At Millennium Designs, our foundry casts strictly with certified <strong>92.5% pure elemental silver</strong>,
-              bonded with a proprietary metallurgical anti-tarnish alloy developed over two decades.
-              This formulation creates an enduring micro-crystalline barrier against oxidation,
-              preserving a mirror-white, moonlit sheen even in humid seaside climates.
-            </p>
-
-            {/* Technical Checklist */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "24px" }}>
-              {[
-                {
-                  title: "100% Hypoallergenic & Skin-Safe",
-                  desc: "Completely devoid of nickel, lead, or toxic cadmium fillers commonly used in mass-market commercial jewelry.",
-                },
-                {
-                  title: "Micro-Pore Free Lost-Wax Vacuum Casting",
-                  desc: "Induction melted in inert atmosphere to prevent porosity, ensuring tensile strength and heirloom resilience.",
-                },
-                {
-                  title: "Molecular Anti-Tarnish Longevity",
-                  desc: "Tested under accelerated climatic chambers to maintain luminous luster without requiring aggressive chemical dips.",
-                },
-              ].map((spec) => (
-                <div key={spec.title} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-                  <div
-                    style={{
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "var(--md-champagne)",
-                      marginTop: "7px",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <div>
-                    <strong style={{ fontSize: "0.875rem", color: "var(--md-fg)", display: "block" }}>
-                      {spec.title}
-                    </strong>
-                    <span style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", lineHeight: 1.5 }}>
-                      {spec.desc}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CHAPTER IV: 100% IN-HOUSE ATELIER CODEX ────────────────────── */}
-      <section
-        data-surface="forest"
-        style={{
-          paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(72px, 9vw, 120px)",
-          background: "var(--md-forest)",
-          color: "var(--md-fg-inverse)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-          }}
-        >
-          <div style={{ maxWidth: "820px", marginBottom: "var(--md-space-9)" }}>
-            <div
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.26em",
-                textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                fontWeight: 600,
-                marginBottom: "var(--md-space-3)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <span>CHAPTER IV</span>
-              <span>·</span>
-              <span>THE CODEX OF COMPLETE CUSTODY</span>
-            </div>
-
-            <h2
-              style={{
-                margin: "0 0 var(--md-space-5)",
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2.25rem, 4.5vw, 3.75rem)",
-                lineHeight: 1.1,
-                fontWeight: 400,
-                letterSpacing: "-0.015em",
-                color: "var(--md-fg-inverse)",
-              }}
-            >
-              Nothing is Outsourced.
-              <br />
-              Every Gram Formed Under One Roof.
-            </h2>
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(1rem, 1.6vw, 1.1875rem)",
-                lineHeight: 1.75,
-                color: "var(--md-fg-inverse-muted)",
-                fontWeight: 300,
-              }}
-            >
-              In an industry where over 90% of commercial labels outsource production to distant
-              job-work factories, Millennium Designs retains complete custody of every creation.
-              Inside our Jaipur atelier at Noor Plaza, master artisans who have inherited family
-              techniques work in direct coordination with our design directors.
-            </p>
-          </div>
-
-          {/* Archival Ledger Format (No AI Cards) */}
-          <div
-            style={{
-              borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
-            }}
-          >
-            {[
-              {
-                code: "CODEX 01",
-                title: "Lapidary Selection & Gem Calibrations",
-                description:
-                  "Rough mineral specimens of natural emerald, royal amethyst, and rainbow moonstone are cut, faceted, and measured in our in-house lapidary. We never purchase pre-calibrated factory commercial lots.",
-              },
-              {
-                code: "CODEX 02",
-                title: "Precision Lost-Wax Metallurgy",
-                description:
-                  "Sculpted wax models are encased in fine ceramic investment and cast in certified 925 silver with anti-tarnish alloy using computer-regulated vacuum induction casting chambers.",
-              },
-              {
-                code: "CODEX 03",
-                title: "Micro-Bench Fabrication & Prong Dressing",
-                description:
-                  "Every gemstone seat is individually cut into the solid silver mounting by a master bench jeweler using hardened tungsten carbide gravers, ensuring flush stone stability without glue or fillers.",
-              },
-              {
-                code: "CODEX 04",
-                title: "Multi-Stage Mirror Finish & Anti-Tarnish Bath",
-                description:
-                  "Jewels undergo progressive hand-buffing with Tripoli and diamond rouge compounds, followed by an electro-chemical anti-tarnish bonding pass that protects deep recesses from atmospheric oxidation.",
-              },
-              {
-                code: "CODEX 05",
-                title: "Optical Loupe Inspection & Certification",
-                description:
-                  "Every finished ring, pendant, and bracelet is independently weighed, hallmarked, and examined under 10x gemological magnification before receiving clearance for client dispatch.",
-              },
-            ].map((entry) => (
-              <div
-                key={entry.code}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "clamp(90px, 12vw, 140px) 1fr",
-                  gap: "clamp(16px, 4vw, 40px)",
-                  paddingBlock: "clamp(20px, 3vw, 32px)",
-                  borderBottom: "1px solid color-mix(in srgb, var(--md-fg-inverse) 12%, transparent)",
-                  alignItems: "baseline",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--md-font-crest), Georgia, serif",
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    color: "var(--md-champagne)",
-                    fontWeight: 600,
-                  }}
-                >
-                  {entry.code}
-                </span>
-                <div>
-                  <h3
-                    style={{
-                      margin: "0 0 8px",
-                      fontFamily: "var(--md-font-display)",
-                      fontSize: "clamp(1.125rem, 1.8vw, 1.4rem)",
-                      fontWeight: 400,
-                      color: "var(--md-fg-inverse)",
-                      lineHeight: 1.25,
-                    }}
-                  >
-                    {entry.title}
-                  </h3>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: "0.875rem",
-                      lineHeight: 1.7,
-                      color: "var(--md-fg-inverse-muted)",
-                      maxWidth: "760px",
-                    }}
-                  >
-                    {entry.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CHAPTER V: GLOBAL CONNOISSEURS & THE JAIPUR ATELIER ───────── */}
-      <section
-        style={{
-          paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(72px, 8vw, 120px)",
-          background: "var(--md-bg)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(36px, 6vw, 72px)",
             alignItems: "start",
           }}
         >
-          {/* Left: Global Demographics & Craft Identity */}
+          {/* Left: Direct Founder Letter */}
           <div>
-            <div
+            <span
               style={{
                 fontSize: "0.6875rem",
                 letterSpacing: "0.24em",
                 textTransform: "uppercase",
                 color: "var(--md-gold-antique)",
                 fontWeight: 600,
-                marginBottom: "var(--md-space-3)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
+                display: "block",
+                marginBottom: "8px",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              <span>CHAPTER V</span>
-              <span>·</span>
-              <span>PATRONS ACROSS SIX CONTINENTS</span>
-            </div>
+              DIRECT PATRON COMMUNICATION
+            </span>
 
             <h2
               style={{
-                margin: "0 0 var(--md-space-4)",
+                margin: "0 0 20px",
                 fontFamily: "var(--md-font-display)",
                 fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-                lineHeight: 1.14,
+                lineHeight: 1.15,
                 fontWeight: 400,
                 color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
               }}
             >
-              Adored in New York, Milan, Sydney &amp; Beyond
+              An Open Door in Jaipur
             </h2>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-4)",
-                fontSize: "var(--md-t-body-lg)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              While our bench rests in Jaipur, our creations adorn collectors in thirty nations.
-              Our primary patronage comes from jewelry lovers aged thirty and above across the
-              United States, Canada, the United Kingdom, Italy, Germany, Australia, Ukraine, and
-              Russia — connoisseurs who appreciate the tactile density of pure sterling silver
-              and the timeless narrative of untreated natural gems.
-            </p>
-
-            <p
-              style={{
-                margin: "0 0 var(--md-space-6)",
-                fontSize: "var(--md-t-body)",
-                lineHeight: 1.85,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              Whether providing custom bridal jewellery sets or single heirloom statement rings,
-              we conduct each transaction with direct factory integrity. You are speaking directly
-              with the artisans and directors who cast the metal and hand-finish each setting.
-            </p>
 
             <div
               style={{
+                fontSize: "0.9375rem",
+                lineHeight: 1.85,
+                color: "var(--md-fg-secondary)",
                 display: "flex",
-                flexWrap: "wrap",
-                gap: "10px",
-                paddingTop: "var(--md-space-4)",
-                borderTop: "1px solid var(--md-rule)",
+                flexDirection: "column",
+                gap: "16px",
               }}
             >
-              {[
-                "United States",
-                "United Kingdom",
-                "Australia",
-                "Germany",
-                "Italy",
-                "Canada",
-                "Russia",
-                "Ukraine",
-                "India",
-              ].map((c) => (
+              <p style={{ margin: 0 }}>
+                Whether you are a private collector acquiring an heirloom emerald ring or a
+                boutique owner seeking bespoke sterling silver collections for your showroom,
+                we believe high jewellery is an intimate relationship built on integrity.
+              </p>
+              <p style={{ margin: 0 }}>
+                When you contact Millennium Designs, you are not communicating with a third-party
+                agency. You are speaking directly with Amit and Saket Agarwal. Our workshop doors
+                at Chameliwala Market are always open to those who honour the craft.
+              </p>
+            </div>
+
+            {/* Signature Block */}
+            <div
+              style={{
+                marginTop: "32px",
+                paddingTop: "24px",
+                borderTop: "1px solid var(--md-rule)",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "36px",
+              }}
+            >
+              <div>
                 <span
-                  key={c}
                   style={{
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "var(--md-fg-secondary)",
-                    padding: "4px 10px",
-                    border: "1px solid var(--md-rule)",
-                    borderRadius: "var(--md-radius-sm)",
-                    background: "var(--md-ivory)",
-                    fontFamily: "var(--md-font-crest), Georgia, serif",
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.25rem",
+                    fontStyle: "italic",
+                    color: "var(--md-fg)",
+                    display: "block",
                   }}
                 >
-                  {c}
+                  Amit Agarwal
                 </span>
-              ))}
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--md-fg-muted)",
+                    marginTop: "4px",
+                    display: "block",
+                  }}
+                >
+                  Principal · Operations &amp; Metallurgy
+                </span>
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.25rem",
+                    fontStyle: "italic",
+                    color: "var(--md-fg)",
+                    display: "block",
+                  }}
+                >
+                  Saket Agarwal
+                </span>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--md-fg-muted)",
+                    marginTop: "4px",
+                    display: "block",
+                  }}
+                >
+                  Principal · Design &amp; International Relations
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Right: Atelier Location & Contact Card */}
+          {/* Right: Atelier Certificate & Contacts */}
           <div
             style={{
               padding: "clamp(24px, 4vw, 40px)",
               background: "var(--md-ivory)",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
-              boxShadow: "0 12px 32px -8px rgba(0, 0, 0, 0.06)",
+              border: "1px solid var(--md-rule-strong)",
             }}
           >
-            <div
+            <span
               style={{
                 fontSize: "0.6875rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-gold-antique)",
-                fontFamily: "var(--md-font-crest), Georgia, serif",
+                fontWeight: 600,
+                display: "block",
                 marginBottom: "8px",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              VISIT OUR JAIPUR WORKSHOP
-            </div>
+              PHYSICAL ATELIER REGISTRY
+            </span>
 
             <h3
               style={{
                 margin: "0 0 16px",
                 fontFamily: "var(--md-font-display)",
-                fontSize: "1.75rem",
+                fontSize: "1.625rem",
                 fontWeight: 400,
                 color: "var(--md-fg)",
-                lineHeight: 1.2,
               }}
             >
-              Millenium Designs Atelier
+              Millenium Designs
             </h3>
 
             <address
@@ -1069,8 +1090,6 @@ export default async function OurStoryPage({
                 display: "block",
               }}
             >
-              <strong>Millenium Designs</strong>
-              <br />
               5, Noor Plaza, Chameliwala Market
               <br />
               M.I. Road, Jaipur, 302001
@@ -1083,52 +1102,36 @@ export default async function OurStoryPage({
                 display: "flex",
                 flexDirection: "column",
                 gap: "12px",
-                paddingTop: "16px",
+                paddingBlock: "16px",
                 borderTop: "1px solid var(--md-rule)",
+                borderBottom: "1px solid var(--md-rule)",
                 marginBottom: "28px",
+                fontSize: "0.875rem",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                  Primary Concierge
-                </span>
+                <span style={{ color: "var(--md-fg-muted)" }}>Telephone I</span>
                 <a
-                  href={`tel:+${MILLENNIUM_WHATSAPP_NUMBER}`}
-                  style={{
-                    color: "var(--md-fg)",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    fontSize: "0.875rem",
-                  }}
+                  href="tel:+919828156465"
+                  style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}
                 >
                   +91 98281 56465
                 </a>
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                  Secondary Direct Line
-                </span>
+                <span style={{ color: "var(--md-fg-muted)" }}>Telephone II</span>
                 <a
-                  href={`tel:+${MILLENNIUM_SECONDARY_PHONE}`}
-                  style={{
-                    color: "var(--md-fg)",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    fontSize: "0.875rem",
-                  }}
+                  href="tel:+919829056597"
+                  style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}
                 >
                   +91 98290 56597
                 </a>
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--md-fg-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                  Principals
-                </span>
-                <span style={{ fontSize: "0.875rem", color: "var(--md-fg)" }}>
-                  Amit Agarwal &amp; Saket Agarwal
-                </span>
+                <span style={{ color: "var(--md-fg-muted)" }}>Factory Direct</span>
+                <span style={{ color: "var(--md-forest)", fontWeight: 600 }}>Pure 925 Sterling Silver</span>
               </div>
             </div>
 
@@ -1155,7 +1158,7 @@ export default async function OurStoryPage({
                   textDecoration: "none",
                 }}
               >
-                <span>WhatsApp Founders Consultation</span>
+                <span>WhatsApp Founders Directly</span>
                 <span>→</span>
               </a>
 
@@ -1178,12 +1181,12 @@ export default async function OurStoryPage({
                   textDecoration: "none",
                 }}
               >
-                Shop High Jewellery Creations
+                Explore Curated Collections
               </Link>
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </footer>
+    </article>
   );
 }
