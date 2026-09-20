@@ -203,6 +203,7 @@ export function ProductCard({
         >
           <Link
             href={href}
+            className="md-title-clamp"
             style={{
               color: "var(--md-fg)",
               textDecoration: "none",

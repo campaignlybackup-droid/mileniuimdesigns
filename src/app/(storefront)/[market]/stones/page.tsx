@@ -77,32 +77,48 @@ export default async function StonesIndexPage({
 
         <header
           style={{
-            paddingBlock: "var(--md-space-8) var(--md-space-6)",
+            paddingBlock: "clamp(24px, 4vw, 48px) clamp(16px, 3vw, 32px)",
             borderBottom: "1px solid var(--md-rule)",
           }}
         >
           <span
             style={{
-              fontSize: "var(--md-t-label, 0.75rem)",
-              letterSpacing: "0.1em",
+              fontSize: "0.6875rem",
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "var(--md-fg-secondary)",
-              fontWeight: 500,
+              color: "var(--md-gold-antique)",
+              fontWeight: 600,
+              display: "block",
+              fontFamily: "var(--md-font-crest), Georgia, serif",
+              marginBottom: "8px",
             }}
           >
-            Gemmology & Craft
+            NATURAL GEMMOLOGY &amp; ARCHIVAL MINERALS · JAIPUR, EST. 1961
           </span>
           <h1
             style={{
-              margin: "var(--md-space-2) 0 0 0",
+              margin: "0 0 12px 0",
               fontFamily: "var(--md-font-display)",
-              fontSize: "var(--md-t-display, 2rem)",
+              fontSize: "clamp(2rem, 4vw, 3.5rem)",
               fontWeight: 400,
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.015em",
+              lineHeight: 1.1,
+              color: "var(--md-fg)",
             }}
           >
-            Stones
+            Untreated Natural Gemstones
           </h1>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "clamp(0.9375rem, 1.4vw, 1.0625rem)",
+              lineHeight: 1.7,
+              color: "var(--md-fg-secondary)",
+              maxWidth: "680px",
+            }}
+          >
+            Sourced directly from historic veins in Colombia, Zambia, Sri Lanka, and Rajasthan &mdash; cut and faceted in our Jaipur lapidary for chromatic fire and authentic optical character.
+          </p>
         </header>
 
         <div style={{ paddingTop: "var(--md-space-8)" }}>

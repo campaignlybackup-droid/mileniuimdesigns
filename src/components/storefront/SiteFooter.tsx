@@ -43,7 +43,7 @@ export function SiteFooter({
           >
             {columns.map((column) => (
               <nav key={column.heading} aria-label={column.heading}>
-                <h2 className="md-label" style={{ color: "var(--md-fg-secondary)" }}>
+                <h2 className="md-label" style={{ color: "var(--md-champagne)", letterSpacing: "0.18em" }}>
                   {column.heading}
                 </h2>
                 <ul style={{ listStyle: "none", margin: "var(--md-space-4) 0 0", padding: 0 }}>
@@ -69,7 +69,7 @@ export function SiteFooter({
 
             {/* Atelier Contact & Location */}
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-3)" }}>
-              <h2 className="md-label" style={{ color: "var(--md-fg-secondary)" }}>
+              <h2 className="md-label" style={{ color: "var(--md-champagne)", letterSpacing: "0.18em" }}>
                 JAIPUR ATELIER &amp; CONTACT
               </h2>
               <address style={{ fontStyle: "normal", color: "var(--md-fg-inverse-muted)", fontSize: "var(--md-t-small)", lineHeight: 1.6 }}>

@@ -44,6 +44,7 @@ export function StoneCard({
         position: "relative",
         background: "var(--md-bg-raised)",
         borderRadius: "var(--md-radius-sm)",
+        border: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
         overflow: "hidden",
         padding: isFeatured ? "var(--md-space-5)" : "var(--md-space-3)",
         textAlign: isFeatured ? "left" : "center",

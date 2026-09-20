@@ -168,17 +168,43 @@ export default async function CategoryPage({
         {/* Header section */}
         <header
           style={{
-            paddingBlock: "clamp(16px, 3vw, 36px) clamp(12px, 2.5vw, 24px)",
+            paddingBlock: "clamp(20px, 3.5vw, 40px) clamp(14px, 2.5vw, 24px)",
             borderBottom: isOneOfAKind ? "1px solid var(--md-green, var(--md-rule))" : "1px solid var(--md-rule)",
           }}
         >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "8px", marginBottom: "6px" }}>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "var(--md-gold-antique)",
+                fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+              }}
+            >
+              JAIPUR ATELIER · PURE 925 STERLING SILVER
+            </span>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--md-fg-muted)",
+              }}
+            >
+              {totalCount} {totalCount === 1 ? "Creation" : "Creations"}
+            </span>
+          </div>
+
           <h1
             style={{
               margin: 0,
-              fontSize: isOneOfAKind ? "var(--md-t-hero, 2.5rem)" : "var(--md-t-display, 2rem)",
+              fontSize: isOneOfAKind ? "var(--md-t-hero, 2.5rem)" : "clamp(2rem, 4vw, 3.25rem)",
               fontFamily: "var(--md-font-display)",
               fontWeight: 400,
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.015em",
+              lineHeight: 1.1,
             }}
           >
             {cat.name}

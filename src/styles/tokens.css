@@ -100,6 +100,11 @@
   --md-container-text: 760px;
   --md-gutter: clamp(1.25rem, 4vw, 4rem);
 
+  /* Aspect Ratios */
+  --md-ratio-product: 4 / 5;
+  --md-ratio-stone: 1 / 1;
+  --md-ratio-hero: 16 / 9;
+
   --md-radius-none: 0;
   /* 2px is the MAXIMUM for a surface. Cards have no radius, no border and no shadow. */
   --md-radius-sm: 2px;

@@ -518,13 +518,33 @@ img[data-tone="ivory"] {
 }
 
 /* Smooth card elevation with subtle gold rim glow */
-.md-product-card {
+.md-product-card,
+.md-stone-card {
   transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease, border-color 240ms ease !important;
 }
 
-.md-product-card:hover {
+.md-product-card:hover,
+.md-stone-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px color-mix(in srgb, var(--md-champagne) 35%, transparent);
+}
+
+/* Strict aspect ratio enforcement across cards */
+.md-aspect-product {
+  aspect-ratio: 4 / 5 !important;
+}
+
+.md-aspect-square {
+  aspect-ratio: 1 / 1 !important;
+}
+
+/* Line clamping for consistent grid baseline alignment */
+.md-title-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
 }
 
 /* ── Luxury Maison Editorial & Monograph Styling ────────────────────────── */

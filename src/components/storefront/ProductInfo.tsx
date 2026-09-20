@@ -230,37 +230,38 @@ export function ProductInfo({
         isPriced={selectedVariant?.price !== null}
       />
 
-      {/* Luxury Assurance Badges */}
+      {/* Luxury Atelier Assurance Badges */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: "var(--md-space-3)",
-          padding: "var(--md-space-4)",
+          padding: "14px 18px",
           background: "var(--md-bg-raised)",
-          border: "1px solid var(--md-rule)",
+          border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
           borderRadius: "var(--md-radius-sm)",
           marginTop: "var(--md-space-4)",
           fontSize: "0.75rem",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.06em",
           color: "var(--md-fg-secondary)",
+          fontFamily: "var(--md-font-crest), Georgia, serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>925 Sterling Silver</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
+          <span>Pure 925 Sterling Silver</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>Anti-tarnish Alloy</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
+          <span>Anti-Tarnish Formula</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>In-house Crafted, Jaipur</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
+          <span>100% In-House, Jaipur</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>✦</span>
-          <span>Direct from Manufacturer</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
+          <span>Direct Atelier Value</span>
         </div>
       </div>
 
