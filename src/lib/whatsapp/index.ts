@@ -11,7 +11,12 @@ export function buildWhatsAppInquiryUrl(options: {
   orderNumber?: string;
   productTitle?: string;
   topic?: "order" | "bespoke" | "wholesale" | "general";
+  customMessage?: string;
 }): string {
+  if (options.customMessage) {
+    return `https://wa.me/${MILLENNIUM_WHATSAPP_NUMBER}?text=${encodeURIComponent(options.customMessage)}`;
+  }
+
   let text = "Hello Millennium Designs, ";
 
   if (options.orderNumber) {
