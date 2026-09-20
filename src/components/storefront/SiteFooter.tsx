@@ -69,17 +69,31 @@ export function SiteFooter({
           </div>
         )}
 
-        <p
+        <div
           style={{
             marginBlockStart: "var(--md-space-8)",
-            paddingBlockStart: "var(--md-space-4)",
-            borderTop: "1px solid var(--md-rule)",
-            color: "var(--md-fg-secondary)",
+            paddingBlockStart: "var(--md-space-5)",
+            borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "var(--md-space-4)",
+            color: "var(--md-fg-inverse-muted)",
             fontSize: "var(--md-t-small)",
           }}
         >
-          © {year} MILLENNIUM DESIGNS
-        </p>
+          <p style={{ margin: 0 }}>
+            © {year} MILLENNIUM DESIGNS · JAIPUR ATELIER
+          </p>
+          <div style={{ display: "flex", gap: "var(--md-space-4)", fontSize: "0.75rem", letterSpacing: "0.08em", flexWrap: "wrap" }}>
+            <span>925 STERLING SILVER</span>
+            <span>·</span>
+            <span>ANTI-TARNISH ALLOY</span>
+            <span>·</span>
+            <span>JAIPUR CRAFTSMANSHIP</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

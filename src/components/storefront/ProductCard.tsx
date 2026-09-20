@@ -101,6 +101,28 @@ export function ProductCard({
           />
         )}
 
+        {/* Subtle Atelier Hallmark Badge */}
+        <div
+          style={{
+            position: "absolute",
+            top: "var(--md-space-2)",
+            left: "var(--md-space-2)",
+            background: "rgba(6, 19, 13, 0.75)",
+            backdropFilter: "blur(8px)",
+            padding: "3px 8px",
+            fontSize: "0.625rem",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "var(--md-champagne)",
+            borderRadius: "var(--md-radius-sm)",
+            border: "1px solid rgba(200, 178, 122, 0.25)",
+            zIndex: 2,
+            fontFamily: "var(--md-font-crest), Georgia, serif",
+          }}
+        >
+          925 Silver
+        </div>
+
         {isSold && (
           <div
             style={{
@@ -134,13 +156,15 @@ export function ProductCard({
       </div>
 
       {/* Details below image */}
-      <div style={{ paddingTop: "var(--md-space-2)", display: "flex", flexDirection: "column", gap: "2px" }}>
+      <div style={{ paddingTop: "var(--md-space-3)", display: "flex", flexDirection: "column", gap: "3px" }}>
         <h3
           style={{
             margin: 0,
-            fontSize: "clamp(0.8125rem, 1.2vw, 0.9375rem)",
+            fontFamily: "var(--md-font-display)",
+            fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
             fontWeight: 400,
-            lineHeight: 1.35,
+            lineHeight: 1.3,
+            letterSpacing: "0.01em",
           }}
         >
           <Link
@@ -148,6 +172,7 @@ export function ProductCard({
             style={{
               color: "var(--md-fg)",
               textDecoration: "none",
+              transition: "color 200ms ease",
             }}
           >
             {product.title}
@@ -157,9 +182,10 @@ export function ProductCard({
         {stoneOrMaterial && (
           <div
             style={{
-              fontSize: "0.875rem",
+              fontSize: "0.8125rem",
               color: "var(--md-fg-secondary)",
               lineHeight: 1.3,
+              letterSpacing: "0.01em",
             }}
           >
             {stoneOrMaterial}

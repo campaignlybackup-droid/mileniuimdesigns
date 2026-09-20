@@ -24,11 +24,39 @@
 
   --font-display: var(--md-font-display);
   --font-sans: var(--md-font-sans);
+  --font-crest: var(--md-font-crest);
 
   --radius-none: var(--md-radius-none);
   --radius-sm: var(--md-radius-sm);
   --radius-pill: var(--md-radius-pill);
 }
+
+.md-font-crest {
+  font-family: var(--md-font-crest), Georgia, serif;
+}
+
+.md-font-display {
+  font-family: var(--md-font-display), Georgia, serif;
+  font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
+}
+
+.md-gold-gradient {
+  background: linear-gradient(135deg, #f5e7c8 0%, #c8b27a 50%, #a88c55 100%);
+}
+
+.md-gold-text {
+  background: linear-gradient(135deg, #f9ecd2 0%, #d4bf88 50%, #a88c55 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.md-glass-luxury {
+  background: color-mix(in srgb, var(--md-green-black) 78%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent);
+}
+
 
 html {
   background-color: var(--md-bg);

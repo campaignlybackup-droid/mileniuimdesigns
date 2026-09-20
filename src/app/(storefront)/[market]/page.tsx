@@ -64,19 +64,16 @@ export default async function StorefrontHomePage({
         boxSizing: "border-box",
       }}
     >
-      {/* ── 1. HAUTE JOAILLERIE HERO ─────────────────────────────────────── */}
+      {/* ── 1. HAUTE JOAILLERIE FLAGSHIP HERO ───────────────────────── */}
       <section
         style={{
           position: "relative",
           width: "100%",
-          minHeight: "clamp(540px, 78vh, 860px)",
-          background: "radial-gradient(ellipse at 50% 30%, var(--md-emerald-deep) 0%, var(--md-forest) 55%, var(--md-green-black) 100%)",
+          minHeight: "clamp(620px, 85vh, 920px)",
+          background: "radial-gradient(ellipse at 50% 25%, var(--md-emerald-deep) 0%, var(--md-forest) 50%, var(--md-green-black) 100%)",
           color: "var(--md-fg-inverse)",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
-          textAlign: "center",
           paddingInline: "var(--md-gutter)",
           paddingBlock: "var(--md-space-10) var(--md-space-8)",
           overflow: "hidden",
@@ -90,7 +87,7 @@ export default async function StorefrontHomePage({
             inset: 0,
             opacity: 0.04,
             backgroundImage: "radial-gradient(circle at 50% 50%, var(--md-champagne) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
+            backgroundSize: "36px 36px",
             pointerEvents: "none",
           }}
         />
@@ -99,148 +96,242 @@ export default async function StorefrontHomePage({
           style={{
             position: "relative",
             zIndex: 2,
-            maxWidth: "920px",
+            width: "100%",
+            maxWidth: "var(--md-container)",
             marginInline: "auto",
-            display: "flex",
-            flexDirection: "column",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))",
+            gap: "clamp(36px, 6vw, 72px)",
             alignItems: "center",
-            gap: "var(--md-space-5)",
           }}
         >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "var(--md-space-3)",
-              padding: "6px 16px",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 32%, transparent)",
-              background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
-              fontSize: "0.6875rem",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--md-champagne)",
-              fontWeight: 500,
-            }}
-          >
-            JAIPUR · EST. 1961
-          </div>
-
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)",
-              lineHeight: 1.08,
-              fontWeight: 400,
-              letterSpacing: "-0.015em",
-              color: "var(--md-fg-inverse)",
-              textWrap: "balance",
-            }}
-          >
-            Handcrafted Silver Jewellery from the Heart of Jaipur
-          </h1>
-
-          <p
-            style={{
-              margin: 0,
-              fontSize: "clamp(1rem, 1.6vw, 1.25rem)",
-              lineHeight: 1.6,
-              color: "var(--md-fg-inverse-muted)",
-              maxWidth: "580px",
-            }}
-          >
-            Crafted in 925 sterling silver with an anti-tarnish alloy. A legacy of over 60 years in fine jewellery — made in-house in our Jaipur workshops and delivered worldwide.
-          </p>
-
+          {/* Left Column: Regal Atelier Copy & Actions */}
           <div
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: "var(--md-space-4)",
-              paddingTop: "var(--md-space-2)",
+              flexDirection: "column",
+              gap: "var(--md-space-5)",
+              textAlign: "left",
             }}
           >
-            <Link
-              href={`${prefix}/shop`}
+            {/* Heritage Monogram Badge */}
+            <div
               style={{
+                alignSelf: "flex-start",
                 display: "inline-flex",
                 alignItems: "center",
-                justifyContent: "center",
-                height: 48,
-                paddingInline: "32px",
-                background: "var(--md-bg-inverse)",
-                color: "var(--md-ivory-soft)",
-                fontSize: "0.8125rem",
-                fontWeight: 600,
-                letterSpacing: "0.12em",
+                gap: "var(--md-space-3)",
+                padding: "8px 18px",
+                borderRadius: "var(--md-radius-sm)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 36%, transparent)",
+                background: "color-mix(in srgb, var(--md-green-black) 70%, transparent)",
+                fontSize: "0.6875rem",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                textDecoration: "none",
-                borderRadius: "var(--md-radius-sm)",
-                transition: "opacity 200ms ease",
+                color: "var(--md-champagne)",
+                fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              Explore Creations →
-            </Link>
+              <span>PUSHPAK JEWELS 1961</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <span>JAIPUR ATELIER</span>
+            </div>
 
-            <a
-              href={whatsappConsultationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <h1
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                height: 48,
-                paddingInline: "26px",
-                border: "1px solid color-mix(in srgb, var(--md-fg-inverse) 36%, transparent)",
-                background: "color-mix(in srgb, var(--md-green-black) 40%, transparent)",
+                margin: 0,
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(2.75rem, 5.5vw, 4.75rem)",
+                lineHeight: 1.06,
+                fontWeight: 400,
+                letterSpacing: "-0.015em",
                 color: "var(--md-fg-inverse)",
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                letterSpacing: "0.08em",
-                textDecoration: "none",
-                borderRadius: "var(--md-radius-sm)",
-                transition: "border-color 200ms ease",
+                textWrap: "balance",
               }}
             >
-              Private Atelier Consultation
-            </a>
+              Generations of Emerald Mastery &amp; Handcrafted 925 Silver
+            </h1>
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: "clamp(1rem, 1.5vw, 1.1875rem)",
+                lineHeight: 1.65,
+                color: "var(--md-fg-inverse-muted)",
+                maxWidth: "600px",
+              }}
+            >
+              Rooted in Jaipur’s historic Johari Bazaar since 1961, our family atelier shapes rare natural gemstones and anti-tarnish 925 sterling silver into heirlooms of enduring distinction. 100% in-house manufacturing, BIS hallmarked, and delivered directly to collectors worldwide.
+            </p>
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "var(--md-space-4)",
+                paddingTop: "var(--md-space-2)",
+              }}
+            >
+              <Link
+                href={`${prefix}/rings`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 52,
+                  paddingInline: "36px",
+                  background: "var(--md-bg-inverse)",
+                  color: "var(--md-ivory-soft)",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  borderRadius: "var(--md-radius-sm)",
+                  border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+                  boxShadow: "0 8px 24px -6px rgba(0, 61, 31, 0.5)",
+                  transition: "transform 200ms ease, box-shadow 200ms ease",
+                }}
+              >
+                Explore Catalogue →
+              </Link>
+
+              <a
+                href={whatsappConsultationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  height: 52,
+                  paddingInline: "28px",
+                  border: "1px solid color-mix(in srgb, var(--md-fg-inverse) 32%, transparent)",
+                  background: "color-mix(in srgb, var(--md-green-black) 45%, transparent)",
+                  color: "var(--md-fg-inverse)",
+                  fontSize: "0.8125rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.08em",
+                  textDecoration: "none",
+                  borderRadius: "var(--md-radius-sm)",
+                  transition: "border-color 200ms ease, background 200ms ease",
+                }}
+              >
+                <span>Private Atelier Consultation</span>
+              </a>
+            </div>
+
+            {/* Quick Assurance Strip */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "clamp(14px, 2.5vw, 28px)",
+                marginTop: "var(--md-space-6)",
+                paddingTop: "var(--md-space-5)",
+                borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
+                fontSize: "0.75rem",
+                letterSpacing: "0.08em",
+                color: "var(--md-fg-inverse-muted)",
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                ✦ BIS 925 Hallmarked
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                ✦ Anti-Tarnish Metallurgy
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                ✦ Johari In-House Atelier
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                ✦ 60+ Year Heritage
+              </span>
+            </div>
           </div>
 
-          {/* Quick Assurance Badges */}
+          {/* Right Column: Signature Editorial Showcase */}
           <div
             style={{
+              position: "relative",
               display: "flex",
-              flexWrap: "wrap",
               justifyContent: "center",
-              gap: "clamp(16px, 3vw, 36px)",
-              marginTop: "var(--md-space-8)",
-              paddingTop: "var(--md-space-6)",
-              borderTop: "1px solid color-mix(in srgb, var(--md-fg-inverse) 14%, transparent)",
-              fontSize: "0.75rem",
-              letterSpacing: "0.06em",
-              color: "var(--md-fg-inverse-muted)",
+              alignItems: "center",
             }}
           >
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ 925 Sterling Silver
-            </span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ Anti-tarnish Alloy
-            </span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ In-house Crafted, Jaipur
-            </span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              ✦ 60+ Year Legacy
-            </span>
+            {/* Visual Frame */}
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "480px",
+                aspectRatio: "3 / 4",
+                borderRadius: "var(--md-radius-sm)",
+                overflow: "hidden",
+                boxShadow: "0 24px 60px -12px rgba(6, 19, 13, 0.7), 0 0 0 1px rgba(200, 178, 122, 0.25)",
+              }}
+            >
+              <Image
+                src="/images/categories/rings.jpg"
+                alt="Millennium Designs Signature Emerald and Sterling Silver Ring"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 480px"
+                style={{ objectFit: "cover" }}
+              />
+
+              {/* Gradient Scrim */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to top, rgba(6, 19, 13, 0.9) 0%, rgba(6, 19, 13, 0.15) 50%, transparent 100%)",
+                  pointerEvents: "none",
+                }}
+              />
+
+              {/* Floating Atelier Medallion */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "var(--md-space-6)",
+                  left: "var(--md-space-6)",
+                  right: "var(--md-space-6)",
+                  padding: "var(--md-space-4) var(--md-space-5)",
+                  background: "color-mix(in srgb, var(--md-green-black) 82%, transparent)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "var(--md-radius-sm)",
+                  border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-champagne)" }}>
+                    SIGNATURE SUITE
+                  </div>
+                  <div style={{ fontFamily: "var(--md-font-display)", fontSize: "1.125rem", color: "var(--md-fg-inverse)", marginTop: 2 }}>
+                    Jaipur Emerald Solitaire
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", color: "var(--md-fg-inverse-muted)" }}>
+                    PURITY
+                  </div>
+                  <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-champagne)", letterSpacing: "0.06em" }}>
+                    925 SILVER
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── 2. SIGNATURE CREATIONS ─────────────────────────────────────── */}
+      {/* ── 2. SIGNATURE MASTERPIECES ─────────────────────────────────── */}
       {featuredProducts.length > 0 && (
         <section
           style={{
@@ -262,10 +353,11 @@ export default async function StorefrontHomePage({
             <span
               style={{
                 fontSize: "0.75rem",
-                letterSpacing: "0.2em",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-green)",
                 fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
                 marginBottom: 6,
               }}
             >
@@ -275,23 +367,23 @@ export default async function StorefrontHomePage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)",
+                fontSize: "clamp(1.875rem, 3.5vw, 2.875rem)",
                 fontWeight: 400,
                 color: "var(--md-fg)",
               }}
             >
-              Signature Creations
+              Signature Masterpieces
             </h2>
             <p
               style={{
                 margin: "8px 0 0",
-                maxWidth: "520px",
+                maxWidth: "540px",
                 fontSize: "0.9375rem",
                 color: "var(--md-fg-secondary)",
-                lineHeight: 1.5,
+                lineHeight: 1.6,
               }}
             >
-              Exceptional pieces individually hallmarked and authenticated for the connoisseur.
+              Individual creations hand-finished by senior Jaipur goldsmiths, authenticated and hallmarked for the discerning collector.
             </p>
           </div>
 
@@ -308,7 +400,200 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 3. CURATED CATEGORY PORTALS ───────────────────────────────── */}
+      {/* ── 3. THE FOUR PILLARS OF MILLENNIUM MASTERY ──────────────────── */}
+      <section
+        style={{
+          background: "var(--md-bg-raised)",
+          borderTop: "1px solid var(--md-rule)",
+          borderBottom: "1px solid var(--md-rule)",
+          paddingInline: "var(--md-gutter)",
+          paddingBlock: "var(--md-space-10) var(--md-space-10)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "center",
+              marginBottom: "var(--md-space-9)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "var(--md-green)",
+                fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+              }}
+            >
+              SIX DECADES OF TRUST
+            </span>
+            <h2
+              style={{
+                margin: "8px 0 0",
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(1.875rem, 3.2vw, 2.75rem)",
+                fontWeight: 400,
+                color: "var(--md-fg)",
+              }}
+            >
+              The Four Pillars of Millennium Mastery
+            </h2>
+            <p
+              style={{
+                margin: "8px auto 0",
+                maxWidth: "560px",
+                fontSize: "0.9375rem",
+                color: "var(--md-fg-secondary)",
+                lineHeight: 1.6,
+              }}
+            >
+              How our grandfather’s 1961 founding principles in Johari Bazaar continue to govern every piece we cast today.
+            </p>
+          </div>
+
+          {/* Asymmetric Luxury Editorial 4-Pillar Grid */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+              gap: "var(--md-space-6)",
+            }}
+          >
+            {/* Pillar 1 */}
+            <div
+              style={{
+                background: "var(--md-bg)",
+                border: "1px solid var(--md-rule)",
+                borderRadius: "var(--md-radius-sm)",
+                padding: "var(--md-space-6)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--md-space-3)",
+                boxShadow: "0 4px 16px -4px rgba(0, 0, 0, 0.03)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  fontSize: "1.25rem",
+                  color: "var(--md-champagne)",
+                  fontWeight: 600,
+                }}
+              >
+                01
+              </div>
+              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--md-fg)" }}>
+                Jaipur Emerald Dynasty
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.6 }}>
+                Founded as Pushpak Jewels in 1961 by B. L. Agarwal, our roots began in Jaipur’s world-famous emerald trade. We personally source and hand-select each natural gemstone from certified ethical origins.
+              </p>
+            </div>
+
+            {/* Pillar 2 */}
+            <div
+              style={{
+                background: "var(--md-bg)",
+                border: "1px solid var(--md-rule)",
+                borderRadius: "var(--md-radius-sm)",
+                padding: "var(--md-space-6)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--md-space-3)",
+                boxShadow: "0 4px 16px -4px rgba(0, 0, 0, 0.03)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  fontSize: "1.25rem",
+                  color: "var(--md-champagne)",
+                  fontWeight: 600,
+                }}
+              >
+                02
+              </div>
+              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--md-fg)" }}>
+                Proprietary Anti-Tarnish Alloy
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.6 }}>
+                Our 925 sterling silver is alloyed with advanced metallurgical science to resist oxidation and discoloration. Your jewellery maintains its pristine, luminous mirror finish year after year.
+              </p>
+            </div>
+
+            {/* Pillar 3 */}
+            <div
+              style={{
+                background: "var(--md-bg)",
+                border: "1px solid var(--md-rule)",
+                borderRadius: "var(--md-radius-sm)",
+                padding: "var(--md-space-6)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--md-space-3)",
+                boxShadow: "0 4px 16px -4px rgba(0, 0, 0, 0.03)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  fontSize: "1.25rem",
+                  color: "var(--md-champagne)",
+                  fontWeight: 600,
+                }}
+              >
+                03
+              </div>
+              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--md-fg)" }}>
+                100% In-House Atelier
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.6 }}>
+                Every single piece is designed, 3D modelled, cast, stone-set, and hallmarked under one single roof in our Jaipur workshop. We never outsource crafting, ensuring uncompromising quality control.
+              </p>
+            </div>
+
+            {/* Pillar 4 */}
+            <div
+              style={{
+                background: "var(--md-bg)",
+                border: "1px solid var(--md-rule)",
+                borderRadius: "var(--md-radius-sm)",
+                padding: "var(--md-space-6)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--md-space-3)",
+                boxShadow: "0 4px 16px -4px rgba(0, 0, 0, 0.03)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  fontSize: "1.25rem",
+                  color: "var(--md-champagne)",
+                  fontWeight: 600,
+                }}
+              >
+                04
+              </div>
+              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--md-fg)" }}>
+                Direct Manufacturer Access
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.6 }}>
+                Serving prestigious trade shows and discerning buyers in the US, Europe, and Asia for over 25 years. You acquire genuine fine jewellery directly from the creator at direct manufacturer pricing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. CURATED CATEGORY PORTALS ───────────────────────────────── */}
       {categories.length > 0 && (
         <section
           style={{
@@ -316,7 +601,6 @@ export default async function StorefrontHomePage({
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
             paddingBlock: "var(--md-space-10) var(--md-space-10)",
-            borderTop: "1px solid var(--md-rule)",
           }}
         >
           <div
@@ -331,10 +615,11 @@ export default async function StorefrontHomePage({
             <span
               style={{
                 fontSize: "0.75rem",
-                letterSpacing: "0.2em",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-green)",
                 fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
                 marginBottom: 6,
               }}
             >
@@ -344,13 +629,24 @@ export default async function StorefrontHomePage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)",
+                fontSize: "clamp(1.875rem, 3.2vw, 2.75rem)",
                 fontWeight: 400,
                 color: "var(--md-fg)",
               }}
             >
               Curated Collections
             </h2>
+            <p
+              style={{
+                margin: "8px 0 0",
+                maxWidth: "520px",
+                fontSize: "0.9375rem",
+                color: "var(--md-fg-secondary)",
+                lineHeight: 1.5,
+              }}
+            >
+              Explore our master-crafted categories, from Venetian box links to hand-set emerald medallions.
+            </p>
           </div>
 
           <div
@@ -376,6 +672,7 @@ export default async function StorefrontHomePage({
                   padding: "var(--md-space-6)",
                   background: "var(--md-bg-raised)",
                   borderRadius: "var(--md-radius-sm)",
+                  boxShadow: "0 8px 24px -6px rgba(0, 0, 0, 0.08)",
                 }}
               >
                 <img
@@ -390,18 +687,31 @@ export default async function StorefrontHomePage({
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
-                    transition: "transform var(--md-dur, 500ms) var(--md-ease)",
+                    transition: "transform 600ms var(--md-ease)",
                   }}
                 />
                 <div
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: "linear-gradient(to top, color-mix(in srgb, var(--md-bg-inverse) 88%, transparent) 0%, color-mix(in srgb, var(--md-bg-inverse) 20%, transparent) 55%, transparent 100%)",
+                    background: "linear-gradient(to top, rgba(6, 19, 13, 0.92) 0%, rgba(6, 19, 13, 0.3) 55%, transparent 100%)",
                     pointerEvents: "none",
                   }}
                 />
                 <div style={{ position: "relative", zIndex: 2 }}>
+                  <div
+                    style={{
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "var(--md-champagne)",
+                      fontWeight: 600,
+                      marginBottom: 4,
+                      fontFamily: "var(--md-font-crest), Georgia, serif",
+                    }}
+                  >
+                    COLLECTION
+                  </div>
                   <h3
                     style={{
                       margin: 0,
@@ -416,15 +726,19 @@ export default async function StorefrontHomePage({
                   </h3>
                   <div
                     style={{
-                      marginTop: 4,
+                      marginTop: 8,
                       fontSize: "0.75rem",
-                      letterSpacing: "0.1em",
+                      letterSpacing: "0.12em",
                       textTransform: "uppercase",
-                      color: "var(--md-champagne)",
+                      color: "var(--md-ivory-soft)",
                       fontWeight: 500,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
                     }}
                   >
-                    View Selection →
+                    <span>View Creations</span>
+                    <span>→</span>
                   </div>
                 </div>
               </Link>
@@ -433,14 +747,15 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 4. THE MILLENNIUM ATELIER & CRAFTSMANSHIP ─────────────────── */}
+      {/* ── 5. THE AGARWAL HERITAGE TIMELINE ─────────────────────────── */}
       <section
         style={{
-          background: "var(--md-bg-raised)",
-          borderTop: "1px solid var(--md-rule)",
-          borderBottom: "1px solid var(--md-rule)",
+          background: "var(--md-bg-inverse)",
+          color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-10) var(--md-space-10)",
+          paddingBlock: "var(--md-space-10) var(--md-space-11)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
         <div
@@ -449,147 +764,144 @@ export default async function StorefrontHomePage({
             marginInline: "auto",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(32px, 5vw, 64px)",
+            gap: "clamp(36px, 6vw, 72px)",
             alignItems: "center",
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              aspectRatio: "4 / 5",
-              overflow: "hidden",
-              borderRadius: "var(--md-radius-sm)",
-            }}
-          >
-            <Image
-              src="/images/categories/pendants.jpg"
-              alt="Millennium Designs Master Craftsman Setting Fine Gemstones"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              style={{ objectFit: "cover" }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                bottom: 16,
-                left: 16,
-                right: 16,
-                padding: "12px 18px",
-                background: "color-mix(in srgb, var(--md-bg-inverse) 86%, transparent)",
-                backdropFilter: "blur(6px)",
-                color: "var(--md-fg-inverse)",
-                fontSize: "0.75rem",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span>THE BENCH ATELIER</span>
-              <span style={{ color: "var(--md-champagne)" }}>HAND-SET PAVÉ</span>
-            </div>
-          </div>
-
+          {/* Heritage Timeline Narrative */}
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-5)" }}>
             <span
               style={{
                 fontSize: "0.75rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "var(--md-green)",
+                color: "var(--md-champagne)",
                 fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              THE ATELIER — SINCE 1961
+              SINCE 1961 · JAIPUR
             </span>
 
             <h2
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.5vw, 3rem)",
-                lineHeight: 1.15,
+                fontSize: "clamp(2.25rem, 4vw, 3.5rem)",
+                lineHeight: 1.1,
                 fontWeight: 400,
-                color: "var(--md-fg)",
+                color: "var(--md-fg-inverse)",
               }}
             >
-              60+ Years of Craft from Jaipur to the World
+              The Story of Millennium Designs
             </h2>
 
             <p
               style={{
                 margin: 0,
-                fontSize: "1rem",
+                fontSize: "1.0625rem",
                 lineHeight: 1.7,
-                color: "var(--md-fg-secondary)",
+                color: "var(--md-fg-inverse-muted)",
               }}
             >
-              Our roots trace back to 1961, when B. L. Agarwal founded Pushpak Jewels in Jaipur, specialising in emerald jewellery. Since 1999, the second generation has grown a global silver jewellery business — every piece still made in-house in our own Jaipur workshop.
+              The story began in 1961, when our grandfather B. L. Agarwal founded Pushpak Jewels in Jaipur. Specializing in emerald jewelry, he built a business rooted in trust, authenticity, and exceptional quality.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)", marginTop: "var(--md-space-2)" }}>
-              <div style={{ display: "flex", gap: "var(--md-space-4)", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
-                <div>
-                  <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    Pure 925 Sterling Silver
-                  </div>
-                  <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    Every piece is crafted in 925 sterling silver with an anti-tarnish alloy, so it stays bright season after season.
-                  </div>
-                </div>
-              </div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.9375rem",
+                lineHeight: 1.7,
+                color: "var(--md-fg-inverse-muted)",
+              }}
+            >
+              In 1999, the next generation—Amit Agarwal and Saket Agarwal—expanded the family business into fine 925 silver jewelry. Showcasing at premier international exhibitions in Europe and the United States, Pushpak Jewels evolved into Millennium Designs: uniting generational stone mastery with world-class design.
+            </p>
 
-              <div style={{ display: "flex", gap: "var(--md-space-4)", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
-                <div>
-                  <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    In-house Manufacturing
-                  </div>
-                  <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    From design to finishing, every stage happens under one roof in our own Jaipur facility — nothing is outsourced.
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", gap: "var(--md-space-4)", alignItems: "flex-start" }}>
-                <span style={{ color: "var(--md-green)", fontSize: "1.125rem", lineHeight: 1 }}>✦</span>
-                <div>
-                  <div style={{ fontWeight: 600, color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                    Global Reach, Direct Pricing
-                  </div>
-                  <div style={{ fontSize: "0.875rem", color: "var(--md-fg-secondary)", marginTop: 2 }}>
-                    Serving buyers across the USA, UK, Europe, Russia, and Australia — at direct-from-manufacturer pricing, without middlemen.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: "var(--md-space-3)" }}>
-              <a
-                href={whatsappConsultationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div style={{ marginTop: "var(--md-space-3)", display: "flex", gap: "var(--md-space-4)", flexWrap: "wrap" }}>
+              <Link
+                href={`${prefix}/our-story`}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  fontSize: "0.875rem",
+                  height: 48,
+                  paddingInline: "28px",
+                  background: "var(--md-champagne)",
+                  color: "var(--md-green-black)",
+                  fontSize: "0.8125rem",
                   fontWeight: 600,
-                  color: "var(--md-green)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
                   textDecoration: "none",
-                  letterSpacing: "0.04em",
+                  borderRadius: "var(--md-radius-sm)",
                 }}
               >
-                Inquire with Our Master Artisans →
-              </a>
+                Read The Full Story →
+              </Link>
+            </div>
+          </div>
+
+          {/* Heritage Archival Image Frame */}
+          <div
+            style={{
+              position: "relative",
+              aspectRatio: "4 / 5",
+              borderRadius: "var(--md-radius-sm)",
+              overflow: "hidden",
+              boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.6)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+            }}
+          >
+            <Image
+              src="/images/categories/pendants.jpg"
+              alt="Pushpak Jewels and Millennium Designs Archival Craftsmanship"
+              fill
+              sizes="(max-width: 768px) 100vw, 500px"
+              style={{ objectFit: "cover" }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to top, rgba(6, 19, 13, 0.85) 0%, rgba(6, 19, 13, 0.15) 50%, transparent 100%)",
+                pointerEvents: "none",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: 20,
+                left: 20,
+                right: 20,
+                padding: "16px 20px",
+                background: "rgba(6, 19, 13, 0.85)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "var(--md-radius-sm)",
+                border: "1px solid rgba(200, 178, 122, 0.3)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                color: "var(--md-fg-inverse)",
+              }}
+            >
+              <div>
+                <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-champagne)" }}>
+                  ARCHIVAL ATELIER
+                </div>
+                <div style={{ fontFamily: "var(--md-font-display)", fontSize: "1.0625rem", marginTop: 2 }}>
+                  Pushpak Jewels to Millennium Designs
+                </div>
+              </div>
+              <span style={{ fontSize: "0.8125rem", color: "var(--md-champagne)", fontWeight: 600 }}>
+                1961 · 2026
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 5. THE GEMSTONE UNIVERSE ─────────────────────────────────── */}
+      {/* ── 6. THE GEMSTONE UNIVERSE ─────────────────────────────────── */}
       {stones.length > 0 && (
         <section
           style={{
@@ -611,10 +923,11 @@ export default async function StorefrontHomePage({
             <span
               style={{
                 fontSize: "0.75rem",
-                letterSpacing: "0.2em",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--md-green)",
                 fontWeight: 600,
+                fontFamily: "var(--md-font-crest), Georgia, serif",
                 marginBottom: 6,
               }}
             >
@@ -624,7 +937,7 @@ export default async function StorefrontHomePage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.75rem, 3.2vw, 2.75rem)",
+                fontSize: "clamp(1.875rem, 3.2vw, 2.75rem)",
                 fontWeight: 400,
                 color: "var(--md-fg)",
               }}
@@ -640,7 +953,7 @@ export default async function StorefrontHomePage({
                 lineHeight: 1.5,
               }}
             >
-              Explore creations by their signature stone, from deep Colombian emeralds to celestial sapphires.
+              Explore creations by signature stone, from deep Colombian emeralds to celestial sapphires and rainbow moonstones.
             </p>
           </div>
 
@@ -662,151 +975,49 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 6. THE FOUR HALLMARKS OF ASSURANCE ───────────────────────── */}
+      {/* ── 7. BESPOKE COMMISSION SALON & CONCIERGE ───────────────────── */}
       <section
         style={{
-          background: "var(--md-bg-raised)",
-          borderTop: "1px solid var(--md-rule)",
-          borderBottom: "1px solid var(--md-rule)",
-          paddingInline: "var(--md-gutter)",
-          paddingBlock: "var(--md-space-10) var(--md-space-10)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-          }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
-              gap: "var(--md-space-6)",
-            }}
-          >
-            <div
-              style={{
-                padding: "var(--md-space-6)",
-                background: "var(--md-bg)",
-                border: "1px solid var(--md-rule)",
-                borderRadius: "var(--md-radius-sm)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--md-space-2)",
-              }}
-            >
-              <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                925 Sterling Silver
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Every piece is made in genuine 925 sterling silver — the international standard for fine silver jewellery.
-              </p>
-            </div>
-
-            <div
-              style={{
-                padding: "var(--md-space-6)",
-                background: "var(--md-bg)",
-                border: "1px solid var(--md-rule)",
-                borderRadius: "var(--md-radius-sm)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--md-space-2)",
-              }}
-            >
-              <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Anti-tarnish Alloy
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Our silver is alloyed to resist tarnish — staying bright and lustrous without the need for constant polishing.
-              </p>
-            </div>
-
-            <div
-              style={{
-                padding: "var(--md-space-6)",
-                background: "var(--md-bg)",
-                border: "1px solid var(--md-rule)",
-                borderRadius: "var(--md-radius-sm)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--md-space-2)",
-              }}
-            >
-              <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                In-house Manufacturing
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                Designed, cast, set, and finished entirely within our own Jaipur workshop. Nothing is outsourced.
-              </p>
-            </div>
-
-            <div
-              style={{
-                padding: "var(--md-space-6)",
-                background: "var(--md-bg)",
-                border: "1px solid var(--md-rule)",
-                borderRadius: "var(--md-radius-sm)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--md-space-2)",
-              }}
-            >
-              <div style={{ color: "var(--md-green)", fontSize: "1.25rem" }}>✦</div>
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--md-fg)" }}>
-                Direct Wholesale Pricing
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.5 }}>
-                We manufacture and sell directly. No intermediaries means the lowest possible price for the quality you receive.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 7. BESPOKE ATELIER CALL TO ACTION ─────────────────────────── */}
-      <section
-        style={{
-          background: "var(--md-bg-inverse)",
+          background: "radial-gradient(ellipse at 50% 50%, var(--md-forest) 0%, var(--md-green-black) 100%)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
           paddingBlock: "var(--md-space-10) var(--md-space-10)",
-          textAlign: "center",
+          borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
+          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
         }}
       >
         <div
           style={{
-            maxWidth: "720px",
+            maxWidth: "880px",
             marginInline: "auto",
+            textAlign: "center",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "var(--md-space-4)",
+            gap: "var(--md-space-5)",
           }}
         >
           <span
             style={{
               fontSize: "0.6875rem",
-              letterSpacing: "0.22em",
+              letterSpacing: "0.24em",
               textTransform: "uppercase",
               color: "var(--md-champagne)",
-              fontWeight: 500,
+              fontWeight: 600,
+              fontFamily: "var(--md-font-crest), Georgia, serif",
             }}
           >
-            BESPOKE COMMISSIONS
+            HAUTE JOAILLERIE BESPOKE
           </span>
 
           <h2
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2rem, 4vw, 3.25rem)",
+              fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)",
               fontWeight: 400,
               color: "var(--md-fg-inverse)",
+              lineHeight: 1.12,
             }}
           >
             Commission a One-of-a-Kind Masterpiece
@@ -815,15 +1026,24 @@ export default async function StorefrontHomePage({
           <p
             style={{
               margin: 0,
-              fontSize: "1rem",
-              lineHeight: 1.6,
+              fontSize: "1.0625rem",
+              lineHeight: 1.7,
               color: "var(--md-fg-inverse-muted)",
+              maxWidth: "680px",
             }}
           >
-            Collaborate directly with our master designers to bring your personal vision to life — from anniversary suites to bespoke engagement rings.
+            Collaborate directly with Amit &amp; Saket Agarwal and our master bench goldsmiths. Whether creating a custom bridal suite, resetting an heirloom emerald, or crafting a bespoke signature monogram, our Jaipur atelier brings your distinct vision to life.
           </p>
 
-          <div style={{ marginTop: "var(--md-space-4)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "var(--md-space-4)",
+              justifyContent: "center",
+              marginTop: "var(--md-space-3)",
+            }}
+          >
             <a
               href={whatsappConsultationUrl}
               target="_blank"
@@ -832,8 +1052,8 @@ export default async function StorefrontHomePage({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
-                height: 50,
-                paddingInline: "32px",
+                height: 52,
+                paddingInline: "36px",
                 background: "var(--md-green)",
                 color: "var(--md-ivory-soft)",
                 fontSize: "0.8125rem",
@@ -842,17 +1062,36 @@ export default async function StorefrontHomePage({
                 textTransform: "uppercase",
                 textDecoration: "none",
                 borderRadius: "var(--md-radius-sm)",
-                transition: "opacity 200ms ease",
+                boxShadow: "0 8px 24px -4px rgba(0, 156, 23, 0.4)",
               }}
             >
-              <span>Chat with Us on WhatsApp</span>
+              <span>Connect with VIP Concierge</span>
               <span>→</span>
             </a>
+
+            <Link
+              href={`${prefix}/our-story`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                height: 52,
+                paddingInline: "28px",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+                color: "var(--md-champagne)",
+                fontSize: "0.8125rem",
+                fontWeight: 500,
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+                borderRadius: "var(--md-radius-sm)",
+              }}
+            >
+              Explore Atelier Techniques
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── 8. PRIVATE SALON INVITATION (NEWSLETTER) ──────────────────── */}
+      {/* ── 8. THE PRIVATE SALON (VIP PREVIEWS) ───────────────────────── */}
       <section
         style={{
           maxWidth: "var(--md-container-text)",
@@ -865,10 +1104,11 @@ export default async function StorefrontHomePage({
         <span
           style={{
             fontSize: "0.75rem",
-            letterSpacing: "0.2em",
+            letterSpacing: "0.22em",
             textTransform: "uppercase",
             color: "var(--md-green)",
             fontWeight: 600,
+            fontFamily: "var(--md-font-crest), Georgia, serif",
           }}
         >
           THE PRIVATE SALON
@@ -877,7 +1117,7 @@ export default async function StorefrontHomePage({
           style={{
             margin: "8px 0 0",
             fontFamily: "var(--md-font-display)",
-            fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+            fontSize: "clamp(1.875rem, 3vw, 2.5rem)",
             fontWeight: 400,
             color: "var(--md-fg)",
           }}
@@ -890,17 +1130,17 @@ export default async function StorefrontHomePage({
             maxWidth: "480px",
             fontSize: "0.9375rem",
             color: "var(--md-fg-secondary)",
-            lineHeight: 1.5,
+            lineHeight: 1.6,
           }}
         >
-          Receive private invitations to confidential high jewelry viewings, new gemstone acquisitions, and atelier news.
+          Receive private invitations to confidential high jewellery viewings, rare Jaipur gemstone acquisitions, and atelier news.
         </p>
 
         <form
           action="#"
           style={{
             display: "flex",
-            maxWidth: "440px",
+            maxWidth: "460px",
             marginInline: "auto",
             gap: "var(--md-space-2)",
           }}
@@ -911,8 +1151,8 @@ export default async function StorefrontHomePage({
             required
             style={{
               flex: 1,
-              height: 46,
-              paddingInline: "16px",
+              height: 48,
+              paddingInline: "18px",
               border: "1px solid var(--md-rule-strong)",
               background: "var(--md-bg)",
               color: "var(--md-fg)",
@@ -924,15 +1164,15 @@ export default async function StorefrontHomePage({
           <button
             type="submit"
             style={{
-              height: 46,
-              paddingInline: "24px",
+              height: 48,
+              paddingInline: "28px",
               background: "var(--md-fg)",
               color: "var(--md-ivory-soft)",
               border: "none",
               borderRadius: "var(--md-radius-sm)",
               fontSize: "0.75rem",
               fontWeight: 600,
-              letterSpacing: "0.1em",
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
               cursor: "pointer",
             }}
