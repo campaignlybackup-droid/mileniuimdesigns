@@ -9,6 +9,7 @@ import { CartProvider } from "@/components/storefront/CartContext";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { LuxuryCursor } from "@/components/storefront/LuxuryCursor";
+import { getStorefrontConfig } from "@/lib/cms/storefrontConfig";
 
 /**
  * The storefront's market layout — 01 §1.4. Owned by P13; the pages inside it are P15's.
@@ -71,9 +72,10 @@ export default async function MarketLayout({
     notFound();
   }
 
-  const [activeMarkets, categories] = await Promise.all([
+  const [activeMarkets, categories, storefrontConfig] = await Promise.all([
     listActiveMarkets(),
     listPublishedCategories(),
+    getStorefrontConfig(resolved.code),
   ]);
 
   const primary = activeMarkets[0];
@@ -182,19 +184,26 @@ export default async function MarketLayout({
 
   return (
     <CartProvider>
+      {storefrontConfig.customCss && (
+        <style
+          id="md-cms-custom-css"
+          dangerouslySetInnerHTML={{ __html: storefrontConfig.customCss }}
+        />
+      )}
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         <SiteHeader
           marketSegment={marketSegment}
           navigation={navigation}
           markets={marketOptions}
           ourStoryHref={`${prefix}/our-story`}
+          config={storefrontConfig}
         />
         <main id="main" style={{ flexGrow: 1 }}>
           {children}
         </main>
-        <SiteFooter year={2026} columns={footerColumns} />
+        <SiteFooter year={2026} columns={footerColumns} config={storefrontConfig} />
         <CartDrawer marketCode={resolved.code} />
-        <LuxuryCursor />
+        {storefrontConfig.luxuryCursorEnabled !== false && <LuxuryCursor />}
       </div>
     </CartProvider>
   );

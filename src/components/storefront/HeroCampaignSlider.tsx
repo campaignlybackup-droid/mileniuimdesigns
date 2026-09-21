@@ -55,16 +55,29 @@ const CAMPAIGN_SLIDES: CampaignSlide[] = [
   },
 ];
 
-const AUTO_INTERVAL_MS = 5500; // 5.5 seconds automatic transition
-
-export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: string }): React.JSX.Element {
+export function HeroCampaignSlider({
+  marketPrefix = "",
+  slides = CAMPAIGN_SLIDES,
+  autoIntervalMs = 5500,
+  autoplayEnabled = true,
+  textAlign = "left",
+  overlayOpacity = 0.45,
+}: {
+  marketPrefix?: string;
+  slides?: CampaignSlide[];
+  autoIntervalMs?: number;
+  autoplayEnabled?: boolean;
+  textAlign?: "left" | "center";
+  overlayOpacity?: number;
+}): React.JSX.Element {
   const [currentIdx, setCurrentIdx] = useState(0);
 
   // Touch Swipe tracking for smartphones
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
 
-  const totalSlides = CAMPAIGN_SLIDES.length;
+  const activeSlides = slides && slides.length > 0 ? slides : CAMPAIGN_SLIDES;
+  const totalSlides = activeSlides.length;
 
   const nextSlide = useCallback(() => {
     setCurrentIdx((prev) => (prev + 1) % totalSlides);
@@ -73,6 +86,13 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
   const prevSlide = useCallback(() => {
     setCurrentIdx((prev) => (prev - 1 + totalSlides) % totalSlides);
   }, [totalSlides]);
+
+  // Autoplay cycle
+  useEffect(() => {
+    if (!autoplayEnabled || totalSlides <= 1) return;
+    const interval = setInterval(nextSlide, autoIntervalMs);
+    return () => clearInterval(interval);
+  }, [nextSlide, autoIntervalMs, autoplayEnabled, totalSlides]);
 
   // Touch handlers for seamless swipe gestures on mobile
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -98,16 +118,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
     touchEndXRef.current = null;
   };
 
-  // Pure automatic timer flow
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % totalSlides);
-    }, AUTO_INTERVAL_MS);
-
-    return () => clearInterval(timer);
-  }, [totalSlides]);
-
-  const activeSlide = CAMPAIGN_SLIDES[currentIdx];
+  const activeSlide = activeSlides[currentIdx] || activeSlides[0]!;
 
   return (
     <section
@@ -129,7 +140,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
       }}
     >
       {/* ── Background Campaign Photography with Ken Burns slow zoom ── */}
-      {CAMPAIGN_SLIDES.map((slide, idx) => {
+      {activeSlides.map((slide, idx) => {
         const isActive = idx === currentIdx;
         return (
           <div

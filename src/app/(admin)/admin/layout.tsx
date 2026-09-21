@@ -10,6 +10,7 @@ export const metadata = {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { label: "Executive Dashboard", href: "/admin" },
+    { label: "✦ CMS & Customization (100+)", href: "/admin/customization" },
     { label: "Catalogue & Products", href: "/admin/products" },
     { label: "Bulk Product Import", href: "/admin/products/import" },
     { label: "Orders & Acquisitions", href: "/admin/orders" },

@@ -35,6 +35,52 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"bank_transfer" | "razorpay" | "stripe">("bank_transfer");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
+  const [bankInfo, setBankInfo] = useState({
+    accountName: BANK_TRANSFER_DETAILS.accountName,
+    bankName: BANK_TRANSFER_DETAILS.bankName,
+    accountNumber: BANK_TRANSFER_DETAILS.accountNumber,
+    ifscCode: BANK_TRANSFER_DETAILS.ifscCode,
+    accountType: BANK_TRANSFER_DETAILS.accountType,
+    branchName: BANK_TRANSFER_DETAILS.branchName,
+    whatsappDisplay: BANK_TRANSFER_DETAILS.whatsappDisplay,
+    upiId: "millenniumdesigns@icici",
+  });
+  const [allowBankTransfer, setAllowBankTransfer] = useState(true);
+  const [allowCardGateway, setAllowCardGateway] = useState(true);
+  const [securityNotice, setSecurityNotice] = useState("");
+
+  useEffect(() => {
+    fetch(`/api/admin/settings?market=${marketCode}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.config) {
+          setBankInfo({
+            accountName: data.config.bankAccountName || BANK_TRANSFER_DETAILS.accountName,
+            bankName: data.config.bankName || BANK_TRANSFER_DETAILS.bankName,
+            accountNumber: data.config.bankAccountNumber || BANK_TRANSFER_DETAILS.accountNumber,
+            ifscCode: data.config.bankIfsc || BANK_TRANSFER_DETAILS.ifscCode,
+            accountType: data.config.bankAccountType || BANK_TRANSFER_DETAILS.accountType,
+            branchName: data.config.bankBranch || BANK_TRANSFER_DETAILS.branchName,
+            whatsappDisplay: data.config.conciergePhone || BANK_TRANSFER_DETAILS.whatsappDisplay,
+            upiId: data.config.bankUpiId || "millenniumdesigns@icici",
+          });
+          if (typeof data.config.checkoutAllowBankTransfer === "boolean") {
+            setAllowBankTransfer(data.config.checkoutAllowBankTransfer);
+            if (!data.config.checkoutAllowBankTransfer) {
+              setPaymentMethod(isIndia ? "razorpay" : "stripe");
+            }
+          }
+          if (typeof data.config.checkoutAllowCards === "boolean") {
+            setAllowCardGateway(data.config.checkoutAllowCards);
+          }
+          if (data.config.checkoutSecurityNotice) {
+            setSecurityNotice(data.config.checkoutSecurityNotice);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [marketCode, isIndia]);
+
   const handleCopy = (text: string, key: string) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       void navigator.clipboard.writeText(text);
@@ -516,204 +562,254 @@ export default function CheckoutPage() {
             </h2>
 
             {/* Payment Option 1: Direct Bank Transfer (Primary / Recommended) */}
-            <div
-              style={{
-                border: paymentMethod === "bank_transfer" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
-                borderRadius: "var(--md-radius-sm)",
-                background: paymentMethod === "bank_transfer" ? "var(--md-bg-raised)" : "transparent",
-                padding: "var(--md-space-4)",
-                marginBottom: "var(--md-space-4)",
-                transition: "border-color 0.2s, background 0.2s",
-                cursor: "pointer",
-              }}
-              onClick={() => setPaymentMethod("bank_transfer")}
-            >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--md-space-2)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)" }}>
-                  <input
-                    type="radio"
-                    id="bank_transfer"
-                    name="payment"
-                    checked={paymentMethod === "bank_transfer"}
-                    onChange={() => setPaymentMethod("bank_transfer")}
-                  />
-                  <label htmlFor="bank_transfer" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
-                    Direct Bank Transfer (NEFT / RTGS / IMPS)
-                  </label>
+            {allowBankTransfer && (
+              <div
+                style={{
+                  border: paymentMethod === "bank_transfer" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                  borderRadius: "var(--md-radius-sm)",
+                  background: paymentMethod === "bank_transfer" ? "var(--md-bg-raised)" : "transparent",
+                  padding: "var(--md-space-4)",
+                  marginBottom: "var(--md-space-4)",
+                  transition: "border-color 0.2s, background 0.2s",
+                  cursor: "pointer",
+                }}
+                onClick={() => setPaymentMethod("bank_transfer")}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--md-space-2)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)" }}>
+                    <input
+                      type="radio"
+                      id="bank_transfer"
+                      name="payment"
+                      checked={paymentMethod === "bank_transfer"}
+                      onChange={() => setPaymentMethod("bank_transfer")}
+                    />
+                    <label htmlFor="bank_transfer" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
+                      Direct Bank Transfer (NEFT / RTGS / IMPS)
+                    </label>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: "0.6875rem",
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      padding: "2px 8px",
+                      background: "rgba(201, 168, 106, 0.15)",
+                      color: "var(--md-gold, #8a6a24)",
+                      fontWeight: 600,
+                      borderRadius: 3,
+                    }}
+                  >
+                    Recommended
+                  </span>
                 </div>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    padding: "2px 8px",
-                    background: "rgba(201, 168, 106, 0.15)",
-                    color: "var(--md-gold, #8a6a24)",
-                    fontWeight: 600,
-                    borderRadius: 3,
-                  }}
-                >
-                  Recommended
-                </span>
+                <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px", lineHeight: 1.5 }}>
+                  Direct bank transfer to Millennium Designs official {bankInfo.bankName} account. Zero transaction fees.
+                </p>
+
+                {paymentMethod === "bank_transfer" && (
+                  <div
+                    style={{
+                      marginTop: "var(--md-space-4)",
+                      marginLeft: 24,
+                      padding: "var(--md-space-4)",
+                      background: "var(--md-bg)",
+                      border: "1px solid var(--md-rule)",
+                      borderRadius: "var(--md-radius-sm)",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, borderBottom: "1px solid var(--md-rule)", paddingBottom: 8 }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-fg)" }}>
+                        Beneficiary Account Details
+                      </span>
+                      <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>
+                        {bankInfo.bankName} • {bankInfo.branchName}
+                      </span>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, fontSize: "0.8125rem" }}>
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Name</div>
+                        <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{bankInfo.accountName}</div>
+                      </div>
+
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bank &amp; Branch</div>
+                        <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{bankInfo.bankName} ({bankInfo.branchName})</div>
+                      </div>
+
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Number</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                          <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
+                            {bankInfo.accountNumber}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(bankInfo.accountNumber, "acc")}
+                            style={{
+                              border: "1px solid var(--md-rule)",
+                              background: "var(--md-bg-raised)",
+                              padding: "2px 8px",
+                              fontSize: "0.6875rem",
+                              borderRadius: 3,
+                              cursor: "pointer",
+                              color: copiedKey === "acc" ? "var(--md-green)" : "var(--md-fg)",
+                            }}
+                          >
+                            {copiedKey === "acc" ? "✓ Copied" : "Copy"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>RTGS / NEFT / IFSC Code</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                          <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
+                            {bankInfo.ifscCode}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(bankInfo.ifscCode, "ifsc")}
+                            style={{
+                              border: "1px solid var(--md-rule)",
+                              background: "var(--md-bg-raised)",
+                              padding: "2px 8px",
+                              fontSize: "0.6875rem",
+                              borderRadius: 3,
+                              cursor: "pointer",
+                              color: copiedKey === "ifsc" ? "var(--md-green)" : "var(--md-fg)",
+                            }}
+                          >
+                            {copiedKey === "ifsc" ? "✓ Copied" : "Copy"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Type</div>
+                        <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{bankInfo.accountType}</div>
+                      </div>
+
+                      <div>
+                        <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Concierge Verification</div>
+                        <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{bankInfo.whatsappDisplay}</div>
+                      </div>
+
+                      {bankInfo.upiId && (
+                        <div>
+                          <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>UPI VPA</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                            <span style={{ fontWeight: 600, fontFamily: "monospace", color: "var(--md-fg)", fontSize: "0.875rem" }}>
+                              {bankInfo.upiId}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(bankInfo.upiId, "upi")}
+                              style={{
+                                border: "1px solid var(--md-rule)",
+                                background: "var(--md-bg-raised)",
+                                padding: "2px 8px",
+                                fontSize: "0.6875rem",
+                                borderRadius: 3,
+                                cursor: "pointer",
+                                color: copiedKey === "upi" ? "var(--md-green)" : "var(--md-fg)",
+                              }}
+                            >
+                              {copiedKey === "upi" ? "✓ Copied" : "Copy"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: 12, padding: "8px 12px", background: "var(--md-bg-raised)", borderRadius: "var(--md-radius-sm)", fontSize: "0.75rem", color: "var(--md-fg-secondary)", lineHeight: 1.4 }}>
+                      ✦ Your bespoke jewellery will be immediately reserved upon clicking &quot;Place Order&quot;. You can then transfer via bank app and share your UTR or confirmation with our atelier on WhatsApp.
+                    </div>
+                  </div>
+                )}
               </div>
-              <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px", lineHeight: 1.5 }}>
-                Direct bank transfer to Millennium Designs official ICICI Bank current account. Zero transaction fees.
-              </p>
-
-              {paymentMethod === "bank_transfer" && (
-                <div
-                  style={{
-                    marginTop: "var(--md-space-4)",
-                    marginLeft: 24,
-                    padding: "var(--md-space-4)",
-                    background: "var(--md-bg)",
-                    border: "1px solid var(--md-rule)",
-                    borderRadius: "var(--md-radius-sm)",
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, borderBottom: "1px solid var(--md-rule)", paddingBottom: 8 }}>
-                    <span style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-fg)" }}>
-                      Beneficiary Account Details
-                    </span>
-                    <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>
-                      ICICI Bank • Jaipur
-                    </span>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, fontSize: "0.8125rem" }}>
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Name</div>
-                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.accountName}</div>
-                    </div>
-
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bank &amp; Branch</div>
-                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.bankName} ({BANK_TRANSFER_DETAILS.branchName})</div>
-                    </div>
-
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Number</div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
-                        <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                          {BANK_TRANSFER_DETAILS.accountNumber}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(BANK_TRANSFER_DETAILS.accountNumber, "acc")}
-                          style={{
-                            border: "1px solid var(--md-rule)",
-                            background: "var(--md-bg-raised)",
-                            padding: "2px 8px",
-                            fontSize: "0.6875rem",
-                            borderRadius: 3,
-                            cursor: "pointer",
-                            color: copiedKey === "acc" ? "var(--md-green)" : "var(--md-fg)",
-                          }}
-                        >
-                          {copiedKey === "acc" ? "✓ Copied" : "Copy"}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>RTGS / NEFT / IFSC Code</div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
-                        <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
-                          {BANK_TRANSFER_DETAILS.ifscCode}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(BANK_TRANSFER_DETAILS.ifscCode, "ifsc")}
-                          style={{
-                            border: "1px solid var(--md-rule)",
-                            background: "var(--md-bg-raised)",
-                            padding: "2px 8px",
-                            fontSize: "0.6875rem",
-                            borderRadius: 3,
-                            cursor: "pointer",
-                            color: copiedKey === "ifsc" ? "var(--md-green)" : "var(--md-fg)",
-                          }}
-                        >
-                          {copiedKey === "ifsc" ? "✓ Copied" : "Copy"}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Type</div>
-                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.accountType}</div>
-                    </div>
-
-                    <div>
-                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Concierge Verification</div>
-                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.whatsappDisplay}</div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: 12, padding: "8px 12px", background: "var(--md-bg-raised)", borderRadius: "var(--md-radius-sm)", fontSize: "0.75rem", color: "var(--md-fg-secondary)", lineHeight: 1.4 }}>
-                    ✦ Your bespoke jewellery will be immediately reserved upon clicking &quot;Place Order&quot;. You can then transfer via bank app and share your UTR or confirmation with our atelier on WhatsApp.
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* Payment Option 2: Online Gateway */}
-            {isIndia ? (
+            {allowCardGateway && (
+              isIndia ? (
+                <div
+                  style={{
+                    border: paymentMethod === "razorpay" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                    borderRadius: "var(--md-radius-sm)",
+                    background: paymentMethod === "razorpay" ? "var(--md-bg-raised)" : "transparent",
+                    padding: "var(--md-space-4)",
+                    marginBottom: "var(--md-space-4)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setPaymentMethod("razorpay")}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
+                    <input
+                      type="radio"
+                      id="rzp"
+                      name="payment"
+                      checked={paymentMethod === "razorpay"}
+                      onChange={() => setPaymentMethod("razorpay")}
+                    />
+                    <label htmlFor="rzp" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
+                      Razorpay — UPI, Cards, NetBanking (INR)
+                    </label>
+                  </div>
+                  <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px" }}>
+                    Pay securely via PhonePe, Google Pay, Paytm, Credit/Debit cards, or NetBanking.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    border: paymentMethod === "stripe" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                    borderRadius: "var(--md-radius-sm)",
+                    background: paymentMethod === "stripe" ? "var(--md-bg-raised)" : "transparent",
+                    padding: "var(--md-space-4)",
+                    marginBottom: "var(--md-space-4)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setPaymentMethod("stripe")}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
+                    <input
+                      type="radio"
+                      id="stripe"
+                      name="payment"
+                      checked={paymentMethod === "stripe"}
+                      onChange={() => setPaymentMethod("stripe")}
+                    />
+                    <label htmlFor="stripe" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
+                      Stripe — Credit / Debit Card (USD)
+                    </label>
+                  </div>
+                  <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px" }}>
+                    All major cards accepted: Visa, Mastercard, American Express. Encrypted via Stripe.
+                  </p>
+                </div>
+              )
+            )}
+
+            {securityNotice && (
               <div
                 style={{
-                  border: paymentMethod === "razorpay" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                  padding: "10px 14px",
+                  background: "var(--md-bg-raised)",
+                  border: "1px solid var(--md-rule)",
                   borderRadius: "var(--md-radius-sm)",
-                  background: paymentMethod === "razorpay" ? "var(--md-bg-raised)" : "transparent",
-                  padding: "var(--md-space-4)",
-                  marginBottom: "var(--md-space-4)",
-                  cursor: "pointer",
+                  fontSize: "0.8125rem",
+                  color: "var(--md-fg-secondary)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: "var(--md-space-3)",
                 }}
-                onClick={() => setPaymentMethod("razorpay")}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
-                  <input
-                    type="radio"
-                    id="rzp"
-                    name="payment"
-                    checked={paymentMethod === "razorpay"}
-                    onChange={() => setPaymentMethod("razorpay")}
-                  />
-                  <label htmlFor="rzp" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
-                    Razorpay — UPI, Cards, NetBanking (INR)
-                  </label>
-                </div>
-                <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px" }}>
-                  Pay securely via PhonePe, Google Pay, Paytm, Credit/Debit cards, or NetBanking.
-                </p>
-              </div>
-            ) : (
-              <div
-                style={{
-                  border: paymentMethod === "stripe" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
-                  borderRadius: "var(--md-radius-sm)",
-                  background: paymentMethod === "stripe" ? "var(--md-bg-raised)" : "transparent",
-                  padding: "var(--md-space-4)",
-                  marginBottom: "var(--md-space-4)",
-                  cursor: "pointer",
-                }}
-                onClick={() => setPaymentMethod("stripe")}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
-                  <input
-                    type="radio"
-                    id="stripe"
-                    name="payment"
-                    checked={paymentMethod === "stripe"}
-                    onChange={() => setPaymentMethod("stripe")}
-                  />
-                  <label htmlFor="stripe" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
-                    Stripe — Credit / Debit Card (USD)
-                  </label>
-                </div>
-                <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px" }}>
-                  All major cards accepted: Visa, Mastercard, American Express. Encrypted via Stripe.
-                </p>
+                <span style={{ color: "var(--md-gold)" }}>🔒</span>
+                <span>{securityNotice}</span>
               </div>
             )}
 

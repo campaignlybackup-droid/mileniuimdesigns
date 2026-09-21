@@ -4,7 +4,15 @@ import React from "react";
 import Link from "next/link";
 import { useCart } from "@/components/storefront/CartContext";
 
-export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) {
+export function HeaderActions({
+  marketPrefix = "",
+  showSearch = true,
+  showAccount = true,
+}: {
+  marketPrefix?: string;
+  showSearch?: boolean;
+  showAccount?: boolean;
+}) {
   const { openCart, totalQuantity } = useCart();
 
   return (
@@ -16,65 +24,69 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
       }}
     >
       {/* Quick Search — 44x44px Touch Target */}
-      <Link
-        href={`${marketPrefix}/search`}
-        aria-label="Search creations"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minWidth: 44,
-          minHeight: 44,
-          color: "var(--md-fg)",
-          textDecoration: "none",
-          padding: 0,
-        }}
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {showSearch && (
+        <Link
+          href={`${marketPrefix}/search`}
+          aria-label="Search creations"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: 44,
+            minHeight: 44,
+            color: "var(--md-fg)",
+            textDecoration: "none",
+            padding: 0,
+          }}
         >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      </Link>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </Link>
+      )}
 
       {/* Customer Account — 44x44px Touch Target */}
-      <Link
-        href={`${marketPrefix}/account`}
-        aria-label="Account"
-        className="md-desktop-account"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minWidth: 44,
-          minHeight: 44,
-          color: "var(--md-fg)",
-          textDecoration: "none",
-          padding: 0,
-        }}
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {showAccount && (
+        <Link
+          href={`${marketPrefix}/account`}
+          aria-label="Account"
+          className="md-desktop-account"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: 44,
+            minHeight: 44,
+            color: "var(--md-fg)",
+            textDecoration: "none",
+            padding: 0,
+          }}
         >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </Link>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </Link>
+      )}
 
       {/* Bag / Cart Toggle — 44x44px Touch Target */}
       <button

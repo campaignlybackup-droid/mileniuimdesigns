@@ -1,25 +1,24 @@
 import { Logo } from "@/components/ui/Logo";
+import { type StorefrontCustomizationConfig, DEFAULT_STOREFRONT_CONFIG } from "@/lib/cms/storefrontConfig";
 
 /**
  * The footer shell — 10 §5.1, on the dark half of the house (`--md-emerald-deep`).
- *
- * **Everything a footer usually contains is client input, and none of it is invented here**
- * (hard rule 8): no address, no telephone number, no opening hours, no "established 1984", no
- * social links, no company registration. Each of those is a fact about a real business, and a
- * plausible-looking placeholder is worse than an empty region because it reads as verified.
- *
- * It renders the mark, the year, and whatever rows it is given. Empty sections are HIDDEN
- * rather than shown with placeholder text.
+ * Now fully customizable via Atelier CMS (100+ settings).
  */
 export function SiteFooter({
   year,
   columns = [],
+  config = DEFAULT_STOREFRONT_CONFIG,
 }: {
   /** Passed in, never `new Date()` in a component: a server-rendered year that disagrees with
    *  a cached page is a small wrongness that is very hard to explain. */
   year: number;
   columns?: { heading: string; links: { label: string; href: string }[] }[];
+  config?: StorefrontCustomizationConfig;
 }): React.ReactElement {
+  const whatsappUrl = `https://wa.me/${config?.whatsappConciergeNumber || "919828156465"}?text=${encodeURIComponent(
+    config?.whatsappConciergeGreeting || "Hello Millennium Designs, I would like to enquire about your jewellery creations."
+  )}`;
   return (
     <footer
       data-surface="emerald-deep"
@@ -76,44 +75,49 @@ export function SiteFooter({
                 JAIPUR ATELIER &amp; CONTACT
               </h2>
               <address style={{ fontStyle: "normal", color: "var(--md-fg-inverse-muted)", fontSize: "var(--md-t-small)", lineHeight: 1.6 }}>
-                Millenium Designs<br />
-                5, Noor Plaza, Chameliwala Market<br />
-                M.I. Road, Jaipur, 302001<br />
-                Rajasthan, India
+                {config?.atelierAddressName || "Millenium Designs"}<br />
+                {config?.atelierAddressLine1 || "5, Noor Plaza, Chameliwala Market"}<br />
+                {config?.atelierAddressLine2 ? <>{config.atelierAddressLine2}<br /></> : null}
+                {config?.atelierCity || "Jaipur"}, {config?.atelierPostalCode || "302001"}<br />
+                {config?.atelierState || "Rajasthan"}, {config?.atelierCountry || "India"}
               </address>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "4px" }}>
+                {config?.directPhonePrimary && (
+                  <a
+                    href={`tel:${config.directPhonePrimary.replace(/[^+\d]/g, "")}`}
+                    style={{
+                      color: "var(--md-fg-inverse-muted)",
+                      textDecoration: "none",
+                      fontSize: "var(--md-t-small)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      minHeight: 44,
+                      gap: "8px",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Direct</span>
+                    <span>{config.directPhonePrimary}</span>
+                  </a>
+                )}
+                {config?.directPhoneSecondary && (
+                  <a
+                    href={`tel:${config.directPhoneSecondary.replace(/[^+\d]/g, "")}`}
+                    style={{
+                      color: "var(--md-fg-inverse-muted)",
+                      textDecoration: "none",
+                      fontSize: "var(--md-t-small)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      minHeight: 44,
+                      gap: "8px",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Atelier</span>
+                    <span>{config.directPhoneSecondary}</span>
+                  </a>
+                )}
                 <a
-                  href="tel:+919828156465"
-                  style={{
-                    color: "var(--md-fg-inverse-muted)",
-                    textDecoration: "none",
-                    fontSize: "var(--md-t-small)",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    minHeight: 44,
-                    gap: "8px",
-                  }}
-                >
-                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Direct</span>
-                  <span>+91 98281 56465</span>
-                </a>
-                <a
-                  href="tel:+919829056597"
-                  style={{
-                    color: "var(--md-fg-inverse-muted)",
-                    textDecoration: "none",
-                    fontSize: "var(--md-t-small)",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    minHeight: 44,
-                    gap: "8px",
-                  }}
-                >
-                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Atelier</span>
-                  <span>+91 98290 56597</span>
-                </a>
-                <a
-                  href="https://wa.me/919828156465?text=Hello%20Millennium%20Designs,%20I%20would%20like%20to%20enquire%20about%20your%20jewellery%20creations."
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -134,6 +138,44 @@ export function SiteFooter({
           </div>
         )}
 
+        {/* Social Media Links Bar */}
+        {(config?.socialInstagramUrl || config?.socialFacebookUrl || config?.socialPinterestUrl || config?.socialYoutubeUrl) && (
+          <div
+            style={{
+              marginBlockStart: "var(--md-space-6)",
+              paddingBlockStart: "var(--md-space-4)",
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
+              Follow The Atelier:
+            </span>
+            {config?.socialInstagramUrl && (
+              <a href={config.socialInstagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
+                Instagram
+              </a>
+            )}
+            {config?.socialFacebookUrl && (
+              <a href={config.socialFacebookUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
+                Facebook
+              </a>
+            )}
+            {config?.socialPinterestUrl && (
+              <a href={config.socialPinterestUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
+                Pinterest
+              </a>
+            )}
+            {config?.socialYoutubeUrl && (
+              <a href={config.socialYoutubeUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
+                YouTube
+              </a>
+            )}
+          </div>
+        )}
+
         <div
           style={{
             marginBlockStart: "var(--md-space-8)",
@@ -149,14 +191,10 @@ export function SiteFooter({
           }}
         >
           <p style={{ margin: 0 }}>
-            © {year} MILLENNIUM DESIGNS · JAIPUR ATELIER
+            © {year} {config?.footerCopyrightNotice || "MILLENNIUM DESIGNS · JAIPUR ATELIER 1961"}
           </p>
           <div style={{ display: "flex", gap: "var(--md-space-2) var(--md-space-3)", fontSize: "0.6875rem", letterSpacing: "0.08em", flexWrap: "wrap" }}>
-            <span>925 STERLING SILVER</span>
-            <span>·</span>
-            <span>ANTI-TARNISH ALLOY</span>
-            <span>·</span>
-            <span>JAIPUR CRAFTSMANSHIP</span>
+            <span>{config?.footerHallmarkStrip || "925 STERLING SILVER · ANTI-TARNISH ALLOY · JAIPUR CRAFTSMANSHIP"}</span>
           </div>
         </div>
       </div>

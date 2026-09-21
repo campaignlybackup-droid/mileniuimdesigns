@@ -5,25 +5,31 @@ import { HeaderActions } from "@/components/storefront/HeaderActions";
 import { MobileNav } from "@/components/storefront/MobileNav";
 import { CurrencyToggle } from "@/components/storefront/CurrencyToggle";
 
+import { type StorefrontCustomizationConfig, DEFAULT_STOREFRONT_CONFIG } from "@/lib/cms/storefrontConfig";
+
 /**
  * The header shell — 10 §5.1.
  * Restored 2-tier luxury navbar with top prestige ribbon, brand lockup, 1-tap currency toggle,
  * header actions, and dynamic category navigation rail with diamond separators.
+ * Now fully customizable via Atelier CMS (100+ settings).
  */
 export function SiteHeader({
   marketSegment,
   navigation = [],
   markets = [],
   ourStoryHref,
+  config = DEFAULT_STOREFRONT_CONFIG,
 }: {
   /** "" for the primary market, which has no prefix. */
   marketSegment: string;
   navigation?: { label: string; href: string }[];
   markets?: { code: string; label: string; href: string; active: boolean }[];
   ourStoryHref?: string;
+  config?: StorefrontCustomizationConfig;
 }): React.ReactElement {
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
   const resolvedStoryHref = ourStoryHref || `${prefix}/our-story`;
+  const isSticky = config?.headerSticky !== false;
 
   return (
     <header
@@ -33,7 +39,7 @@ export function SiteHeader({
         background: "color-mix(in srgb, var(--md-bg) 94%, transparent)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        position: "sticky",
+        position: isSticky ? "sticky" : "relative",
         top: 0,
         zIndex: 50,
         boxShadow: "0 4px 24px -10px rgba(0, 0, 0, 0.05)",
@@ -58,50 +64,58 @@ export function SiteHeader({
       </a>
 
       {/* PRESTIGE ATELIER TOP RIBBON */}
-      <div
-        style={{
-          background: "var(--md-green-black)",
-          color: "var(--md-fg-inverse)",
-          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-          paddingBlock: "5px",
-          paddingInline: "var(--md-gutter)",
-          fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
-          letterSpacing: "0.16em",
-          textTransform: "uppercase",
-          fontFamily: "var(--md-font-crest), Georgia, serif",
-        }}
-      >
+      {config?.announcementVisible !== false && (
         <div
           style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            overflow: "hidden",
+            background: config?.announcementBgColor || "var(--md-green-black)",
+            color: config?.announcementTextColor || "var(--md-fg-inverse)",
+            borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
+            paddingBlock: "5px",
+            paddingInline: "var(--md-gutter)",
+            fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            fontFamily: "var(--md-font-crest), Georgia, serif",
           }}
         >
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px", whiteSpace: "nowrap" }}>
-            <span>✦</span> JOHARI BAZAAR, JAIPUR · EST. 1961
-          </span>
-          <span
+          <div
             style={{
+              maxWidth: "var(--md-container)",
               marginInline: "auto",
-              textAlign: "center",
-              letterSpacing: "0.12em",
-              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               overflow: "hidden",
-              textOverflow: "ellipsis",
-              paddingInline: "8px",
             }}
           >
-            COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS
-          </span>
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", whiteSpace: "nowrap" }}>
-            ANTI-TARNISH 925 SILVER
-          </span>
+            <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px", whiteSpace: "nowrap" }}>
+              {config?.ribbonProvenanceTag || "✦ JOHARI BAZAAR, JAIPUR · EST. 1961"}
+            </span>
+            <span
+              style={{
+                marginInline: "auto",
+                textAlign: "center",
+                letterSpacing: "0.12em",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                paddingInline: "8px",
+              }}
+            >
+              {config?.announcementLink ? (
+                <Link href={config.announcementLink} style={{ color: "inherit", textDecoration: "none" }}>
+                  {config.announcementText}
+                </Link>
+              ) : (
+                config?.announcementText || "COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS"
+              )}
+            </span>
+            <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", whiteSpace: "nowrap" }}>
+              {config?.ribbonRightTag || "ANTI-TARNISH 925 SILVER"}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* TIER 1: BRAND LOCKUP & UTILITIES BAR */}
       <div
@@ -129,7 +143,7 @@ export function SiteHeader({
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              ✦ JAIPUR ATELIER · 1961
+              {config?.ribbonProvenanceTag?.split("·")[0] || "✦ JAIPUR ATELIER"} · {config?.foundingYear || "1961"}
             </span>
           </div>
 
@@ -141,70 +155,78 @@ export function SiteHeader({
               style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
             >
               <span className="md-header-logo-mobile">
-                <Logo variant="wordmark" tone="green" size="sm" priority />
+                <Logo variant={config?.headerLogoMode === "monogram" ? "monogram" : "wordmark"} tone="green" size="sm" priority />
               </span>
               <span className="md-header-logo-desktop">
-                <Logo variant="wordmark" tone="green" size="md" priority />
+                <Logo variant={config?.headerLogoMode === "monogram" ? "monogram" : "wordmark"} tone="green" size="md" priority />
               </span>
             </Link>
           </div>
 
           {/* Right Section: Desktop Currency Switcher + Header Actions */}
           <div className="md-header-right" style={{ display: "flex", alignItems: "center", gap: "clamp(8px, 1.5vw, 16px)" }}>
-            <div className="md-desktop-currency">
-              <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
-            </div>
+            {config?.headerShowCurrency !== false && (
+              <div className="md-desktop-currency">
+                <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
+              </div>
+            )}
 
-            <HeaderActions marketPrefix={prefix} />
+            <HeaderActions
+              marketPrefix={prefix}
+              showSearch={config?.headerShowSearch !== false}
+              showAccount={config?.headerShowAccount !== false}
+            />
           </div>
         </div>
       </div>
 
       {/* TIER 2-MOBILE: HORIZONTAL SCROLLABLE CATEGORY QUICK-RAIL FOR SMARTPHONES */}
-      <div className="md-mobile-nav-rail">
-        <nav
-          aria-label="Mobile Categories"
-          style={{
-            overflowX: "auto",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-            padding: "6px var(--md-gutter)",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 18%, var(--md-rule))",
-            background: "color-mix(in srgb, var(--md-bg-raised) 75%, transparent)",
-          }}
-        >
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={`${prefix}${item.href}`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                whiteSpace: "nowrap",
-                padding: "4px 10px",
-                borderRadius: "var(--md-radius-pill)",
-                fontSize: "0.625rem",
-                fontWeight: 600,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                color: "var(--md-fg)",
-                background: "var(--md-bg)",
-                border: "1px solid var(--md-rule)",
-                flexShrink: 0,
-                minHeight: 28,
-              }}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      {config?.navMobileRailVisible !== false && (
+        <div className="md-mobile-nav-rail">
+          <nav
+            aria-label="Mobile Categories"
+            style={{
+              overflowX: "auto",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
+              padding: "6px var(--md-gutter)",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 18%, var(--md-rule))",
+              background: "color-mix(in srgb, var(--md-bg-raised) 75%, transparent)",
+            }}
+          >
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={`${prefix}${item.href}`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  whiteSpace: "nowrap",
+                  padding: "4px 10px",
+                  borderRadius: "var(--md-radius-pill)",
+                  fontSize: "0.625rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  color: "var(--md-fg)",
+                  background: "var(--md-bg)",
+                  border: "1px solid var(--md-rule)",
+                  flexShrink: 0,
+                  minHeight: 28,
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
 
       {/* TIER 2-DESKTOP: CATEGORY NAVIGATION RAIL */}
       <div className="md-desktop-nav-tier">
@@ -240,7 +262,7 @@ export function SiteHeader({
                 key={item.href}
                 style={{ display: "inline-flex", alignItems: "center", gap: "clamp(6px, 1.15vw, 18px)" }}
               >
-                {idx > 0 && (
+                {idx > 0 && config?.navShowDiamondSeparator !== false && (
                   <span
                     aria-hidden="true"
                     style={{
@@ -274,17 +296,19 @@ export function SiteHeader({
             ))}
             {/* Our Story option in the primary navigation rail */}
             <li style={{ display: "inline-flex", alignItems: "center", gap: "clamp(6px, 1.15vw, 18px)" }}>
-              <span
-                aria-hidden="true"
-                style={{
-                  color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
-                  fontSize: "0.375rem",
-                  userSelect: "none",
-                  lineHeight: 1,
-                }}
-              >
-                ✦
-              </span>
+              {config?.navShowDiamondSeparator !== false && (
+                <span
+                  aria-hidden="true"
+                  style={{
+                    color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
+                    fontSize: "0.375rem",
+                    userSelect: "none",
+                    lineHeight: 1,
+                  }}
+                >
+                  ✦
+                </span>
+              )}
               <Link
                 href={resolvedStoryHref}
                 className="md-label md-nav-rail-link"
