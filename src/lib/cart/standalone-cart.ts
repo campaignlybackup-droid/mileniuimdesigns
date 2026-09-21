@@ -47,7 +47,9 @@ export function formatStandaloneEnrichedCart(
         (p) =>
           p.id === it.productId ||
           p.slug === it.variantId ||
-          (Array.isArray((p as any).variants) && (p as any).variants.some((v: any) => v.id === it.variantId)),
+          ("variants" in p &&
+            Array.isArray((p as { variants?: { id: string }[] }).variants) &&
+            (p as { variants?: { id: string }[] }).variants?.some((v) => v.id === it.variantId)),
       ) ?? STANDALONE_PRODUCTS[0];
 
     const unitBigInt = isIndia ? prod.priceInrMinor : prod.priceUsdMinor;

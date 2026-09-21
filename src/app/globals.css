@@ -459,6 +459,16 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Mobile bottom sheet animation ────────────────────────────────────────── */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 /* ── Nav link active/hover underline ─────────────────────────────────────── */
 .md-nav-link {
   position: relative;

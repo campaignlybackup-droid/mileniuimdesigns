@@ -120,6 +120,7 @@ export function MobileNav({
           zIndex: 999,
           display: "flex",
           flexDirection: "column",
+          paddingTop: "env(safe-area-inset-top, 0px)",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 320ms cubic-bezier(0.16, 1, 0.3, 1)",
           boxShadow: isOpen ? "var(--md-shadow-drawer)" : "none",
@@ -164,7 +165,7 @@ export function MobileNav({
         </div>
 
         {/* Search Bar Input */}
-        <div style={{ padding: "var(--md-space-4) var(--md-space-5)", borderBottom: "1px solid var(--md-rule)" }}>
+        <div style={{ padding: "var(--md-space-3) var(--md-space-5)", borderBottom: "1px solid var(--md-rule)" }}>
           <form onSubmit={handleSearchSubmit} style={{ position: "relative" }}>
             <input
               type="search"
@@ -173,21 +174,21 @@ export function MobileNav({
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: "100%",
-                height: 42,
-                paddingLeft: "36px",
+                height: 44,
+                paddingLeft: "38px",
                 paddingRight: "12px",
                 borderRadius: 0,
                 border: "1px solid var(--md-rule-strong)",
                 background: "var(--md-bg-raised)",
                 color: "var(--md-fg)",
-                fontSize: "0.8125rem",
+                fontSize: "0.875rem",
                 letterSpacing: "0.02em",
                 outline: "none",
               }}
             />
             <svg
-              width="15"
-              height="15"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="var(--md-fg-muted)"
@@ -226,7 +227,14 @@ export function MobileNav({
         </div>
 
         {/* Scrollable Navigation Links */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "var(--md-space-4) 0" }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: "var(--md-space-3) 0",
+          }}
+        >
           {/* Main Categories */}
           <div style={{ paddingInline: "var(--md-space-5)", marginBottom: "var(--md-space-2)" }}>
             <span
@@ -252,6 +260,7 @@ export function MobileNav({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    minHeight: 48,
                     padding: "12px var(--md-space-5)",
                     fontSize: "0.9375rem",
                     fontWeight: 500,
@@ -259,27 +268,33 @@ export function MobileNav({
                     textTransform: "uppercase",
                     color: "var(--md-fg)",
                     textDecoration: "none",
-                    borderLeft: "2px solid transparent",
+                    borderLeft: "3px solid transparent",
+                    transition: "background 180ms ease, border-left-color 180ms ease",
                   }}
                 >
                   <span>{item.label}</span>
-                  <span style={{ color: "var(--md-fg-muted)", fontSize: "0.75rem" }}>→</span>
+                  <span style={{ color: "var(--md-fg-muted)", fontSize: "0.875rem" }}>→</span>
                 </Link>
               </li>
             ))}
           </ul>
 
           {/* Dedicated Stones & Gemstones Subcategories Section */}
-          <div style={{ marginTop: "var(--md-space-4)", borderTop: "1px solid var(--md-rule)", paddingTop: "var(--md-space-4)" }}>
-            <div
+          <div style={{ marginTop: "var(--md-space-4)", borderTop: "1px solid var(--md-rule)", paddingTop: "var(--md-space-3)" }}>
+            <button
+              type="button"
               onClick={() => setStonesExpanded(!stonesExpanded)}
               style={{
+                width: "100%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 paddingInline: "var(--md-space-5)",
                 cursor: "pointer",
-                paddingBlock: "6px",
+                background: "transparent",
+                border: "none",
+                minHeight: 44,
+                textAlign: "left",
               }}
             >
               <span
@@ -293,13 +308,13 @@ export function MobileNav({
               >
                 STONES &amp; GEMSTONES
               </span>
-              <span style={{ fontSize: "0.75rem", color: "var(--md-green)" }}>
+              <span style={{ fontSize: "0.875rem", color: "var(--md-green)", fontWeight: 600 }}>
                 {stonesExpanded ? "–" : "+"}
               </span>
-            </div>
+            </button>
 
             {stonesExpanded && (
-              <ul style={{ listStyle: "none", margin: 0, padding: "4px 0 0 0" }}>
+              <ul style={{ listStyle: "none", margin: 0, padding: "2px 0 0 0" }}>
                 {STONES_LIST.map((stone) => (
                   <li key={stone.slug}>
                     <Link
@@ -308,6 +323,7 @@ export function MobileNav({
                       style={{
                         display: "flex",
                         alignItems: "center",
+                        minHeight: 44,
                         padding: "8px var(--md-space-5) 8px calc(var(--md-space-5) + 12px)",
                         fontSize: "0.875rem",
                         color: "var(--md-fg-secondary)",
@@ -326,6 +342,7 @@ export function MobileNav({
                     style={{
                       display: "flex",
                       alignItems: "center",
+                      minHeight: 44,
                       padding: "8px var(--md-space-5) 8px calc(var(--md-space-5) + 12px)",
                       fontSize: "0.8125rem",
                       fontWeight: 600,
@@ -343,7 +360,7 @@ export function MobileNav({
 
           {/* Region / Currency Switcher */}
           {markets.length > 1 && (
-            <div style={{ marginTop: "var(--md-space-6)", borderTop: "1px solid var(--md-rule)", padding: "var(--md-space-5) var(--md-space-5) var(--md-space-2)" }}>
+            <div style={{ marginTop: "var(--md-space-5)", borderTop: "1px solid var(--md-rule)", padding: "var(--md-space-4) var(--md-space-5) var(--md-space-2)" }}>
               <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-fg-secondary)", fontWeight: 600, marginBottom: 10 }}>
                 CURRENCY &amp; REGION
               </div>
@@ -356,6 +373,10 @@ export function MobileNav({
                     style={{
                       flex: 1,
                       textAlign: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: 44,
                       padding: "8px 12px",
                       borderRadius: "var(--md-radius-sm)",
                       fontSize: "0.75rem",
@@ -375,10 +396,10 @@ export function MobileNav({
           )}
         </div>
 
-        {/* Drawer Footer with WhatsApp Concierge and Account */}
+        {/* Drawer Footer with WhatsApp Concierge, Account, and Direct Atelier */}
         <div
           style={{
-            padding: "var(--md-space-4) var(--md-space-5)",
+            padding: "var(--md-space-4) var(--md-space-5) calc(var(--md-space-4) + env(safe-area-inset-bottom, 0px))",
             borderTop: "1px solid var(--md-rule)",
             background: "var(--md-bg-raised)",
             display: "flex",
@@ -395,7 +416,7 @@ export function MobileNav({
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              height: 44,
+              minHeight: 48,
               background: "var(--md-emerald-deep)",
               color: "var(--md-ivory-soft)",
               fontSize: "0.8125rem",
@@ -409,29 +430,61 @@ export function MobileNav({
             <span>→</span>
           </a>
 
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 36, fontSize: "0.8125rem" }}>
             <Link
               href={`${marketPrefix}/account`}
               onClick={() => setIsOpen(false)}
-              style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 500 }}
+              style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 500, padding: "8px 0" }}
             >
               My Account
             </Link>
             <Link
               href={`${marketPrefix}/login`}
               onClick={() => setIsOpen(false)}
-              style={{ color: "var(--md-green)", textDecoration: "none", fontWeight: 500 }}
+              style={{ color: "var(--md-green)", textDecoration: "none", fontWeight: 500, padding: "8px 0" }}
             >
               Sign In
             </Link>
           </div>
 
-          <div style={{ display: "flex", gap: "8px", fontSize: "0.75rem", justifyContent: "center", paddingTop: "4px", borderTop: "1px solid var(--md-rule)" }}>
-            <a href="tel:+919828156465" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              fontSize: "0.75rem",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: "8px",
+              borderTop: "1px solid var(--md-rule)",
+            }}
+          >
+            <a
+              href="tel:+919828156465"
+              style={{
+                color: "var(--md-fg)",
+                textDecoration: "none",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                minHeight: 44,
+                padding: "0 4px",
+              }}
+            >
               📞 +91 98281 56465
             </a>
             <span style={{ color: "var(--md-fg-muted)" }}>·</span>
-            <a href="tel:+919829056597" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
+            <a
+              href="tel:+919829056597"
+              style={{
+                color: "var(--md-fg)",
+                textDecoration: "none",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                minHeight: 44,
+                padding: "0 4px",
+              }}
+            >
               +91 98290 56597
             </a>
           </div>

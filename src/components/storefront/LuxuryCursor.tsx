@@ -23,7 +23,9 @@ export function LuxuryCursor(): React.ReactElement | null {
     if (window.matchMedia && !window.matchMedia("(pointer: fine)").matches) {
       return;
     }
-    setIsTouch(false);
+    requestAnimationFrame(() => {
+      setIsTouch(false);
+    });
 
     let currentX = -100;
     let currentY = -100;

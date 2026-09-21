@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       const cookieStore = await cookies();
       const raw = cookieStore.get("md_standalone_cart")?.value;
 
-      let state = readStandaloneCartCookie(raw) ?? {
+      const state = readStandaloneCartCookie(raw) ?? {
         id: `cart-${Date.now()}`,
         marketCode,
         currencyCode: marketCode.toUpperCase() === "IN" ? "INR" : "USD",

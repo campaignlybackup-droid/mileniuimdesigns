@@ -64,6 +64,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
           boxShadow: "var(--md-shadow-drawer)",
           display: "flex",
           flexDirection: "column",
+          paddingTop: "env(safe-area-inset-top, 0px)",
           zIndex: 101,
           animation: "slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
@@ -74,8 +75,9 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "var(--md-space-5) var(--md-space-6)",
+            padding: "var(--md-space-4) var(--md-space-6)",
             borderBottom: "1px solid var(--md-rule)",
+            minHeight: 64,
           }}
         >
           <div style={{ display: "flex", alignItems: "baseline", gap: "var(--md-space-2)" }}>
@@ -107,14 +109,15 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              padding: "var(--md-space-2)",
+              width: 44,
+              height: 44,
               color: "var(--md-fg)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -264,6 +267,8 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                           display: "inline-flex",
                           alignItems: "center",
                           border: "1px solid var(--md-rule)",
+                          borderRadius: "var(--md-radius-sm)",
+                          background: "var(--md-bg-raised)",
                         }}
                       >
                         <button
@@ -273,10 +278,13 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                           style={{
                             background: "transparent",
                             border: "none",
-                            width: 28,
-                            height: 28,
+                            width: 38,
+                            height: 38,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             cursor: "pointer",
-                            fontSize: "0.875rem",
+                            fontSize: "1rem",
                             color: "var(--md-fg)",
                           }}
                         >
@@ -285,9 +293,10 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                         <span
                           style={{
                             paddingInline: "var(--md-space-2)",
-                            fontSize: "0.8125rem",
-                            minWidth: 24,
+                            fontSize: "0.875rem",
+                            minWidth: 32,
                             textAlign: "center",
+                            fontWeight: 600,
                           }}
                         >
                           {line.quantity}
@@ -299,10 +308,13 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                           style={{
                             background: "transparent",
                             border: "none",
-                            width: 28,
-                            height: 28,
+                            width: 38,
+                            height: 38,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             cursor: "pointer",
-                            fontSize: "0.875rem",
+                            fontSize: "1rem",
                             color: "var(--md-fg)",
                           }}
                         >
@@ -320,7 +332,10 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                           fontSize: "0.75rem",
                           color: "var(--md-fg-secondary)",
                           textDecoration: "underline",
-                          padding: "var(--md-space-1)",
+                          minHeight: 40,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "var(--md-space-2)",
                         }}
                       >
                         Remove
@@ -337,7 +352,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
         {hasItems && (
           <div
             style={{
-              padding: "var(--md-space-5) var(--md-space-6)",
+              padding: "var(--md-space-5) var(--md-space-6) calc(var(--md-space-5) + env(safe-area-inset-bottom, 0px))",
               borderTop: "1px solid var(--md-rule)",
               background: "var(--md-bg)",
               display: "flex",
@@ -372,7 +387,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
             </p>
 
             <Link href={checkoutHref} onClick={closeCart} style={{ textDecoration: "none" }}>
-              <Button variant="primary" size="lg" style={{ width: "100%", marginTop: "var(--md-space-2)" }}>
+              <Button variant="primary" size="lg" style={{ width: "100%", minHeight: 48, marginTop: "var(--md-space-2)" }}>
                 Proceed to Checkout
               </Button>
             </Link>

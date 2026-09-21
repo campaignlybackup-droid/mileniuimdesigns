@@ -52,6 +52,9 @@ export function StickyAddToBag({
       });
       if (res.ok) {
         setAdded(true);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("cart:open"));
+        }
         setTimeout(() => setAdded(false), 2500);
       }
     } catch {
@@ -73,7 +76,7 @@ export function StickyAddToBag({
         zIndex: 40,
         background: "var(--md-bg)",
         borderTop: "1px solid var(--md-rule)",
-        padding: "var(--md-space-3) var(--md-gutter)",
+        padding: "var(--md-space-3) var(--md-gutter) calc(var(--md-space-3) + env(safe-area-inset-bottom, 0px))",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -104,9 +107,9 @@ export function StickyAddToBag({
         size="md"
         onClick={handleAddToCart}
         disabled={loading || !variantId}
-        style={{ flexShrink: 0 }}
+        style={{ flexShrink: 0, minHeight: 44, paddingInline: "var(--md-space-5)" }}
       >
-        {added ? "Added" : loading ? "…" : "Add to Bag"}
+        {added ? "Added to Bag ✓" : loading ? "…" : "Add to Bag"}
       </Button>
     </aside>
   );

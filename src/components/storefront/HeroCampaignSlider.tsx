@@ -62,7 +62,11 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const animRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(Date.now());
+  const startTimeRef = useRef<number>(0);
+
+  // Touch Swipe tracking for smartphones
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
 
   const totalSlides = CAMPAIGN_SLIDES.length;
 
@@ -78,10 +82,38 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
     startTimeRef.current = Date.now();
   }, [totalSlides]);
 
-  const goToSlide = (idx: number) => {
+  const goToSlide = useCallback((idx: number) => {
     setCurrentIdx(idx);
     setProgress(0);
     startTimeRef.current = Date.now();
+  }, []);
+
+  // Touch handlers for seamless swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+    if (touchStartXRef.current === null || touchEndXRef.current === null) return;
+    const diff = touchStartXRef.current - touchEndXRef.current;
+    const minSwipeDistance = 45; // 45px threshold
+
+    if (diff > minSwipeDistance) {
+      // Swiped left -> Next slide
+      nextSlide();
+    } else if (diff < -minSwipeDistance) {
+      // Swiped right -> Prev slide
+      prevSlide();
+    }
+
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
   };
 
   // Timer loop with smooth progress bar
@@ -117,10 +149,13 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
       aria-label="Featured Fine Jewellery Campaigns"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "clamp(580px, 82vh, 860px)",
+        minHeight: "clamp(540px, 78vh, 860px)",
         background: "var(--md-green-black)",
         color: "var(--md-fg-inverse)",
         overflow: "hidden",
@@ -139,7 +174,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               position: "absolute",
               inset: 0,
               opacity: isActive ? 1 : 0,
-              transition: "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)",
               zIndex: 1,
               pointerEvents: isActive ? "auto" : "none",
             }}
@@ -149,22 +184,22 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               alt={slide.imageAlt}
               fill
               priority={idx === 0}
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, 100vw"
               style={{
                 objectFit: "cover",
-                objectPosition: "center 42%",
+                objectPosition: "center 38%",
                 transform: isActive ? "scale(1.05)" : "scale(1.0)",
                 transition: "transform 7000ms cubic-bezier(0.1, 1, 0.3, 1)",
-                filter: "brightness(0.72) contrast(1.08)",
+                filter: "brightness(0.68) contrast(1.08)",
               }}
             />
-            {/* Cinematic Gradient Overlays: Rich Studio Vignette */}
+            {/* Cinematic Gradient Overlays: Rich Studio Vignette for perfect text readability on mobile */}
             <div
               style={{
                 position: "absolute",
                 inset: 0,
                 background:
-                  "linear-gradient(to right, rgba(4, 18, 12, 0.88) 0%, rgba(4, 18, 12, 0.65) 45%, rgba(4, 18, 12, 0.25) 100%)",
+                  "linear-gradient(to right, rgba(4, 18, 12, 0.92) 0%, rgba(4, 18, 12, 0.72) 55%, rgba(4, 18, 12, 0.32) 100%)",
               }}
             />
             <div
@@ -172,7 +207,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
                 position: "absolute",
                 inset: 0,
                 background:
-                  "linear-gradient(to top, rgba(3, 15, 10, 0.85) 0%, transparent 45%, rgba(3, 15, 10, 0.4) 100%)",
+                  "linear-gradient(to top, rgba(3, 15, 10, 0.9) 0%, transparent 50%, rgba(3, 15, 10, 0.45) 100%)",
               }}
             />
           </div>
@@ -188,27 +223,28 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 10vw, 128px)",
+          paddingBlockStart: "clamp(48px, 8vw, 112px)",
+          paddingBlockEnd: "clamp(88px, 12vw, 128px)", // Room for bottom dock on mobile
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
         }}
       >
-        <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
+        <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "clamp(12px, 2.5vw, 20px)" }}>
           {/* Tag & Subhead */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "clamp(8px, 2vw, 12px)", flexWrap: "wrap" }}>
             <span
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
-                padding: "4px 12px",
+                gap: 5,
+                padding: "3px 10px",
                 borderRadius: 0,
-                background: "color-mix(in srgb, var(--md-champagne) 16%, transparent)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+                background: "color-mix(in srgb, var(--md-champagne) 18%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 42%, transparent)",
                 color: "var(--md-champagne)",
-                fontSize: "0.625rem",
-                letterSpacing: "0.18em",
+                fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
+                letterSpacing: "0.16em",
                 textTransform: "uppercase",
                 fontWeight: 600,
                 fontFamily: "var(--md-font-crest), Georgia, serif",
@@ -221,8 +257,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
 
             <span
               style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.2em",
+                fontSize: "clamp(0.625rem, 1.9vw, 0.6875rem)",
+                letterSpacing: "0.16em",
                 textTransform: "uppercase",
                 color: "color-mix(in srgb, var(--md-champagne) 85%, transparent)",
                 fontWeight: 500,
@@ -232,14 +268,14 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             </span>
           </div>
 
-          {/* Headline with keyframe crossfade */}
+          {/* Headline: Mobile-tuned clamp to prevent 4-line wrapping */}
           <h1
             key={activeSlide.id}
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2.5rem, 5.5vw, 4.75rem)",
-              lineHeight: 1.06,
+              fontSize: "clamp(1.85rem, 6.2vw, 4.5rem)",
+              lineHeight: 1.08,
               fontWeight: 400,
               letterSpacing: "-0.015em",
               color: "var(--md-fg-inverse)",
@@ -255,23 +291,23 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             key={`p-${activeSlide.id}`}
             style={{
               margin: 0,
-              fontSize: "clamp(0.9375rem, 1.3vw, 1.125rem)",
-              lineHeight: 1.75,
-              color: "color-mix(in srgb, var(--md-fg-inverse) 88%, transparent)",
-              maxWidth: "560px",
+              fontSize: "clamp(0.875rem, 2.8vw, 1.0625rem)",
+              lineHeight: 1.65,
+              color: "color-mix(in srgb, var(--md-fg-inverse) 86%, transparent)",
+              maxWidth: "540px",
               animation: "fadeIn 650ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {activeSlide.standfirst}
           </p>
 
-          {/* Editorial Custom CTAs */}
+          {/* Editorial Custom CTAs — Stack gracefully on narrow mobile */}
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              gap: "clamp(16px, 3vw, 32px)",
-              paddingTop: "var(--md-space-3)",
+              alignItems: "stretch",
+              gap: "clamp(12px, 2.5vw, 24px)",
+              paddingTop: "clamp(6px, 1.5vw, 16px)",
               flexWrap: "wrap",
             }}
           >
@@ -280,16 +316,18 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 12,
-                padding: "15px 32px",
+                justifyContent: "center",
+                gap: 10,
+                padding: "clamp(13px, 2.8vw, 16px) clamp(22px, 4vw, 32px)",
                 background: "var(--md-champagne)",
                 color: "var(--md-green-black)",
-                fontSize: "0.75rem",
-                letterSpacing: "0.18em",
+                fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",
+                letterSpacing: "0.16em",
                 textTransform: "uppercase",
                 fontWeight: 600,
                 textDecoration: "none",
                 borderRadius: 0,
+                minHeight: 44,
                 boxShadow: "0 8px 24px -6px rgba(0, 0, 0, 0.45)",
                 transition: "transform 180ms ease, background 180ms ease",
               }}
@@ -301,13 +339,16 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             <Link
               href={`${marketPrefix}/our-story`}
               style={{
-                fontSize: "0.75rem",
-                letterSpacing: "0.16em",
+                display: "inline-flex",
+                alignItems: "center",
+                fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "var(--md-champagne)",
                 textDecoration: "none",
                 borderBottom: "1px solid var(--md-champagne)",
                 paddingBottom: "3px",
+                minHeight: 44,
                 fontWeight: 500,
                 transition: "opacity 180ms ease",
               }}
@@ -318,20 +359,22 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
         </div>
       </div>
 
-      {/* ── Slide Controls & Progress Dock (Bottom Right) ─────────── */}
+      {/* ── Slide Controls & Progress Dock — Mobile-Responsive ─────── */}
       <div
         style={{
           position: "absolute",
-          bottom: "clamp(20px, 4vw, 40px)",
+          bottom: "clamp(16px, 3.5vw, 36px)",
           right: "var(--md-gutter)",
           zIndex: 4,
           display: "flex",
           alignItems: "center",
-          gap: "clamp(12px, 2vw, 24px)",
-          background: "rgba(4, 18, 12, 0.75)",
+          gap: "clamp(8px, 1.8vw, 18px)",
+          background: "rgba(4, 18, 12, 0.82)",
           backdropFilter: "blur(12px)",
-          padding: "10px 20px",
-          border: "1px solid color-mix(in srgb, var(--md-champagne) 28%, transparent)",
+          WebkitBackdropFilter: "blur(12px)",
+          padding: "clamp(6px, 1.5vw, 10px) clamp(10px, 2vw, 18px)",
+          border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+          maxWidth: "calc(100% - 32px)",
         }}
       >
         {/* Slide Counter (01 / 03) */}
@@ -339,21 +382,21 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           style={{
             display: "flex",
             alignItems: "baseline",
-            gap: 4,
-            fontSize: "0.8125rem",
+            gap: 3,
+            fontSize: "clamp(0.75rem, 2vw, 0.8125rem)",
             fontFamily: "var(--md-font-display)",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.08em",
             color: "var(--md-champagne)",
           }}
         >
           <span style={{ fontWeight: 600 }}>0{currentIdx + 1}</span>
-          <span style={{ opacity: 0.5, fontSize: "0.6875rem" }}>/ 0{totalSlides}</span>
+          <span style={{ opacity: 0.5, fontSize: "0.625rem" }}>/ 0{totalSlides}</span>
         </div>
 
         {/* Dynamic Progress Timer Line */}
         <div
           style={{
-            width: "clamp(60px, 8vw, 110px)",
+            width: "clamp(44px, 7vw, 100px)",
             height: 2,
             background: "rgba(255, 255, 255, 0.2)",
             position: "relative",
@@ -373,8 +416,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           />
         </div>
 
-        {/* Slide Selector Buttons */}
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        {/* Slide Selector Indicators */}
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {CAMPAIGN_SLIDES.map((s, idx) => {
             const isSel = idx === currentIdx;
             return (
@@ -384,8 +427,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
                 onClick={() => goToSlide(idx)}
                 aria-label={`Go to slide ${idx + 1}: ${s.title}`}
                 style={{
-                  width: isSel ? 22 : 8,
-                  height: 6,
+                  width: isSel ? 18 : 6,
+                  height: 5,
                   borderRadius: 0,
                   background: isSel ? "var(--md-champagne)" : "rgba(255, 255, 255, 0.3)",
                   border: "none",
@@ -398,8 +441,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           })}
         </div>
 
-        {/* Prev / Next Arrows */}
-        <div style={{ display: "flex", gap: 4, marginLeft: 8 }}>
+        {/* Prev / Next Arrows with touch targets */}
+        <div style={{ display: "flex", gap: 3, marginLeft: 4 }}>
           <button
             type="button"
             onClick={prevSlide}
@@ -407,6 +450,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             style={{
               width: 32,
               height: 32,
+              minWidth: 32,
+              minHeight: 32,
               background: "transparent",
               border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
               color: "var(--md-champagne)",
@@ -414,7 +459,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "0.875rem",
+              fontSize: "0.8125rem",
               transition: "all 150ms ease",
             }}
           >
@@ -427,6 +472,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             style={{
               width: 32,
               height: 32,
+              minWidth: 32,
+              minHeight: 32,
               background: "transparent",
               border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
               color: "var(--md-champagne)",
@@ -434,7 +481,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "0.875rem",
+              fontSize: "0.8125rem",
               transition: "all 150ms ease",
             }}
           >

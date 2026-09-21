@@ -117,34 +117,134 @@ export function ProductGalleryMobile({
         })}
       </div>
 
-      {/* Dot indicator */}
+      {/* Left & Right subtle navigation buttons on mobile */}
       {items.length > 1 && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "var(--md-space-3)",
-            left: 0,
-            right: 0,
-            display: "flex",
-            justifyContent: "center",
-            gap: "var(--md-space-2)",
-            zIndex: 2,
-          }}
-        >
-          {items.map((_, idx) => (
-            <span
-              key={idx}
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              if (scrollRef.current) {
+                const newIdx = Math.max(0, activeIndex - 1);
+                scrollRef.current.scrollTo({
+                  left: newIdx * scrollRef.current.clientWidth,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            aria-label="Previous product image"
+            style={{
+              position: "absolute",
+              left: 8,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 40,
+              height: 40,
+              display: activeIndex > 0 ? "flex" : "none",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "color-mix(in srgb, var(--md-bg) 80%, transparent)",
+              backdropFilter: "blur(6px)",
+              border: "1px solid var(--md-rule)",
+              borderRadius: "50%",
+              color: "var(--md-fg)",
+              cursor: "pointer",
+              zIndex: 3,
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (scrollRef.current) {
+                const newIdx = Math.min(items.length - 1, activeIndex + 1);
+                scrollRef.current.scrollTo({
+                  left: newIdx * scrollRef.current.clientWidth,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            aria-label="Next product image"
+            style={{
+              position: "absolute",
+              right: 8,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 40,
+              height: 40,
+              display: activeIndex < items.length - 1 ? "flex" : "none",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "color-mix(in srgb, var(--md-bg) 80%, transparent)",
+              backdropFilter: "blur(6px)",
+              border: "1px solid var(--md-rule)",
+              borderRadius: "50%",
+              color: "var(--md-fg)",
+              cursor: "pointer",
+              zIndex: 3,
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* Luxury Slide Pill Counter & Progress Indicator */}
+      {items.length > 1 && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "var(--md-space-3)",
+              right: "var(--md-space-3)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "4px 10px",
+              background: "color-mix(in srgb, var(--md-charcoal) 75%, transparent)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 25%, transparent)",
+              borderRadius: "var(--md-radius-pill)",
+              color: "var(--md-ivory-soft)",
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              zIndex: 2,
+            }}
+          >
+            <span>{String(activeIndex + 1).padStart(2, "0")}</span>
+            <span style={{ color: "var(--md-champagne)", opacity: 0.6 }}>/</span>
+            <span style={{ opacity: 0.7 }}>{String(items.length).padStart(2, "0")}</span>
+          </div>
+
+          {/* Progress bar line at bottom */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 2,
+              background: "var(--md-rule)",
+              zIndex: 2,
+            }}
+          >
+            <div
               style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: idx === activeIndex ? "var(--md-fg)" : "var(--md-rule)",
-                opacity: idx === activeIndex ? 1 : 0.6,
-                transition: "background var(--md-dur-fast) ease",
+                height: "100%",
+                width: `${((activeIndex + 1) / items.length) * 100}%`,
+                background: "var(--md-green)",
+                transition: "width 280ms cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             />
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

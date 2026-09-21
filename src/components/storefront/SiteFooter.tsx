@@ -25,7 +25,7 @@ export function SiteFooter({
       data-surface="emerald-deep"
       style={{
         paddingInline: "var(--md-gutter)",
-        paddingBlock: "var(--md-space-9) var(--md-space-6)",
+        paddingBlock: "var(--md-space-9) calc(var(--md-space-6) + env(safe-area-inset-bottom, 0px))",
         marginBlockStart: "var(--md-space-10)",
       }}
     >
@@ -56,6 +56,9 @@ export function SiteFooter({
                           color: "var(--md-fg-inverse-muted)",
                           textDecoration: "none",
                           fontSize: "var(--md-t-small)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          minHeight: 36,
                           transition: "color var(--md-dur-fast) ease",
                         }}
                       >
@@ -78,7 +81,7 @@ export function SiteFooter({
                 M.I. Road, Jaipur, 302001<br />
                 Rajasthan, India
               </address>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "4px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "4px" }}>
                 <a
                   href="tel:+919828156465"
                   style={{
@@ -87,10 +90,11 @@ export function SiteFooter({
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
+                    minHeight: 44,
                     gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)" }}>Direct</span>
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Direct</span>
                   <span>+91 98281 56465</span>
                 </a>
                 <a
@@ -101,10 +105,11 @@ export function SiteFooter({
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
+                    minHeight: 44,
                     gap: "8px",
                   }}
                 >
-                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)" }}>Atelier</span>
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Atelier</span>
                   <span>+91 98290 56597</span>
                 </a>
                 <a
@@ -117,9 +122,9 @@ export function SiteFooter({
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
+                    minHeight: 44,
                     gap: "6px",
-                    fontWeight: 500,
-                    marginTop: "4px",
+                    fontWeight: 600,
                   }}
                 >
                   <span>WhatsApp Concierge →</span>
@@ -138,7 +143,7 @@ export function SiteFooter({
             flexWrap: "wrap",
             justifyContent: "space-between",
             alignItems: "center",
-            gap: "var(--md-space-4)",
+            gap: "var(--md-space-3) var(--md-space-4)",
             color: "var(--md-fg-inverse-muted)",
             fontSize: "var(--md-t-small)",
           }}
@@ -146,7 +151,7 @@ export function SiteFooter({
           <p style={{ margin: 0 }}>
             © {year} MILLENNIUM DESIGNS · JAIPUR ATELIER
           </p>
-          <div style={{ display: "flex", gap: "var(--md-space-4)", fontSize: "0.75rem", letterSpacing: "0.08em", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "var(--md-space-2) var(--md-space-3)", fontSize: "0.6875rem", letterSpacing: "0.08em", flexWrap: "wrap" }}>
             <span>925 STERLING SILVER</span>
             <span>·</span>
             <span>ANTI-TARNISH ALLOY</span>

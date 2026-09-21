@@ -12,19 +12,22 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "var(--md-space-3)",
+        gap: "clamp(2px, 1vw, 8px)",
       }}
     >
-      {/* Quick Search */}
+      {/* Quick Search — 44x44px Touch Target */}
       <Link
         href={`${marketPrefix}/search`}
         aria-label="Search creations"
         style={{
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
+          justifyContent: "center",
+          minWidth: 44,
+          minHeight: 44,
           color: "var(--md-fg)",
           textDecoration: "none",
-          padding: "var(--md-space-1)",
+          padding: 0,
         }}
       >
         <svg
@@ -42,16 +45,20 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
         </svg>
       </Link>
 
-      {/* Customer Account */}
+      {/* Customer Account — 44x44px Touch Target */}
       <Link
         href={`${marketPrefix}/account`}
         aria-label="Account"
+        className="md-desktop-account"
         style={{
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
+          justifyContent: "center",
+          minWidth: 44,
+          minHeight: 44,
           color: "var(--md-fg)",
           textDecoration: "none",
-          padding: "var(--md-space-1)",
+          padding: 0,
         }}
       >
         <svg
@@ -69,7 +76,7 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
         </svg>
       </Link>
 
-      {/* Bag / Cart Toggle */}
+      {/* Bag / Cart Toggle — 44x44px Touch Target */}
       <button
         onClick={openCart}
         aria-label={`Shopping bag, ${totalQuantity} items`}
@@ -77,11 +84,14 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
           background: "transparent",
           border: "none",
           cursor: "pointer",
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
+          justifyContent: "center",
+          minWidth: 44,
+          minHeight: 44,
           position: "relative",
           color: "var(--md-fg)",
-          padding: "var(--md-space-1)",
+          padding: 0,
         }}
       >
         <svg
@@ -103,8 +113,8 @@ export function HeaderActions({ marketPrefix = "" }: { marketPrefix?: string }) 
           <span
             style={{
               position: "absolute",
-              top: -2,
-              right: -6,
+              top: 4,
+              right: 2,
               background: "var(--md-green)",
               color: "var(--md-fg-inverse)",
               fontSize: "0.625rem",

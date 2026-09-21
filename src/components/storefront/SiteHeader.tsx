@@ -37,6 +37,7 @@ export function SiteHeader({
         top: 0,
         zIndex: 50,
         boxShadow: "0 4px 24px -10px rgba(0, 0, 0, 0.05)",
+        paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
       {/* The first focusable element on every page (10 §8.2). */}
@@ -62,10 +63,10 @@ export function SiteHeader({
           background: "var(--md-green-black)",
           color: "var(--md-fg-inverse)",
           borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-          paddingBlock: "6px",
+          paddingBlock: "5px",
           paddingInline: "var(--md-gutter)",
-          fontSize: "0.625rem",
-          letterSpacing: "0.18em",
+          fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
+          letterSpacing: "0.16em",
           textTransform: "uppercase",
           fontFamily: "var(--md-font-crest), Georgia, serif",
         }}
@@ -77,15 +78,26 @@ export function SiteHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            overflow: "hidden",
           }}
         >
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px" }}>
+          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px", whiteSpace: "nowrap" }}>
             <span>✦</span> JOHARI BAZAAR, JAIPUR · EST. 1961
           </span>
-          <span style={{ marginInline: "auto", textAlign: "center", letterSpacing: "0.14em" }}>
+          <span
+            style={{
+              marginInline: "auto",
+              textAlign: "center",
+              letterSpacing: "0.12em",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              paddingInline: "8px",
+            }}
+          >
             COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS
           </span>
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)" }}>
+          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", whiteSpace: "nowrap" }}>
             ANTI-TARNISH 925 SILVER
           </span>
         </div>
