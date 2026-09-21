@@ -35,7 +35,7 @@ export type CreateOrderInput = {
   };
   shippingAddress: CustomerAddressInput;
   billingAddress?: CustomerAddressInput;
-  paymentMethod: "razorpay" | "stripe" | "test";
+  paymentMethod: "bank_transfer" | "razorpay" | "stripe" | "test";
   paymentReference?: string;
 };
 
@@ -43,6 +43,7 @@ export type OrderSummary = {
   id: string;
   orderNumber: string;
   publicToken: string;
+  paymentMethod?: string | null;
   email: string;
   phone: string | null;
   marketCode: string;
@@ -156,8 +157,7 @@ export async function createOrderFromCart(input: CreateOrderInput): Promise<Orde
     const shippingTotalMinor = 0n;
     const taxTotalMinor = 0n;
     const totalMinor = subtotalMinor;
-
-    const isPaid = true; // In V1 checkout flow, intent/payment is verified upon placement
+    const isPaid = paymentMethod !== "bank_transfer";
     const orderId = crypto.randomUUID();
     const idempotencyKey = `ord_idemp_${crypto.randomBytes(16).toString("hex")}`;
 
@@ -284,17 +284,33 @@ export async function createOrderFromCart(input: CreateOrderInput): Promise<Orde
     `;
 
     // 10. Record Payment
+    const paymentIdempKey = `pay_idemp_${crypto.randomBytes(16).toString("hex")}`;
     if (isPaid) {
       await tx.$executeRaw`
         INSERT INTO payments (
           id, order_id, market_code, currency_code, provider_key,
-          amount_minor, status, provider_reference, authorized_at, captured_at,
+          amount_minor, captured_minor, status, idempotency_key, provider_payment_id,
+          authorized_at, captured_at, created_at, updated_at
+        ) VALUES (
+          gen_random_uuid(), ${orderId}::uuid, ${cart.market_code}, ${cart.currency_code},
+          ${paymentMethod}, ${totalMinor}, ${totalMinor}, 'paid'::payment_status,
+          ${paymentIdempKey},
+          ${paymentReference ?? `pay_${crypto.randomBytes(8).toString("hex")}`},
+          now(), now(), now(), now()
+        )
+      `;
+    } else {
+      await tx.$executeRaw`
+        INSERT INTO payments (
+          id, order_id, market_code, currency_code, provider_key,
+          amount_minor, captured_minor, status, idempotency_key, provider_payment_id,
           created_at, updated_at
         ) VALUES (
           gen_random_uuid(), ${orderId}::uuid, ${cart.market_code}, ${cart.currency_code},
-          ${paymentMethod}, ${totalMinor}, 'captured'::payment_status,
-          ${paymentReference ?? `pay_${crypto.randomBytes(8).toString("hex")}`},
-          now(), now(), now(), now()
+          ${paymentMethod}, ${totalMinor}, 0, 'unpaid'::payment_status,
+          ${paymentIdempKey},
+          ${paymentReference ?? `bt_${orderNumber}`},
+          now(), now()
         )
       `;
     }
@@ -308,6 +324,7 @@ export async function createOrderFromCart(input: CreateOrderInput): Promise<Orde
       id: orderId,
       orderNumber,
       publicToken,
+      paymentMethod,
       email: customer.email,
       phone: customer.phone ?? null,
       marketCode: cart.market_code,
@@ -339,6 +356,10 @@ export async function getOrderByNumberOrId(identifier: string): Promise<OrderSum
       items: true,
       addresses: {
         where: { kind: "shipping" },
+      },
+      payments: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
       },
     },
   });
@@ -378,6 +399,7 @@ export async function getOrderByNumberOrId(identifier: string): Promise<OrderSum
     id: order.id,
     orderNumber: order.orderNumber,
     publicToken: "",
+    paymentMethod: order.payments[0]?.providerKey ?? (order.paymentStatus === "unpaid" ? "bank_transfer" : null),
     email: order.email,
     phone: order.phone,
     marketCode: order.marketCode,
@@ -408,6 +430,10 @@ export async function listRecentOrders(limit: number = 20): Promise<OrderSummary
       addresses: {
         where: { kind: "shipping" },
       },
+      payments: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
     },
   });
 
@@ -421,6 +447,7 @@ export async function listRecentOrders(limit: number = 20): Promise<OrderSummary
         id: order.id,
         orderNumber: order.orderNumber,
         publicToken: "",
+        paymentMethod: order.payments[0]?.providerKey ?? (order.paymentStatus === "unpaid" ? "bank_transfer" : null),
         email: order.email,
         phone: order.phone,
         marketCode: order.marketCode,

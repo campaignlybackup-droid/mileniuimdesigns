@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { customer, shippingAddress, billingAddress, paymentMethod = "test", paymentReference } = body;
+    const { customer, shippingAddress, billingAddress, paymentMethod = "bank_transfer", paymentReference } = body;
 
     if (!customer?.email || !customer?.name) {
       return NextResponse.json({ error: "Customer name and email are required" }, { status: 400 });

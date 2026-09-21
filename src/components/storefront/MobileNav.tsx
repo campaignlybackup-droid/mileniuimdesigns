@@ -387,43 +387,6 @@ export function MobileNav({
               </li>
             </ul>
           </div>
-
-          {/* Region / Currency Switcher */}
-          {markets.length > 1 && (
-            <div style={{ marginTop: "var(--md-space-5)", borderTop: "1px solid var(--md-rule)", padding: "var(--md-space-4) var(--md-space-5) var(--md-space-2)" }}>
-              <div style={{ fontSize: "0.6875rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--md-fg-secondary)", fontWeight: 600, marginBottom: 10 }}>
-                CURRENCY &amp; REGION
-              </div>
-              <div style={{ display: "flex", gap: "var(--md-space-2)" }}>
-                {markets.map((m) => (
-                  <Link
-                    key={m.code}
-                    href={m.href}
-                    onClick={() => setIsOpen(false)}
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      minHeight: 44,
-                      padding: "8px 12px",
-                      borderRadius: "var(--md-radius-sm)",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                      textDecoration: "none",
-                      background: m.active ? "var(--md-fg)" : "var(--md-bg-raised)",
-                      color: m.active ? "var(--md-ivory-soft)" : "var(--md-fg)",
-                      border: "1px solid var(--md-rule)",
-                    }}
-                  >
-                    {m.code === "IN" ? "🇮🇳 INR ₹" : "🇺🇸 USD $"}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Drawer Footer with WhatsApp Concierge, Account, and Direct Atelier */}

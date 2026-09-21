@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useCart } from "@/components/storefront/CartContext";
 import { Button } from "@/components/ui/Button";
+import { BANK_TRANSFER_DETAILS } from "@/lib/config/bankDetails";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -31,7 +32,16 @@ export default function CheckoutPage() {
   const [state, setState] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [countryCode, setCountryCode] = useState(isIndia ? "IN" : "US");
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "stripe">(isIndia ? "razorpay" : "stripe");
+  const [paymentMethod, setPaymentMethod] = useState<"bank_transfer" | "razorpay" | "stripe">("bank_transfer");
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const handleCopy = (text: string, key: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      void navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    }
+  };
 
   useEffect(() => {
     void refreshCart();
@@ -505,13 +515,161 @@ export default function CheckoutPage() {
               4. Payment
             </h2>
 
+            {/* Payment Option 1: Direct Bank Transfer (Primary / Recommended) */}
+            <div
+              style={{
+                border: paymentMethod === "bank_transfer" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                borderRadius: "var(--md-radius-sm)",
+                background: paymentMethod === "bank_transfer" ? "var(--md-bg-raised)" : "transparent",
+                padding: "var(--md-space-4)",
+                marginBottom: "var(--md-space-4)",
+                transition: "border-color 0.2s, background 0.2s",
+                cursor: "pointer",
+              }}
+              onClick={() => setPaymentMethod("bank_transfer")}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--md-space-2)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)" }}>
+                  <input
+                    type="radio"
+                    id="bank_transfer"
+                    name="payment"
+                    checked={paymentMethod === "bank_transfer"}
+                    onChange={() => setPaymentMethod("bank_transfer")}
+                  />
+                  <label htmlFor="bank_transfer" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
+                    Direct Bank Transfer (NEFT / RTGS / IMPS)
+                  </label>
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    padding: "2px 8px",
+                    background: "rgba(201, 168, 106, 0.15)",
+                    color: "var(--md-gold, #8a6a24)",
+                    fontWeight: 600,
+                    borderRadius: 3,
+                  }}
+                >
+                  Recommended
+                </span>
+              </div>
+              <p style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)", margin: "0 0 0 24px", lineHeight: 1.5 }}>
+                Direct bank transfer to Millennium Designs official ICICI Bank current account. Zero transaction fees.
+              </p>
+
+              {paymentMethod === "bank_transfer" && (
+                <div
+                  style={{
+                    marginTop: "var(--md-space-4)",
+                    marginLeft: 24,
+                    padding: "var(--md-space-4)",
+                    background: "var(--md-bg)",
+                    border: "1px solid var(--md-rule)",
+                    borderRadius: "var(--md-radius-sm)",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, borderBottom: "1px solid var(--md-rule)", paddingBottom: 8 }}>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-fg)" }}>
+                      Beneficiary Account Details
+                    </span>
+                    <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>
+                      ICICI Bank • Jaipur
+                    </span>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, fontSize: "0.8125rem" }}>
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Name</div>
+                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.accountName}</div>
+                    </div>
+
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bank &amp; Branch</div>
+                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.bankName} ({BANK_TRANSFER_DETAILS.branchName})</div>
+                    </div>
+
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Number</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                        <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
+                          {BANK_TRANSFER_DETAILS.accountNumber}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(BANK_TRANSFER_DETAILS.accountNumber, "acc")}
+                          style={{
+                            border: "1px solid var(--md-rule)",
+                            background: "var(--md-bg-raised)",
+                            padding: "2px 8px",
+                            fontSize: "0.6875rem",
+                            borderRadius: 3,
+                            cursor: "pointer",
+                            color: copiedKey === "acc" ? "var(--md-green)" : "var(--md-fg)",
+                          }}
+                        >
+                          {copiedKey === "acc" ? "✓ Copied" : "Copy"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>RTGS / NEFT / IFSC Code</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+                        <span style={{ fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.05em", color: "var(--md-fg)", fontSize: "0.9375rem" }}>
+                          {BANK_TRANSFER_DETAILS.ifscCode}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(BANK_TRANSFER_DETAILS.ifscCode, "ifsc")}
+                          style={{
+                            border: "1px solid var(--md-rule)",
+                            background: "var(--md-bg-raised)",
+                            padding: "2px 8px",
+                            fontSize: "0.6875rem",
+                            borderRadius: 3,
+                            cursor: "pointer",
+                            color: copiedKey === "ifsc" ? "var(--md-green)" : "var(--md-fg)",
+                          }}
+                        >
+                          {copiedKey === "ifsc" ? "✓ Copied" : "Copy"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Type</div>
+                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.accountType}</div>
+                    </div>
+
+                    <div>
+                      <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Concierge Verification</div>
+                      <div style={{ fontWeight: 600, color: "var(--md-fg)", marginTop: 2 }}>{BANK_TRANSFER_DETAILS.whatsappDisplay}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 12, padding: "8px 12px", background: "var(--md-bg-raised)", borderRadius: "var(--md-radius-sm)", fontSize: "0.75rem", color: "var(--md-fg-secondary)", lineHeight: 1.4 }}>
+                    ✦ Your bespoke jewellery will be immediately reserved upon clicking &quot;Place Order&quot;. You can then transfer via bank app and share your UTR or confirmation with our atelier on WhatsApp.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Payment Option 2: Online Gateway */}
             {isIndia ? (
               <div
                 style={{
-                  border: "1px solid var(--md-rule)",
+                  border: paymentMethod === "razorpay" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                  borderRadius: "var(--md-radius-sm)",
+                  background: paymentMethod === "razorpay" ? "var(--md-bg-raised)" : "transparent",
                   padding: "var(--md-space-4)",
                   marginBottom: "var(--md-space-4)",
+                  cursor: "pointer",
                 }}
+                onClick={() => setPaymentMethod("razorpay")}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
                   <input
@@ -521,7 +679,7 @@ export default function CheckoutPage() {
                     checked={paymentMethod === "razorpay"}
                     onChange={() => setPaymentMethod("razorpay")}
                   />
-                  <label htmlFor="rzp" style={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+                  <label htmlFor="rzp" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
                     Razorpay — UPI, Cards, NetBanking (INR)
                   </label>
                 </div>
@@ -532,10 +690,14 @@ export default function CheckoutPage() {
             ) : (
               <div
                 style={{
-                  border: "1px solid var(--md-rule)",
+                  border: paymentMethod === "stripe" ? "1.5px solid var(--md-gold, #c9a86a)" : "1px solid var(--md-rule)",
+                  borderRadius: "var(--md-radius-sm)",
+                  background: paymentMethod === "stripe" ? "var(--md-bg-raised)" : "transparent",
                   padding: "var(--md-space-4)",
                   marginBottom: "var(--md-space-4)",
+                  cursor: "pointer",
                 }}
+                onClick={() => setPaymentMethod("stripe")}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--md-space-3)", marginBottom: "var(--md-space-2)" }}>
                   <input
@@ -545,7 +707,7 @@ export default function CheckoutPage() {
                     checked={paymentMethod === "stripe"}
                     onChange={() => setPaymentMethod("stripe")}
                   />
-                  <label htmlFor="stripe" style={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+                  <label htmlFor="stripe" style={{ fontWeight: 600, fontSize: "0.9375rem", cursor: "pointer" }}>
                     Stripe — Credit / Debit Card (USD)
                   </label>
                 </div>
