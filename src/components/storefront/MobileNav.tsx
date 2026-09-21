@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
@@ -23,12 +24,19 @@ export type MobileNavProps = {
   markets?: { code: string; label: string; href: string; active: boolean }[];
 };
 
+const emptySubscribe = () => () => {};
+
 export function MobileNav({
   marketPrefix = "",
   navigation = [],
   markets = [],
 }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const mounted = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const [stonesExpanded, setStonesExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
@@ -63,72 +71,50 @@ export function MobileNav({
     }
   };
 
+  const drawerOverlay = mounted
+    ? createPortal(
+        <>
+          {/* Backdrop overlay */}
+          {isOpen && (
+            <div
+              onClick={() => setIsOpen(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(3, 14, 9, 0.72)",
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+                zIndex: 99998,
+                transition: "opacity 280ms ease",
+              }}
+              aria-hidden="true"
+            />
+          )}
 
-  return (
-    <div className="md-mobile-trigger">
-      {/* Mobile Hamburger Toggle Button (Minimum 44x44 tap target) */}
-      <button
-        onClick={() => setIsOpen(true)}
-        aria-label="Open mobile navigation menu"
-        aria-expanded={isOpen}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 44,
-          height: 44,
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          color: "var(--md-fg)",
-          padding: 0,
-        }}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-
-      {/* Backdrop overlay */}
-      {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "color-mix(in srgb, var(--md-charcoal) 60%, transparent)",
-            backdropFilter: "blur(4px)",
-            zIndex: 998,
-            transition: "opacity 300ms ease",
-          }}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Slide-out Drawer from Left */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: "min(88vw, 380px)",
-          background: "var(--md-bg)",
-          borderRight: "1px solid var(--md-rule)",
-          zIndex: 999,
-          display: "flex",
-          flexDirection: "column",
-          paddingTop: "env(safe-area-inset-top, 0px)",
-          transform: isOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 320ms cubic-bezier(0.16, 1, 0.3, 1)",
-          boxShadow: isOpen ? "var(--md-shadow-drawer)" : "none",
-        }}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile Navigation"
-      >
+          {/* Slide-out Drawer from Left */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: "min(88vw, 380px)",
+              background: "var(--md-bg)",
+              borderRight: "1px solid var(--md-rule)",
+              zIndex: 99999,
+              display: "flex",
+              flexDirection: "column",
+              paddingTop: "env(safe-area-inset-top, 0px)",
+              transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 320ms cubic-bezier(0.16, 1, 0.3, 1)",
+              boxShadow: isOpen ? "0 0 50px rgba(0, 0, 0, 0.55)" : "none",
+              visibility: isOpen ? "visible" : "hidden",
+              pointerEvents: isOpen ? "auto" : "none",
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
+          >
         {/* Drawer Header with Logo and Close */}
         <div
           style={{
@@ -534,6 +520,43 @@ export function MobileNav({
           </div>
         </div>
       </div>
-    </div>
+    </>,
+    document.body
+  )
+: null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        aria-label="Open mobile navigation menu"
+        aria-expanded={isOpen}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 44,
+          height: 44,
+          minWidth: 44,
+          minHeight: 44,
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "var(--md-fg)",
+          padding: 0,
+          touchAction: "manipulation",
+          WebkitTapHighlightColor: "transparent",
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      {drawerOverlay}
+    </>
   );
 }

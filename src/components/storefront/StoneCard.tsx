@@ -112,6 +112,10 @@ export function StoneCard({
               letterSpacing: "-0.01em",
               color: "var(--md-fg)",
               lineHeight: 1.2,
+              minHeight: "1.4em",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isFeatured ? "flex-start" : "center",
             }}
           >
             {stone.name}
@@ -149,7 +153,8 @@ export function StoneCard({
 
         <span
           style={{
-            marginTop: "clamp(6px, 1.5vw, 12px)",
+            marginTop: "auto",
+            paddingTop: "clamp(6px, 1.5vw, 12px)",
             fontSize: "clamp(0.625rem, 1.4vw, 0.6875rem)",
             letterSpacing: "0.14em",
             textTransform: "uppercase",

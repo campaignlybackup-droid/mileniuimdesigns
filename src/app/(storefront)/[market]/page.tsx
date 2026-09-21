@@ -8,7 +8,7 @@ import { listPublishedCategories } from "@/lib/catalog";
 import { listStorefrontFeaturedProducts } from "@/lib/catalog/products";
 import { getStorefrontStones } from "@/lib/stones";
 import { StoneCard } from "@/components/storefront/StoneCard";
-import { ProductCard } from "@/components/storefront/ProductCard";
+import { ArchivalShowcase } from "@/components/storefront/ArchivalShowcase";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
@@ -130,136 +130,101 @@ export default async function StorefrontHomePage({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
-            gap: "clamp(16px, 3vw, 40px)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+            gap: "clamp(12px, 2vw, 24px)",
             width: "100%",
             maxWidth: "1000px",
-            marginTop: "clamp(28px, 4.5vw, 64px)",
+            marginTop: "clamp(28px, 4.5vw, 56px)",
             paddingTop: "clamp(18px, 3vw, 32px)",
             borderTop: "1px solid var(--md-rule)",
             textAlign: "left",
           }}
         >
-          <div>
-            <h3
+          {[
+            {
+              num: "01",
+              title: "100% In-House Atelier",
+              desc: "From initial sketch and lost-wax casting to hand-prong setting, every piece remains within our Jaipur facility.",
+            },
+            {
+              num: "02",
+              title: "Anti-Tarnish 925 Alloy",
+              desc: "Pure sterling silver alloyed with precious elements to permanently shield its mirror polish from atmospheric oxidation.",
+            },
+            {
+              num: "03",
+              title: "Direct Bench Provenance",
+              desc: "Exhibited at Vicenza, Basel, and New York. Global collectors acquire heirloom creations directly from our family atelier.",
+            },
+          ].map((truth) => (
+            <div
+              key={truth.num}
               style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "1.125rem",
-                fontWeight: 500,
-                color: "var(--md-fg)",
+                padding: "clamp(16px, 2.5vw, 22px)",
+                background: "var(--md-bg)",
+                borderRadius: "var(--md-radius-sm, 2px)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 22%, var(--md-rule))",
+                boxSizing: "border-box",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                height: "100%",
               }}
             >
-              100% In-House Atelier
-            </h3>
-            <p style={{ margin: "8px 0 0", fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
-              From initial sketch and lost-wax casting to hand-prong setting, every piece remains within our Jaipur facility.
-            </p>
-          </div>
-
-          <div>
-            <h3
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "1.125rem",
-                fontWeight: 500,
-                color: "var(--md-fg)",
-              }}
-            >
-              Anti-Tarnish 925 Alloy
-            </h3>
-            <p style={{ margin: "8px 0 0", fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
-              Pure sterling silver alloyed with precious elements to permanently shield its mirror polish from atmospheric oxidation.
-            </p>
-          </div>
-
-          <div>
-            <h3
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "1.125rem",
-                fontWeight: 500,
-                color: "var(--md-fg)",
-              }}
-            >
-              Direct Bench Provenance
-            </h3>
-            <p style={{ margin: "8px 0 0", fontSize: "0.875rem", color: "var(--md-fg-secondary)", lineHeight: 1.65 }}>
-              Exhibited at Vicenza, Basel, and New York. Global collectors acquire heirloom creations directly from our family atelier.
-            </p>
-          </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 8,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--md-font-crest), Georgia, serif",
+                    fontSize: "0.6875rem",
+                    color: "var(--md-green)",
+                    letterSpacing: "0.18em",
+                    fontWeight: 600,
+                  }}
+                >
+                  {truth.num}
+                </span>
+                <span style={{ fontSize: "0.5625rem", color: "var(--md-champagne)" }}>✦</span>
+              </div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "1.0625rem",
+                  fontWeight: 500,
+                  color: "var(--md-fg)",
+                }}
+              >
+                {truth.title}
+              </h3>
+              <p
+                style={{
+                  margin: "8px 0 0",
+                  fontSize: "0.8125rem",
+                  color: "var(--md-fg-secondary)",
+                  lineHeight: 1.6,
+                }}
+              >
+                {truth.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* ── 3. ARCHIVAL MASTERPIECE SHOWCASE (THE SUITE) ───────────── */}
       {featuredProducts.length > 0 && (
-        <section
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(36px, 5vw, 80px)",
-            borderTop: "1px solid var(--md-rule)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              marginBottom: "clamp(24px, 3.5vw, 48px)",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-fg-secondary)",
-                fontWeight: 600,
-                marginBottom: 8,
-              }}
-            >
-              CURATED SELECTIONS
-            </span>
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
-                fontWeight: 400,
-                color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Archival Masterpieces
-            </h2>
-            <p
-              style={{
-                margin: "8px 0 0",
-                maxWidth: "540px",
-                fontSize: "clamp(0.875rem, 1.2vw, 0.9375rem)",
-                color: "var(--md-fg-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              Individually documented creations, hallmarked in solid sterling silver and archived for connoisseurs worldwide.
-            </p>
-          </div>
-
-          <div className="md-product-grid">
-            {featuredProducts.map((p) => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                marketSegment={resolved.code.toLowerCase() === "us" ? "" : resolved.code.toLowerCase()}
-                locale={resolved.locale}
-              />
-            ))}
-          </div>
-        </section>
+        <ArchivalShowcase
+          products={featuredProducts}
+          marketSegment={resolved.code.toLowerCase() === "us" ? "" : resolved.code.toLowerCase()}
+          locale={resolved.locale}
+        />
       )}
 
       {/* ── 3. ART OF THE ATELIER (JAIPUR CRAFTSMANSHIP SPREAD) ───────── */}
@@ -455,7 +420,15 @@ export default async function StorefrontHomePage({
                   />
                 </div>
 
-                <div style={{ paddingTop: "clamp(8px, 1.8vw, 14px)" }}>
+                <div
+                  style={{
+                    paddingTop: "clamp(8px, 1.8vw, 14px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    justifyContent: "space-between",
+                  }}
+                >
                   <h3
                     style={{
                       margin: 0,
@@ -464,6 +437,9 @@ export default async function StorefrontHomePage({
                       fontWeight: 400,
                       letterSpacing: "-0.01em",
                       color: "var(--md-fg)",
+                      minHeight: "1.4em",
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
                     {c.name}
@@ -474,7 +450,8 @@ export default async function StorefrontHomePage({
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: "var(--md-fg-secondary)",
-                      marginTop: "3px",
+                      marginTop: "auto",
+                      paddingTop: "4px",
                       display: "block",
                     }}
                   >
