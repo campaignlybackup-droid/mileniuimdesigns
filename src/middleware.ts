@@ -31,6 +31,7 @@ const BYPASS = [
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
+  "/sitemaps",
   "/opengraph-image",
   "/icon",
   "/apple-icon",
@@ -51,7 +52,7 @@ export function middleware(req: NextRequest): NextResponse {
 
   if (
     BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
-    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|avif|css|js|woff2?)$/.test(pathname)
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|avif|css|js|woff2?|xml)$/.test(pathname)
   ) {
     return NextResponse.next();
   }
