@@ -113,13 +113,14 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
     <section
       data-surface="emerald-deep"
       aria-label="Featured Fine Jewellery Campaigns"
+      className="md-hero-section"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "clamp(460px, 72vh, 840px)",
+        minHeight: "clamp(340px, 50vh, 780px)",
         background: "var(--md-green-black)",
         color: "var(--md-fg-inverse)",
         overflow: "hidden",
@@ -180,6 +181,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
 
       {/* ── Foreground Editorial Typography & Content ──────────────── */}
       <div
+        className="md-hero-content"
         style={{
           position: "relative",
           zIndex: 3,
@@ -187,27 +189,27 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(44px, 7vw, 112px)",
+          paddingBlock: "clamp(28px, 6vw, 96px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
         }}
       >
-        <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "clamp(12px, 2.5vw, 20px)" }}>
+        <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "clamp(10px, 2vw, 18px)" }}>
           {/* Tag & Subhead */}
-          <div style={{ display: "flex", alignItems: "center", gap: "clamp(8px, 2vw, 12px)", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "clamp(6px, 1.5vw, 10px)", flexWrap: "wrap" }}>
             <span
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 5,
-                padding: "3px 10px",
+                gap: 4,
+                padding: "2px 8px",
                 borderRadius: 0,
                 background: "color-mix(in srgb, var(--md-champagne) 18%, transparent)",
                 border: "1px solid color-mix(in srgb, var(--md-champagne) 42%, transparent)",
                 color: "var(--md-champagne)",
-                fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
-                letterSpacing: "0.16em",
+                fontSize: "clamp(0.5625rem, 1.6vw, 0.625rem)",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 fontWeight: 600,
                 fontFamily: "var(--md-font-crest), Georgia, serif",
@@ -220,8 +222,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
 
             <span
               style={{
-                fontSize: "clamp(0.625rem, 1.9vw, 0.6875rem)",
-                letterSpacing: "0.16em",
+                fontSize: "clamp(0.5625rem, 1.6vw, 0.65625rem)",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "color-mix(in srgb, var(--md-champagne) 85%, transparent)",
                 fontWeight: 500,
@@ -234,11 +236,12 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           {/* Headline: Mobile-tuned clamp to prevent 4-line wrapping */}
           <h1
             key={activeSlide.id}
+            className="md-hero-title"
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.65rem, 5.8vw, 4.25rem)",
-              lineHeight: 1.08,
+              fontSize: "clamp(1.45rem, 4.8vw, 3.75rem)",
+              lineHeight: 1.1,
               fontWeight: 400,
               letterSpacing: "-0.015em",
               color: "var(--md-fg-inverse)",
@@ -249,39 +252,41 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             {activeSlide.title}
           </h1>
 
-          {/* Standfirst narrative */}
+          {/* Standfirst narrative — hidden on mobile via .md-hero-standfirst for sleek spaciousness */}
           <p
             key={`p-${activeSlide.id}`}
+            className="md-hero-standfirst"
             style={{
               margin: 0,
-              fontSize: "clamp(0.8125rem, 2.4vw, 1rem)",
+              fontSize: "clamp(0.8125rem, 2vw, 0.9375rem)",
               lineHeight: 1.6,
               color: "color-mix(in srgb, var(--md-fg-inverse) 86%, transparent)",
-              maxWidth: "540px",
+              maxWidth: "520px",
               animation: "fadeIn 650ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {activeSlide.standfirst}
           </p>
 
-          {/* Editorial Custom CTAs — Stack gracefully on narrow mobile */}
+          {/* Editorial Custom CTAs */}
           <div
             style={{
               display: "flex",
               alignItems: "stretch",
-              gap: "clamp(12px, 2.5vw, 24px)",
-              paddingTop: "clamp(6px, 1.5vw, 16px)",
+              gap: "clamp(10px, 2vw, 20px)",
+              paddingTop: "clamp(4px, 1.2vw, 12px)",
               flexWrap: "wrap",
             }}
           >
             <Link
               href={`${marketPrefix}${activeSlide.ctaHref}`}
+              className="md-hero-cta"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 10,
-                padding: "clamp(13px, 2.8vw, 16px) clamp(22px, 4vw, 32px)",
+                gap: 8,
+                padding: "clamp(10px, 2.2vw, 14px) clamp(18px, 3.5vw, 28px)",
                 background: "var(--md-champagne)",
                 color: "var(--md-green-black)",
                 fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",

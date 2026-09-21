@@ -186,9 +186,9 @@ export function SiteHeader({
                 alignItems: "center",
                 justifyContent: "center",
                 whiteSpace: "nowrap",
-                padding: "6px 12px",
+                padding: "4px 10px",
                 borderRadius: "var(--md-radius-pill)",
-                fontSize: "0.6875rem",
+                fontSize: "0.625rem",
                 fontWeight: 600,
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
@@ -197,7 +197,7 @@ export function SiteHeader({
                 background: "var(--md-bg)",
                 border: "1px solid var(--md-rule)",
                 flexShrink: 0,
-                minHeight: 32,
+                minHeight: 28,
               }}
             >
               {item.label}

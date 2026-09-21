@@ -105,7 +105,7 @@ export function ArchivalShowcase({
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+              fontSize: "clamp(1.25rem, 3.4vw, 2.75rem)",
               fontWeight: 400,
               color: "var(--md-fg)",
               letterSpacing: "-0.01em",
@@ -121,17 +121,17 @@ export function ArchivalShowcase({
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 10,
+            gap: 8,
           }}
         >
           <span
             style={{
-              fontSize: "0.75rem",
+              fontSize: "0.6875rem",
               letterSpacing: "0.12em",
               color: "var(--md-fg-secondary)",
               fontFamily: "var(--md-font-mono, monospace)",
               textTransform: "uppercase",
-              marginRight: 4,
+              marginRight: 2,
             }}
           >
             {String(activeIndex + 1).padStart(2, "0")} / {String(products.length).padStart(2, "0")}
@@ -143,8 +143,8 @@ export function ArchivalShowcase({
             disabled={!canScrollLeft}
             aria-label="Previous archival piece"
             style={{
-              width: 38,
-              height: 38,
+              width: 32,
+              height: 32,
               borderRadius: "50%",
               border: "1px solid var(--md-rule)",
               background: "var(--md-bg)",
@@ -159,7 +159,7 @@ export function ArchivalShowcase({
               boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
@@ -170,8 +170,8 @@ export function ArchivalShowcase({
             disabled={!canScrollRight}
             aria-label="Next archival piece"
             style={{
-              width: 38,
-              height: 38,
+              width: 32,
+              height: 32,
               borderRadius: "50%",
               border: "1px solid var(--md-rule)",
               background: "var(--md-bg)",
@@ -186,7 +186,7 @@ export function ArchivalShowcase({
               boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
@@ -199,13 +199,13 @@ export function ArchivalShowcase({
         className="md-archival-slider"
         style={{
           display: "flex",
-          gap: 16,
+          gap: 12,
           overflowX: "auto",
           scrollSnapType: "x mandatory",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           WebkitOverflowScrolling: "touch",
-          paddingBottom: 16,
+          paddingBottom: 14,
           paddingTop: 4,
           scrollBehavior: "smooth",
         }}
@@ -214,7 +214,7 @@ export function ArchivalShowcase({
           <div
             key={p.id}
             style={{
-              flex: "0 0 clamp(240px, 72vw, 300px)",
+              flex: "0 0 clamp(180px, 54vw, 260px)",
               scrollSnapAlign: "start",
               display: "flex",
               flexDirection: "column",

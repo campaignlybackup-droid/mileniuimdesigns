@@ -232,6 +232,7 @@ export function ProductCard({
           <>
             <button
               type="button"
+              className="md-slider-arrow md-slider-arrow-prev"
               onClick={handlePrevImage}
               aria-label="Previous image"
               style={{
@@ -239,8 +240,8 @@ export function ProductCard({
                 left: 6,
                 top: "50%",
                 transform: "translateY(-50%)",
-                width: 32,
-                height: 32,
+                width: 30,
+                height: 30,
                 borderRadius: "50%",
                 background: "color-mix(in srgb, var(--md-bg) 92%, transparent)",
                 border: "1px solid var(--md-rule)",
@@ -258,13 +259,14 @@ export function ProductCard({
                 boxShadow: "0 2px 6px rgba(0, 0, 0, 0.12)",
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
             </button>
 
             <button
               type="button"
+              className="md-slider-arrow md-slider-arrow-next"
               onClick={handleNextImage}
               aria-label="Next image"
               style={{
@@ -272,8 +274,8 @@ export function ProductCard({
                 right: 6,
                 top: "50%",
                 transform: "translateY(-50%)",
-                width: 32,
-                height: 32,
+                width: 30,
+                height: 30,
                 borderRadius: "50%",
                 background: "color-mix(in srgb, var(--md-bg) 92%, transparent)",
                 border: "1px solid var(--md-rule)",
@@ -291,7 +293,7 @@ export function ProductCard({
                 boxShadow: "0 2px 6px rgba(0, 0, 0, 0.12)",
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>

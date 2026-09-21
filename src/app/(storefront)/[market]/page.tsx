@@ -76,14 +76,16 @@ export default async function StorefrontHomePage({
 
       {/* ── 2. COMPACT ATELIER HALLMARK & TRUST PILLARS ──────────────── */}
       <section
+        className="md-trust-strip"
         style={{
           borderBottom: "1px solid var(--md-rule)",
           background: "var(--md-bg-raised)",
-          paddingBlock: "clamp(12px, 1.8vw, 18px)",
+          paddingBlock: "clamp(10px, 1.6vw, 16px)",
           paddingInline: "var(--md-gutter)",
         }}
       >
         <div
+          className="md-trust-strip-inner"
           style={{
             maxWidth: "var(--md-container)",
             marginInline: "auto",
@@ -102,20 +104,21 @@ export default async function StorefrontHomePage({
           ].map((item, i) => (
             <div
               key={i}
+              className="md-trust-item"
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 8,
-                padding: "4px 8px",
+                padding: "3px 6px",
               }}
             >
-              <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "0.625rem" }}>✦</span>
+              <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "0.5625rem" }}>✦</span>
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--md-fg)" }}>
+                <div className="md-trust-label" style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--md-fg)" }}>
                   {item.label}
                 </div>
-                <div style={{ fontSize: "0.625rem", color: "var(--md-fg-muted)", letterSpacing: "0.02em" }}>
+                <div className="md-trust-detail" style={{ fontSize: "0.625rem", color: "var(--md-fg-muted)", letterSpacing: "0.02em" }}>
                   {item.detail}
                 </div>
               </div>
@@ -172,7 +175,7 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+                  fontSize: "clamp(1.25rem, 3.4vw, 2.75rem)",
                   fontWeight: 400,
                   color: "var(--md-fg)",
                   letterSpacing: "-0.01em",
@@ -247,7 +250,7 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+                  fontSize: "clamp(1.25rem, 3.4vw, 2.75rem)",
                   fontWeight: 400,
                   color: "var(--md-fg)",
                   letterSpacing: "-0.01em",
@@ -389,7 +392,7 @@ export default async function StorefrontHomePage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                fontSize: "clamp(1.25rem, 3vw, 2.25rem)",
                 fontWeight: 400,
                 lineHeight: 1.2,
                 color: "var(--md-fg-inverse)",
@@ -469,7 +472,7 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+                  fontSize: "clamp(1.25rem, 3.4vw, 2.75rem)",
                   fontWeight: 400,
                   color: "var(--md-fg)",
                   letterSpacing: "-0.01em",
@@ -545,7 +548,7 @@ export default async function StorefrontHomePage({
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+              fontSize: "clamp(1.25rem, 3vw, 2.25rem)",
               fontWeight: 400,
               color: "var(--md-fg)",
               letterSpacing: "-0.015em",

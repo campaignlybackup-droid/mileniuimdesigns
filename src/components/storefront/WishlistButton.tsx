@@ -73,7 +73,7 @@ export function WishlistButton({
       type="button"
       onClick={toggleWishlist}
       aria-label={isSaved ? "Remove from saved pieces" : "Save to wishlist"}
-      className={className}
+      className={`md-wishlist-btn ${className ?? ""}`}
       style={{
         background: "transparent",
         border: "none",
