@@ -292,6 +292,12 @@ img[data-tone="ivory"] {
   display: none !important;
 }
 
+.md-header-logo-mobile img,
+.md-header-logo-desktop img {
+  width: auto !important;
+  height: auto !important;
+}
+
 .md-desktop-markets {
   display: none !important;
 }

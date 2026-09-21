@@ -16,7 +16,7 @@ describe("Prisma version parity", () => {
     devDependencies: Record<string, string>;
   };
 
-  const cli = pkg.devDependencies["prisma"];
+  const cli = pkg.dependencies["prisma"] ?? pkg.devDependencies["prisma"];
   const client = pkg.dependencies["@prisma/client"];
   const adapter = pkg.dependencies["@prisma/adapter-pg"];
 
