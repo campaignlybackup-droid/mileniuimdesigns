@@ -554,7 +554,7 @@ for (const p of STANDALONE_PRODUCTS) {
 }
 
 // ── Storefront Card Formatter ─────────────────────────────────────────
-function buildStorefrontCard(
+export function buildStorefrontCard(
   p: StandaloneProductDefinition,
   marketCode: string,
 ): StorefrontCard {

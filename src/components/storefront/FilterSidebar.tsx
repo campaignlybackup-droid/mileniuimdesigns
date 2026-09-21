@@ -64,10 +64,20 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
     router.push(qs ? `${pathname}?${qs}` : pathname);
   };
 
+  // Find all active filters with their group key and label
+  const activeFilters: { groupKey: string; slug: string; label: string }[] = [];
+  for (const group of groups) {
+    const activeSlugs = searchParams.getAll(group.key);
+    for (const slug of activeSlugs) {
+      const opt = group.options.find((o) => o.slug.toLowerCase() === slug.toLowerCase());
+      if (opt) {
+        activeFilters.push({ groupKey: group.key, slug: opt.slug, label: opt.label });
+      }
+    }
+  }
+
   // Has any filter applied?
-  const hasActiveFilters = Array.from(searchParams.keys()).some(
-    (k) => k !== "sort" && k !== "page",
-  );
+  const hasActiveFilters = activeFilters.length > 0;
 
   return (
     <aside
@@ -77,7 +87,7 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
         maxWidth: 260,
         display: "flex",
         flexDirection: "column",
-        gap: "var(--md-space-6)",
+        gap: "var(--md-space-5)",
       }}
     >
       <div
@@ -92,9 +102,11 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
         <span
           style={{
             fontSize: "var(--md-t-label, 0.75rem)",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
-            fontWeight: 500,
+            fontWeight: 600,
+            fontFamily: "var(--md-font-crest), Georgia, serif",
+            color: "var(--md-fg)",
           }}
         >
           Filters
@@ -106,18 +118,49 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
             style={{
               background: "transparent",
               border: "none",
-              color: "var(--md-fg-secondary)",
+              color: "var(--md-gold-antique)",
               fontSize: "0.75rem",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               cursor: "pointer",
               padding: 0,
+              fontWeight: 600,
             }}
           >
             Clear all
           </button>
         )}
       </div>
+
+      {/* Active Filter Chips */}
+      {activeFilters.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {activeFilters.map((af) => (
+            <button
+              key={`${af.groupKey}-${af.slug}`}
+              type="button"
+              onClick={() => toggleFilter(af.groupKey, af.slug)}
+              title="Remove filter"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "4px 10px",
+                borderRadius: "var(--md-radius-sm)",
+                background: "var(--md-forest)",
+                color: "var(--md-champagne)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                fontSize: "0.75rem",
+                cursor: "pointer",
+                transition: "opacity 160ms ease",
+              }}
+            >
+              <span>{af.label}</span>
+              <span style={{ fontSize: "0.7rem", lineHeight: 1 }}>✕</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {groups.map((group) => {
         if (group.options.length === 0) return null;

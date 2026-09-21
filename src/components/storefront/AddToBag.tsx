@@ -133,7 +133,7 @@ export function AddToBag({
     if (!variantId) return;
     setLoading(true);
     try {
-      const ok = await addItem(variantId, 1, marketCode);
+      const ok = await addItem(variantId, 1, marketCode, productId);
       if (ok) {
         setAdded(true);
         setTimeout(() => setAdded(false), 2500);

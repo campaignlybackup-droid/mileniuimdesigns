@@ -1073,3 +1073,31 @@ export async function listStorefrontFeaturedProducts(
   return getStandaloneFeaturedProducts(marketCode, limit);
 }
 
+export async function searchStorefrontProducts(
+  query: string,
+  marketCode: string,
+  limit: number = 40,
+): Promise<ListProductsResult> {
+  const clean = query.trim().toLowerCase();
+  if (!clean) {
+    return listStorefrontFeaturedProducts(marketCode, limit);
+  }
+
+  const { STANDALONE_PRODUCTS, buildStorefrontCard } = await import(
+    "@/lib/storage/standalone-catalog"
+  );
+
+  const matched = STANDALONE_PRODUCTS.filter((p) => {
+    const titleMatch = p.title.toLowerCase().includes(clean);
+    const slugMatch = p.slug.toLowerCase().includes(clean);
+    const catMatch = p.categorySlug.toLowerCase().includes(clean);
+    const stoneMatch = p.stoneSlug ? p.stoneSlug.toLowerCase().includes(clean) : false;
+    return titleMatch || slugMatch || catMatch || stoneMatch;
+  });
+
+  const cards: StorefrontCard[] = matched
+    .slice(0, limit)
+    .map((p) => buildStorefrontCard(p, marketCode));
+
+  return { products: cards, totalCount: matched.length };
+}

@@ -71,38 +71,81 @@ export async function parseCatalogFilters(params: URLSearchParams): Promise<Pars
     attrPairs.push({ key: rawKey.slice(ATTR_PREFIX.length), value });
   }
 
-  if (stoneSlugs.length === 0 && materialSlugs.length === 0 && attrPairs.length === 0) {
+  const unions: Sql[] = [];
+
+  if (stoneSlugs.length > 0) {
+    unions.push(sql`
+      SELECT 'stone' AS kind, s.id::text AS id, NULL::text AS attribute_id, NULL::text AS attr_key,
+             s.slug AS matched
+      FROM stones s
+      WHERE s.deleted_at IS NULL AND s.slug = ANY(${stoneSlugs}::text[])
+    `);
+  }
+
+  if (materialSlugs.length > 0) {
+    unions.push(sql`
+      SELECT 'material' AS kind, m.id::text AS id, NULL::text AS attribute_id, NULL::text AS attr_key,
+             m.slug AS matched
+      FROM materials m
+      WHERE m.deleted_at IS NULL AND m.slug = ANY(${materialSlugs}::text[])
+    `);
+  }
+
+  if (attrPairs.length > 0) {
+    const keys = attrPairs.map((p) => p.key);
+    const values = attrPairs.map((p) => p.value);
+    unions.push(sql`
+      SELECT 'attribute' AS kind, o.id::text AS id, a.id::text AS attribute_id, a.key AS attr_key,
+             req.v AS matched
+      FROM attribute_options o
+      JOIN attributes a ON a.id = o.attribute_id
+      JOIN unnest(${keys}::text[], ${values}::text[])
+           AS req(k, v) ON req.k = a.key AND lower(req.v) = lower(o.value)
+      WHERE a.deleted_at IS NULL AND a.is_filterable
+    `);
+  }
+
+  if (unions.length === 0) {
     return { filters: EMPTY_FILTERS, dropped: [] };
   }
 
-  const rows = await db.$queryRaw<
-    {
-      kind: string;
-      id: string;
-      attribute_id: string | null;
-      attr_key: string | null;
-      matched: string;
-    }[]
-  >`
-    SELECT 'stone' AS kind, s.id::text AS id, NULL::text AS attribute_id, NULL::text AS attr_key,
-           s.slug AS matched
-    FROM stones s
-    WHERE s.deleted_at IS NULL AND s.slug = ANY(${stoneSlugs}::text[])
-    UNION ALL
-    SELECT 'material', m.id::text, NULL, NULL, m.slug
-    FROM materials m
-    WHERE m.deleted_at IS NULL AND m.slug = ANY(${materialSlugs}::text[])
-    UNION ALL
-    -- lower(value) matches uq_attribute_options, so the URL is case-insensitive in exactly
-    -- the same way the uniqueness constraint is. Only filterable attributes resolve: a text
-    -- attribute reaching this point would build a predicate no index can serve.
-    SELECT 'attribute', o.id::text, a.id::text, a.key, req.v
-    FROM attribute_options o
-    JOIN attributes a ON a.id = o.attribute_id
-    JOIN unnest(${attrPairs.map((p) => p.key)}::text[], ${attrPairs.map((p) => p.value)}::text[])
-         AS req(k, v) ON req.k = a.key AND lower(req.v) = lower(o.value)
-    WHERE a.deleted_at IS NULL AND a.is_filterable
-  `;
+  const query = unions.reduce((acc, u, idx) => (idx === 0 ? u : sql`${acc} UNION ALL ${u}`));
+  let rows: {
+    kind: string;
+    id: string;
+    attribute_id: string | null;
+    attr_key: string | null;
+    matched: string;
+  }[] = [];
+
+  try {
+    rows = await db.$queryRaw<
+      {
+        kind: string;
+        id: string;
+        attribute_id: string | null;
+        attr_key: string | null;
+        matched: string;
+      }[]
+    >(query);
+  } catch {
+    // Database connection refused or offline — resolve against standalone catalog
+    try {
+      const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
+      const matchedStones = STANDALONE_STONES.filter((s) =>
+        stoneSlugs.map((slug) => slug.toLowerCase()).includes(s.slug.toLowerCase()),
+      );
+      rows = matchedStones.map((s) => ({
+        kind: "stone",
+        id: s.id,
+        attribute_id: null,
+        attr_key: null,
+        matched: s.slug,
+      }));
+    } catch {
+      rows = [];
+    }
+  }
 
   const byAttribute = new Map<string, AttributeFilter>();
   for (const r of rows) {

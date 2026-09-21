@@ -21,14 +21,45 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "lineId and quantity are required" }, { status: 400 });
     }
 
-    const updatedCart = await updateItemQuantity(token, lineId, Number(quantity));
-    const enriched = await enrichCart(updatedCart);
-    return NextResponse.json({ ok: true, cart: enriched });
+    try {
+      const updatedCart = await updateItemQuantity(token, lineId, Number(quantity));
+      const enriched = await enrichCart(updatedCart);
+      return NextResponse.json({ ok: true, cart: enriched });
+    } catch {
+      // Fallback to standalone cart below
+    }
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Failed to update item quantity";
-    console.error("Cart Update error:", error);
-    return NextResponse.json({ error: message }, { status: 400 });
+    // Check standalone
   }
+
+  try {
+    const cookieStore = await cookies();
+    const raw = cookieStore.get("md_standalone_cart")?.value;
+    const body = await request.clone().json().catch(() => ({}));
+    const { lineId, quantity } = body;
+    if (raw && lineId) {
+      const { readStandaloneCartCookie, serializeStandaloneCart, formatStandaloneEnrichedCart } =
+        await import("@/lib/cart/standalone-cart");
+      const state = readStandaloneCartCookie(raw);
+      if (state) {
+        const item = state.items.find((it) => it.lineId === lineId);
+        if (item) {
+          item.quantity = Math.max(1, Math.min(10, Number(quantity)));
+          cookieStore.set("md_standalone_cart", serializeStandaloneCart(state), {
+            httpOnly: false,
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 30,
+            path: "/",
+          });
+          return NextResponse.json({ ok: true, cart: formatStandaloneEnrichedCart(state) });
+        }
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  return NextResponse.json({ error: "Failed to update item quantity" }, { status: 400 });
 }
 
 export async function DELETE(request: NextRequest) {
@@ -36,20 +67,41 @@ export async function DELETE(request: NextRequest) {
     const cookieStore = await cookies();
     const token = cookieStore.get(CART_COOKIE_NAME)?.value;
 
-    if (!token) {
-      return NextResponse.json({ error: "No active cart session" }, { status: 401 });
-    }
-
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { lineId } = body;
 
     if (!lineId) {
       return NextResponse.json({ error: "lineId is required" }, { status: 400 });
     }
 
-    const updatedCart = await removeItem(token, lineId);
-    const enriched = await enrichCart(updatedCart);
-    return NextResponse.json({ ok: true, cart: enriched });
+    if (token) {
+      try {
+        const updatedCart = await removeItem(token, lineId);
+        const enriched = await enrichCart(updatedCart);
+        return NextResponse.json({ ok: true, cart: enriched });
+      } catch {
+        // Fallback to standalone cart
+      }
+    }
+
+    // Standalone removal
+    const raw = cookieStore.get("md_standalone_cart")?.value;
+    if (raw) {
+      const { readStandaloneCartCookie, serializeStandaloneCart, formatStandaloneEnrichedCart } =
+        await import("@/lib/cart/standalone-cart");
+      const state = readStandaloneCartCookie(raw);
+      if (state) {
+        state.items = state.items.filter((it) => it.lineId !== lineId);
+        cookieStore.set("md_standalone_cart", serializeStandaloneCart(state), {
+          httpOnly: false,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 30,
+          path: "/",
+        });
+        return NextResponse.json({ ok: true, cart: formatStandaloneEnrichedCart(state) });
+      }
+    }
+    return NextResponse.json({ ok: true, cart: null });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to remove item";
     console.error("Cart Delete error:", error);

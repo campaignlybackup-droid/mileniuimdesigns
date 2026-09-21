@@ -9,6 +9,9 @@ import { AvailabilityBadge } from "@/components/storefront/AvailabilityBadge";
 import type { PdpProduct, PdpVariant } from "@/lib/catalog/products";
 import type { AvailabilityBand } from "@/types/inventory";
 
+import { RingSizeGuideModal } from "@/components/storefront/RingSizeGuideModal";
+import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
+
 export type ProductInfoProps = {
   product: PdpProduct;
   marketCode: string;
@@ -30,6 +33,7 @@ export function ProductInfo({
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
     story: true,
   });
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const toggleAccordion = (key: string) => {
     setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -41,6 +45,14 @@ export function ProductInfo({
 
   const isSold = Boolean(product.soldAt);
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
+
+  const isRing = product.slug.includes("ring") || product.options.some((o) => o.name.toLowerCase().includes("size"));
+
+  const whatsappInquiryUrl = buildWhatsAppInquiryUrl({
+    topic: "bespoke",
+    productTitle: product.title,
+    customMessage: `Hello Millennium Designs Jaipur, I am viewing "${product.title}" (${product.slug}) and would like to inquire about bespoke sizing or craftsmanship details.`,
+  });
 
   // Description string or JSON extraction
   let descriptionText = "";
@@ -205,12 +217,37 @@ export function ProductInfo({
 
       <hr style={{ border: "none", borderTop: "1px solid var(--md-rule)", margin: 0 }} />
 
-      {/* Variant Selector */}
-      <VariantSelector
-        product={product}
-        selectedVariant={selectedVariant}
-        onSelectVariant={setSelectedVariant}
-      />
+      {/* Variant Selector with optional Size Guide */}
+      <div>
+        {isRing && (
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "4px" }}>
+            <button
+              type="button"
+              onClick={() => setIsSizeGuideOpen(true)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--md-gold-antique)",
+                fontSize: "0.75rem",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                padding: "2px 0",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+                textDecoration: "underline",
+                textUnderlineOffset: "3px",
+              }}
+            >
+              📏 Ring Size Guide
+            </button>
+          </div>
+        )}
+        <VariantSelector
+          product={product}
+          selectedVariant={selectedVariant}
+          onSelectVariant={setSelectedVariant}
+        />
+      </div>
 
       {/* Availability hint */}
       <div>
@@ -264,6 +301,44 @@ export function ProductInfo({
           <span>Direct Atelier Value</span>
         </div>
       </div>
+
+      {/* Direct WhatsApp Concierge Link */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 16px",
+          background: "var(--md-ivory)",
+          borderRadius: "var(--md-radius-sm)",
+          border: "1px solid var(--md-rule)",
+          marginTop: "12px",
+          fontSize: "0.8125rem",
+        }}
+      >
+        <span style={{ color: "var(--md-fg-secondary)" }}>
+          Need bespoke sizing or customization?
+        </span>
+        <a
+          href={whatsappInquiryUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: "var(--md-forest)",
+            fontWeight: 600,
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+            marginLeft: "8px",
+          }}
+        >
+          WhatsApp Concierge →
+        </a>
+      </div>
+
+      <RingSizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+      />
 
       <hr style={{ border: "none", borderTop: "1px solid var(--md-rule)", margin: "var(--md-space-3) 0 0 0" }} />
 

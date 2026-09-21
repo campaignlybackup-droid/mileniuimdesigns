@@ -7,21 +7,36 @@ import { env } from "@/lib/config/env";
 const CART_COOKIE_NAME = "md_cart_token";
 
 export async function GET() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(CART_COOKIE_NAME)?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(CART_COOKIE_NAME)?.value;
 
-    if (!token) {
-      return NextResponse.json({ cart: null });
+  if (token) {
+    try {
+      const cart = await getCart(token);
+      const enriched = await enrichCart(cart);
+      return NextResponse.json({ cart: enriched });
+    } catch {
+      // Fallback below
     }
-
-    const cart = await getCart(token);
-    const enriched = await enrichCart(cart);
-    return NextResponse.json({ cart: enriched });
-  } catch (error) {
-    console.error("Cart GET error:", error);
-    return NextResponse.json({ error: "Failed to load cart" }, { status: 500 });
   }
+
+  // Check standalone cart cookie
+  try {
+    const raw = cookieStore.get("md_standalone_cart")?.value;
+    if (raw) {
+      const { readStandaloneCartCookie, formatStandaloneEnrichedCart } = await import(
+        "@/lib/cart/standalone-cart"
+      );
+      const state = readStandaloneCartCookie(raw);
+      if (state && state.items.length > 0) {
+        return NextResponse.json({ cart: formatStandaloneEnrichedCart(state) });
+      }
+    }
+  } catch {
+    // Ignore
+  }
+
+  return NextResponse.json({ cart: null });
 }
 
 export async function POST(request: NextRequest) {

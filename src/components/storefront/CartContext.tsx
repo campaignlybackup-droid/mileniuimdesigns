@@ -9,7 +9,7 @@ type CartContextType = {
   isLoading: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (variantId: string, quantity?: number, marketCode?: string) => Promise<boolean>;
+  addItem: (variantId: string, quantity?: number, marketCode?: string, productId?: string) => Promise<boolean>;
   updateQuantity: (lineId: string, quantity: number) => Promise<boolean>;
   removeItem: (lineId: string) => Promise<boolean>;
   refreshCart: () => Promise<void>;
@@ -57,13 +57,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
 
-  const addItem = async (variantId: string, quantity: number = 1, marketCode: string = "US"): Promise<boolean> => {
+  const addItem = async (
+    variantId: string,
+    quantity: number = 1,
+    marketCode: string = "US",
+    productId?: string,
+  ): Promise<boolean> => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/cart/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId, quantity, marketCode }),
+        body: JSON.stringify({ variantId, quantity, marketCode, productId }),
       });
       if (res.ok) {
         const data = await res.json();
