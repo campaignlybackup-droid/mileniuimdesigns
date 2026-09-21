@@ -358,6 +358,50 @@ export function MobileNav({
             )}
           </div>
 
+          {/* Maison & Heritage Section */}
+          <div style={{ marginTop: "var(--md-space-4)", borderTop: "1px solid var(--md-rule)", paddingTop: "var(--md-space-3)" }}>
+            <div style={{ paddingInline: "var(--md-space-5)", marginBottom: "var(--md-space-2)" }}>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--md-champagne)",
+                  fontWeight: 600,
+                }}
+              >
+                MAISON &amp; HERITAGE
+              </span>
+            </div>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              <li>
+                <Link
+                  href={`${marketPrefix}/our-story`}
+                  onClick={() => setIsOpen(false)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    minHeight: 48,
+                    padding: "12px var(--md-space-5)",
+                    fontSize: "0.9375rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    color: "var(--md-green)",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ color: "var(--md-champagne)" }}>✦</span>
+                    <span>Our Story · 1961</span>
+                  </span>
+                  <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>→</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Region / Currency Switcher */}
           {markets.length > 1 && (
             <div style={{ marginTop: "var(--md-space-5)", borderTop: "1px solid var(--md-rule)", padding: "var(--md-space-4) var(--md-space-5) var(--md-space-2)" }}>

@@ -328,6 +328,24 @@ img[data-tone="ivory"] {
   }
 }
 
+.md-mobile-nav-rail {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .md-mobile-nav-rail {
+    display: none !important;
+  }
+}
+
+.md-nav-rail-link {
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.md-nav-rail-link:hover {
+  color: var(--md-green) !important;
+}
+
 /* ── Responsive helpers ──────────────────────────────────────────────────── */
 .md-mobile-only {
   display: block;

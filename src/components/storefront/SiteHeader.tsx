@@ -170,33 +170,115 @@ export function SiteHeader({
         </div>
       </div>
 
-      {/* TIER 2: DESKTOP CATEGORY NAVIGATION RAIL */}
+      {/* TIER 2-MOBILE: HORIZONTAL SCROLLABLE CATEGORY QUICK-RAIL FOR SMARTPHONES */}
+      <div className="md-mobile-nav-rail">
+        <nav
+          aria-label="Mobile Categories"
+          style={{
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
+            padding: "6px var(--md-gutter)",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 18%, var(--md-rule))",
+            background: "color-mix(in srgb, var(--md-bg-raised) 75%, transparent)",
+          }}
+        >
+          {navigation.map((item) => (
+            <Link
+              key={item.href}
+              href={`${prefix}${item.href}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                whiteSpace: "nowrap",
+                padding: "6px 12px",
+                borderRadius: "var(--md-radius-pill)",
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: "var(--md-fg)",
+                background: "var(--md-bg)",
+                border: "1px solid var(--md-rule)",
+                flexShrink: 0,
+                minHeight: 32,
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href={resolvedStoryHref}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              whiteSpace: "nowrap",
+              padding: "6px 12px",
+              borderRadius: "var(--md-radius-pill)",
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "var(--md-green)",
+              background: "color-mix(in srgb, var(--md-champagne) 20%, transparent)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+              flexShrink: 0,
+              minHeight: 32,
+            }}
+          >
+            ✦ OUR STORY
+          </Link>
+        </nav>
+      </div>
+
+      {/* TIER 2-DESKTOP: CATEGORY NAVIGATION RAIL */}
       <div className="md-desktop-nav-tier">
-        <nav aria-label="Primary" style={{ width: "100%", maxWidth: "var(--md-container)", marginInline: "auto" }}>
+        <nav
+          aria-label="Primary"
+          style={{
+            width: "100%",
+            maxWidth: "100%",
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
           <VisuallyHidden>Primary navigation</VisuallyHidden>
           <ul
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              gap: "clamp(12px, 2.2vw, 28px)",
+              justifyContent: "safe center",
+              gap: "clamp(6px, 1.15vw, 18px)",
               listStyle: "none",
-              margin: 0,
-              padding: 0,
+              margin: "0 auto",
+              padding: "0 var(--md-gutter)",
+              width: "max-content",
+              minWidth: "100%",
+              boxSizing: "border-box",
               flexWrap: "nowrap",
             }}
           >
             {navigation.map((item, idx) => (
               <li
                 key={item.href}
-                style={{ display: "inline-flex", alignItems: "center", gap: "clamp(12px, 2.2vw, 28px)" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: "clamp(6px, 1.15vw, 18px)" }}
               >
                 {idx > 0 && (
                   <span
                     aria-hidden="true"
                     style={{
                       color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
-                      fontSize: "0.4375rem",
+                      fontSize: "0.375rem",
                       userSelect: "none",
                       lineHeight: 1,
                     }}
@@ -206,12 +288,13 @@ export function SiteHeader({
                 )}
                 <Link
                   href={`${prefix}${item.href}`}
-                  className="md-label"
+                  className="md-label md-nav-rail-link"
                   style={{
-                    fontSize: "0.71875rem",
-                    letterSpacing: "0.18em",
+                    fontSize: "clamp(0.65625rem, 0.72vw, 0.71875rem)",
+                    letterSpacing: "clamp(0.08em, 0.1vw, 0.12em)",
                     textDecoration: "none",
                     color: "var(--md-fg)",
+                    fontWeight: 600,
                     paddingBlock: "4px",
                     display: "inline-block",
                     whiteSpace: "nowrap",
@@ -222,6 +305,37 @@ export function SiteHeader({
                 </Link>
               </li>
             ))}
+            {/* Our Story option in the primary navigation rail */}
+            <li style={{ display: "inline-flex", alignItems: "center", gap: "clamp(6px, 1.15vw, 18px)" }}>
+              <span
+                aria-hidden="true"
+                style={{
+                  color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
+                  fontSize: "0.375rem",
+                  userSelect: "none",
+                  lineHeight: 1,
+                }}
+              >
+                ✦
+              </span>
+              <Link
+                href={resolvedStoryHref}
+                className="md-label md-nav-rail-link"
+                style={{
+                  fontSize: "clamp(0.65625rem, 0.72vw, 0.71875rem)",
+                  letterSpacing: "clamp(0.08em, 0.1vw, 0.12em)",
+                  textDecoration: "none",
+                  color: "var(--md-green)",
+                  fontWeight: 600,
+                  paddingBlock: "4px",
+                  display: "inline-block",
+                  whiteSpace: "nowrap",
+                  transition: "color 150ms ease",
+                }}
+              >
+                OUR STORY
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

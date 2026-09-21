@@ -82,6 +82,19 @@ export default async function MarketLayout({
 
   // User-specified exact taxonomy order:
   // Ring, Pendant, Earrings, Jewellery Set, Stones, Closeouts, 14 Carat Gold, Lab Grown Diamond, One of a Kind, Chain
+  const CANONICAL_ITEMS = [
+    { slug: "rings", label: "RINGS", href: "/rings", rank: 1 },
+    { slug: "pendants", label: "PENDANTS", href: "/pendants", rank: 2 },
+    { slug: "earrings", label: "EARRINGS", href: "/earrings", rank: 3 },
+    { slug: "jewellery-sets", label: "JEWELLERY SETS", href: "/jewellery-sets", rank: 4 },
+    { slug: "stones", label: "STONES", href: "/stones", rank: 5 },
+    { slug: "closeouts", label: "CLOSEOUTS", href: "/closeouts", rank: 6 },
+    { slug: "14k-gold", label: "14 CARAT GOLD", href: "/14k-gold", rank: 7 },
+    { slug: "lab-grown-diamonds", label: "LAB GROWN DIAMOND", href: "/lab-grown-diamonds", rank: 8 },
+    { slug: "one-of-a-kind", label: "ONE OF A KIND", href: "/one-of-a-kind", rank: 9 },
+    { slug: "chains", label: "CHAINS", href: "/chains", rank: 10 },
+  ];
+
   const orderRank: Record<string, number> = {
     rings: 1,
     pendants: 2,
@@ -97,8 +110,15 @@ export default async function MarketLayout({
   };
 
   const navMap = new Map<string, { label: string; href: string; rank: number }>();
+  // Guaranteed canonical options
+  for (const item of CANONICAL_ITEMS) {
+    navMap.set(item.slug, item);
+  }
+
+  // Merge any dynamic/persisted categories
   for (const c of categories) {
     const slugKey = c.slug === "bracelets" ? "jewellery-sets" : c.slug;
+    const existing = navMap.get(slugKey);
     const nameLabel =
       c.slug === "bracelets" || c.slug === "jewellery-sets"
         ? "JEWELLERY SETS"
@@ -107,20 +127,12 @@ export default async function MarketLayout({
           : c.slug === "lab-grown-diamonds"
             ? "LAB GROWN DIAMOND"
             : c.name.toUpperCase();
-    if (!navMap.has(slugKey)) {
-      navMap.set(slugKey, {
-        label: nameLabel,
-        href: `/${slugKey}`,
-        rank: orderRank[c.slug] ?? 99,
-      });
-    }
+    navMap.set(slugKey, {
+      label: nameLabel,
+      href: `/${slugKey}`,
+      rank: existing?.rank ?? (orderRank[c.slug] ?? 99),
+    });
   }
-
-  navMap.set("stones", {
-    label: "STONES",
-    href: "/stones",
-    rank: 5,
-  });
 
   const navigation = Array.from(navMap.values())
     .sort((a, b) => a.rank - b.rank)
