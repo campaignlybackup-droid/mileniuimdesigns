@@ -298,26 +298,6 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               <span>{activeSlide.ctaText}</span>
               <span style={{ fontSize: "1rem", lineHeight: 1 }}>→</span>
             </Link>
-
-            <Link
-              href={`${marketPrefix}/our-story`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                textDecoration: "none",
-                borderBottom: "1px solid var(--md-champagne)",
-                paddingBottom: "3px",
-                minHeight: 44,
-                fontWeight: 500,
-                transition: "opacity 180ms ease",
-              }}
-            >
-              The 1961 Heritage · Johari Bazaar
-            </Link>
           </div>
         </div>
       </div>

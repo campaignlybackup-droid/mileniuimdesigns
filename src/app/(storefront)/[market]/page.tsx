@@ -548,18 +548,18 @@ export default async function StorefrontHomePage({
           background: "var(--md-bg-raised)",
           borderTop: "1px solid var(--md-rule)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(44px, 6vw, 96px)",
+          paddingBlock: "clamp(44px, 6vw, 88px)",
           textAlign: "center",
         }}
       >
         <div
           style={{
-            maxWidth: "720px",
+            maxWidth: "680px",
             marginInline: "auto",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "var(--md-space-4)",
+            gap: "var(--md-space-3)",
           }}
         >
           <span
@@ -571,41 +571,38 @@ export default async function StorefrontHomePage({
               fontWeight: 600,
             }}
           >
-            DIRECT ATELIER ACCESS
+            BESPOKE COMMISSIONS
           </span>
 
           <h2
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.75rem, 3.4vw, 3.25rem)",
+              fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
               fontWeight: 400,
               color: "var(--md-fg)",
               letterSpacing: "-0.015em",
             }}
           >
-            Private Commissions &amp; Sizing
+            Custom Sizing &amp; Mineral Sourcing
           </h2>
 
           <p
             style={{
-              margin: 0,
-              fontSize: "clamp(0.875rem, 1.2vw, 1.0625rem)",
+              margin: "6px 0 0",
+              fontSize: "clamp(0.875rem, 1.2vw, 1rem)",
               lineHeight: 1.7,
               color: "var(--md-fg-secondary)",
             }}
           >
-            Whether requesting bespoke sizing for a sovereign ring, custom chain lengths, or sourcing a specific unheated emerald cut, our master jewelers assist you directly from our Jaipur workshop.
+            Request bespoke sizing for an archival sovereign ring, custom chain lengths, or source an unheated gemstone cut directly through our master jewellers.
           </p>
 
           <div
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: "12px",
               justifyContent: "center",
               marginTop: "var(--md-space-2)",
-              width: "100%",
             }}
           >
             <a
@@ -620,43 +617,7 @@ export default async function StorefrontHomePage({
                 textAlign: "center",
               }}
             >
-              WhatsApp Concierge Consultation
-            </a>
-
-            <Link
-              href={`${prefix}/our-story`}
-              className="md-btn-editorial"
-              style={{
-                border: "1px solid var(--md-rule-strong)",
-                background: "transparent",
-                color: "var(--md-fg)",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
-              Visit Our Atelier Story
-            </Link>
-          </div>
-
-          <div
-            style={{
-              marginTop: "var(--md-space-4)",
-              fontSize: "0.8125rem",
-              color: "var(--md-fg-secondary)",
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--md-space-4)",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <span>Direct Atelier Lines:</span>
-            <a href="tel:+919828156465" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
-              +91 98281 56465
-            </a>
-            <span>·</span>
-            <a href="tel:+919829056597" style={{ color: "var(--md-fg)", textDecoration: "none", fontWeight: 600 }}>
-              +91 98290 56597
+              Inquire for Bespoke Sizing →
             </a>
           </div>
         </div>

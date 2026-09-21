@@ -105,18 +105,6 @@ export function ProductInfo({
     });
   }
 
-  if (product.materials.length > 0) {
-    accordions.push({
-      key: "material",
-      title: "Material",
-      content: (
-        <div style={{ lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>
-          {product.materials.map((m) => m.name).join(", ")}
-        </div>
-      ),
-    });
-  }
-
   if (product.stones.length > 0) {
     accordions.push({
       key: "stone",

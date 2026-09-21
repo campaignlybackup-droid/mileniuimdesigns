@@ -117,32 +117,20 @@ export function SiteHeader({
             <MobileNav marketPrefix={prefix} navigation={navigation} markets={markets} />
           </div>
 
-          {/* Desktop Left: Refined Our Story Crest Button */}
+          {/* Desktop Left: Quiet Provenance Hallmark */}
           <div className="md-desktop-left-tag" style={{ display: "flex", alignItems: "center" }}>
-            <Link
-              href={resolvedStoryHref}
+            <span
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "5px 12px",
-                borderRadius: "var(--md-radius-sm, 0px)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 36%, transparent)",
-                background: "color-mix(in srgb, var(--md-champagne) 8%, transparent)",
-                color: "var(--md-fg)",
                 fontSize: "0.6875rem",
-                letterSpacing: "0.14em",
+                letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                textDecoration: "none",
-                fontWeight: 600,
+                color: "var(--md-fg-secondary)",
+                fontWeight: 500,
                 fontFamily: "var(--md-font-crest), Georgia, serif",
-                transition: "all 180ms ease",
-                lineHeight: 1,
               }}
             >
-              <span style={{ color: "var(--md-champagne)", fontSize: "0.6875rem", lineHeight: 1 }}>✦</span>
-              <span>Our Story · 1961</span>
-            </Link>
+              ✦ JAIPUR ATELIER · 1961
+            </span>
           </div>
 
           {/* Center Brand Logo (Desktop and Mobile) */}
@@ -161,9 +149,11 @@ export function SiteHeader({
             </Link>
           </div>
 
-          {/* Right Section: Direct Currency Switcher + Header Actions */}
+          {/* Right Section: Desktop Currency Switcher + Header Actions */}
           <div className="md-header-right" style={{ display: "flex", alignItems: "center", gap: "clamp(8px, 1.5vw, 16px)" }}>
-            <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
+            <div className="md-desktop-currency">
+              <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
+            </div>
 
             <HeaderActions marketPrefix={prefix} />
           </div>
@@ -213,29 +203,6 @@ export function SiteHeader({
               {item.label}
             </Link>
           ))}
-          <Link
-            href={resolvedStoryHref}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              whiteSpace: "nowrap",
-              padding: "6px 12px",
-              borderRadius: "var(--md-radius-pill)",
-              fontSize: "0.6875rem",
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              color: "var(--md-green)",
-              background: "color-mix(in srgb, var(--md-champagne) 20%, transparent)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
-              flexShrink: 0,
-              minHeight: 32,
-            }}
-          >
-            ✦ OUR STORY
-          </Link>
         </nav>
       </div>
 
