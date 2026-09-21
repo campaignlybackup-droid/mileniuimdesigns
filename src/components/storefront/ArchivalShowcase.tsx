@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import type { StorefrontCard } from "@/lib/catalog/products";
 
@@ -15,23 +15,55 @@ export function ArchivalShowcase({
   marketSegment = "",
   locale = "en-US",
 }: ArchivalShowcaseProps) {
-  const [viewMode, setViewMode] = useState<"slider" | "grid">("grid");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  if (products.length === 0) return null;
-
-  const handleScroll = () => {
+  const updateScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+
+    // Calculate approximate active card index for indicator
+    if (products.length > 0 && scrollWidth > clientWidth) {
+      const cardWidth = (scrollWidth - (products.length - 1) * 16) / products.length;
+      const idx = Math.min(
+        products.length - 1,
+        Math.max(0, Math.round(scrollLeft / (cardWidth + 16)))
+      );
+      setActiveIndex(idx);
+    }
+  }, [products.length]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState, { passive: true });
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  if (products.length === 0) return null;
+
+  const scrollByAmount = (direction: "prev" | "next") => {
+    if (!scrollRef.current) return;
+    const cardEl = scrollRef.current.firstElementChild as HTMLElement | null;
+    const cardWidth = cardEl ? cardEl.offsetWidth + 16 : 280;
+    const offset = direction === "next" ? cardWidth : -cardWidth;
+    scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
   };
 
-  const scrollBy = (offset: number) => {
+  const scrollToIndex = (index: number) => {
     if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+    const cardEl = scrollRef.current.firstElementChild as HTMLElement | null;
+    const cardWidth = cardEl ? cardEl.offsetWidth + 16 : 280;
+    scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" });
   };
 
   return (
@@ -44,13 +76,13 @@ export function ArchivalShowcase({
         borderTop: "1px solid var(--md-rule)",
       }}
     >
-      {/* Header with Title and View/Navigation Controls */}
+      {/* Header with Title, Editorial Context, and Carousel Navigation */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
-          marginBottom: "clamp(20px, 3.5vw, 40px)",
+          marginBottom: "clamp(20px, 3.5vw, 36px)",
           flexWrap: "wrap",
           gap: "var(--md-space-3)",
         }}
@@ -67,7 +99,7 @@ export function ArchivalShowcase({
               marginBottom: 6,
             }}
           >
-            CURATED SELECTIONS
+            CURATED ARCHIVE
           </span>
           <h2
             style={{
@@ -90,181 +122,154 @@ export function ArchivalShowcase({
               lineHeight: 1.6,
             }}
           >
-            Individually documented creations, hallmarked in solid sterling silver and archived for connoisseurs worldwide.
+            Individually documented creations, hallmarked in solid sterling silver and archived for connoisseurs worldwide. Swipe or slide to explore the collection.
           </p>
         </div>
 
-        {/* View Switcher & Carousel Controls */}
+        {/* Carousel Controls (Previous / Next chevrons) */}
         <div
           style={{
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            gap: 8,
+            gap: 10,
           }}
         >
-          {/* Mode Switcher on mobile: Grid vs Slider */}
-          <div
+          <span
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              background: "var(--md-bg-raised)",
-              borderRadius: "var(--md-radius-sm, 2px)",
-              border: "1px solid var(--md-rule)",
-              padding: 2,
+              fontSize: "0.75rem",
+              letterSpacing: "0.12em",
+              color: "var(--md-fg-secondary)",
+              fontFamily: "var(--md-font-mono, monospace)",
+              textTransform: "uppercase",
+              marginRight: 4,
             }}
           >
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              aria-label="Grid view"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "6px 12px",
-                border: "none",
-                background: viewMode === "grid" ? "var(--md-bg)" : "transparent",
-                color: viewMode === "grid" ? "var(--md-fg)" : "var(--md-fg-secondary)",
-                boxShadow: viewMode === "grid" ? "0 1px 4px rgba(0, 0, 0, 0.08)" : "none",
-                fontSize: "0.6875rem",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                cursor: "pointer",
-                borderRadius: "var(--md-radius-sm, 2px)",
-                transition: "all 180ms ease",
-              }}
-            >
-              Grid ⊞
-            </button>
+            {String(activeIndex + 1).padStart(2, "0")} / {String(products.length).padStart(2, "0")}
+          </span>
 
-            <button
-              type="button"
-              onClick={() => setViewMode("slider")}
-              aria-label="Slider carousel view"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "6px 12px",
-                border: "none",
-                background: viewMode === "slider" ? "var(--md-bg)" : "transparent",
-                color: viewMode === "slider" ? "var(--md-fg)" : "var(--md-fg-secondary)",
-                boxShadow: viewMode === "slider" ? "0 1px 4px rgba(0, 0, 0, 0.08)" : "none",
-                fontSize: "0.6875rem",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                cursor: "pointer",
-                borderRadius: "var(--md-radius-sm, 2px)",
-                transition: "all 180ms ease",
-              }}
-            >
-              Slider ↔
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => scrollByAmount("prev")}
+            disabled={!canScrollLeft}
+            aria-label="Previous archival piece"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: "50%",
+              border: "1px solid var(--md-rule)",
+              background: "var(--md-bg)",
+              color: "var(--md-fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: canScrollLeft ? "pointer" : "default",
+              opacity: canScrollLeft ? 1 : 0.35,
+              transition: "all 180ms ease",
+              touchAction: "manipulation",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
 
-          {/* If in slider mode, show carousel left/right buttons */}
-          {viewMode === "slider" && (
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <button
-                type="button"
-                onClick={() => scrollBy(-260)}
-                disabled={!canScrollLeft}
-                aria-label="Previous products"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  border: "1px solid var(--md-rule)",
-                  background: "var(--md-bg)",
-                  color: "var(--md-fg)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: canScrollLeft ? "pointer" : "default",
-                  opacity: canScrollLeft ? 1 : 0.4,
-                  transition: "opacity 180ms ease",
-                }}
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollBy(260)}
-                disabled={!canScrollRight}
-                aria-label="Next products"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  border: "1px solid var(--md-rule)",
-                  background: "var(--md-bg)",
-                  color: "var(--md-fg)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: canScrollRight ? "pointer" : "default",
-                  opacity: canScrollRight ? 1 : 0.4,
-                  transition: "opacity 180ms ease",
-                }}
-              >
-                →
-              </button>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => scrollByAmount("next")}
+            disabled={!canScrollRight}
+            aria-label="Next archival piece"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: "50%",
+              border: "1px solid var(--md-rule)",
+              background: "var(--md-bg)",
+              color: "var(--md-fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: canScrollRight ? "pointer" : "default",
+              opacity: canScrollRight ? 1 : 0.35,
+              transition: "all 180ms ease",
+              touchAction: "manipulation",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Grid Mode: perfectly uniform 2-column on mobile, auto-fill on desktop */}
-      {viewMode === "grid" ? (
-        <div className="md-product-grid">
-          {products.map((p) => (
-            <div key={p.id} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-              <ProductCard
-                product={p}
-                marketSegment={marketSegment}
-                locale={locale}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        /* Slider Mode: smooth horizontal touch-swipeable track */
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          style={{
-            display: "flex",
-            gap: 14,
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-            paddingBottom: 8,
-          }}
-        >
-          {products.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                flex: "0 0 clamp(220px, 68vw, 290px)",
-                scrollSnapAlign: "start",
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-              }}
-            >
-              <ProductCard
-                product={p}
-                marketSegment={marketSegment}
-                locale={locale}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Horizontal Slider Track: Smooth Touch & Mouse Carousel */}
+      <div
+        ref={scrollRef}
+        className="md-archival-slider"
+        style={{
+          display: "flex",
+          gap: 16,
+          overflowX: "auto",
+          scrollSnapType: "x mandatory",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          WebkitOverflowScrolling: "touch",
+          paddingBottom: 16,
+          paddingTop: 4,
+          scrollBehavior: "smooth",
+        }}
+      >
+        {products.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              flex: "0 0 clamp(240px, 72vw, 300px)",
+              scrollSnapAlign: "start",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              minWidth: 0,
+            }}
+          >
+            <ProductCard
+              product={p}
+              marketSegment={marketSegment}
+              locale={locale}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Slide Position Indicator Dots for Mobile & Desktop */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 6,
+          marginTop: 12,
+        }}
+      >
+        {products.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => scrollToIndex(idx)}
+            aria-label={`Go to piece ${idx + 1}`}
+            style={{
+              width: idx === activeIndex ? 22 : 6,
+              height: 6,
+              borderRadius: "var(--md-radius-pill, 9999px)",
+              background: idx === activeIndex ? "var(--md-gold)" : "var(--md-rule)",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              transition: "all 240ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          />
+        ))}
+      </div>
     </section>
   );
 }
