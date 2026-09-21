@@ -11,8 +11,7 @@ import { StoneCard } from "@/components/storefront/StoneCard";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
-import { HeroGemstoneCanvas } from "@/components/storefront/HeroGemstoneCanvas";
-import { InteractiveStudio3D } from "@/components/storefront/InteractiveStudio3D";
+import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
 
 export const revalidate = 300;
 
@@ -69,153 +68,8 @@ export default async function StorefrontHomePage({
         boxSizing: "border-box",
       }}
     >
-      {/* ── 1. CINEMATIC HAUTE JOAILLERIE HERO ───────────────────────── */}
-      <section
-        data-surface="emerald-deep"
-        style={{
-          position: "relative",
-          width: "100%",
-          minHeight: "clamp(520px, 75vh, 760px)",
-          background: "var(--md-emerald-deep)",
-          color: "var(--md-fg-inverse)",
-          display: "flex",
-          alignItems: "center",
-          paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(48px, 6vw, 84px)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            width: "100%",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))",
-            gap: "clamp(36px, 6vw, 80px)",
-            alignItems: "center",
-          }}
-        >
-          {/* Hero Narrative Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                fontWeight: 600,
-                fontFamily: "var(--md-font-sans), sans-serif",
-              }}
-            >
-              JAIPUR ATELIER · ESTABLISHED 1961
-            </span>
-
-            <h1
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2.4rem, 5vw, 4.25rem)",
-                lineHeight: 1.08,
-                fontWeight: 400,
-                letterSpacing: "-0.015em",
-                color: "var(--md-fg-inverse)",
-                textWrap: "balance",
-              }}
-            >
-              Courtly Emeralds &amp; Cold-Forged Silver
-            </h1>
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(0.9375rem, 1.25vw, 1.0625rem)",
-                lineHeight: 1.75,
-                color: "var(--md-fg-inverse-muted)",
-                maxWidth: "520px",
-              }}
-            >
-              Rare natural Colombian emeralds, celestial moonstones, and anti-tarnish 925 sterling silver. Hand-cast, faceted, and hallmarked entirely in-house in our Noor Plaza workshop.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "var(--md-space-4)",
-                paddingTop: "var(--md-space-3)",
-                alignItems: "center",
-              }}
-            >
-              <Link
-                href={`${prefix}/rings`}
-                className="md-btn-editorial"
-                style={{
-                  background: "var(--md-champagne)",
-                  color: "var(--md-green-black)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <span>Explore the Creations</span>
-                <span>→</span>
-              </Link>
-
-              <a
-                href="#studio-3d"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "14px 24px",
-                  borderRadius: "var(--md-radius-sm, 0px)",
-                  border: "1px solid color-mix(in srgb, var(--md-champagne) 55%, transparent)",
-                  color: "var(--md-champagne)",
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontFamily: "var(--md-font-crest), Georgia, serif",
-                  transition: "all 180ms ease",
-                }}
-              >
-                <span>✦ Inspect in 3D</span>
-              </a>
-
-              <Link
-                href={`${prefix}/our-story`}
-                style={{
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "color-mix(in srgb, var(--md-fg-inverse) 75%, transparent)",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "6px",
-                  fontWeight: 500,
-                  transition: "opacity 180ms ease",
-                }}
-              >
-                The 1961 Lineage
-              </Link>
-            </div>
-          </div>
-
-          {/* Hero 3D Interactive Centerpiece */}
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <HeroGemstoneCanvas />
-          </div>
-        </div>
-      </section>
+      {/* ── 1. CINEMATIC HIGH-FASHION CAMPAIGN SLIDER ───────────────── */}
+      <HeroCampaignSlider marketPrefix={prefix} />
 
       {/* ── 2. THE HOUSE MANIFESTO (EDITORIAL BREATHING SPACE) ─────── */}
       <section
@@ -408,12 +262,7 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 3B. INTERACTIVE 3D ATELIER SHOWROOM ─────────────────────── */}
-      <div id="studio-3d">
-        <InteractiveStudio3D marketPrefix={prefix} />
-      </div>
-
-      {/* ── 4. ART OF THE ATELIER (JAIPUR CRAFTSMANSHIP SPREAD) ───────── */}
+      {/* ── 3. ART OF THE ATELIER (JAIPUR CRAFTSMANSHIP SPREAD) ───────── */}
       <section
         data-surface="forest"
         style={{
