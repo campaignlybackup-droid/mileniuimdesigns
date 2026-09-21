@@ -6,6 +6,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "build": "prisma generate && npm run check:brand && npm run gen:markets && npm run gen:tokens && next build",
+    "build:hostinger": "npm run build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
