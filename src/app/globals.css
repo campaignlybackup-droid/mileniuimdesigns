@@ -107,26 +107,34 @@ body {
   text-transform: uppercase;
 }
 
-/* Card hover: serene cross-fade without artificial scale or bounce */
+/* Card hover: serene cross-fade with subtle optical zoom and gallery precision */
 .md-product-card {
   position: relative;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.md-product-card .md-card-primary-image {
-  transition: opacity 350ms ease;
-}
-
+.md-product-card .md-card-primary-image,
 .md-product-card .md-card-alternate-image {
-  transition: opacity 350ms ease;
+  transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.md-product-card:hover .md-card-primary-image {
+  transform: scale(1.03);
 }
 
 .md-product-card:hover .md-card-alternate-image {
   opacity: 1 !important;
+  transform: scale(1.03);
 }
 
 /* Gemstone card hover — quiet contrast transition */
 .md-stone-card {
-  transition: opacity 250ms ease;
+  transition: opacity 250ms ease, transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.md-stone-card:hover {
+  transform: translateY(-2px);
 }
 
 /* Responsive product grid */

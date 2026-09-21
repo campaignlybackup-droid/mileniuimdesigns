@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { CartProvider } from "@/components/storefront/CartContext";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
+import { LuxuryCursor } from "@/components/storefront/LuxuryCursor";
 
 /**
  * The storefront's market layout — 01 §1.4. Owned by P13; the pages inside it are P15's.
@@ -181,6 +182,7 @@ export default async function MarketLayout({
         </main>
         <SiteFooter year={2026} columns={footerColumns} />
         <CartDrawer marketCode={resolved.code} />
+        <LuxuryCursor />
       </div>
     </CartProvider>
   );

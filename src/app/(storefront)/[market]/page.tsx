@@ -11,6 +11,8 @@ import { StoneCard } from "@/components/storefront/StoneCard";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
+import { HeroGemstoneCanvas } from "@/components/storefront/HeroGemstoneCanvas";
+import { InteractiveStudio3D } from "@/components/storefront/InteractiveStudio3D";
 
 export const revalidate = 300;
 
@@ -151,10 +153,36 @@ export default async function StorefrontHomePage({
                 style={{
                   background: "var(--md-champagne)",
                   color: "var(--md-green-black)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
                 }}
               >
-                Explore the Creations
+                <span>Explore the Creations</span>
+                <span>→</span>
               </Link>
+
+              <a
+                href="#studio-3d"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "14px 24px",
+                  borderRadius: "var(--md-radius-sm, 0px)",
+                  border: "1px solid color-mix(in srgb, var(--md-champagne) 55%, transparent)",
+                  color: "var(--md-champagne)",
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                  transition: "all 180ms ease",
+                }}
+              >
+                <span>✦ Inspect in 3D</span>
+              </a>
 
               <Link
                 href={`${prefix}/our-story`}
@@ -162,7 +190,7 @@ export default async function StorefrontHomePage({
                   fontSize: "0.75rem",
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "var(--md-fg-inverse)",
+                  color: "color-mix(in srgb, var(--md-fg-inverse) 75%, transparent)",
                   textDecoration: "underline",
                   textUnderlineOffset: "6px",
                   fontWeight: 500,
@@ -174,26 +202,17 @@ export default async function StorefrontHomePage({
             </div>
           </div>
 
-          {/* Hero Architectural Photography Showcase */}
+          {/* Hero 3D Interactive Centerpiece */}
           <div
             style={{
               position: "relative",
               width: "100%",
-              aspectRatio: "4 / 5",
-              maxHeight: "620px",
-              overflow: "hidden",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Image
-              src="/images/hero-emerald-ring.jpg"
-              alt="Handcrafted emerald solitaire ring forged in our Jaipur atelier"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              priority
-              style={{
-                objectFit: "cover",
-              }}
-            />
+            <HeroGemstoneCanvas />
           </div>
         </div>
       </section>
@@ -388,6 +407,11 @@ export default async function StorefrontHomePage({
           </div>
         </section>
       )}
+
+      {/* ── 3B. INTERACTIVE 3D ATELIER SHOWROOM ─────────────────────── */}
+      <div id="studio-3d">
+        <InteractiveStudio3D marketPrefix={prefix} />
+      </div>
 
       {/* ── 4. ART OF THE ATELIER (JAIPUR CRAFTSMANSHIP SPREAD) ───────── */}
       <section
