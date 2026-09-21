@@ -78,7 +78,7 @@ export default async function StorefrontHomePage({
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 9vw, 120px)",
+          paddingBlock: "clamp(40px, 6vw, 96px)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -92,7 +92,7 @@ export default async function StorefrontHomePage({
             textTransform: "uppercase",
             color: "var(--md-fg-secondary)",
             fontWeight: 600,
-            marginBottom: "var(--md-space-4)",
+            marginBottom: "var(--md-space-3)",
           }}
         >
           THE ATELIER PHILOSOPHY
@@ -103,7 +103,7 @@ export default async function StorefrontHomePage({
             margin: 0,
             maxWidth: "880px",
             fontFamily: "var(--md-font-display)",
-            fontSize: "clamp(1.75rem, 3.4vw, 2.75rem)",
+            fontSize: "clamp(1.35rem, 3.2vw, 2.75rem)",
             fontWeight: 400,
             lineHeight: 1.3,
             letterSpacing: "-0.015em",
@@ -116,10 +116,10 @@ export default async function StorefrontHomePage({
 
         <p
           style={{
-            margin: "var(--md-space-5) auto 0",
+            margin: "clamp(14px, 2.5vw, 24px) auto 0",
             maxWidth: "600px",
-            fontSize: "clamp(0.9375rem, 1.2vw, 1.0625rem)",
-            lineHeight: 1.8,
+            fontSize: "clamp(0.875rem, 1.2vw, 1.0625rem)",
+            lineHeight: 1.75,
             color: "var(--md-fg-secondary)",
           }}
         >
@@ -130,12 +130,12 @@ export default async function StorefrontHomePage({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "clamp(24px, 4vw, 48px)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
+            gap: "clamp(16px, 3vw, 40px)",
             width: "100%",
             maxWidth: "1000px",
-            marginTop: "clamp(48px, 6vw, 80px)",
-            paddingTop: "var(--md-space-6)",
+            marginTop: "clamp(28px, 4.5vw, 64px)",
+            paddingTop: "clamp(18px, 3vw, 32px)",
             borderTop: "1px solid var(--md-rule)",
             textAlign: "left",
           }}
@@ -200,7 +200,7 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(48px, 6vw, 96px)",
+            paddingBlock: "clamp(36px, 5vw, 80px)",
             borderTop: "1px solid var(--md-rule)",
           }}
         >
@@ -209,7 +209,7 @@ export default async function StorefrontHomePage({
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-start",
-              marginBottom: "clamp(32px, 4vw, 56px)",
+              marginBottom: "clamp(24px, 3.5vw, 48px)",
             }}
           >
             <span
@@ -228,7 +228,7 @@ export default async function StorefrontHomePage({
               style={{
                 margin: 0,
                 fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.6vw, 3rem)",
+                fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
                 fontWeight: 400,
                 color: "var(--md-fg)",
                 letterSpacing: "-0.01em",
@@ -240,7 +240,7 @@ export default async function StorefrontHomePage({
               style={{
                 margin: "8px 0 0",
                 maxWidth: "540px",
-                fontSize: "0.9375rem",
+                fontSize: "clamp(0.875rem, 1.2vw, 0.9375rem)",
                 color: "var(--md-fg-secondary)",
                 lineHeight: 1.6,
               }}
@@ -269,7 +269,7 @@ export default async function StorefrontHomePage({
           background: "var(--md-forest)",
           color: "var(--md-fg-inverse)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(48px, 6vw, 96px)",
           position: "relative",
           overflow: "hidden",
         }}
@@ -279,20 +279,13 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-            gap: "clamp(40px, 6vw, 84px)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))",
+            gap: "clamp(24px, 4vw, 72px)",
             alignItems: "center",
           }}
         >
-          {/* Craftsmanship Image */}
-          <div
-            style={{
-              position: "relative",
-              aspectRatio: "4 / 5",
-              maxHeight: "580px",
-              overflow: "hidden",
-            }}
-          >
+          {/* Craftsmanship Image — compact on mobile */}
+          <div className="md-craft-image">
             <Image
               src="/images/story/atelier_bench_silversmith.jpg"
               alt="Master silversmith at work in our Jaipur workshop"
@@ -427,13 +420,7 @@ export default async function StorefrontHomePage({
             </p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))",
-              gap: "clamp(20px, 3vw, 36px)",
-            }}
-          >
+          <div className="md-category-grid">
             {categories.slice(0, 6).map((c) => (
               <Link
                 key={c.id}
@@ -450,6 +437,7 @@ export default async function StorefrontHomePage({
                     position: "relative",
                     aspectRatio: "4 / 5",
                     overflow: "hidden",
+                    borderRadius: "var(--md-radius-sm)",
                     background: "var(--md-bg-raised)",
                   }}
                 >
@@ -467,12 +455,12 @@ export default async function StorefrontHomePage({
                   />
                 </div>
 
-                <div style={{ paddingTop: "var(--md-space-3)" }}>
+                <div style={{ paddingTop: "clamp(8px, 1.8vw, 14px)" }}>
                   <h3
                     style={{
                       margin: 0,
                       fontFamily: "var(--md-font-display)",
-                      fontSize: "1.25rem",
+                      fontSize: "clamp(0.9375rem, 2.2vw, 1.25rem)",
                       fontWeight: 400,
                       letterSpacing: "-0.01em",
                       color: "var(--md-fg)",
@@ -482,11 +470,11 @@ export default async function StorefrontHomePage({
                   </h3>
                   <span
                     style={{
-                      fontSize: "0.6875rem",
+                      fontSize: "0.625rem",
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: "var(--md-fg-secondary)",
-                      marginTop: "4px",
+                      marginTop: "3px",
                       display: "block",
                     }}
                   >
@@ -506,7 +494,7 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(48px, 6vw, 96px)",
+            paddingBlock: "clamp(36px, 5vw, 80px)",
             borderTop: "1px solid var(--md-rule)",
           }}
         >
@@ -515,7 +503,7 @@ export default async function StorefrontHomePage({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "flex-end",
-              marginBottom: "clamp(32px, 4vw, 48px)",
+              marginBottom: "clamp(24px, 3.5vw, 40px)",
               flexWrap: "wrap",
               gap: "var(--md-space-4)",
             }}
@@ -538,7 +526,7 @@ export default async function StorefrontHomePage({
                 style={{
                   margin: 0,
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "clamp(2rem, 3.5vw, 3rem)",
+                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
                   fontWeight: 400,
                   color: "var(--md-fg)",
                   letterSpacing: "-0.01em",
@@ -564,13 +552,7 @@ export default async function StorefrontHomePage({
             </Link>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))",
-              gap: "clamp(16px, 2.5vw, 28px)",
-            }}
-          >
+          <div className="md-stone-grid">
             {stones.slice(0, 4).map((stone) => (
               <StoneCard
                 key={stone.id}
@@ -589,7 +571,7 @@ export default async function StorefrontHomePage({
           background: "var(--md-bg-raised)",
           borderTop: "1px solid var(--md-rule)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(64px, 8vw, 112px)",
+          paddingBlock: "clamp(44px, 6vw, 96px)",
           textAlign: "center",
         }}
       >
@@ -619,7 +601,7 @@ export default async function StorefrontHomePage({
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(2rem, 3.6vw, 3.25rem)",
+              fontSize: "clamp(1.75rem, 3.4vw, 3.25rem)",
               fontWeight: 400,
               color: "var(--md-fg)",
               letterSpacing: "-0.015em",
@@ -631,8 +613,8 @@ export default async function StorefrontHomePage({
           <p
             style={{
               margin: 0,
-              fontSize: "clamp(0.9375rem, 1.2vw, 1.0625rem)",
-              lineHeight: 1.75,
+              fontSize: "clamp(0.875rem, 1.2vw, 1.0625rem)",
+              lineHeight: 1.7,
               color: "var(--md-fg-secondary)",
             }}
           >
@@ -643,9 +625,10 @@ export default async function StorefrontHomePage({
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "var(--md-space-4)",
+              gap: "12px",
               justifyContent: "center",
-              marginTop: "var(--md-space-3)",
+              marginTop: "var(--md-space-2)",
+              width: "100%",
             }}
           >
             <a
@@ -656,6 +639,8 @@ export default async function StorefrontHomePage({
               style={{
                 background: "var(--md-emerald-deep)",
                 color: "var(--md-ivory-soft)",
+                justifyContent: "center",
+                textAlign: "center",
               }}
             >
               WhatsApp Concierge Consultation
@@ -668,6 +653,8 @@ export default async function StorefrontHomePage({
                 border: "1px solid var(--md-rule-strong)",
                 background: "transparent",
                 color: "var(--md-fg)",
+                justifyContent: "center",
+                textAlign: "center",
               }}
             >
               Visit Our Atelier Story

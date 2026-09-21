@@ -3,12 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveMarket } from "@/lib/market";
 import { buildCanonicalAndAlternates } from "@/lib/seo";
-import {
-  buildWhatsAppInquiryUrl,
-  MILLENNIUM_ADDRESS,
-  MILLENNIUM_WHATSAPP_NUMBER,
-  MILLENNIUM_SECONDARY_PHONE,
-} from "@/lib/whatsapp";
+import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 
 export const revalidate = 3600;
 
@@ -503,9 +498,6 @@ export default async function OurStoryPage({
                     fontWeight: 400,
                     lineHeight: 1.3,
                     color: "var(--md-fg-inverse)",
-                    minHeight: "2.6em",
-                    display: "flex",
-                    alignItems: "flex-end",
                   }}
                 >
                   {col.title}

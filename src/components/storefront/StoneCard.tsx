@@ -46,7 +46,7 @@ export function StoneCard({
         borderRadius: "var(--md-radius-sm)",
         border: "1px solid color-mix(in srgb, var(--md-champagne) 20%, transparent)",
         overflow: "hidden",
-        padding: isFeatured ? "var(--md-space-5)" : "var(--md-space-3)",
+        padding: isFeatured ? "clamp(12px, 2.5vw, 20px)" : "clamp(8px, 2vw, 14px)",
         textAlign: isFeatured ? "left" : "center",
         height: "100%",
         boxSizing: "border-box",
@@ -78,7 +78,7 @@ export function StoneCard({
 
       <div
         style={{
-          paddingTop: isFeatured ? "var(--md-space-4)" : "var(--md-space-3)",
+          paddingTop: isFeatured ? "clamp(8px, 1.8vw, 16px)" : "clamp(6px, 1.4vw, 12px)",
           display: "flex",
           flexDirection: "column",
           alignItems: isFeatured ? "flex-start" : "center",
@@ -107,7 +107,7 @@ export function StoneCard({
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: isFeatured ? "clamp(1.5rem, 2.5vw, 2rem)" : isWide ? "1.25rem" : "1.125rem",
+              fontSize: isFeatured ? "clamp(1.25rem, 2.4vw, 2rem)" : isWide ? "clamp(1rem, 2vw, 1.25rem)" : "clamp(0.875rem, 2vw, 1.0625rem)",
               fontWeight: 400,
               letterSpacing: "-0.01em",
               color: "var(--md-fg)",
@@ -149,8 +149,8 @@ export function StoneCard({
 
         <span
           style={{
-            marginTop: "var(--md-space-3)",
-            fontSize: "0.6875rem",
+            marginTop: "clamp(6px, 1.5vw, 12px)",
+            fontSize: "clamp(0.625rem, 1.4vw, 0.6875rem)",
             letterSpacing: "0.14em",
             textTransform: "uppercase",
             color: "var(--md-green)",

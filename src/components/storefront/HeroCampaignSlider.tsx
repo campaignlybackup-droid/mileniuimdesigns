@@ -119,7 +119,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "clamp(540px, 78vh, 860px)",
+        minHeight: "clamp(460px, 72vh, 840px)",
         background: "var(--md-green-black)",
         color: "var(--md-fg-inverse)",
         overflow: "hidden",
@@ -187,7 +187,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(56px, 9vw, 120px)",
+          paddingBlock: "clamp(44px, 7vw, 112px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -237,7 +237,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.85rem, 6.2vw, 4.5rem)",
+              fontSize: "clamp(1.65rem, 5.8vw, 4.25rem)",
               lineHeight: 1.08,
               fontWeight: 400,
               letterSpacing: "-0.015em",
@@ -254,8 +254,8 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
             key={`p-${activeSlide.id}`}
             style={{
               margin: 0,
-              fontSize: "clamp(0.875rem, 2.8vw, 1.0625rem)",
-              lineHeight: 1.65,
+              fontSize: "clamp(0.8125rem, 2.4vw, 1rem)",
+              lineHeight: 1.6,
               color: "color-mix(in srgb, var(--md-fg-inverse) 86%, transparent)",
               maxWidth: "540px",
               animation: "fadeIn 650ms cubic-bezier(0.16, 1, 0.3, 1)",

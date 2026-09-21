@@ -140,11 +140,11 @@ export function ProductCard({
       </div>
 
       {/* Typographic Details below image */}
-      <div style={{ paddingTop: "var(--md-space-4)", display: "flex", flexDirection: "column", gap: "4px" }}>
+      <div style={{ paddingTop: "clamp(8px, 1.8vw, 14px)", display: "flex", flexDirection: "column", gap: "3px" }}>
         {stoneOrMaterial && (
           <div
             style={{
-              fontSize: "0.6875rem",
+              fontSize: "clamp(0.5625rem, 1.6vw, 0.6875rem)",
               letterSpacing: "0.14em",
               textTransform: "uppercase",
               color: "var(--md-fg-secondary)",
@@ -161,7 +161,7 @@ export function ProductCard({
           style={{
             margin: 0,
             fontFamily: "var(--md-font-display)",
-            fontSize: "clamp(0.9375rem, 1.25vw, 1.0625rem)",
+            fontSize: "clamp(0.8125rem, 2.2vw, 1rem)",
             fontWeight: 400,
             lineHeight: 1.35,
             letterSpacing: "-0.01em",
@@ -180,7 +180,7 @@ export function ProductCard({
           </Link>
         </h3>
 
-        <div style={{ marginTop: "2px", fontSize: "0.9375rem" }}>
+        <div style={{ marginTop: "2px", fontSize: "clamp(0.8125rem, 2vw, 0.9375rem)" }}>
           {isSold ? (
             <span style={{ color: "var(--md-sold, var(--md-fg-secondary))", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
               Private Archive

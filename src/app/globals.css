@@ -215,8 +215,15 @@ body {
 }
 
 @media (max-width: 599px) {
+  .md-stones-mosaic {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
   .md-stones-mosaic > * {
-    grid-column: span 12 !important;
+    grid-column: span 1 !important;
+  }
+  .md-stones-mosaic > :nth-child(7n + 1) {
+    grid-column: span 2 !important;
   }
 }
 
@@ -434,12 +441,66 @@ img[data-tone="ivory"] {
   transform: translateY(-2px);
 }
 
+/* ── Storefront Category Grid (Compact 2-col on mobile, 3-col on desktop) ── */
+.md-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .md-category-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2.5vw, 28px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .md-category-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 36px);
+  }
+}
+
+/* ── Storefront Gemstone Grid (Clean 2-col on mobile, auto-fill on desktop) ── */
+.md-stone-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .md-stone-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: clamp(16px, 2.5vw, 28px);
+  }
+}
+
+/* ── Craftsmanship Bench Image (Tuned height on mobile, 4:5 on desktop) ──── */
+.md-craft-image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  max-height: clamp(200px, 34vh, 280px);
+  overflow: hidden;
+  border-radius: var(--md-radius-sm);
+}
+
+@media (min-width: 768px) {
+  .md-craft-image {
+    aspect-ratio: 4 / 5;
+    max-height: 580px;
+    border-radius: 0;
+  }
+}
+
 @media (max-width: 639px) {
   :root {
     --md-gutter: 14px;
   }
   
-  .md-product-grid {
+  .md-product-grid,
+  .md-product-grid.md-grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
   }
 }
