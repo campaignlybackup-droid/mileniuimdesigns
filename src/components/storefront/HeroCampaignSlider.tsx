@@ -55,14 +55,10 @@ const CAMPAIGN_SLIDES: CampaignSlide[] = [
   },
 ];
 
-const SLIDE_DURATION = 6500; // 6.5s per campaign slide
+const AUTO_INTERVAL_MS = 5500; // 5.5 seconds automatic transition
 
 export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: string }): React.JSX.Element {
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const animRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(0);
 
   // Touch Swipe tracking for smartphones
   const touchStartXRef = useRef<number | null>(null);
@@ -72,25 +68,14 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
 
   const nextSlide = useCallback(() => {
     setCurrentIdx((prev) => (prev + 1) % totalSlides);
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [totalSlides]);
 
   const prevSlide = useCallback(() => {
     setCurrentIdx((prev) => (prev - 1 + totalSlides) % totalSlides);
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [totalSlides]);
 
-  const goToSlide = useCallback((idx: number) => {
-    setCurrentIdx(idx);
-    setProgress(0);
-    startTimeRef.current = Date.now();
-  }, []);
-
-  // Touch handlers for seamless swipe gestures
+  // Touch handlers for seamless swipe gestures on mobile
   const handleTouchStart = (e: React.TouchEvent) => {
-    setIsPaused(true);
     touchStartXRef.current = e.targetTouches[0].clientX;
   };
 
@@ -99,16 +84,13 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
   };
 
   const handleTouchEnd = () => {
-    setIsPaused(false);
     if (touchStartXRef.current === null || touchEndXRef.current === null) return;
     const diff = touchStartXRef.current - touchEndXRef.current;
     const minSwipeDistance = 45; // 45px threshold
 
     if (diff > minSwipeDistance) {
-      // Swiped left -> Next slide
       nextSlide();
     } else if (diff < -minSwipeDistance) {
-      // Swiped right -> Prev slide
       prevSlide();
     }
 
@@ -116,30 +98,14 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
     touchEndXRef.current = null;
   };
 
-  // Timer loop with smooth progress bar
+  // Pure automatic timer flow
   useEffect(() => {
-    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % totalSlides);
+    }, AUTO_INTERVAL_MS);
 
-    startTimeRef.current = Date.now() - (progress / 100) * SLIDE_DURATION;
-
-    const tick = () => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const currentProgress = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
-      setProgress(currentProgress);
-
-      if (elapsed >= SLIDE_DURATION) {
-        nextSlide();
-      } else {
-        animRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    animRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
-  }, [currentIdx, isPaused, nextSlide, progress]);
+    return () => clearInterval(timer);
+  }, [totalSlides]);
 
   const activeSlide = CAMPAIGN_SLIDES[currentIdx];
 
@@ -147,8 +113,6 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
     <section
       data-surface="emerald-deep"
       aria-label="Featured Fine Jewellery Campaigns"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -174,7 +138,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               position: "absolute",
               inset: 0,
               opacity: isActive ? 1 : 0,
-              transition: "opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1)",
               zIndex: 1,
               pointerEvents: isActive ? "auto" : "none",
             }}
@@ -223,8 +187,7 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlockStart: "clamp(48px, 8vw, 112px)",
-          paddingBlockEnd: "clamp(88px, 12vw, 128px)", // Room for bottom dock on mobile
+          paddingBlock: "clamp(56px, 9vw, 120px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -356,137 +319,6 @@ export function HeroCampaignSlider({ marketPrefix = "" }: { marketPrefix?: strin
               The 1961 Heritage · Johari Bazaar
             </Link>
           </div>
-        </div>
-      </div>
-
-      {/* ── Slide Controls & Progress Dock — Mobile-Responsive ─────── */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "clamp(16px, 3.5vw, 36px)",
-          right: "var(--md-gutter)",
-          zIndex: 4,
-          display: "flex",
-          alignItems: "center",
-          gap: "clamp(8px, 1.8vw, 18px)",
-          background: "rgba(4, 18, 12, 0.82)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          padding: "clamp(6px, 1.5vw, 10px) clamp(10px, 2vw, 18px)",
-          border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-          maxWidth: "calc(100% - 32px)",
-        }}
-      >
-        {/* Slide Counter (01 / 03) */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            gap: 3,
-            fontSize: "clamp(0.75rem, 2vw, 0.8125rem)",
-            fontFamily: "var(--md-font-display)",
-            letterSpacing: "0.08em",
-            color: "var(--md-champagne)",
-          }}
-        >
-          <span style={{ fontWeight: 600 }}>0{currentIdx + 1}</span>
-          <span style={{ opacity: 0.5, fontSize: "0.625rem" }}>/ 0{totalSlides}</span>
-        </div>
-
-        {/* Dynamic Progress Timer Line */}
-        <div
-          style={{
-            width: "clamp(44px, 7vw, 100px)",
-            height: 2,
-            background: "rgba(255, 255, 255, 0.2)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              height: "100%",
-              width: `${progress}%`,
-              background: "var(--md-champagne)",
-              transition: isPaused ? "none" : "width 80ms linear",
-            }}
-          />
-        </div>
-
-        {/* Slide Selector Indicators */}
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          {CAMPAIGN_SLIDES.map((s, idx) => {
-            const isSel = idx === currentIdx;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => goToSlide(idx)}
-                aria-label={`Go to slide ${idx + 1}: ${s.title}`}
-                style={{
-                  width: isSel ? 18 : 6,
-                  height: 5,
-                  borderRadius: 0,
-                  background: isSel ? "var(--md-champagne)" : "rgba(255, 255, 255, 0.3)",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  transition: "all 250ms ease",
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Prev / Next Arrows with touch targets */}
-        <div style={{ display: "flex", gap: 3, marginLeft: 4 }}>
-          <button
-            type="button"
-            onClick={prevSlide}
-            aria-label="Previous slide"
-            style={{
-              width: 32,
-              height: 32,
-              minWidth: 32,
-              minHeight: 32,
-              background: "transparent",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-              color: "var(--md-champagne)",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "0.8125rem",
-              transition: "all 150ms ease",
-            }}
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={nextSlide}
-            aria-label="Next slide"
-            style={{
-              width: 32,
-              height: 32,
-              minWidth: 32,
-              minHeight: 32,
-              background: "transparent",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-              color: "var(--md-champagne)",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "0.8125rem",
-              transition: "all 150ms ease",
-            }}
-          >
-            →
-          </button>
         </div>
       </div>
     </section>
