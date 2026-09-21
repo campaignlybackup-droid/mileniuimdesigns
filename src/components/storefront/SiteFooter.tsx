@@ -82,44 +82,47 @@ export function SiteFooter({
                 <a
                   href="tel:+919828156465"
                   style={{
-                    color: "var(--md-champagne)",
+                    color: "var(--md-fg-inverse-muted)",
                     textDecoration: "none",
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "6px",
+                    gap: "8px",
                   }}
                 >
-                  <span>📞</span> +91 98281 56465
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)" }}>Direct</span>
+                  <span>+91 98281 56465</span>
                 </a>
                 <a
                   href="tel:+919829056597"
                   style={{
-                    color: "var(--md-champagne)",
+                    color: "var(--md-fg-inverse-muted)",
                     textDecoration: "none",
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "6px",
+                    gap: "8px",
                   }}
                 >
-                  <span>📞</span> +91 98290 56597
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)" }}>Atelier</span>
+                  <span>+91 98290 56597</span>
                 </a>
                 <a
                   href="https://wa.me/919828156465?text=Hello%20Millennium%20Designs,%20I%20would%20like%20to%20enquire%20about%20your%20jewellery%20creations."
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    color: "var(--md-green)",
+                    color: "var(--md-champagne)",
                     textDecoration: "none",
                     fontSize: "var(--md-t-small)",
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "6px",
-                    fontWeight: 600,
+                    fontWeight: 500,
+                    marginTop: "4px",
                   }}
                 >
-                  <span>💬</span> Official WhatsApp Concierge
+                  <span>WhatsApp Concierge →</span>
                 </a>
               </div>
             </div>

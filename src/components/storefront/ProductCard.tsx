@@ -54,10 +54,10 @@ export function ProductCard({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isSold ? 0.75 : 1,
+        opacity: isSold ? 0.7 : 1,
       }}
     >
-      {/* 4:5 Media container */}
+      {/* 4:5 Media container — pure photographic presentation, no visible card border */}
       <Link
         href={href}
         style={{
@@ -67,8 +67,7 @@ export function ProductCard({
           overflow: "hidden",
           display: "block",
           textDecoration: "none",
-          borderRadius: "var(--md-radius-sm)",
-          border: "1px solid color-mix(in srgb, var(--md-champagne) 18%, transparent)",
+          borderRadius: 0,
         }}
         tabIndex={-1}
         aria-hidden="true"
@@ -85,7 +84,7 @@ export function ProductCard({
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            transition: "transform 600ms var(--md-ease), opacity 300ms ease",
+            transition: "opacity 400ms ease",
           }}
         />
 
@@ -103,33 +102,10 @@ export function ProductCard({
               height: "100%",
               objectFit: "cover",
               opacity: 0,
-              transition: "opacity 400ms var(--md-ease), transform 600ms var(--md-ease)",
+              transition: "opacity 400ms ease",
             }}
           />
         )}
-
-        {/* Discreet Atelier Hallmark Badge */}
-        <div
-          style={{
-            position: "absolute",
-            top: "var(--md-space-2)",
-            left: "var(--md-space-2)",
-            background: "rgba(6, 19, 13, 0.78)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-            padding: "3px 8px",
-            fontSize: "0.625rem",
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "var(--md-champagne)",
-            borderRadius: "var(--md-radius-sm)",
-            border: "1px solid rgba(200, 178, 122, 0.3)",
-            zIndex: 2,
-            fontFamily: "var(--md-font-crest), Georgia, serif",
-          }}
-        >
-          925 Silver
-        </div>
 
         {isSold && (
           <div
@@ -138,21 +114,20 @@ export function ProductCard({
               bottom: "var(--md-space-3)",
               left: "var(--md-space-3)",
               background: "var(--md-bg)",
-              padding: "var(--md-space-1) var(--md-space-2)",
-              fontSize: "var(--md-t-label)",
-              letterSpacing: "0.1em",
+              padding: "4px 10px",
+              fontSize: "0.625rem",
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
               color: "var(--md-sold, var(--md-fg-secondary))",
-              borderRadius: "var(--md-radius-sm)",
               zIndex: 2,
             }}
           >
-            Sold
+            Archived Piece
           </div>
         )}
       </Link>
 
-      {/* Wishlist control on top right */}
+      {/* Understated Wishlist control */}
       <div
         style={{
           position: "absolute",
@@ -164,41 +139,32 @@ export function ProductCard({
         <WishlistButton productId={product.id} />
       </div>
 
-      {/* Details below image */}
-      <div style={{ paddingTop: "var(--md-space-3)", display: "flex", flexDirection: "column", gap: "3px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-          <span
+      {/* Typographic Details below image */}
+      <div style={{ paddingTop: "var(--md-space-4)", display: "flex", flexDirection: "column", gap: "4px" }}>
+        {stoneOrMaterial && (
+          <div
             style={{
-              fontSize: "0.625rem",
-              letterSpacing: "0.16em",
+              fontSize: "0.6875rem",
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
-              color: "var(--md-fg-muted)",
-              fontFamily: "var(--md-font-crest), Georgia, serif",
+              color: "var(--md-fg-secondary)",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
-            JAIPUR ATELIER
-          </span>
-          <span
-            style={{
-              fontSize: "0.625rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--md-champagne)",
-              fontWeight: 600,
-            }}
-          >
-            925 SILVER
-          </span>
-        </div>
+            {stoneOrMaterial}
+          </div>
+        )}
 
         <h3
           style={{
             margin: 0,
             fontFamily: "var(--md-font-display)",
-            fontSize: "clamp(0.9375rem, 1.3vw, 1.0625rem)",
+            fontSize: "clamp(0.9375rem, 1.25vw, 1.0625rem)",
             fontWeight: 400,
-            lineHeight: 1.3,
-            letterSpacing: "0.01em",
+            lineHeight: 1.35,
+            letterSpacing: "-0.01em",
           }}
         >
           <Link
@@ -207,32 +173,17 @@ export function ProductCard({
             style={{
               color: "var(--md-fg)",
               textDecoration: "none",
-              transition: "color 200ms ease",
+              transition: "color 180ms ease",
             }}
           >
             {product.title}
           </Link>
         </h3>
 
-        <div
-          style={{
-            fontSize: "0.8125rem",
-            color: "var(--md-fg-secondary)",
-            lineHeight: 1.3,
-            letterSpacing: "0.01em",
-            minHeight: "1.3em",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {stoneOrMaterial || "\u00A0"}
-        </div>
-
-        <div style={{ marginTop: "var(--md-space-1)", fontSize: "0.9375rem" }}>
+        <div style={{ marginTop: "2px", fontSize: "0.9375rem" }}>
           {isSold ? (
-            <span style={{ color: "var(--md-sold, var(--md-fg-secondary))", fontSize: "var(--md-t-label)", textTransform: "uppercase" }}>
-              Archive
+            <span style={{ color: "var(--md-sold, var(--md-fg-secondary))", fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              Private Archive
             </span>
           ) : (
             <PriceDisplay priceRange={product.priceRange} locale={locale} />

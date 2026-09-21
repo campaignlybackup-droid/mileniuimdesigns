@@ -168,7 +168,7 @@ export function MobileNav({
           <form onSubmit={handleSearchSubmit} style={{ position: "relative" }}>
             <input
               type="search"
-              placeholder="Search fine jewellery or stones…"
+              placeholder="Search fine jewellery or gemstones…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -176,22 +176,23 @@ export function MobileNav({
                 height: 42,
                 paddingLeft: "36px",
                 paddingRight: "12px",
-                borderRadius: "var(--md-radius-sm)",
+                borderRadius: 0,
                 border: "1px solid var(--md-rule-strong)",
                 background: "var(--md-bg-raised)",
                 color: "var(--md-fg)",
-                fontSize: "0.875rem",
+                fontSize: "0.8125rem",
+                letterSpacing: "0.02em",
                 outline: "none",
               }}
             />
             <svg
-              width="16"
-              height="16"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="var(--md-fg-muted)"
-              strokeWidth="2"
-              style={{ position: "absolute", left: 12, top: 13 }}
+              strokeWidth="1.75"
+              style={{ position: "absolute", left: 12, top: 14 }}
             >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />

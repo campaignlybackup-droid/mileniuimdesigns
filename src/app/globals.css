@@ -46,21 +46,19 @@
 }
 
 
-.md-gold-gradient {
-  background: linear-gradient(135deg, #f5e7c8 0%, #c8b27a 50%, #a88c55 100%);
+.md-editorial-title {
+  font-family: var(--md-font-display), "Bodoni Moda", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
 }
 
-.md-gold-text {
-  background: linear-gradient(135deg, #f9ecd2 0%, #d4bf88 50%, #a88c55 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.md-glass-luxury {
-  background: color-mix(in srgb, var(--md-green-black) 78%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent);
+.md-editorial-standfirst {
+  font-family: var(--md-font-sans), sans-serif;
+  font-size: clamp(0.9375rem, 1.25vw, 1.0625rem);
+  line-height: 1.75;
+  color: var(--md-fg-secondary);
+  max-width: var(--md-measure-standfirst);
 }
 
 
@@ -109,31 +107,26 @@ body {
   text-transform: uppercase;
 }
 
-/* Card hover and image transitions */
+/* Card hover: serene cross-fade without artificial scale or bounce */
 .md-product-card {
-  transition: transform var(--md-dur, 320ms) var(--md-ease);
+  position: relative;
 }
 
-.md-product-card:hover .md-card-primary-image {
-  transform: scale(1.04);
+.md-product-card .md-card-primary-image {
+  transition: opacity 350ms ease;
+}
+
+.md-product-card .md-card-alternate-image {
+  transition: opacity 350ms ease;
 }
 
 .md-product-card:hover .md-card-alternate-image {
   opacity: 1 !important;
-  transform: scale(1.04);
 }
 
-/* Gemstone card hover — subtle lift only, no scale */
+/* Gemstone card hover — quiet contrast transition */
 .md-stone-card {
-  transition: transform var(--md-dur, 320ms) var(--md-ease);
-}
-
-.md-stone-card:hover {
-  transform: translateY(-3px);
-}
-
-.md-stone-card:hover img {
-  transform: scale(1.05);
+  transition: opacity 250ms ease;
 }
 
 /* Responsive product grid */
@@ -481,52 +474,31 @@ img[data-tone="ivory"] {
   width: 100%;
 }
 
-/* ── Luxury E-Commerce Micro-Animations ──────────────────────────────────── */
-@keyframes mdShimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+/* ── Luxury E-Commerce Editorial Buttons ──────────────────────────────────── */
+.md-btn-editorial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding-inline: 32px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0;
+  transition: opacity 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+  cursor: pointer;
 }
 
-.md-btn-luxury {
-  position: relative;
-  overflow: hidden;
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-
-.md-btn-luxury:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 10px 24px -6px rgba(200, 178, 122, 0.4);
-}
-
-.md-btn-luxury::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  transform: translateX(-100%);
-}
-
-.md-btn-luxury:hover::after {
-  animation: mdShimmer 1.2s infinite;
-}
-
-/* Smooth card elevation with subtle gold rim glow */
+/* Card hover: calm photographic crossfade, no jumping borders or glows */
 .md-product-card,
 .md-stone-card {
-  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease, border-color 240ms ease !important;
+  transition: opacity 220ms ease;
 }
 
-.md-product-card:hover,
-.md-stone-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px color-mix(in srgb, var(--md-champagne) 35%, transparent);
+.md-product-card:hover .md-card-alternate-image {
+  opacity: 1 !important;
 }
 
 /* Strict aspect ratio enforcement across cards */

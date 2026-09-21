@@ -220,25 +220,25 @@ export function ProductInfo({
       {/* Variant Selector with optional Size Guide */}
       <div>
         {isRing && (
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "4px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "6px" }}>
             <button
               type="button"
               onClick={() => setIsSizeGuideOpen(true)}
               style={{
                 background: "transparent",
                 border: "none",
-                color: "var(--md-gold-antique)",
-                fontSize: "0.75rem",
-                letterSpacing: "0.08em",
+                color: "var(--md-fg-secondary)",
+                fontSize: "0.6875rem",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 cursor: "pointer",
                 padding: "2px 0",
-                fontFamily: "var(--md-font-crest), Georgia, serif",
                 textDecoration: "underline",
-                textUnderlineOffset: "3px",
+                textUnderlineOffset: "4px",
+                fontWeight: 600,
               }}
             >
-              📏 Ring Size Guide
+              Ring Sizing Guide →
             </button>
           </div>
         )}
@@ -267,72 +267,38 @@ export function ProductInfo({
         isPriced={selectedVariant?.price !== null}
       />
 
-      {/* Luxury Atelier Assurance Badges */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "var(--md-space-3)",
-          padding: "14px 18px",
-          background: "var(--md-bg-raised)",
-          border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-          borderRadius: "var(--md-radius-sm)",
-          marginTop: "var(--md-space-4)",
-          fontSize: "0.75rem",
-          letterSpacing: "0.06em",
-          color: "var(--md-fg-secondary)",
-          fontFamily: "var(--md-font-crest), Georgia, serif",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
-          <span>Pure 925 Sterling Silver</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
-          <span>Anti-Tarnish Formula</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
-          <span>100% In-House, Jaipur</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "var(--md-champagne)", fontSize: "0.75rem" }}>✦</span>
-          <span>Direct Atelier Value</span>
-        </div>
-      </div>
-
-      {/* Direct WhatsApp Concierge Link */}
+      {/* Atelier Specifications & Assurance */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "12px 16px",
-          background: "var(--md-ivory)",
-          borderRadius: "var(--md-radius-sm)",
-          border: "1px solid var(--md-rule)",
-          marginTop: "12px",
-          fontSize: "0.8125rem",
+          flexDirection: "column",
+          gap: "10px",
+          paddingBlock: "var(--md-space-4)",
+          borderTop: "1px solid var(--md-rule)",
+          fontSize: "0.75rem",
+          letterSpacing: "0.06em",
+          color: "var(--md-fg-secondary)",
         }}
       >
-        <span style={{ color: "var(--md-fg-secondary)" }}>
-          Need bespoke sizing or customization?
-        </span>
-        <a
-          href={whatsappInquiryUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: "var(--md-forest)",
-            fontWeight: 600,
-            textDecoration: "none",
-            whiteSpace: "nowrap",
-            marginLeft: "8px",
-          }}
-        >
-          WhatsApp Concierge →
-        </a>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Material</span>
+          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Anti-Tarnish 925 Sterling Silver</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Provenance</span>
+          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Jaipur Atelier · In-House Bench (Est. 1961)</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Bespoke Sizing</span>
+          <a
+            href={whatsappInquiryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "var(--md-fg)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "3px" }}
+          >
+            WhatsApp Atelier Concierge →
+          </a>
+        </div>
       </div>
 
       <RingSizeGuideModal

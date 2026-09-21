@@ -29,21 +29,27 @@ export function SiteHeader({
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
   const resolvedStoryHref = ourStoryHref || `${prefix}/our-story`;
 
+  // Core high-jewellery editorial navigation
+  const primaryLinks = [
+    { label: "High Jewellery", href: `${prefix}/rings` },
+    { label: "Collections", href: `${prefix}/jewellery-sets` },
+    { label: "Gemstones", href: `${prefix}/stones` },
+    { label: "Atelier 1961", href: resolvedStoryHref },
+  ];
+
   return (
     <header
       data-surface="ivory-soft"
       style={{
-        borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 22%, var(--md-rule))",
-        background: "color-mix(in srgb, var(--md-bg) 92%, transparent)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
         position: "sticky",
         top: 0,
-        zIndex: 40,
-        boxShadow: "0 4px 20px -8px rgba(0, 0, 0, 0.04)",
+        zIndex: 50,
+        background: "var(--md-bg)",
+        borderBottom: "1px solid var(--md-rule)",
+        transition: "background 200ms ease, border-color 200ms ease",
       }}
     >
-      {/* The first focusable element on every page (10 §8.2). */}
+      {/* Skip to content accessibility link */}
       <a
         href="#main"
         className="md-label"
@@ -60,162 +66,96 @@ export function SiteHeader({
         Skip to content
       </a>
 
-      {/* PRESTIGE ATELIER TOP RIBBON */}
+      {/* Quiet, refined top announcement line */}
       <div
         style={{
-          background: "var(--md-green-black)",
-          color: "var(--md-fg-inverse)",
-          borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-          paddingBlock: "5px",
+          background: "var(--md-bg-raised)",
+          borderBottom: "1px solid var(--md-rule)",
+          paddingBlock: "6px",
           paddingInline: "var(--md-gutter)",
-          fontSize: "0.625rem",
-          letterSpacing: "0.18em",
+          textAlign: "center",
+          fontSize: "0.6875rem",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
-          fontFamily: "var(--md-font-crest), Georgia, serif",
+          color: "var(--md-fg-secondary)",
+          fontFamily: "var(--md-font-sans), sans-serif",
         }}
       >
-        <div
-          style={{
-            maxWidth: "var(--md-container)",
-            marginInline: "auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px" }}>
-            <span>✦</span> JOHARI BAZAAR, JAIPUR · EST. 1961
-          </span>
-          <span style={{ marginInline: "auto", textAlign: "center", letterSpacing: "0.14em" }}>
-            COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS
-          </span>
-          <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)" }}>
-            ANTI-TARNISH 925 SILVER
-          </span>
-        </div>
+        <span>Complimentary Insured Courier Worldwide · Handcrafted In-House in Jaipur since 1961</span>
       </div>
 
-      {/* TIER 1: BRAND LOCKUP & UTILITIES BAR */}
+      {/* Main Luxury Navigation Bar */}
       <div
         style={{
+          maxWidth: "var(--md-container)",
+          marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          width: "100%",
+          height: "clamp(60px, 7vw, 76px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           boxSizing: "border-box",
         }}
       >
-        <div className="md-header-top-row">
-          {/* Mobile Left: Hamburger trigger */}
-          <div className="md-mobile-trigger" style={{ display: "flex", alignItems: "center" }}>
-            <MobileNav marketPrefix={prefix} navigation={navigation} markets={markets} />
-          </div>
+        {/* Mobile: Hamburger Drawer Trigger */}
+        <div className="md-mobile-trigger" style={{ display: "flex", alignItems: "center" }}>
+          <MobileNav marketPrefix={prefix} navigation={navigation} markets={markets} />
+        </div>
 
-          {/* Desktop Left: Refined Our Story Crest Button */}
-          <div className="md-desktop-left-tag" style={{ display: "flex", alignItems: "center" }}>
+        {/* Desktop Left: Refined Editorial Menu Links */}
+        <nav
+          aria-label="Primary"
+          className="md-desktop-only"
+          style={{ display: "flex", alignItems: "center", gap: "clamp(16px, 2.5vw, 32px)" }}
+        >
+          {primaryLinks.map((item) => (
             <Link
-              href={resolvedStoryHref}
+              key={item.href}
+              href={item.href}
+              className="md-nav-link"
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "4px 10px",
-                borderRadius: "var(--md-radius-sm)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 32%, transparent)",
-                background: "color-mix(in srgb, var(--md-champagne) 8%, transparent)",
-                color: "var(--md-fg)",
-                fontSize: "0.6875rem",
+                fontSize: "0.75rem",
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                textDecoration: "none",
-                fontWeight: 600,
-                fontFamily: "var(--md-font-crest), Georgia, serif",
-                transition: "all 180ms ease",
-                lineHeight: 1,
+                color: "var(--md-fg)",
+                fontWeight: 500,
+                paddingBlock: "8px",
+                whiteSpace: "nowrap",
               }}
             >
-              <span style={{ color: "var(--md-champagne)", fontSize: "0.6875rem", lineHeight: 1 }}>✦</span>
-              <span>Our Story · 1961</span>
+              {item.label}
             </Link>
-          </div>
+          ))}
+        </nav>
 
-          {/* Center Brand Logo (Desktop and Mobile) */}
-          <div className="md-header-logo-container">
-            <Link
-              href={prefix === "" ? "/" : prefix}
-              aria-label="MILLENNIUM DESIGNS — home"
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
-            >
-              <span className="md-header-logo-mobile">
-                <Logo variant="wordmark" tone="green" size="sm" priority />
-              </span>
-              <span className="md-header-logo-desktop">
-                <Logo variant="wordmark" tone="green" size="md" priority />
-              </span>
-            </Link>
-          </div>
-
-          {/* Right Section: Direct Currency Switcher + Header Actions */}
-          <div className="md-header-right" style={{ display: "flex", alignItems: "center", gap: "clamp(6px, 1.5vw, 14px)" }}>
-            <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
-
-            <HeaderActions marketPrefix={prefix} />
-          </div>
-        </div>
-      </div>
-
-      {/* TIER 2: DESKTOP CATEGORY NAVIGATION RAIL */}
-      <div className="md-desktop-nav-tier">
-        <nav aria-label="Primary" style={{ width: "100%", maxWidth: "var(--md-container)", marginInline: "auto" }}>
-          <VisuallyHidden>Primary navigation</VisuallyHidden>
-          <ul
+        {/* Center: Millennium Designs Prestige Brand Wordmark */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Link
+            href={prefix === "" ? "/" : prefix}
+            aria-label="MILLENNIUM DESIGNS — Home"
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "clamp(12px, 2.2vw, 28px)",
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-              flexWrap: "nowrap",
+              textDecoration: "none",
             }}
           >
-            {navigation.map((item, idx) => (
-              <li
-                key={item.href}
-                style={{ display: "inline-flex", alignItems: "center", gap: "clamp(12px, 2.2vw, 28px)" }}
-              >
-                {idx > 0 && (
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
-                      fontSize: "0.4375rem",
-                      userSelect: "none",
-                      lineHeight: 1,
-                    }}
-                  >
-                    ✦
-                  </span>
-                )}
-                <Link
-                  href={`${prefix}${item.href}`}
-                  className="md-label"
-                  style={{
-                    fontSize: "0.71875rem",
-                    letterSpacing: "0.18em",
-                    textDecoration: "none",
-                    color: "var(--md-fg)",
-                    paddingBlock: "4px",
-                    display: "inline-block",
-                    whiteSpace: "nowrap",
-                    transition: "color 150ms ease",
-                  }}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+            <Logo variant="wordmark" tone="green" size="md" priority />
+          </Link>
+        </div>
+
+        {/* Right Section: Currency Toggle & Essential Minimal Utilities */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "clamp(10px, 1.8vw, 20px)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <CurrencyToggle activeCode={marketSegment === "" ? "US" : marketSegment.toUpperCase()} />
+          <HeaderActions marketPrefix={prefix} />
+        </div>
       </div>
     </header>
   );

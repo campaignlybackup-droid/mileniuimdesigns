@@ -106,8 +106,8 @@
   --md-ratio-hero: 16 / 9;
 
   --md-radius-none: 0;
-  /* 2px is the MAXIMUM for a surface. Cards have no radius, no border and no shadow. */
-  --md-radius-sm: 2px;
+  /* Crisp couture edges: cards have no radius, no border, and no shadow. */
+  --md-radius-sm: 0;
   /* ONLY the wishlist dot and the bag count. */
   --md-radius-pill: 999px;
 
