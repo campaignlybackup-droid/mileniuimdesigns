@@ -27,7 +27,7 @@ export async function seed500Products(db: PrismaClient): Promise<{ count: number
     const catId = categoryMap.get(item.categorySlug.toLowerCase()) ?? categories[0]?.id;
     const stoneId = item.stoneSlug ? stoneMap.get(item.stoneSlug.toLowerCase()) : undefined;
 
-    const variantId = `var-${item.id.slice(4)}`;
+    const variantId = item.id.replace(/^00000000/, "00000001");
 
     await db.product.create({
       data: {
@@ -48,14 +48,15 @@ export async function seed500Products(db: PrismaClient): Promise<{ count: number
             title: "Standard Edition",
             position: 1,
             isActive: true,
+            isOneOfAKind: item.isOneOfAKind ?? false,
             ...(location
               ? {
                   inventoryItems: {
                     create: {
                       locationId: location.id,
                       isOneOfAKind: item.isOneOfAKind ?? false,
-                      onHandQuantity: 15,
-                      availableQuantity: 15,
+                      onHandQuantity: item.isOneOfAKind ? 1 : 15,
+                      availableQuantity: item.isOneOfAKind ? 1 : 15,
                     },
                   },
                 }
