@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate || true",
     "build": "prisma generate && npm run check:brand && npm run gen:markets && npm run gen:tokens && next build",
     "build:hostinger": "npm run build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "start": "next start",
@@ -62,6 +62,7 @@
     "next": "16.3.5",
     "next-cloudinary": "6.19.0",
     "pg": "8.23.0",
+    "prisma": "7.10.0",
     "razorpay": "2.9.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -71,6 +72,7 @@
     "server-only": "0.0.1",
     "stripe": "22.6.2",
     "tailwind-merge": "3.7.0",
+    "tsx": "4.23.13",
     "zod": "4.6.4",
     "zustand": "5.0.15"
   },
@@ -93,9 +95,7 @@
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "prisma": "7.10.0",
     "tailwindcss": "^4",
-    "tsx": "4.23.13",
     "typescript": "^5",
     "vitest": "4.1.11"
   },
