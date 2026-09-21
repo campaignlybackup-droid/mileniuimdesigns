@@ -3,6 +3,7 @@
 import { useEffect, useState, type JSX } from "react";
 import { PriceDisplay } from "@/components/storefront/PriceDisplay";
 import { Button } from "@/components/ui/Button";
+import { useCart } from "@/components/storefront/CartContext";
 import type { DisplayPrice } from "@/lib/pricing/types";
 
 export type StickyAddToBagProps = {
@@ -25,6 +26,7 @@ export function StickyAddToBag({
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,16 +47,9 @@ export function StickyAddToBag({
     if (!variantId) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/cart/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId, quantity: 1, marketCode }),
-      });
-      if (res.ok) {
+      const ok = await addItem(variantId, 1, marketCode);
+      if (ok) {
         setAdded(true);
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cart:open"));
-        }
         setTimeout(() => setAdded(false), 2500);
       }
     } catch {

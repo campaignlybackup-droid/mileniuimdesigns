@@ -85,7 +85,9 @@ export function ProductGalleryMobile({
         }}
       >
         {items.map((item, idx) => {
-          const imgUrl = imageUrl(item.publicId, { width: 768, crop: "fill" });
+          const fallbacks = getProductFallbackImages(title);
+          const fallbackImg = idx % 2 === 0 ? fallbacks.primary : fallbacks.alternate;
+          const imgUrl = imageUrl(item.publicId, { width: 768, crop: "fill" }) ?? fallbackImg;
           return (
             <div
               key={item.id}
@@ -98,20 +100,18 @@ export function ProductGalleryMobile({
                 background: "var(--md-bg-subtle, var(--md-rule))",
               }}
             >
-              {imgUrl && (
-                <img
-                  src={imgUrl}
-                  alt={item.altText ?? `${title} - Image ${idx + 1}`}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              )}
+              <img
+                src={imgUrl}
+                alt={item.altText ?? `${title} - Image ${idx + 1}`}
+                loading={idx === 0 ? "eager" : "lazy"}
+                decoding="async"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
             </div>
           );
         })}

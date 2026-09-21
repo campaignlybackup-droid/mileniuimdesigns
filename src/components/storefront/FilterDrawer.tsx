@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect, type JSX } from "react";
+import { useState, useEffect, useSyncExternalStore, type JSX } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { FilterSidebar, type FilterGroup } from "@/components/storefront/FilterSidebar";
 import { Button } from "@/components/ui/Button";
+
+const emptySubscribe = () => () => {};
 
 export type FilterDrawerProps = {
   groups: FilterGroup[];
@@ -12,6 +15,11 @@ export type FilterDrawerProps = {
 
 export function FilterDrawer({ groups, className }: FilterDrawerProps): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const searchParams = useSearchParams();
 
   // Count active filters
@@ -91,139 +99,141 @@ export function FilterDrawer({ groups, className }: FilterDrawerProps): JSX.Elem
       </button>
 
       {/* Slide-Up Bottom Sheet Modal */}
-      {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 950,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-          }}
-        >
-          {/* Backdrop overlay */}
+      {isOpen && mounted &&
+        createPortal(
           <div
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
             style={{
               position: "fixed",
               inset: 0,
-              background: "color-mix(in srgb, var(--md-charcoal) 60%, transparent)",
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
-              transition: "opacity 240ms ease",
-            }}
-          />
-
-          {/* Bottom Sheet Card */}
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Filter products"
-            style={{
-              position: "relative",
-              width: "100%",
-              maxHeight: "85vh",
-              background: "var(--md-bg)",
-              borderRadius: "16px 16px 0 0",
-              borderTop: "1px solid var(--md-rule)",
+              zIndex: 950,
               display: "flex",
               flexDirection: "column",
-              zIndex: 951,
-              boxShadow: "0 -8px 32px rgba(0, 0, 0, 0.2)",
-              animation: "slideUp 280ms cubic-bezier(0.16, 1, 0.3, 1)",
+              justifyContent: "flex-end",
             }}
           >
-            {/* Sheet Handle */}
-            <div style={{ width: "100%", display: "flex", justifyContent: "center", paddingTop: 10 }}>
-              <div style={{ width: 36, height: 4, borderRadius: 2, background: "var(--md-rule-strong)" }} />
-            </div>
-
-            {/* Header */}
+            {/* Backdrop overlay */}
             <div
+              onClick={() => setIsOpen(false)}
+              aria-hidden="true"
               style={{
+                position: "fixed",
+                inset: 0,
+                background: "color-mix(in srgb, var(--md-charcoal) 60%, transparent)",
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
+                transition: "opacity 240ms ease",
+              }}
+            />
+
+            {/* Bottom Sheet Card */}
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Filter products"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxHeight: "85vh",
+                background: "var(--md-bg)",
+                borderRadius: "16px 16px 0 0",
+                borderTop: "1px solid var(--md-rule)",
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "var(--md-space-3) var(--md-gutter)",
-                borderBottom: "1px solid var(--md-rule)",
+                flexDirection: "column",
+                zIndex: 951,
+                boxShadow: "0 -8px 32px rgba(0, 0, 0, 0.2)",
+                animation: "slideUp 280ms cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <h3
+              {/* Sheet Handle */}
+              <div style={{ width: "100%", display: "flex", justifyContent: "center", paddingTop: 10 }}>
+                <div style={{ width: 36, height: 4, borderRadius: 2, background: "var(--md-rule-strong)" }} />
+              </div>
+
+              {/* Header */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "var(--md-space-3) var(--md-gutter)",
+                  borderBottom: "1px solid var(--md-rule)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <h3
+                    style={{
+                      fontFamily: "var(--md-font-display)",
+                      fontSize: "1.125rem",
+                      margin: 0,
+                      fontWeight: 600,
+                      color: "var(--md-fg)",
+                    }}
+                  >
+                    Refine Creations
+                  </h3>
+                  {activeCount > 0 && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--md-green)", fontWeight: 600 }}>
+                      ({activeCount} active)
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close filter sheet"
                   style={{
-                    fontFamily: "var(--md-font-display)",
+                    width: 44,
+                    height: 44,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
                     fontSize: "1.125rem",
-                    margin: 0,
-                    fontWeight: 600,
                     color: "var(--md-fg)",
                   }}
                 >
-                  Refine Creations
-                </h3>
-                {activeCount > 0 && (
-                  <span style={{ fontSize: "0.75rem", color: "var(--md-green)", fontWeight: 600 }}>
-                    ({activeCount} active)
-                  </span>
-                )}
+                  ✕
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                aria-label="Close filter sheet"
+              {/* Scrollable Filter Options */}
+              <div
                 style={{
-                  width: 44,
-                  height: 44,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "1.125rem",
-                  color: "var(--md-fg)",
+                  flex: 1,
+                  overflowY: "auto",
+                  WebkitOverflowScrolling: "touch",
+                  padding: "var(--md-space-4) var(--md-gutter)",
                 }}
               >
-                ✕
-              </button>
-            </div>
+                <FilterSidebar groups={groups} />
+              </div>
 
-            {/* Scrollable Filter Options */}
-            <div
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                WebkitOverflowScrolling: "touch",
-                padding: "var(--md-space-4) var(--md-gutter)",
-              }}
-            >
-              <FilterSidebar groups={groups} />
-            </div>
-
-            {/* Sticky Safe-Area Footer */}
-            <div
-              style={{
-                padding: "var(--md-space-3) var(--md-gutter) calc(var(--md-space-3) + env(safe-area-inset-bottom, 0px))",
-                borderTop: "1px solid var(--md-rule)",
-                background: "var(--md-bg-raised)",
-                display: "flex",
-                gap: "var(--md-space-3)",
-              }}
-            >
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => setIsOpen(false)}
-                style={{ width: "100%", minHeight: 48, letterSpacing: "0.08em" }}
+              {/* Sticky Safe-Area Footer */}
+              <div
+                style={{
+                  padding: "var(--md-space-3) var(--md-gutter) calc(var(--md-space-3) + env(safe-area-inset-bottom, 0px))",
+                  borderTop: "1px solid var(--md-rule)",
+                  background: "var(--md-bg-raised)",
+                  display: "flex",
+                  gap: "var(--md-space-3)",
+                }}
               >
-                Apply &amp; View Creations
-              </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={() => setIsOpen(false)}
+                  style={{ width: "100%", minHeight: 48, letterSpacing: "0.08em" }}
+                >
+                  Apply &amp; View Creations
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

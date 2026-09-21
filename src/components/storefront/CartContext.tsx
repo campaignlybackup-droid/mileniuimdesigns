@@ -49,8 +49,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     };
     void load();
+
+    const handleExternalOpen = () => setIsOpen(true);
+    window.addEventListener("cart:open", handleExternalOpen);
+
     return () => {
       ignore = true;
+      window.removeEventListener("cart:open", handleExternalOpen);
     };
   }, []);
 

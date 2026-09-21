@@ -112,8 +112,12 @@ export function ProductGallery({
           }}
         >
           {items.map((item, idx) => {
-            const thumbUrl = imageUrl(item.publicId, { width: 320, height: 400, crop: "fill" });
-            const isSelected = idx === activeIndex;
+            const fallbacks = getProductFallbackImages(title);
+            const fallbackImg = idx % 2 === 0 ? fallbacks.primary : fallbacks.alternate;
+            const thumbUrl =
+              imageUrl(item.publicId, { width: 160, height: 200, crop: "fill" }) ?? fallbackImg;
+            const isSelected = activeIndex === idx;
+
             return (
               <button
                 key={item.id}
@@ -132,13 +136,11 @@ export function ProductGallery({
                   transition: "opacity 180ms ease, border-color 180ms ease",
                 }}
               >
-                {thumbUrl && (
-                  <img
-                    src={thumbUrl}
-                    alt=""
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                )}
+                <img
+                  src={thumbUrl}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </button>
             );
           })}
@@ -158,7 +160,9 @@ export function ProductGallery({
         }}
       >
         {items.map((item, idx) => {
-          const mainUrl = imageUrl(item.publicId, { width: 1200, crop: "fill" });
+          const fallbacks = getProductFallbackImages(title);
+          const fallbackImg = idx % 2 === 0 ? fallbacks.primary : fallbacks.alternate;
+          const mainUrl = imageUrl(item.publicId, { width: 1200, crop: "fill" }) ?? fallbackImg;
           const zoom = zoomState[idx];
           const isZoomed = zoom?.active ?? false;
           const originX = zoom ? `${zoom.x}%` : "50%";

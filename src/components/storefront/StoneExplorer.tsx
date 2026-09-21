@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import Link from "next/link";
 import { imageUrl } from "@/lib/media/url";
+import { getStoneImage } from "@/lib/media/categoryImages";
 import type { StoneRecord, StoneCategoryLink } from "@/lib/stones";
 
 export type StoneExplorerProps = {
@@ -19,9 +20,10 @@ export function StoneExplorer({
   className,
 }: StoneExplorerProps): JSX.Element {
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
-  const heroUrl = stone.heroPublicId
-    ? imageUrl(stone.heroPublicId, { width: 1280, crop: "fill" })
-    : null;
+  const heroUrl =
+    (stone.heroPublicId
+      ? imageUrl(stone.heroPublicId, { width: 1280, crop: "fill" })
+      : null) ?? getStoneImage(stone.slug);
 
   let descriptionText = "";
   if (typeof stone.descriptionJson === "string") {

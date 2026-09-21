@@ -1,14 +1,24 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/components/storefront/CartContext";
 import { Button } from "@/components/ui/Button";
 
+const emptySubscribe = () => () => {};
+
 export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
   const { cart, isOpen, closeCart, updateQuantity, removeItem, isLoading } = useCart();
-  const checkoutHref = marketCode.toLowerCase() === "us" ? "/checkout" : `/${marketCode.toLowerCase()}/checkout`;
+  const marketPrefix = marketCode.toLowerCase() === "us" ? "" : `/${marketCode.toLowerCase()}`;
+  const checkoutHref = `${marketPrefix}/checkout`;
+
+  const mounted = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   // Lock background scroll when drawer is open
   useEffect(() => {
@@ -22,12 +32,12 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const lines = cart?.lines ?? [];
   const hasItems = lines.length > 0;
 
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
@@ -193,7 +203,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                 >
                   {/* Thumbnail */}
                   <Link
-                    href={`/products/${line.productSlug}`}
+                    href={`${marketPrefix}/products/${line.productSlug}`}
                     onClick={closeCart}
                     style={{
                       position: "relative",
@@ -217,7 +227,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
                       <Link
-                        href={`/products/${line.productSlug}`}
+                        href={`${marketPrefix}/products/${line.productSlug}`}
                         onClick={closeCart}
                         style={{
                           textDecoration: "none",
@@ -414,6 +424,7 @@ export function CartDrawer({ marketCode = "US" }: { marketCode?: string }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

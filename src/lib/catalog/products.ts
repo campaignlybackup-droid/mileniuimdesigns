@@ -736,6 +736,8 @@ export async function resolveCategoryBySlug(
   descriptionJson: unknown;
   heroMediaId: string | null;
 } | null> {
+  const normSlug = slug.toLowerCase().trim();
+  const alias = normSlug === "jewellery-sets" ? "bracelets" : normSlug === "bracelets" ? "jewellery-sets" : null;
   const rows = await ctx.client.$queryRaw<
     {
       id: string;
@@ -748,7 +750,7 @@ export async function resolveCategoryBySlug(
   >`
     SELECT id::text, slug, name, materialized_path, description_json, hero_media_id::text
       FROM categories
-     WHERE slug = ${slug}
+     WHERE (slug = ${normSlug} OR (${alias}::text IS NOT NULL AND slug = ${alias}))
        AND deleted_at IS NULL
        AND is_published = true
      LIMIT 1
