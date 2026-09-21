@@ -9,6 +9,7 @@ import { listStorefrontFeaturedProducts } from "@/lib/catalog/products";
 import { getStorefrontStones } from "@/lib/stones";
 import { StoneCard } from "@/components/storefront/StoneCard";
 import { ArchivalShowcase } from "@/components/storefront/ArchivalShowcase";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
@@ -30,7 +31,7 @@ export async function generateMetadata({
   return {
     title: "MILLENNIUM DESIGNS | Fine Jewellery & Gemstones · Jaipur Atelier 1961",
     description:
-      "Sixty-five years of courtly emerald curation and anti-tarnish 925 sterling silver craftsmanship. Handcrafted entirely in-house in our Jaipur atelier.",
+      "Sixty-five years of courtly gemstone curation and anti-tarnish 925 sterling silver craftsmanship. Handcrafted in our Jaipur atelier.",
     alternates: {
       canonical,
       languages,
@@ -47,14 +48,16 @@ export default async function StorefrontHomePage({
   const resolved = await resolveMarket(market);
   const prefix = resolved.code.toLowerCase() === "us" ? "" : `/${resolved.code.toLowerCase()}`;
 
-  // Read published categories from DB
+  // Read published categories from DB (display 8 for a complete 4x2 / 2x4 filled grid)
   const categories = await listPublishedCategories();
 
   // Read featured signature products from DB for active market
-  const featuredResult = await listStorefrontFeaturedProducts(resolved.code, 4);
-  const featuredProducts = featuredResult.products;
+  const featuredResult = await listStorefrontFeaturedProducts(resolved.code, 16);
+  const allFeatured = featuredResult.products;
+  const showcaseProducts = allFeatured.slice(0, 4);
+  const signatureGrid = allFeatured.slice(4, 12).length >= 4 ? allFeatured.slice(4, 12) : allFeatured.slice(0, 8);
 
-  // Read featured stones from DB
+  // Read featured stones from DB (display 6 to fill grid symmetrically)
   const stones = await getStorefrontStones();
 
   const whatsappConsultationUrl = buildWhatsAppInquiryUrl({ topic: "bespoke" });
@@ -68,175 +71,16 @@ export default async function StorefrontHomePage({
         boxSizing: "border-box",
       }}
     >
-      {/* ── 1. CINEMATIC HIGH-FASHION CAMPAIGN SLIDER ───────────────── */}
+      {/* ── 1. CINEMATIC CAMPAIGN SLIDER ─────────────────────────────── */}
       <HeroCampaignSlider marketPrefix={prefix} />
 
-      {/* ── 2. THE HOUSE MANIFESTO (EDITORIAL BREATHING SPACE) ─────── */}
+      {/* ── 2. COMPACT ATELIER HALLMARK & TRUST PILLARS ──────────────── */}
       <section
-        data-surface="ivory-soft"
         style={{
-          maxWidth: "var(--md-container)",
-          marginInline: "auto",
+          borderBottom: "1px solid var(--md-rule)",
+          background: "var(--md-bg-raised)",
+          paddingBlock: "clamp(12px, 1.8vw, 18px)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(40px, 6vw, 96px)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "0.6875rem",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "var(--md-fg-secondary)",
-            fontWeight: 600,
-            marginBottom: "var(--md-space-3)",
-          }}
-        >
-          THE ATELIER PHILOSOPHY
-        </span>
-
-        <blockquote
-          style={{
-            margin: 0,
-            maxWidth: "880px",
-            fontFamily: "var(--md-font-display)",
-            fontSize: "clamp(1.35rem, 3.2vw, 2.75rem)",
-            fontWeight: 400,
-            lineHeight: 1.3,
-            letterSpacing: "-0.015em",
-            color: "var(--md-fg)",
-            textWrap: "balance",
-          }}
-        >
-          “We believe true luxury requires patience, natural minerals, and hands that have shaped silver for generations. Nothing in our collection is ever outsourced.”
-        </blockquote>
-
-        <p
-          style={{
-            margin: "clamp(14px, 2.5vw, 24px) auto 0",
-            maxWidth: "600px",
-            fontSize: "clamp(0.875rem, 1.2vw, 1.0625rem)",
-            lineHeight: 1.75,
-            color: "var(--md-fg-secondary)",
-          }}
-        >
-          Founded in 1961 by B.L. Agarwal in Johari Bazaar, Pushpak Jewels built an international reputation for rare untreated emeralds. Today, under Millennium Designs, Saket and Amit Agarwal continue the bench tradition in Jaipur — marrying courtly gemstones with a proprietary anti-tarnish 925 alloy.
-        </p>
-
-        {/* 3 Quiet House Truths */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
-            gap: "clamp(12px, 2vw, 24px)",
-            width: "100%",
-            maxWidth: "1000px",
-            marginTop: "clamp(28px, 4.5vw, 56px)",
-            paddingTop: "clamp(18px, 3vw, 32px)",
-            borderTop: "1px solid var(--md-rule)",
-            textAlign: "left",
-          }}
-        >
-          {[
-            {
-              num: "01",
-              title: "100% In-House Atelier",
-              desc: "From initial sketch and lost-wax casting to hand-prong setting, every piece remains within our Jaipur facility.",
-            },
-            {
-              num: "02",
-              title: "Anti-Tarnish 925 Alloy",
-              desc: "Pure sterling silver alloyed with precious elements to permanently shield its mirror polish from atmospheric oxidation.",
-            },
-            {
-              num: "03",
-              title: "Direct Bench Provenance",
-              desc: "Exhibited at Vicenza, Basel, and New York. Global collectors acquire heirloom creations directly from our family atelier.",
-            },
-          ].map((truth) => (
-            <div
-              key={truth.num}
-              style={{
-                padding: "clamp(16px, 2.5vw, 22px)",
-                background: "var(--md-bg)",
-                borderRadius: "var(--md-radius-sm, 2px)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 22%, var(--md-rule))",
-                boxSizing: "border-box",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                height: "100%",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 8,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--md-font-crest), Georgia, serif",
-                    fontSize: "0.6875rem",
-                    color: "var(--md-green)",
-                    letterSpacing: "0.18em",
-                    fontWeight: 600,
-                  }}
-                >
-                  {truth.num}
-                </span>
-                <span style={{ fontSize: "0.5625rem", color: "var(--md-champagne)" }}>✦</span>
-              </div>
-              <h3
-                style={{
-                  margin: 0,
-                  fontFamily: "var(--md-font-display)",
-                  fontSize: "1.0625rem",
-                  fontWeight: 500,
-                  color: "var(--md-fg)",
-                }}
-              >
-                {truth.title}
-              </h3>
-              <p
-                style={{
-                  margin: "8px 0 0",
-                  fontSize: "0.8125rem",
-                  color: "var(--md-fg-secondary)",
-                  lineHeight: 1.6,
-                }}
-              >
-                {truth.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 3. ARCHIVAL MASTERPIECE SHOWCASE (THE SUITE) ───────────── */}
-      {featuredProducts.length > 0 && (
-        <ArchivalShowcase
-          products={featuredProducts}
-          marketSegment={resolved.code.toLowerCase() === "us" ? "" : resolved.code.toLowerCase()}
-          locale={resolved.locale}
-        />
-      )}
-
-      {/* ── 3. ART OF THE ATELIER (JAIPUR CRAFTSMANSHIP SPREAD) ───────── */}
-      <section
-        data-surface="forest"
-        style={{
-          background: "var(--md-forest)",
-          color: "var(--md-fg-inverse)",
-          paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(48px, 6vw, 96px)",
-          position: "relative",
-          overflow: "hidden",
         }}
       >
         <div
@@ -244,149 +88,179 @@ export default async function StorefrontHomePage({
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))",
-            gap: "clamp(24px, 4vw, 72px)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "clamp(8px, 1.5vw, 24px)",
+            textAlign: "center",
             alignItems: "center",
           }}
         >
-          {/* Craftsmanship Image — compact on mobile */}
-          <div className="md-craft-image">
-            <Image
-              src="/images/story/atelier_bench_silversmith.jpg"
-              alt="Master silversmith at work in our Jaipur workshop"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              style={{ objectFit: "cover" }}
-            />
-          </div>
-
-          {/* Craftsmanship Narrative */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
-            <span
+          {[
+            { label: "JAIPUR BENCH EST. 1961", detail: "100% In-House Atelier" },
+            { label: "SOLID 925 STERLING SILVER", detail: "Permanent Anti-Tarnish Alloy" },
+            { label: "NATURAL COURTLY GEMSTONES", detail: "Unheated Mineral Character" },
+            { label: "INSURED WORLDWIDE DELIVERY", detail: "Hallmarked & Certified" },
+          ].map((item, i) => (
+            <div
+              key={i}
               style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-champagne)",
-                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                padding: "4px 8px",
               }}
             >
-              HERITAGE OF THE BENCH
-            </span>
-
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.5vw, 3rem)",
-                fontWeight: 400,
-                lineHeight: 1.15,
-                color: "var(--md-fg-inverse)",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Preserving the Lost-Wax Casting Tradition
-            </h2>
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(0.9375rem, 1.2vw, 1.0625rem)",
-                lineHeight: 1.8,
-                color: "var(--md-fg-inverse-muted)",
-              }}
-            >
-              Every contour begins with a gouache hand-drawing, translated into an intricate wax master model before being cast in molten 925 sterling silver.
-            </p>
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "clamp(0.9375rem, 1.2vw, 1.0625rem)",
-                lineHeight: 1.8,
-                color: "var(--md-fg-inverse-muted)",
-              }}
-            >
-              Our lapidaries inspect each gemstone under cross-polarised light to ensure natural crystal integrity. No composite stones, no unstable heat treatments — only pure mineral character set by hand with microscopic accuracy.
-            </p>
-
-            <div style={{ paddingTop: "var(--md-space-3)" }}>
-              <Link
-                href={`${prefix}/our-story`}
-                style={{
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--md-champagne)",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "6px",
-                  fontWeight: 600,
-                }}
-              >
-                Read Our Story &amp; Heritage →
-              </Link>
+              <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "0.625rem" }}>✦</span>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--md-fg)" }}>
+                  {item.label}
+                </div>
+                <div style={{ fontSize: "0.625rem", color: "var(--md-fg-muted)", letterSpacing: "0.02em" }}>
+                  {item.detail}
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* ── 5. CURATED ARCHIVAL COLLECTIONS (GALLERY DISCOVERY) ──────── */}
+      {/* ── 3. ARCHIVAL MASTERPIECE SLIDER ──────────────────────────── */}
+      {showcaseProducts.length > 0 && (
+        <ArchivalShowcase
+          products={showcaseProducts}
+          marketSegment={resolved.code.toLowerCase() === "us" ? "" : resolved.code.toLowerCase()}
+          locale={resolved.locale}
+        />
+      )}
+
+      {/* ── 4. SIGNATURE ATELIER CREATIONS (FEATURED PRODUCT GRID) ──── */}
+      {signatureGrid.length > 0 && (
+        <section
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+            paddingInline: "var(--md-gutter)",
+            paddingBlock: "clamp(36px, 5vw, 64px)",
+            borderTop: "1px solid var(--md-rule)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              marginBottom: "clamp(20px, 3.5vw, 36px)",
+              flexWrap: "wrap",
+              gap: "var(--md-space-3)",
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-secondary)",
+                  fontWeight: 600,
+                  display: "block",
+                  marginBottom: 6,
+                }}
+              >
+                FINE JEWELLERY
+              </span>
+              <h2
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+                  fontWeight: 400,
+                  color: "var(--md-fg)",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.15,
+                }}
+              >
+                Signature Creations
+              </h2>
+            </div>
+
+            <Link
+              href={`${prefix}/rings`}
+              style={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--md-fg)",
+                textDecoration: "underline",
+                textUnderlineOffset: "4px",
+                fontWeight: 600,
+              }}
+            >
+              Browse All Creations ({allFeatured.length}+) →
+            </Link>
+          </div>
+
+          <ProductGrid
+            products={signatureGrid.slice(0, 8)}
+            marketSegment={resolved.code.toLowerCase() === "us" ? "" : resolved.code.toLowerCase()}
+            locale={resolved.locale}
+            columns={4}
+          />
+        </section>
+      )}
+
+      {/* ── 5. CURATED COLLECTIONS (CATEGORY TILES - FILLS BALANCED 4x2) ─ */}
       {categories.length > 0 && (
         <section
           style={{
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(64px, 8vw, 108px)",
+            paddingBlock: "clamp(36px, 5vw, 64px)",
+            borderTop: "1px solid var(--md-rule)",
           }}
         >
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              marginBottom: "clamp(32px, 4vw, 56px)",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              marginBottom: "clamp(20px, 3.5vw, 36px)",
+              flexWrap: "wrap",
+              gap: "var(--md-space-3)",
             }}
           >
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-fg-secondary)",
-                fontWeight: 600,
-                marginBottom: 8,
-              }}
-            >
-              THE TAXONOMY
-            </span>
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(2rem, 3.5vw, 3rem)",
-                fontWeight: 400,
-                color: "var(--md-fg)",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Curated Collections
-            </h2>
-            <p
-              style={{
-                margin: "8px 0 0",
-                maxWidth: "520px",
-                fontSize: "0.9375rem",
-                color: "var(--md-fg-secondary)",
-                lineHeight: 1.6,
-              }}
-            >
-              From Byzantine hand-woven chains to courtly solitaire rings, discover each category forged in our atelier.
-            </p>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-secondary)",
+                  fontWeight: 600,
+                  display: "block",
+                  marginBottom: 6,
+                }}
+              >
+                EXPLORE BY CATEGORY
+              </span>
+              <h2
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--md-font-display)",
+                  fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+                  fontWeight: 400,
+                  color: "var(--md-fg)",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.15,
+                }}
+              >
+                Curated Collections
+              </h2>
+            </div>
           </div>
 
           <div className="md-category-grid">
-            {categories.slice(0, 6).map((c) => (
+            {categories.slice(0, 8).map((c) => (
               <Link
                 key={c.id}
                 href={`${prefix}/${c.slug}`}
@@ -455,7 +329,7 @@ export default async function StorefrontHomePage({
                       display: "block",
                     }}
                   >
-                    Explore Collection →
+                    Explore →
                   </span>
                 </div>
               </Link>
@@ -464,14 +338,106 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 6. NATURAL GEMSTONES LAPIDARY ARCHIVE ────────────────────── */}
+      {/* ── 6. ART OF THE ATELIER (JAIPUR BENCH CRAFTSMANSHIP SPREAD) ── */}
+      <section
+        data-surface="forest"
+        style={{
+          background: "var(--md-forest)",
+          color: "var(--md-fg-inverse)",
+          paddingInline: "var(--md-gutter)",
+          paddingBlock: "clamp(40px, 5vw, 72px)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",
+            gap: "clamp(24px, 4vw, 56px)",
+            alignItems: "center",
+          }}
+        >
+          {/* Craftsmanship Image */}
+          <div className="md-craft-image" style={{ borderRadius: "var(--md-radius-sm)" }}>
+            <Image
+              src="/images/story/atelier_bench_silversmith.jpg"
+              alt="Master silversmith at work in our Jaipur workshop"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+
+          {/* Clean, Non-bloated Narrative */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-3)" }}>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "var(--md-champagne)",
+                fontWeight: 600,
+              }}
+            >
+              JAIPUR BENCH HERITAGE
+            </span>
+
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                fontWeight: 400,
+                lineHeight: 1.2,
+                color: "var(--md-fg-inverse)",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Lost-Wax Casting &amp; Micro-Prong Setting
+            </h2>
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: "clamp(0.875rem, 1.1vw, 1rem)",
+                lineHeight: 1.7,
+                color: "var(--md-fg-inverse-muted)",
+              }}
+            >
+              Every master model is shaped in wax, cast in pure anti-tarnish 925 sterling silver, and hand-set with natural untreated minerals entirely inside our Jaipur atelier.
+            </p>
+
+            <div style={{ paddingTop: "var(--md-space-2)" }}>
+              <Link
+                href={`${prefix}/our-story`}
+                style={{
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--md-champagne)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "6px",
+                  fontWeight: 600,
+                }}
+              >
+                Our Story &amp; Atelier →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 7. NATURAL GEMSTONES LAPIDARY ARCHIVE ───────────────────── */}
       {stones.length > 0 && (
         <section
           style={{
             maxWidth: "var(--md-container)",
             marginInline: "auto",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(36px, 5vw, 80px)",
+            paddingBlock: "clamp(36px, 5vw, 64px)",
             borderTop: "1px solid var(--md-rule)",
           }}
         >
@@ -480,9 +446,9 @@ export default async function StorefrontHomePage({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "flex-end",
-              marginBottom: "clamp(24px, 3.5vw, 40px)",
+              marginBottom: "clamp(20px, 3.5vw, 36px)",
               flexWrap: "wrap",
-              gap: "var(--md-space-4)",
+              gap: "var(--md-space-3)",
             }}
           >
             <div>
@@ -494,7 +460,7 @@ export default async function StorefrontHomePage({
                   color: "var(--md-fg-secondary)",
                   fontWeight: 600,
                   display: "block",
-                  marginBottom: 8,
+                  marginBottom: 6,
                 }}
               >
                 UNHEATED NATURAL MINERALS
@@ -507,6 +473,7 @@ export default async function StorefrontHomePage({
                   fontWeight: 400,
                   color: "var(--md-fg)",
                   letterSpacing: "-0.01em",
+                  lineHeight: 1.15,
                 }}
               >
                 The Gemstone Archive
@@ -530,7 +497,7 @@ export default async function StorefrontHomePage({
           </div>
 
           <div className="md-stone-grid">
-            {stones.slice(0, 4).map((stone) => (
+            {stones.slice(0, 6).map((stone) => (
               <StoneCard
                 key={stone.id}
                 stone={stone}
@@ -541,25 +508,25 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 7. PRIVATE ATELIER CONCIERGE & BESPOKE INQUIRY ──────────── */}
+      {/* ── 8. PRIVATE ATELIER CONCIERGE & BESPOKE INQUIRY ─────────── */}
       <section
         data-surface="ivory"
         style={{
           background: "var(--md-bg-raised)",
           borderTop: "1px solid var(--md-rule)",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(44px, 6vw, 88px)",
+          paddingBlock: "clamp(36px, 5vw, 64px)",
           textAlign: "center",
         }}
       >
         <div
           style={{
-            maxWidth: "680px",
+            maxWidth: "600px",
             marginInline: "auto",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "var(--md-space-3)",
+            gap: "var(--md-space-2)",
           }}
         >
           <span
@@ -578,7 +545,7 @@ export default async function StorefrontHomePage({
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.75rem, 3.4vw, 3rem)",
+              fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
               fontWeight: 400,
               color: "var(--md-fg)",
               letterSpacing: "-0.015em",
@@ -589,37 +556,29 @@ export default async function StorefrontHomePage({
 
           <p
             style={{
-              margin: "6px 0 0",
-              fontSize: "clamp(0.875rem, 1.2vw, 1rem)",
-              lineHeight: 1.7,
+              margin: "4px 0 var(--md-space-2)",
+              fontSize: "0.875rem",
+              lineHeight: 1.6,
               color: "var(--md-fg-secondary)",
             }}
           >
-            Request bespoke sizing for an archival sovereign ring, custom chain lengths, or source an unheated gemstone cut directly through our master jewellers.
+            Inquire for custom ring sizing, chain adjustments, or rare unheated gemstone sourcing directly from our master jewellers.
           </p>
 
-          <div
+          <a
+            href={whatsappConsultationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="md-btn-editorial"
             style={{
-              display: "flex",
+              background: "var(--md-emerald-deep)",
+              color: "var(--md-ivory-soft)",
               justifyContent: "center",
-              marginTop: "var(--md-space-2)",
+              textAlign: "center",
             }}
           >
-            <a
-              href={whatsappConsultationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="md-btn-editorial"
-              style={{
-                background: "var(--md-emerald-deep)",
-                color: "var(--md-ivory-soft)",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
-              Inquire for Bespoke Sizing →
-            </a>
-          </div>
+            Inquire on WhatsApp →
+          </a>
         </div>
       </section>
     </main>

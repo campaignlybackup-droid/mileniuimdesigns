@@ -114,16 +114,6 @@ export function ArchivalShowcase({
           >
             Archival Masterpieces
           </h2>
-          <p
-            style={{
-              margin: "8px 0 0",
-              fontSize: "clamp(0.875rem, 1.2vw, 0.9375rem)",
-              color: "var(--md-fg-secondary)",
-              lineHeight: 1.6,
-            }}
-          >
-            Individually documented creations, hallmarked in solid sterling silver and archived for connoisseurs worldwide. Swipe or slide to explore the collection.
-          </p>
         </div>
 
         {/* Carousel Controls (Previous / Next chevrons) */}
