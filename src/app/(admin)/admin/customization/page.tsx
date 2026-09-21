@@ -921,6 +921,31 @@ export default function AdminCustomizationPage() {
                 <TextAreaField label="Default WhatsApp Concierge Pre-Filled Message" value={config.whatsappConciergeGreeting} onChange={(v) => updateField("whatsappConciergeGreeting", v)} />
               </div>
             </div>
+
+            <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
+              <h4 style={{ margin: "0 0 8px", fontSize: "0.9375rem", display: "flex", alignItems: "center", gap: 8 }}>
+                <span>✉</span>
+                <span>Gmail Authentication &amp; OTP SMTP Credentials</span>
+              </h4>
+              <p style={{ margin: "0 0 16px", fontSize: "0.8125rem", color: "var(--md-fg-muted)", lineHeight: 1.5 }}>
+                Used to dispatch single-use 6-digit verification codes to clients signing in with their email address.
+                You can set them here or in your <code>.env</code> file as <code>GMAIL_USER</code> and <code>GMAIL_APP_PASSWORD</code>.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+                <InputField
+                  label="Gmail Address / Sender Email"
+                  value={config.gmailUser || ""}
+                  onChange={(v) => updateField("gmailUser", v)}
+                  desc="e.g. millenniumdesigns.jaipur@gmail.com"
+                />
+                <InputField
+                  label="16-Character Google App Password"
+                  value={config.gmailAppPassword || ""}
+                  onChange={(v) => updateField("gmailAppPassword", v)}
+                  desc="Generate at Google Account -> Security -> 2-Step Verification -> App Passwords"
+                />
+              </div>
+            </div>
           </div>
         )}
 

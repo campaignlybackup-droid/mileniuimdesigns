@@ -6,6 +6,7 @@ import { formatMoney, money } from "@/lib/money";
 import { getProductFallbackImages } from "@/lib/media/categoryImages";
 import { issueOtp, verifyOtpCode } from "@/lib/auth/otp";
 import { createSession } from "@/lib/auth/session";
+import { sendCustomerOtpEmail } from "@/lib/email/mailer";
 
 export type CustomerProfile = {
   id: string;
@@ -207,12 +208,33 @@ export async function addCustomerAddress(
 
 export async function sendCustomerOtp(identifier: string) {
   const clean = identifier.trim().toLowerCase();
-  return withTransaction(async (tx) => {
+  const isEmail = clean.includes("@");
+
+  const issued = await withTransaction(async (tx) => {
     return issueOtp(tx, {
       purpose: "customer_login",
       identifier: clean,
     });
   });
+
+  let emailResult: { sent: boolean; provider: string; error?: string } = {
+    sent: false,
+    provider: isEmail ? "gmail" : "whatsapp",
+  };
+
+  if (isEmail) {
+    emailResult = await sendCustomerOtpEmail({
+      to: clean,
+      code: issued.deliverable,
+      expiresMinutes: 10,
+    });
+  }
+
+  return {
+    ...issued,
+    isEmail,
+    emailResult,
+  };
 }
 
 export async function verifyAndLoginCustomer(identifier: string, code: string, marketCode: string = "US") {

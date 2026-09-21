@@ -16,9 +16,16 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       ok: true,
-      message: "One-time verification code dispatched.",
+      message: issued.isEmail
+        ? issued.emailResult.sent
+          ? `Verification code dispatched to ${identifier} via Gmail.`
+          : `Verification code generated for ${identifier}.`
+        : `Verification code initiated for WhatsApp ${identifier}.`,
+      channel: issued.isEmail ? "email" : "whatsapp",
+      emailSent: issued.emailResult.sent,
+      provider: issued.emailResult.provider,
       expiresAt: issued.expiresAt.toISOString(),
-      // In local development, provide code directly for seamless testing
+      // In local development or unconfigured mode, provide code directly for seamless testing
       devCode: isLocal ? issued.deliverable : undefined,
     });
   } catch (error: unknown) {

@@ -161,7 +161,9 @@ export function secret(
     | "STRIPE_SECRET_KEY"
     | "STRIPE_WEBHOOK_SECRET"
     | "META_CAPI_ACCESS_TOKEN"
-    | "NEXT_PUBLIC_META_PIXEL_ID",
+    | "NEXT_PUBLIC_META_PIXEL_ID"
+    | "GMAIL_USER"
+    | "GMAIL_APP_PASSWORD",
 ): string | undefined {
   return process.env[name];
 }

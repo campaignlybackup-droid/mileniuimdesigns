@@ -134,6 +134,8 @@ export interface StorefrontCustomizationConfig {
   whatsappConciergeNumber: string;
   whatsappConciergeGreeting: string;
   atelierHours: string;
+  gmailUser: string;
+  gmailAppPassword: string;
 
   // 8. Footer, Hallmarks & Social
   footerBrandStatement: string;
@@ -348,6 +350,8 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   whatsappConciergeGreeting:
     "Namaste. I am inquiring about a fine jewellery creation from the Millennium Designs Jaipur atelier archive.",
   atelierHours: "Monday – Saturday: 11:00 AM – 7:30 PM IST (Sundays by private appointment)",
+  gmailUser: "",
+  gmailAppPassword: "",
 
   // 8. Footer, Hallmarks & Social
   footerBrandStatement:
