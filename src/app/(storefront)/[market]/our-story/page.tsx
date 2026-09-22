@@ -586,7 +586,7 @@ export default async function OurStoryPage({
               </div>
             </div>
 
-            {/* Sanket Agarwal — Director */}
+            {/* Saket Agarwal — Director */}
             <div
               style={{
                 display: "flex",
@@ -609,7 +609,7 @@ export default async function OurStoryPage({
               >
                 <Image
                   src="/images/story/sanket-agarwal.jpg"
-                  alt="Sanket Agarwal, Director of Millennium Designs"
+                  alt="Saket Agarwal, Director of Millennium Designs"
                   fill
                   sizes="(max-width: 768px) 90vw, 320px"
                   style={{ objectFit: "cover", objectPosition: "center top" }}
@@ -626,7 +626,7 @@ export default async function OurStoryPage({
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  Sanket Agarwal
+                  Saket Agarwal
                 </p>
                 <p
                   style={{
