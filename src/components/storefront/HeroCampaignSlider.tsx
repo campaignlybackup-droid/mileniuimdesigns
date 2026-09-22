@@ -2,15 +2,14 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 
 export type CampaignSlide = {
   id: string;
   subhead: string;
   title: string;
   standfirst: string;
-  ctaText: string;
-  ctaHref: string;
+  ctaText?: string;
+  ctaHref?: string;
   imageSrc: string;
   imageAlt: string;
   tag: string;
@@ -19,46 +18,39 @@ export type CampaignSlide = {
 const CAMPAIGN_SLIDES: CampaignSlide[] = [
   {
     id: "emerald-solitaire",
-    tag: "HAUTE JOAILLERIE",
-    subhead: "JOHARI BAZAAR, JAIPUR · ATELIER 1961",
+    tag: "HAUTE JOAILLERIE · EST. 1961",
+    subhead: "Unheated Mineral Sovereignty",
     title: "Courtly Emeralds & Cold-Forged Silver",
     standfirst:
       "Rare unheated Colombian emeralds cradled in our proprietary anti-tarnish 925 sterling silver alloy. Hand-cast, faceted, and hallmarked on the bench.",
-    ctaText: "Explore High Jewellery",
-    ctaHref: "/rings",
-    imageSrc: "/images/hero-emerald-ring.jpg",
-    imageAlt: "Courtly emerald solitaire ring forged in 925 sterling silver",
+    imageSrc: "/images/hero/campaign_hero_1.jpg",
+    imageAlt: "Courtly Colombian emerald solitaire ring forged in 925 sterling silver",
   },
   {
     id: "moonstone-signature",
-    tag: "THE NEW SIGNATURE",
-    subhead: "CELESTIAL ADULARESCENCE",
-    title: "The Art of the Light",
+    tag: "THE SOVEREIGN MOONSTONE SUITE",
+    subhead: "Celestial Adularescence",
+    title: "Celestial Light, Set in Sculptural Silver",
     standfirst:
       "Natural hand-cut rainbow moonstones exhibiting otherworldly blue adularescence, set in architectural sovereign silver mounts.",
-    ctaText: "Discover Natural Moonstone",
-    ctaHref: "/stones/moonstone",
-    imageSrc: "/images/categories/rings.jpg",
-    imageAlt: "Natural rainbow moonstone fine jewellery collection",
+    imageSrc: "/images/hero/campaign_hero_2.jpg",
+    imageAlt: "Natural blue flash rainbow moonstone fine jewellery collection",
   },
   {
     id: "royal-pendants",
-    tag: "ARCHIVAL CREATIONS",
-    subhead: "ONE-OF-A-KIND ARCHIVAL MOUNTS",
-    title: "Made to Be Remembered",
+    tag: "THE REGAL PENDANT VAULT",
+    subhead: "Archival Talismans",
+    title: "Crown Jewels for Modern Connoisseurs",
     standfirst:
-      "Courtly cushion and brilliant-cut heirloom minerals captured in cold-forged silhouettes. Zero middlemen markups; direct from master silversmiths.",
-    ctaText: "View Royal Pendants",
-    ctaHref: "/pendants",
-    imageSrc: "/images/categories/pendants.jpg",
-    imageAlt: "Royal archival fine silver pendants and natural gemstones",
+      "Courtly cushion and brilliant-cut heirloom minerals captured in cold-forged silhouettes. Generational Jaipur lost-wax bench mastery.",
+    imageSrc: "/images/hero/campaign_hero_3.jpg",
+    imageAlt: "Imperial royal amethyst and gemstone sterling silver pendants",
   },
 ];
 
 export function HeroCampaignSlider({
-  marketPrefix = "",
   slides = CAMPAIGN_SLIDES,
-  autoIntervalMs = 5500,
+  autoIntervalMs = 6000,
   autoplayEnabled = true,
   textAlign = "left",
   overlayOpacity = 0.45,
@@ -71,6 +63,7 @@ export function HeroCampaignSlider({
   overlayOpacity?: number;
 }): React.JSX.Element {
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Touch Swipe tracking for smartphones
   const touchStartXRef = useRef<number | null>(null);
@@ -87,26 +80,26 @@ export function HeroCampaignSlider({
     setCurrentIdx((prev) => (prev - 1 + totalSlides) % totalSlides);
   }, [totalSlides]);
 
-  // Autoplay cycle
+  // Autoplay cycle with pause on hover
   useEffect(() => {
-    if (!autoplayEnabled || totalSlides <= 1) return;
+    if (!autoplayEnabled || totalSlides <= 1 || isPaused) return;
     const interval = setInterval(nextSlide, autoIntervalMs);
     return () => clearInterval(interval);
-  }, [nextSlide, autoIntervalMs, autoplayEnabled, totalSlides]);
+  }, [nextSlide, autoIntervalMs, autoplayEnabled, totalSlides, isPaused]);
 
-  // Touch handlers for seamless swipe gestures on mobile
+  // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartXRef.current = e.targetTouches[0].clientX;
+    touchStartXRef.current = e.targetTouches[0]?.clientX ?? null;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndXRef.current = e.targetTouches[0].clientX;
+    touchEndXRef.current = e.targetTouches[0]?.clientX ?? null;
   };
 
   const handleTouchEnd = () => {
     if (touchStartXRef.current === null || touchEndXRef.current === null) return;
     const diff = touchStartXRef.current - touchEndXRef.current;
-    const minSwipeDistance = 45; // 45px threshold
+    const minSwipeDistance = 40;
 
     if (diff > minSwipeDistance) {
       nextSlide();
@@ -119,19 +112,25 @@ export function HeroCampaignSlider({
   };
 
   const activeSlide = activeSlides[currentIdx] || activeSlides[0]!;
+  const isCentered = textAlign === "center";
+
+  // Compute refined scrim opacity based on admin setting
+  const effectiveOpacity = Math.max(0.2, Math.min(overlayOpacity, 0.85));
 
   return (
     <section
       data-surface="emerald-deep"
-      aria-label="Featured Fine Jewellery Campaigns"
+      aria-label="Millennium Designs Haute Joaillerie Showcase"
       className="md-hero-section"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "clamp(340px, 50vh, 780px)",
+        minHeight: "clamp(460px, 66vh, 840px)",
         background: "var(--md-green-black)",
         color: "var(--md-fg-inverse)",
         overflow: "hidden",
@@ -139,7 +138,7 @@ export function HeroCampaignSlider({
         alignItems: "center",
       }}
     >
-      {/* ── Background Campaign Photography with Ken Burns slow zoom ── */}
+      {/* ── Background Campaign Imagery with Ken Burns subtle drift ── */}
       {activeSlides.map((slide, idx) => {
         const isActive = idx === currentIdx;
         return (
@@ -150,9 +149,9 @@ export function HeroCampaignSlider({
               position: "absolute",
               inset: 0,
               opacity: isActive ? 1 : 0,
-              transition: "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1)",
               zIndex: 1,
-              pointerEvents: isActive ? "auto" : "none",
+              pointerEvents: "none",
             }}
           >
             <Image
@@ -160,37 +159,43 @@ export function HeroCampaignSlider({
               alt={slide.imageAlt}
               fill
               priority={idx === 0}
-              sizes="(max-width: 768px) 100vw, 100vw"
+              sizes="100vw"
               style={{
                 objectFit: "cover",
-                objectPosition: "center 38%",
-                transform: isActive ? "scale(1.05)" : "scale(1.0)",
-                transition: "transform 7000ms cubic-bezier(0.1, 1, 0.3, 1)",
-                filter: "brightness(0.68) contrast(1.08)",
+                objectPosition: "center 42%",
+                transform: isActive ? "scale(1.04)" : "scale(1.0)",
+                transition: "transform 8500ms cubic-bezier(0.16, 1, 0.3, 1)",
+                filter: "brightness(0.92) contrast(1.04)",
               }}
             />
-            {/* Cinematic Gradient Overlays: Rich Studio Vignette for perfect text readability on mobile */}
+
+            {/* Haute Joaillerie Luxury Vignette Gradient:
+                Keeps the jewelry piece radiant while providing crisp contrast for typography */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: isCentered
+                  ? `radial-gradient(ellipse at center, rgba(3, 15, 10, ${effectiveOpacity * 0.7}) 0%, rgba(3, 15, 10, ${effectiveOpacity * 1.3}) 100%)`
+                  : `linear-gradient(90deg, rgba(3, 15, 10, ${effectiveOpacity * 1.55}) 0%, rgba(3, 15, 10, ${effectiveOpacity * 1.1}) 38%, rgba(3, 15, 10, ${effectiveOpacity * 0.35}) 70%, transparent 100%)`,
+                transition: "background 500ms ease",
+              }}
+            />
+
+            {/* Subtle bottom edge shadow uniting with next section */}
             <div
               style={{
                 position: "absolute",
                 inset: 0,
                 background:
-                  "linear-gradient(to right, rgba(4, 18, 12, 0.92) 0%, rgba(4, 18, 12, 0.72) 55%, rgba(4, 18, 12, 0.32) 100%)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(to top, rgba(3, 15, 10, 0.9) 0%, transparent 50%, rgba(3, 15, 10, 0.45) 100%)",
+                  "linear-gradient(to top, rgba(3, 15, 10, 0.65) 0%, transparent 22%)",
               }}
             />
           </div>
         );
       })}
 
-      {/* ── Foreground Editorial Typography & Content ──────────────── */}
+      {/* ── Foreground Editorial Typography ───────────────────────── */}
       <div
         className="md-hero-content"
         style={{
@@ -200,41 +205,66 @@ export function HeroCampaignSlider({
           maxWidth: "var(--md-container)",
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
-          paddingBlock: "clamp(28px, 6vw, 96px)",
+          paddingBlock: "clamp(36px, 7vw, 100px)",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
+          alignItems: isCentered ? "center" : "flex-start",
+          textAlign: isCentered ? "center" : "left",
         }}
       >
-        <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "clamp(10px, 2vw, 18px)" }}>
-          {/* Tag & Subhead */}
-          <div style={{ display: "flex", alignItems: "center", gap: "clamp(6px, 1.5vw, 10px)", flexWrap: "wrap" }}>
+        <div
+          style={{
+            maxWidth: isCentered ? "800px" : "660px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: isCentered ? "center" : "flex-start",
+            gap: "clamp(12px, 2.2vw, 22px)",
+          }}
+        >
+          {/* Prestige Provenance Tag & Subhead */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isCentered ? "center" : "flex-start",
+              gap: "clamp(8px, 1.5vw, 12px)",
+              flexWrap: "wrap",
+            }}
+          >
             <span
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 4,
-                padding: "2px 8px",
-                borderRadius: 0,
-                background: "color-mix(in srgb, var(--md-champagne) 18%, transparent)",
-                border: "1px solid color-mix(in srgb, var(--md-champagne) 42%, transparent)",
+                gap: 6,
+                padding: "4px 10px",
+                background: "color-mix(in srgb, var(--md-champagne) 14%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 38%, transparent)",
                 color: "var(--md-champagne)",
-                fontSize: "clamp(0.5625rem, 1.6vw, 0.625rem)",
-                letterSpacing: "0.14em",
+                fontSize: "clamp(0.5625rem, 1.5vw, 0.625rem)",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 fontWeight: 600,
                 fontFamily: "var(--md-font-crest), Georgia, serif",
                 lineHeight: 1,
               }}
             >
-              <span>✦</span>
+              <span style={{ color: "var(--md-gold)", fontSize: "0.6875rem" }}>✦</span>
               <span>{activeSlide.tag}</span>
             </span>
 
             <span
               style={{
-                fontSize: "clamp(0.5625rem, 1.6vw, 0.65625rem)",
-                letterSpacing: "0.14em",
+                display: "inline-block",
+                width: 20,
+                height: 1,
+                background: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
+              }}
+            />
+
+            <span
+              style={{
+                fontSize: "clamp(0.625rem, 1.6vw, 0.6875rem)",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color: "color-mix(in srgb, var(--md-champagne) 85%, transparent)",
                 fontWeight: 500,
@@ -244,78 +274,192 @@ export function HeroCampaignSlider({
             </span>
           </div>
 
-          {/* Headline: Mobile-tuned clamp to prevent 4-line wrapping */}
+          {/* Grand Haute Joaillerie Headline */}
           <h1
             key={activeSlide.id}
             className="md-hero-title"
             style={{
               margin: 0,
               fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.45rem, 4.8vw, 3.75rem)",
-              lineHeight: 1.1,
+              fontSize: "clamp(1.85rem, 4.8vw, 3.85rem)",
+              lineHeight: 1.08,
               fontWeight: 400,
-              letterSpacing: "-0.015em",
+              letterSpacing: "-0.02em",
               color: "var(--md-fg-inverse)",
               textWrap: "balance",
-              animation: "fadeIn 550ms cubic-bezier(0.16, 1, 0.3, 1)",
+              textShadow: "0 3px 20px rgba(0, 0, 0, 0.65)",
+              animation: "fadeIn 600ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {activeSlide.title}
           </h1>
 
-          {/* Standfirst narrative — hidden on mobile via .md-hero-standfirst for sleek spaciousness */}
+          {/* Editorial Standfirst Narrative */}
           <p
             key={`p-${activeSlide.id}`}
             className="md-hero-standfirst"
             style={{
               margin: 0,
-              fontSize: "clamp(0.8125rem, 2vw, 0.9375rem)",
-              lineHeight: 1.6,
-              color: "color-mix(in srgb, var(--md-fg-inverse) 86%, transparent)",
-              maxWidth: "520px",
-              animation: "fadeIn 650ms cubic-bezier(0.16, 1, 0.3, 1)",
+              fontSize: "clamp(0.84rem, 1.8vw, 0.98rem)",
+              lineHeight: 1.7,
+              color: "color-mix(in srgb, var(--md-fg-inverse) 88%, transparent)",
+              maxWidth: "540px",
+              textShadow: "0 2px 14px rgba(0, 0, 0, 0.5)",
+              animation: "fadeIn 700ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             {activeSlide.standfirst}
           </p>
+        </div>
+      </div>
 
-          {/* Editorial Custom CTAs */}
+      {/* ── Haute Joaillerie Editorial Slide Controls & Timeline Bar ── */}
+      {totalSlides > 1 && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "clamp(16px, 3.5vw, 32px)",
+            left: "var(--md-gutter)",
+            right: "var(--md-gutter)",
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+            zIndex: 4,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            pointerEvents: "none",
+          }}
+        >
+          {/* Slide Numbers & Timeline Dashes */}
           <div
             style={{
               display: "flex",
-              alignItems: "stretch",
-              gap: "clamp(10px, 2vw, 20px)",
-              paddingTop: "clamp(4px, 1.2vw, 12px)",
-              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 14,
+              pointerEvents: "auto",
             }}
           >
-            <Link
-              href={`${marketPrefix}${activeSlide.ctaHref}`}
-              className="md-hero-cta"
+            {/* Elegant slide counter */}
+            <span
               style={{
+                fontFamily: "var(--md-font-display)",
+                fontSize: "0.8125rem",
+                color: "var(--md-champagne)",
+                letterSpacing: "0.15em",
+                fontWeight: 500,
+              }}
+            >
+              0{currentIdx + 1}&nbsp;
+              <span style={{ opacity: 0.5, fontSize: "0.75rem" }}>/ 0{totalSlides}</span>
+            </span>
+
+            {/* Individual slide navigation dashes */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {activeSlides.map((slide, idx) => {
+                const isActive = idx === currentIdx;
+                return (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    onClick={() => setCurrentIdx(idx)}
+                    aria-label={`Go to slide ${idx + 1}: ${slide.title}`}
+                    style={{
+                      border: "none",
+                      padding: 0,
+                      height: 3,
+                      width: isActive ? 44 : 18,
+                      background: isActive
+                        ? "var(--md-champagne)"
+                        : "color-mix(in srgb, var(--md-fg-inverse) 30%, transparent)",
+                      cursor: "pointer",
+                      transition: "width 400ms cubic-bezier(0.16, 1, 0.3, 1), background 300ms ease",
+                      borderRadius: 1,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Discreet Chevrons for Desktop */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              pointerEvents: "auto",
+            }}
+          >
+            <button
+              type="button"
+              onClick={prevSlide}
+              aria-label="Previous Campaign"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 25%, transparent)",
+                color: "var(--md-champagne)",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 8,
-                padding: "clamp(10px, 2.2vw, 14px) clamp(18px, 3.5vw, 28px)",
-                background: "var(--md-champagne)",
-                color: "var(--md-green-black)",
-                fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                textDecoration: "none",
-                borderRadius: 0,
-                minHeight: 44,
-                boxShadow: "0 8px 24px -6px rgba(0, 0, 0, 0.45)",
-                transition: "transform 180ms ease, background 180ms ease",
+                cursor: "pointer",
+                fontSize: "1rem",
+                lineHeight: 1,
+                transition: "background 200ms ease, border-color 200ms ease, transform 150ms ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-black) 90%, transparent)";
+                e.currentTarget.style.borderColor = "var(--md-champagne)";
+                e.currentTarget.style.transform = "scale(1.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-black) 60%, transparent)";
+                e.currentTarget.style.borderColor = "color-mix(in srgb, var(--md-champagne) 25%, transparent)";
+                e.currentTarget.style.transform = "scale(1.0)";
               }}
             >
-              <span>{activeSlide.ctaText}</span>
-            </Link>
+              ‹
+            </button>
+
+            <button
+              type="button"
+              onClick={nextSlide}
+              aria-label="Next Campaign"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "color-mix(in srgb, var(--md-green-black) 60%, transparent)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid color-mix(in srgb, var(--md-champagne) 25%, transparent)",
+                color: "var(--md-champagne)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "1rem",
+                lineHeight: 1,
+                transition: "background 200ms ease, border-color 200ms ease, transform 150ms ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-black) 90%, transparent)";
+                e.currentTarget.style.borderColor = "var(--md-champagne)";
+                e.currentTarget.style.transform = "scale(1.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-black) 60%, transparent)";
+                e.currentTarget.style.borderColor = "color-mix(in srgb, var(--md-champagne) 25%, transparent)";
+                e.currentTarget.style.transform = "scale(1.0)";
+              }}
+            >
+              ›
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

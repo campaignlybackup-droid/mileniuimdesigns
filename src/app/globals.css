@@ -542,22 +542,17 @@ img[data-tone="ivory"] {
 
   /* Compact Hero Campaign on smartphones: refined height and typography */
   .md-hero-section {
-    min-height: clamp(320px, 48vh, 400px) !important;
+    min-height: clamp(380px, 55vh, 480px) !important;
   }
   .md-hero-content {
-    padding-block: clamp(20px, 4.5vw, 36px) !important;
+    padding-block: clamp(24px, 5vw, 44px) !important;
   }
   .md-hero-title {
-    font-size: clamp(1.35rem, 5vw, 1.85rem) !important;
-    line-height: 1.15 !important;
+    font-size: clamp(1.45rem, 5.4vw, 2.1rem) !important;
+    line-height: 1.12 !important;
   }
   .md-hero-standfirst {
     display: none !important;
-  }
-  .md-hero-cta {
-    padding: 8px 18px !important;
-    font-size: 0.6875rem !important;
-    gap: 6px !important;
   }
 
   /* Hide card slider buttons on mobile touch screens for 100% clean image visibility */
