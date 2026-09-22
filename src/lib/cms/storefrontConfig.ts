@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { requireStaffSession } from "@/lib/auth/actor";
 import {
   DEFAULT_STOREFRONT_CONFIG,
@@ -22,10 +22,7 @@ export {
   type FooterColumnConfig,
 };
 
-/**
- * Loads the complete storefront configuration merged with any persisted settings from PostgreSQL.
- */
-export async function getStorefrontConfig(
+async function loadStorefrontConfigFromDb(
   marketCode?: string | null,
 ): Promise<StorefrontCustomizationConfig> {
   const merged: StorefrontCustomizationConfig = { ...DEFAULT_STOREFRONT_CONFIG };
@@ -58,6 +55,24 @@ export async function getStorefrontConfig(
   }
 
   return merged;
+}
+
+/**
+ * Loads the complete storefront configuration merged with any persisted settings from PostgreSQL.
+ * Cached via Next.js Data Cache to prevent DB load on every page request.
+ */
+export async function getStorefrontConfig(
+  marketCode?: string | null,
+): Promise<StorefrontCustomizationConfig> {
+  const norm = marketCode ? marketCode.toUpperCase() : "GLOBAL";
+  return unstable_cache(
+    () => loadStorefrontConfigFromDb(marketCode),
+    ["storefront-config", norm],
+    {
+      tags: ["settings", `settings:${norm}`],
+      revalidate: 3600,
+    },
+  )();
 }
 
 /**
@@ -108,6 +123,7 @@ export async function saveStorefrontSettings(
   }
 
   try {
+    revalidateTag("settings", { expire: 0 });
     revalidatePath("/", "layout");
     revalidatePath("/[market]", "layout");
   } catch {

@@ -1,13 +1,17 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
-import { resolveMarket } from "@/lib/market";
+import { resolveMarket, marketParams } from "@/lib/market";
 import { getStorefrontStones } from "@/lib/stones";
 import { buildCanonicalAndAlternates, getSeoMetadataOverride } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/storefront/Breadcrumbs";
 import { StoneCard } from "@/components/storefront/StoneCard";
 import { EmptyState } from "@/components/storefront/EmptyState";
 
-export const revalidate = 1800;
+export const revalidate = 3600;
+
+export async function generateStaticParams(): Promise<{ market: string }[]> {
+  return marketParams();
+}
 
 export async function generateMetadata({
   params,

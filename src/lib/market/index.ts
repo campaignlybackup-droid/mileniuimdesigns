@@ -64,8 +64,9 @@ const SELECT = `code, name, currency_code, locale, country_code, timezone,
                 tax_mode::text AS tax_mode, prices_include_tax, payment_provider_key,
                 incoterm, weight_unit, rank`;
 
-/** Every active market, rank ascending. Memoised per request. */
-export const listActiveMarkets = cache(async (): Promise<Market[]> => {
+import { unstable_cache } from "next/cache";
+
+async function loadActiveMarketsFromDb(): Promise<Market[]> {
   try {
     const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
       `SELECT ${SELECT} FROM markets WHERE is_active ORDER BY rank`,
@@ -76,16 +77,23 @@ export const listActiveMarkets = cache(async (): Promise<Market[]> => {
   }
   const { STANDALONE_MARKETS } = await import("@/lib/storage/standalone-catalog");
   return STANDALONE_MARKETS;
+}
+
+const getCachedActiveMarkets = unstable_cache(
+  loadActiveMarketsFromDb,
+  ["active-markets-list"],
+  {
+    tags: ["markets"],
+    revalidate: 3600,
+  },
+);
+
+/** Every active market, rank ascending. Memoised per request and cached across requests. */
+export const listActiveMarkets = cache(async (): Promise<Market[]> => {
+  return getCachedActiveMarkets();
 });
 
-/**
- * Resolve a URL segment to a market, or throw.
- */
-export const resolveMarket = cache(async (marketSegment: string): Promise<Market> => {
-  const code = marketSegment.trim().toUpperCase();
-  if (!/^[A-Z]{2}$/.test(code)) {
-    throw new MarketNotFoundError(`'${marketSegment}' is not a market code.`);
-  }
+async function loadMarketFromDb(code: string): Promise<Market> {
   try {
     const rows = await db.$queryRawUnsafe<Record<string, unknown>[]>(
       `SELECT ${SELECT} FROM markets WHERE code = $1 AND is_active`,
@@ -102,6 +110,26 @@ export const resolveMarket = cache(async (marketSegment: string): Promise<Market
   if (fallback) return fallback;
 
   throw new MarketNotFoundError(`No active market '${code}'.`);
+}
+
+const getCachedMarket = unstable_cache(
+  loadMarketFromDb,
+  ["market-by-code"],
+  {
+    tags: ["markets"],
+    revalidate: 3600,
+  },
+);
+
+/**
+ * Resolve a URL segment to a market, or throw.
+ */
+export const resolveMarket = cache(async (marketSegment: string): Promise<Market> => {
+  const code = marketSegment.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(code)) {
+    throw new MarketNotFoundError(`'${marketSegment}' is not a market code.`);
+  }
+  return getCachedMarket(code);
 });
 
 /** `generateStaticParams()` for `[market]` — QUERIES the table, never a hand-written array. */

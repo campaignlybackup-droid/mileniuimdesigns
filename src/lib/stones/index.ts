@@ -1,4 +1,6 @@
 import "server-only";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db/client";
 import { priceVisibility } from "@/lib/catalog/visibility";
 
@@ -172,8 +174,7 @@ export async function getStoneCategories(
   }));
 }
 
-/** Storefront route helpers */
-export async function getStorefrontStones(): Promise<StoneRecord[]> {
+async function loadStorefrontStonesFromDb(): Promise<StoneRecord[]> {
   try {
     const list = await listPublishedStones({ client: db });
     if (list && list.length > 0) return list;
@@ -184,7 +185,18 @@ export async function getStorefrontStones(): Promise<StoneRecord[]> {
   return STANDALONE_STONES;
 }
 
-export async function getStorefrontStone(slug: string): Promise<StoneRecord | null> {
+const getCachedStones = unstable_cache(
+  loadStorefrontStonesFromDb,
+  ["storefront-stones"],
+  { tags: ["stones:index"], revalidate: 3600 },
+);
+
+/** Storefront route helpers */
+export const getStorefrontStones = cache(async (): Promise<StoneRecord[]> => {
+  return getCachedStones();
+});
+
+async function loadStorefrontStoneFromDb(slug: string): Promise<StoneRecord | null> {
   try {
     const stone = await getStoneBySlug(slug, { client: db });
     if (stone) return stone;
@@ -194,6 +206,16 @@ export async function getStorefrontStone(slug: string): Promise<StoneRecord | nu
   const { STANDALONE_STONES } = await import("@/lib/storage/standalone-catalog");
   return STANDALONE_STONES.find((s) => s.slug.toLowerCase() === slug.toLowerCase()) ?? null;
 }
+
+const getCachedStoneBySlug = unstable_cache(
+  loadStorefrontStoneFromDb,
+  ["storefront-stone-by-slug"],
+  { tags: ["stones"], revalidate: 3600 },
+);
+
+export const getStorefrontStone = cache(async (slug: string): Promise<StoneRecord | null> => {
+  return getCachedStoneBySlug(slug);
+});
 
 export async function getStorefrontStoneCategories(
   stoneId: string,

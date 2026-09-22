@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { resolveMarket } from "@/lib/market";
+import { resolveMarket, marketParams } from "@/lib/market";
 import { buildCanonicalAndAlternates } from "@/lib/seo";
 import { listPublishedCategories } from "@/lib/catalog";
 import { listStorefrontFeaturedProducts } from "@/lib/catalog/products";
@@ -15,7 +15,11 @@ import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
 import { getStorefrontConfig } from "@/lib/cms/storefrontConfig";
 
-export const revalidate = 300;
+export const revalidate = 3600;
+
+export async function generateStaticParams(): Promise<{ market: string }[]> {
+  return marketParams();
+}
 
 export async function generateMetadata({
   params,

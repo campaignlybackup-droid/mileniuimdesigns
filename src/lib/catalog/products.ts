@@ -1,4 +1,6 @@
 import "server-only";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db/client";
 import { sql } from "@/lib/db/sql";
 import { priceVisibility } from "@/lib/catalog/visibility";
@@ -620,31 +622,54 @@ async function queryProductList(
 
   const productIds = rows.map((r) => r.id);
 
-  // Batch query price ranges
-  let priceRanges = new Map<string, PriceRange>();
-  try {
-    priceRanges = await getProductPriceRanges(productIds, marketCode as MarketCode);
-  } catch {
-    // Graceful fallback
-  }
-
-  // Batch query media (primary and alternate image)
-  const mediaRows = await ctx.client.$queryRaw<
-    {
-      product_id: string;
-      public_id: string;
-      alt_text: string | null;
-      position: number;
-    }[]
-  >`
-    SELECT DISTINCT ON (pm.product_id, pm.position)
-           pm.product_id::text, m.public_id, m.alt_text, pm.position
-      FROM product_media pm
-      JOIN media m ON m.id = pm.media_id AND m.deleted_at IS NULL
-     WHERE pm.product_id = ANY(${productIds}::uuid[])
-       AND pm.variant_id IS NULL
-     ORDER BY pm.product_id, pm.position, pm.id
-  `;
+  // Parallelize secondary queries: price ranges, media, stones, materials
+  const [priceRanges, mediaRows, stoneRows, matRows] = await Promise.all([
+    getProductPriceRanges(productIds, marketCode as MarketCode).catch(
+      () => new Map<string, PriceRange>(),
+    ),
+    ctx.client.$queryRaw<
+      {
+        product_id: string;
+        public_id: string;
+        alt_text: string | null;
+        position: number;
+      }[]
+    >`
+      SELECT DISTINCT ON (pm.product_id, pm.position)
+             pm.product_id::text, m.public_id, m.alt_text, pm.position
+        FROM product_media pm
+        JOIN media m ON m.id = pm.media_id AND m.deleted_at IS NULL
+       WHERE pm.product_id = ANY(${productIds}::uuid[])
+         AND pm.variant_id IS NULL
+       ORDER BY pm.product_id, pm.position, pm.id
+    `,
+    ctx.client.$queryRaw<
+      {
+        product_id: string;
+        name: string;
+      }[]
+    >`
+      SELECT ps.product_id::text, s.name
+        FROM product_stones ps
+        JOIN stones s ON s.id = ps.stone_id AND s.deleted_at IS NULL
+       WHERE ps.product_id = ANY(${productIds}::uuid[])
+       ORDER BY ps.is_primary DESC, ps.position
+    `,
+    ctx.client.$queryRaw<
+      {
+        product_id: string;
+        name: string;
+      }[]
+    >`
+      SELECT DISTINCT v.product_id::text AS product_id, m.name, vm.is_primary
+        FROM product_variants v
+        JOIN variant_materials vm ON vm.variant_id = v.id
+        JOIN materials m ON m.id = vm.material_id AND m.deleted_at IS NULL
+       WHERE v.product_id = ANY(${productIds}::uuid[])
+         AND v.deleted_at IS NULL
+       ORDER BY v.product_id::text, vm.is_primary DESC, m.name
+    `,
+  ]);
 
   const mediaByProduct = new Map<string, { publicId: string; altText: string | null }[]>();
   for (const m of mediaRows) {
@@ -653,19 +678,6 @@ async function queryProductList(
     mediaByProduct.set(m.product_id, list);
   }
 
-  // Query stone names
-  const stoneRows = await ctx.client.$queryRaw<
-    {
-      product_id: string;
-      name: string;
-    }[]
-  >`
-    SELECT ps.product_id::text, s.name
-      FROM product_stones ps
-      JOIN stones s ON s.id = ps.stone_id AND s.deleted_at IS NULL
-     WHERE ps.product_id = ANY(${productIds}::uuid[])
-     ORDER BY ps.is_primary DESC, ps.position
-  `;
   const stonesByProduct = new Map<string, string[]>();
   for (const s of stoneRows) {
     const list = stonesByProduct.get(s.product_id) ?? [];
@@ -673,21 +685,6 @@ async function queryProductList(
     stonesByProduct.set(s.product_id, list);
   }
 
-  // Query material names
-  const matRows = await ctx.client.$queryRaw<
-    {
-      product_id: string;
-      name: string;
-    }[]
-  >`
-    SELECT DISTINCT v.product_id::text AS product_id, m.name, vm.is_primary
-      FROM product_variants v
-      JOIN variant_materials vm ON vm.variant_id = v.id
-      JOIN materials m ON m.id = vm.material_id AND m.deleted_at IS NULL
-     WHERE v.product_id = ANY(${productIds}::uuid[])
-       AND v.deleted_at IS NULL
-     ORDER BY v.product_id::text, vm.is_primary DESC, m.name
-  `;
   const matsByProduct = new Map<string, string[]>();
   for (const m of matRows) {
     const list = matsByProduct.get(m.product_id) ?? [];
@@ -833,8 +830,7 @@ export async function resolveCuratedFacet(
   };
 }
 
-/** Storefront route helpers (connecting route handlers to service layer) */
-export async function getStorefrontCategory(slug: string) {
+async function loadCategoryBySlug(slug: string) {
   try {
     const cat = await resolveCategoryBySlug(slug, { client: db });
     if (cat) return cat;
@@ -854,7 +850,18 @@ export async function getStorefrontCategory(slug: string) {
   };
 }
 
-export async function listPublishedCategories() {
+const getCachedCategory = unstable_cache(
+  loadCategoryBySlug,
+  ["storefront-category"],
+  { tags: ["categories"], revalidate: 3600 },
+);
+
+/** Storefront route helpers (connecting route handlers to service layer) */
+export const getStorefrontCategory = cache(async (slug: string) => {
+  return getCachedCategory(slug);
+});
+
+async function loadPublishedCategories() {
   try {
     const rows = await db.category.findMany({
       where: { deletedAt: null, isPublished: true },
@@ -868,6 +875,12 @@ export async function listPublishedCategories() {
   const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
   return STANDALONE_CATEGORIES.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
 }
+
+export const listPublishedCategories = unstable_cache(
+  loadPublishedCategories,
+  ["published-categories"],
+  { tags: ["categories"], revalidate: 3600 },
+);
 
 export async function listStorefrontCategoryProducts(
   categoryId: string,
@@ -939,7 +952,7 @@ export async function getStorefrontCuratedFacet(
   }
 }
 
-export async function getStorefrontPdpProduct(slug: string, marketCode: string) {
+async function loadPdpProductFromDb(slug: string, marketCode: string) {
   try {
     const prod = await getProductForPdp(slug, marketCode, { client: db });
     if (prod) return prod;
@@ -949,6 +962,10 @@ export async function getStorefrontPdpProduct(slug: string, marketCode: string) 
   const { getStandalonePdpProduct } = await import("@/lib/storage/standalone-catalog");
   return getStandalonePdpProduct(slug, marketCode);
 }
+
+export const getStorefrontPdpProduct = cache(async (slug: string, marketCode: string) => {
+  return loadPdpProductFromDb(slug, marketCode);
+});
 
 export async function listTopProductSlugs(take = 50) {
   try {
@@ -970,18 +987,20 @@ export async function listTopProductSlugs(take = 50) {
   return getStandaloneTopProductSlugs(take);
 }
 
-export async function getCategoryFilterOptions() {
+async function loadCategoryFilterOptionsFromDb() {
   try {
-    const stones = await db.stone.findMany({
-      where: { deletedAt: null, isPublished: true },
-      select: { id: true, name: true, slug: true },
-      orderBy: { rank: "asc" },
-    });
-    const materials = await db.material.findMany({
-      where: { deletedAt: null, isPublished: true },
-      select: { id: true, name: true, slug: true },
-      orderBy: { rank: "asc" },
-    });
+    const [stones, materials] = await Promise.all([
+      db.stone.findMany({
+        where: { deletedAt: null, isPublished: true },
+        select: { id: true, name: true, slug: true },
+        orderBy: { rank: "asc" },
+      }),
+      db.material.findMany({
+        where: { deletedAt: null, isPublished: true },
+        select: { id: true, name: true, slug: true },
+        orderBy: { rank: "asc" },
+      }),
+    ]);
     if (stones.length > 0) return { stones, materials };
   } catch {
     // Database unconfigured / offline on host storage
@@ -996,6 +1015,12 @@ export async function getCategoryFilterOptions() {
     ],
   };
 }
+
+export const getCategoryFilterOptions = unstable_cache(
+  loadCategoryFilterOptionsFromDb,
+  ["category-filter-options"],
+  { tags: ["filters"], revalidate: 3600 },
+);
 
 export async function getCuratedFacetForCategoryAndStone(categoryId: string, stoneId: string) {
   try {
@@ -1054,7 +1079,7 @@ export async function listAdminCatalogProducts(limit = 100) {
   }
 }
 
-export async function listStorefrontFeaturedProducts(
+async function loadFeaturedProductsFromDb(
   marketCode: string,
   limit = 4,
 ): Promise<ListProductsResult> {
@@ -1074,6 +1099,15 @@ export async function listStorefrontFeaturedProducts(
   const { getStandaloneFeaturedProducts } = await import("@/lib/storage/standalone-catalog");
   return getStandaloneFeaturedProducts(marketCode, limit);
 }
+
+export const listStorefrontFeaturedProducts = cache(
+  async (
+    marketCode: string,
+    limit = 4,
+  ): Promise<ListProductsResult> => {
+    return loadFeaturedProductsFromDb(marketCode, limit);
+  },
+);
 
 export async function searchStorefrontProducts(
   query: string,

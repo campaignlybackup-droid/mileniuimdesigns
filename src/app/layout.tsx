@@ -9,7 +9,7 @@ import "./globals.css";
 const bodoni = Bodoni_Moda({
   variable: "--md-font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -32,7 +32,7 @@ const italiana = Italiana({
 const cinzel = Cinzel({
   variable: "--md-font-crest",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
   display: "swap",
 });
 
@@ -43,7 +43,7 @@ const cinzel = Cinzel({
 const sans = Plus_Jakarta_Sans({
   variable: "--md-font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 

@@ -60,7 +60,7 @@ const bootSchema = z.object({
       return v.trim().replace(/^['"]+|['"]+$/g, "");
     })
     .pipe(z.string().min(1)),
-  DATABASE_CONNECTION_LIMIT: z.coerce.number().int().positive().default(5),
+  DATABASE_CONNECTION_LIMIT: z.coerce.number().int().positive().default(10),
 });
 
 export type BootEnv = z.infer<typeof bootSchema>;
@@ -77,7 +77,7 @@ export function env(): BootEnv {
       NEXT_PUBLIC_DEFAULT_MARKET: "US",
       DATABASE_URL: DEFAULT_FALLBACK_URL,
       DIRECT_URL: DEFAULT_FALLBACK_URL,
-      DATABASE_CONNECTION_LIMIT: 5,
+      DATABASE_CONNECTION_LIMIT: 10,
     };
     cached = fallback;
     return cached;

@@ -1,4 +1,6 @@
 import "server-only";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { env } from "@/lib/config/env";
 import { db } from "@/lib/db/client";
 import { listActiveMarkets } from "@/lib/market";
@@ -81,7 +83,7 @@ const VALID_SEO_ENTITY_TYPES = new Set([
   "home",
 ]);
 
-export async function getSeoMetadataOverride(
+async function loadSeoMetadataOverrideFromDb(
   entityType: string,
   entityId: string | null,
   marketCode?: string,
@@ -101,7 +103,6 @@ export async function getSeoMetadataOverride(
     const rows = await db.seoMetadata.findFirst({
       where: {
         entityType: entityType as never,
-
         ...(entityId ? { entityId } : {}),
         ...(marketCode ? { OR: [{ marketCode }, { marketCode: null }] } : {}),
       },
@@ -122,6 +123,30 @@ export async function getSeoMetadataOverride(
     return null;
   }
 }
+
+const getCachedSeoOverride = unstable_cache(
+  loadSeoMetadataOverrideFromDb,
+  ["seo-metadata-override"],
+  { tags: ["seo"], revalidate: 3600 },
+);
+
+export const getSeoMetadataOverride = cache(
+  async (
+    entityType: string,
+    entityId: string | null,
+    marketCode?: string,
+  ): Promise<{
+    title: string | null;
+    description: string | null;
+    canonicalPath: string | null;
+    ogTitle: string | null;
+    ogDescription: string | null;
+    robotsNoindex: boolean;
+    robotsNofollow: boolean;
+  } | null> => {
+    return getCachedSeoOverride(entityType, entityId, marketCode);
+  },
+);
 
 /**
  * Build JSON-LD for Product detail page — 04 §5.4.
