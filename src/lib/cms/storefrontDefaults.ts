@@ -178,12 +178,12 @@ export interface StorefrontCustomizationConfig {
 export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   // 1. Header & Top Ribbon
   announcementVisible: true,
-  announcementText: "COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS",
+  announcementText: "COMPLIMENTARY INSURED COURIER ON ALL ORDERS",
   announcementLink: "/our-story",
   announcementBgColor: "var(--md-forest, #062319)",
   announcementTextColor: "var(--md-champagne, #e8d8b9)",
-  ribbonProvenanceTag: "✦ JOHARI BAZAAR, JAIPUR · EST. 1961",
-  ribbonRightTag: "SOLID 925 STERLING SILVER · 100% UNTREATED NATURAL MINERALS",
+  ribbonProvenanceTag: "",
+  ribbonRightTag: "",
   headerLogoMode: "wordmark",
   headerCustomLogoUrl: "",
   headerSticky: true,

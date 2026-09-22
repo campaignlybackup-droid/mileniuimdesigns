@@ -236,7 +236,7 @@ export default async function StorefrontHomePage({
                 fontWeight: 600,
               }}
             >
-              Browse All Creations ({allFeatured.length}+) →
+              Browse All Creations ({allFeatured.length}+)
             </Link>
           </div>
 
@@ -361,7 +361,8 @@ export default async function StorefrontHomePage({
                   </h3>
                   <span
                     style={{
-                      fontSize: "0.625rem",
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: "var(--md-fg-secondary)",
@@ -370,7 +371,7 @@ export default async function StorefrontHomePage({
                       display: "block",
                     }}
                   >
-                    Explore →
+                    Explore
                   </span>
                 </div>
               </Link>
@@ -486,7 +487,7 @@ export default async function StorefrontHomePage({
                     fontWeight: 600,
                   }}
                 >
-                  Our Story &amp; Atelier →
+                  Our Story &amp; Atelier
                 </Link>
               </div>
             </div>
@@ -556,7 +557,7 @@ export default async function StorefrontHomePage({
                 fontWeight: 600,
               }}
             >
-              View All Stones ({stones.length}) →
+              View All Stones ({stones.length})
             </Link>
           </div>
 
@@ -642,7 +643,7 @@ export default async function StorefrontHomePage({
                 textAlign: "center",
               }}
             >
-              Inquire on WhatsApp →
+              Inquire on WhatsApp
             </a>
           </div>
         </section>

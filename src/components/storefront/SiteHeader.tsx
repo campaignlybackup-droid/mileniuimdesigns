@@ -63,19 +63,21 @@ export function SiteHeader({
         Skip to content
       </a>
 
-      {/* PRESTIGE ATELIER TOP RIBBON */}
+      {/* MINIMAL ATELIER ANNOUNCEMENT BAR */}
       {config?.announcementVisible !== false && (
         <div
           style={{
             background: config?.announcementBgColor || "var(--md-green-black)",
-            color: config?.announcementTextColor || "var(--md-fg-inverse)",
-            borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 24%, transparent)",
-            paddingBlock: "5px",
+            color: config?.announcementTextColor || "var(--md-champagne)",
+            borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 18%, transparent)",
+            paddingBlock: "7px",
             paddingInline: "var(--md-gutter)",
-            fontSize: "clamp(0.5625rem, 1.8vw, 0.625rem)",
-            letterSpacing: "0.16em",
+            fontSize: "clamp(0.625rem, 1.8vw, 0.6875rem)",
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
-            fontFamily: "var(--md-font-crest), Georgia, serif",
+            fontFamily: "var(--md-font-sans)",
+            fontWeight: 500,
+            textAlign: "center",
           }}
         >
           <div
@@ -84,18 +86,14 @@ export function SiteHeader({
               marginInline: "auto",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
+              justifyContent: "center",
               overflow: "hidden",
             }}
           >
-            <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", gap: "6px", whiteSpace: "nowrap" }}>
-              {config?.ribbonProvenanceTag || "✦ JOHARI BAZAAR, JAIPUR · EST. 1961"}
-            </span>
             <span
               style={{
-                marginInline: "auto",
                 textAlign: "center",
-                letterSpacing: "0.12em",
+                letterSpacing: "0.14em",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -104,14 +102,11 @@ export function SiteHeader({
             >
               {config?.announcementLink ? (
                 <Link href={config.announcementLink} style={{ color: "inherit", textDecoration: "none" }}>
-                  {config.announcementText}
+                  {config.announcementText || "Complimentary Insured Courier on All Orders"}
                 </Link>
               ) : (
-                config?.announcementText || "COMPLIMENTARY INSURED WHITE-GLOVE COURIER ON ALL ORDERS"
+                config?.announcementText || "Complimentary Insured Courier on All Orders"
               )}
-            </span>
-            <span className="md-top-ribbon-desktop" style={{ color: "var(--md-champagne)", whiteSpace: "nowrap" }}>
-              {config?.ribbonRightTag || "ANTI-TARNISH 925 SILVER"}
             </span>
           </div>
         </div>

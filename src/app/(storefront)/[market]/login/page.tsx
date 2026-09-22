@@ -364,7 +364,7 @@ export default function LoginPage() {
                 disabled={loading}
                 style={{ width: "100%", marginTop: "var(--md-space-2)" }}
               >
-                {loading ? "Dispatching Code…" : "Send Verification Code →"}
+                {loading ? "Dispatching Code…" : "Send Verification Code"}
               </Button>
             </form>
           </div>
@@ -441,7 +441,7 @@ export default function LoginPage() {
               disabled={loading || code.trim().length < 6}
               style={{ width: "100%", marginTop: "var(--md-space-2)" }}
             >
-              {loading ? "Verifying Vault Access…" : "Access Client Vault →"}
+              {loading ? "Verifying Vault Access…" : "Access Client Vault"}
             </Button>
 
             {/* Resend Code Action */}

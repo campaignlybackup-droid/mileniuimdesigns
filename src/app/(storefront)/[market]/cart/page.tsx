@@ -130,7 +130,7 @@ export default function CartPage() {
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              Explore Rings & Creations <span>→</span>
+              Explore Rings & Creations
             </Link>
           </div>
         ) : (
@@ -415,7 +415,7 @@ export default function CartPage() {
                   boxSizing: "border-box",
                 }}
               >
-                Proceed to Secure Checkout →
+                Proceed to Secure Checkout
               </Link>
 
               <div
