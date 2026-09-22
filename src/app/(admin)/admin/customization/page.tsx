@@ -6,9 +6,7 @@ import {
   DEFAULT_STOREFRONT_CONFIG,
   type StorefrontCustomizationConfig,
   type HeroSlideConfig,
-  type TrustPillarConfig,
   type TestimonialConfig,
-  type FooterColumnConfig,
 } from "@/lib/cms/storefrontDefaults";
 
 const TABS = [
@@ -27,11 +25,16 @@ const TABS = [
 
 export default function AdminCustomizationPage() {
   const [activeTab, setActiveTab] = useState("header");
-  const [config, setConfig] = useState<StorefrontCustomizationConfig>(DEFAULT_STOREFRONT_CONFIG);
+  const [config, setConfig] = useState<StorefrontCustomizationConfig>(
+    DEFAULT_STOREFRONT_CONFIG,
+  );
   const [market, setMarket] = useState<string>("global");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [statusMessage, setStatusMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
   // Fetch current config on load / market change
   useEffect(() => {
@@ -74,12 +77,16 @@ export default function AdminCustomizationPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setStatusMessage({ text: "All 100+ customization settings saved live to database!", type: "success" });
+        setStatusMessage({
+          text: "All 100+ customization settings saved live to database!",
+          type: "success",
+        });
       } else {
         setStatusMessage({ text: data.error || "Failed to save settings", type: "error" });
       }
-    } catch (err: any) {
-      setStatusMessage({ text: err.message || "Network error while saving", type: "error" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Network error while saving";
+      setStatusMessage({ text: msg, type: "error" });
     } finally {
       setSaving(false);
       setTimeout(() => setStatusMessage(null), 5000);
@@ -87,9 +94,16 @@ export default function AdminCustomizationPage() {
   };
 
   const handleResetDefaults = () => {
-    if (confirm("Reset all settings to original atelier defaults? Unsaved changes will be replaced.")) {
+    if (
+      confirm(
+        "Reset all settings to original atelier defaults? Unsaved changes will be replaced.",
+      )
+    ) {
       setConfig({ ...DEFAULT_STOREFRONT_CONFIG });
-      setStatusMessage({ text: "Form reset to atelier defaults. Click 'Save Live Settings' to commit.", type: "success" });
+      setStatusMessage({
+        text: "Form reset to atelier defaults. Click 'Save Live Settings' to commit.",
+        type: "success",
+      });
     }
   };
 
@@ -110,7 +124,10 @@ export default function AdminCustomizationPage() {
   };
 
   const removeHeroSlide = (idx: number) => {
-    updateField("heroSlides", config.heroSlides.filter((_, i) => i !== idx));
+    updateField(
+      "heroSlides",
+      config.heroSlides.filter((_, i) => i !== idx),
+    );
   };
 
   const updateHeroSlide = (idx: number, patch: Partial<HeroSlideConfig>) => {
@@ -126,7 +143,8 @@ export default function AdminCustomizationPage() {
       clientName: "Valued Collector",
       location: "San Francisco, USA",
       rating: 5,
-      reviewText: "Exceptional craftsmanship. The gemstone has extraordinary fire and presence.",
+      reviewText:
+        "Exceptional craftsmanship. The gemstone has extraordinary fire and presence.",
       piecePurchased: "Sovereign Gemstone Ring",
       dateStr: "Recent Collector Acquisition",
     };
@@ -134,7 +152,10 @@ export default function AdminCustomizationPage() {
   };
 
   const removeTestimonial = (idx: number) => {
-    updateField("testimonials", config.testimonials.filter((_, i) => i !== idx));
+    updateField(
+      "testimonials",
+      config.testimonials.filter((_, i) => i !== idx),
+    );
   };
 
   const updateTestimonial = (idx: number, patch: Partial<TestimonialConfig>) => {
@@ -146,7 +167,13 @@ export default function AdminCustomizationPage() {
   if (loading) {
     return (
       <div style={{ padding: "48px 24px", textAlign: "center", color: "var(--md-fg-muted)" }}>
-        <div style={{ fontSize: "1.25rem", fontFamily: "var(--md-font-display)", color: "var(--md-fg)" }}>
+        <div
+          style={{
+            fontSize: "1.25rem",
+            fontFamily: "var(--md-font-display)",
+            color: "var(--md-fg)",
+          }}
+        >
           ✦ Loading Atelier Customization Engine...
         </div>
         <p style={{ marginTop: 8 }}>Connecting to PostgreSQL settings vault...</p>
@@ -176,7 +203,7 @@ export default function AdminCustomizationPage() {
       >
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "1rem" }}>✦</span>
+            <span style={{ color: "var(--md-gold)", fontSize: "1rem" }}>✦</span>
             <h1
               style={{
                 fontFamily: "var(--md-font-display)",
@@ -190,7 +217,8 @@ export default function AdminCustomizationPage() {
             </h1>
           </div>
           <p style={{ margin: "4px 0 0", fontSize: "0.8125rem", color: "var(--md-fg-muted)" }}>
-            Live control panel for every visual, content, banking, and structural element of the storefront.
+            Live control panel for every visual, content, banking, and structural element of the
+            storefront.
           </p>
         </div>
 
@@ -260,8 +288,8 @@ export default function AdminCustomizationPage() {
               padding: "10px 24px",
               borderRadius: 4,
               border: "none",
-              background: "var(--md-green-black, #051811)",
-              color: "#ffffff",
+              background: "var(--md-green-black)",
+              color: "var(--md-fg-inverse)",
               cursor: saving ? "wait" : "pointer",
               fontWeight: 600,
               fontSize: "0.875rem",
@@ -283,9 +311,12 @@ export default function AdminCustomizationPage() {
             padding: "12px 20px",
             marginBottom: 20,
             borderRadius: 4,
-            background: statusMessage.type === "success" ? "#e6f4ea" : "#fce8e6",
-            color: statusMessage.type === "success" ? "#137333" : "#c5221f",
-            border: `1px solid ${statusMessage.type === "success" ? "#34a853" : "#ea4335"}`,
+            background:
+              statusMessage.type === "success"
+                ? "color-mix(in srgb, var(--md-success) 12%, var(--md-bg-raised))"
+                : "color-mix(in srgb, var(--md-danger) 12%, var(--md-bg-raised))",
+            color: statusMessage.type === "success" ? "var(--md-success)" : "var(--md-danger)",
+            border: `1px solid ${statusMessage.type === "success" ? "var(--md-success)" : "var(--md-danger)"}`,
             fontSize: "0.875rem",
             fontWeight: 500,
           }}
@@ -319,7 +350,9 @@ export default function AdminCustomizationPage() {
                 padding: "8px 16px",
                 borderRadius: "4px 4px 0 0",
                 border: "1px solid",
-                borderColor: isActive ? "var(--md-rule) var(--md-rule) transparent var(--md-rule)" : "transparent",
+                borderColor: isActive
+                  ? "var(--md-rule) var(--md-rule) transparent var(--md-rule)"
+                  : "transparent",
                 background: isActive ? "var(--md-bg)" : "transparent",
                 color: isActive ? "var(--md-fg)" : "var(--md-fg-muted)",
                 fontWeight: isActive ? 600 : 500,
@@ -347,9 +380,18 @@ export default function AdminCustomizationPage() {
         {/* TAB 1: HEADER & TOP RIBBON */}
         {activeTab === "header" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <SectionHeader title="Header & Top Ribbon Customization" subtitle="Control the announcement bar, logos, hallmarks, and header actions." />
+            <SectionHeader
+              title="Header & Top Ribbon Customization"
+              subtitle="Control the announcement bar, logos, hallmarks, and header actions."
+            />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+              }}
+            >
               <ToggleField
                 label="Show Top Announcement Bar"
                 checked={config.announcementVisible}
@@ -405,7 +447,12 @@ export default function AdminCustomizationPage() {
                   { value: "monogram", label: "Compact Monogram Crest" },
                   { value: "custom", label: "Custom Logo Image URL" },
                 ]}
-                onChange={(v) => updateField("headerLogoMode", v as any)}
+                onChange={(v) =>
+                  updateField(
+                    "headerLogoMode",
+                    v as StorefrontCustomizationConfig["headerLogoMode"],
+                  )
+                }
               />
 
               {config.headerLogoMode === "custom" && (
@@ -453,7 +500,14 @@ export default function AdminCustomizationPage() {
               subtitle="Add, remove, reorder, and configure luxury slides on the homepage hero."
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 16 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                gap: 20,
+                marginBottom: 16,
+              }}
+            >
               <ToggleField
                 label="Autoplay Slider Transitions"
                 checked={config.heroAutoplayEnabled}
@@ -475,7 +529,12 @@ export default function AdminCustomizationPage() {
                   { value: "left", label: "Left Aligned" },
                   { value: "center", label: "Centered" },
                 ]}
-                onChange={(v) => updateField("heroTextAlign", v as any)}
+                onChange={(v) =>
+                  updateField(
+                    "heroTextAlign",
+                    v as StorefrontCustomizationConfig["heroTextAlign"],
+                  )
+                }
               />
 
               <InputField
@@ -488,8 +547,21 @@ export default function AdminCustomizationPage() {
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h3 style={{ margin: 0, fontSize: "1.125rem", fontFamily: "var(--md-font-display)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 16,
+                }}
+              >
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "1.125rem",
+                    fontFamily: "var(--md-font-display)",
+                  }}
+                >
                   Slides ({config.heroSlides.length})
                 </h3>
                 <button
@@ -523,8 +595,20 @@ export default function AdminCustomizationPage() {
                       gap: 14,
                     }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--md-gold)" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontWeight: 600,
+                          fontSize: "0.875rem",
+                          color: "var(--md-gold)",
+                        }}
+                      >
                         Slide #{idx + 1}: {slide.title || "Untitled Slide"}
                       </span>
                       <button
@@ -533,7 +617,7 @@ export default function AdminCustomizationPage() {
                         style={{
                           background: "none",
                           border: "none",
-                          color: "#c5221f",
+                          color: "var(--md-danger)",
                           fontSize: "0.75rem",
                           cursor: "pointer",
                           textDecoration: "underline",
@@ -543,7 +627,13 @@ export default function AdminCustomizationPage() {
                       </button>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                        gap: 12,
+                      }}
+                    >
                       <InputField
                         label="Prestige Tag"
                         value={slide.tag}
@@ -602,7 +692,13 @@ export default function AdminCustomizationPage() {
               onChange={(v) => updateField("trustPillarsVisible", v)}
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: 20,
+              }}
+            >
               <InputField
                 label="Founding Year"
                 value={config.foundingYear}
@@ -626,10 +722,22 @@ export default function AdminCustomizationPage() {
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h3 style={{ margin: "0 0 16px", fontSize: "1.125rem", fontFamily: "var(--md-font-display)" }}>
+              <h3
+                style={{
+                  margin: "0 0 16px",
+                  fontSize: "1.125rem",
+                  fontFamily: "var(--md-font-display)",
+                }}
+              >
                 Pillar Items
               </h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 16,
+                }}
+              >
                 {config.trustPillars.map((p, idx) => (
                   <div
                     key={p.id || idx}
@@ -643,7 +751,9 @@ export default function AdminCustomizationPage() {
                       gap: 10,
                     }}
                   >
-                    <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--md-gold)" }}>
+                    <span
+                      style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--md-gold)" }}
+                    >
                       Pillar #{idx + 1}
                     </span>
                     <InputField
@@ -680,47 +790,156 @@ export default function AdminCustomizationPage() {
             />
 
             <div>
-              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>Section Visibility Toggles</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-                <ToggleField label="Hero Slider" checked={config.sectionHeroVisible} onChange={(v) => updateField("sectionHeroVisible", v)} />
-                <ToggleField label="Trust Pillars Strip" checked={config.sectionTrustVisible} onChange={(v) => updateField("sectionTrustVisible", v)} />
-                <ToggleField label="Curated Collections Grid" checked={config.sectionCategoriesVisible} onChange={(v) => updateField("sectionCategoriesVisible", v)} />
-                <ToggleField label="Signature Showcase" checked={config.sectionSignatureVisible} onChange={(v) => updateField("sectionSignatureVisible", v)} />
-                <ToggleField label="Gemstone Vault Explorer" checked={config.sectionStonesVisible} onChange={(v) => updateField("sectionStonesVisible", v)} />
-                <ToggleField label="Archival Heritage Story" checked={config.sectionHeritageVisible} onChange={(v) => updateField("sectionHeritageVisible", v)} />
-                <ToggleField label="Client Testimonials" checked={config.sectionTestimonialsVisible} onChange={(v) => updateField("sectionTestimonialsVisible", v)} />
-                <ToggleField label="Atelier Newsletter" checked={config.sectionNewsletterVisible} onChange={(v) => updateField("sectionNewsletterVisible", v)} />
+              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>
+                Section Visibility Toggles
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: 12,
+                }}
+              >
+                <ToggleField
+                  label="Hero Slider"
+                  checked={config.sectionHeroVisible}
+                  onChange={(v) => updateField("sectionHeroVisible", v)}
+                />
+                <ToggleField
+                  label="Trust Pillars Strip"
+                  checked={config.sectionTrustVisible}
+                  onChange={(v) => updateField("sectionTrustVisible", v)}
+                />
+                <ToggleField
+                  label="Curated Collections Grid"
+                  checked={config.sectionCategoriesVisible}
+                  onChange={(v) => updateField("sectionCategoriesVisible", v)}
+                />
+                <ToggleField
+                  label="Signature Showcase"
+                  checked={config.sectionSignatureVisible}
+                  onChange={(v) => updateField("sectionSignatureVisible", v)}
+                />
+                <ToggleField
+                  label="Gemstone Vault Explorer"
+                  checked={config.sectionStonesVisible}
+                  onChange={(v) => updateField("sectionStonesVisible", v)}
+                />
+                <ToggleField
+                  label="Archival Heritage Story"
+                  checked={config.sectionHeritageVisible}
+                  onChange={(v) => updateField("sectionHeritageVisible", v)}
+                />
+                <ToggleField
+                  label="Client Testimonials"
+                  checked={config.sectionTestimonialsVisible}
+                  onChange={(v) => updateField("sectionTestimonialsVisible", v)}
+                />
+                <ToggleField
+                  label="Atelier Newsletter"
+                  checked={config.sectionNewsletterVisible}
+                  onChange={(v) => updateField("sectionNewsletterVisible", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Section Titles &amp; Subtitles</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <InputField label="Categories Title" value={config.categoriesSectionTitle} onChange={(v) => updateField("categoriesSectionTitle", v)} />
-                <InputField label="Categories Subtitle" value={config.categoriesSectionSubtitle} onChange={(v) => updateField("categoriesSectionSubtitle", v)} />
-                <InputField label="Signature Showcase Title" value={config.signatureSectionTitle} onChange={(v) => updateField("signatureSectionTitle", v)} />
-                <InputField label="Signature Showcase Subtitle" value={config.signatureSectionSubtitle} onChange={(v) => updateField("signatureSectionSubtitle", v)} />
-                <InputField label="Gemstone Vault Title" value={config.stonesSectionTitle} onChange={(v) => updateField("stonesSectionTitle", v)} />
-                <InputField label="Gemstone Vault Subtitle" value={config.stonesSectionSubtitle} onChange={(v) => updateField("stonesSectionSubtitle", v)} />
+              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
+                Section Titles &amp; Subtitles
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Categories Title"
+                  value={config.categoriesSectionTitle}
+                  onChange={(v) => updateField("categoriesSectionTitle", v)}
+                />
+                <InputField
+                  label="Categories Subtitle"
+                  value={config.categoriesSectionSubtitle}
+                  onChange={(v) => updateField("categoriesSectionSubtitle", v)}
+                />
+                <InputField
+                  label="Signature Showcase Title"
+                  value={config.signatureSectionTitle}
+                  onChange={(v) => updateField("signatureSectionTitle", v)}
+                />
+                <InputField
+                  label="Signature Showcase Subtitle"
+                  value={config.signatureSectionSubtitle}
+                  onChange={(v) => updateField("signatureSectionSubtitle", v)}
+                />
+                <InputField
+                  label="Gemstone Vault Title"
+                  value={config.stonesSectionTitle}
+                  onChange={(v) => updateField("stonesSectionTitle", v)}
+                />
+                <InputField
+                  label="Gemstone Vault Subtitle"
+                  value={config.stonesSectionSubtitle}
+                  onChange={(v) => updateField("stonesSectionSubtitle", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Jaipur Atelier Heritage Editorial Copy</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-                <InputField label="Story Headline" value={config.heritageStoryHeadline} onChange={(v) => updateField("heritageStoryHeadline", v)} />
-                <InputField label="Master Artisan Signature" value={config.heritageStorySignature} onChange={(v) => updateField("heritageStorySignature", v)} />
-                <InputField label="Heritage Photo URL" value={config.heritageStoryImageUrl} onChange={(v) => updateField("heritageStoryImageUrl", v)} />
+              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
+                Jaipur Atelier Heritage Editorial Copy
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Story Headline"
+                  value={config.heritageStoryHeadline}
+                  onChange={(v) => updateField("heritageStoryHeadline", v)}
+                />
+                <InputField
+                  label="Master Artisan Signature"
+                  value={config.heritageStorySignature}
+                  onChange={(v) => updateField("heritageStorySignature", v)}
+                />
+                <InputField
+                  label="Heritage Photo URL"
+                  value={config.heritageStoryImageUrl}
+                  onChange={(v) => updateField("heritageStoryImageUrl", v)}
+                />
               </div>
               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 16 }}>
-                <TextAreaField label="Heritage Standfirst Body" value={config.heritageStoryStandfirst} onChange={(v) => updateField("heritageStoryStandfirst", v)} />
-                <TextAreaField label="Master Silversmith Quote" value={config.heritageStoryQuote} onChange={(v) => updateField("heritageStoryQuote", v)} />
+                <TextAreaField
+                  label="Heritage Standfirst Body"
+                  value={config.heritageStoryStandfirst}
+                  onChange={(v) => updateField("heritageStoryStandfirst", v)}
+                />
+                <TextAreaField
+                  label="Master Silversmith Quote"
+                  value={config.heritageStoryQuote}
+                  onChange={(v) => updateField("heritageStoryQuote", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h4 style={{ margin: 0, fontSize: "0.9375rem" }}>Client Testimonials ({config.testimonials.length})</h4>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 16,
+                }}
+              >
+                <h4 style={{ margin: 0, fontSize: "0.9375rem" }}>
+                  Client Testimonials ({config.testimonials.length})
+                </h4>
                 <button
                   type="button"
                   onClick={addTestimonial}
@@ -751,8 +970,20 @@ export default function AdminCustomizationPage() {
                       gap: 12,
                     }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--md-gold)" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontWeight: 600,
+                          fontSize: "0.875rem",
+                          color: "var(--md-gold)",
+                        }}
+                      >
                         Review by {t.clientName} ({t.location})
                       </span>
                       <button
@@ -761,7 +992,7 @@ export default function AdminCustomizationPage() {
                         style={{
                           background: "none",
                           border: "none",
-                          color: "#c5221f",
+                          color: "var(--md-danger)",
                           fontSize: "0.75rem",
                           cursor: "pointer",
                           textDecoration: "underline",
@@ -771,13 +1002,39 @@ export default function AdminCustomizationPage() {
                       </button>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-                      <InputField label="Client Name" value={t.clientName} onChange={(v) => updateTestimonial(idx, { clientName: v })} />
-                      <InputField label="Location" value={t.location} onChange={(v) => updateTestimonial(idx, { location: v })} />
-                      <InputField label="Piece Purchased" value={t.piecePurchased} onChange={(v) => updateTestimonial(idx, { piecePurchased: v })} />
-                      <InputField label="Date / Timestamp" value={t.dateStr || ""} onChange={(v) => updateTestimonial(idx, { dateStr: v })} />
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                        gap: 12,
+                      }}
+                    >
+                      <InputField
+                        label="Client Name"
+                        value={t.clientName}
+                        onChange={(v) => updateTestimonial(idx, { clientName: v })}
+                      />
+                      <InputField
+                        label="Location"
+                        value={t.location}
+                        onChange={(v) => updateTestimonial(idx, { location: v })}
+                      />
+                      <InputField
+                        label="Piece Purchased"
+                        value={t.piecePurchased}
+                        onChange={(v) => updateTestimonial(idx, { piecePurchased: v })}
+                      />
+                      <InputField
+                        label="Date / Timestamp"
+                        value={t.dateStr || ""}
+                        onChange={(v) => updateTestimonial(idx, { dateStr: v })}
+                      />
                     </div>
-                    <TextAreaField label="Review Text" value={t.reviewText} onChange={(v) => updateTestimonial(idx, { reviewText: v })} />
+                    <TextAreaField
+                      label="Review Text"
+                      value={t.reviewText}
+                      onChange={(v) => updateTestimonial(idx, { reviewText: v })}
+                    />
                   </div>
                 ))}
               </div>
@@ -785,12 +1042,30 @@ export default function AdminCustomizationPage() {
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
               <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Newsletter Bar</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-                <InputField label="Headline" value={config.newsletterHeadline} onChange={(v) => updateField("newsletterHeadline", v)} />
-                <InputField label="Button Label" value={config.newsletterButtonText} onChange={(v) => updateField("newsletterButtonText", v)} />
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Headline"
+                  value={config.newsletterHeadline}
+                  onChange={(v) => updateField("newsletterHeadline", v)}
+                />
+                <InputField
+                  label="Button Label"
+                  value={config.newsletterButtonText}
+                  onChange={(v) => updateField("newsletterButtonText", v)}
+                />
               </div>
               <div style={{ marginTop: 12 }}>
-                <TextAreaField label="Newsletter Subtitle" value={config.newsletterSubtitle} onChange={(v) => updateField("newsletterSubtitle", v)} />
+                <TextAreaField
+                  label="Newsletter Subtitle"
+                  value={config.newsletterSubtitle}
+                  onChange={(v) => updateField("newsletterSubtitle", v)}
+                />
               </div>
             </div>
           </div>
@@ -799,8 +1074,17 @@ export default function AdminCustomizationPage() {
         {/* TAB 5: NAVIGATION TAXONOMY */}
         {activeTab === "nav" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <SectionHeader title="Navigation & Taxonomy Menu" subtitle="Control menu separators and smartphone quick-rails." />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+            <SectionHeader
+              title="Navigation & Taxonomy Menu"
+              subtitle="Control menu separators and smartphone quick-rails."
+            />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: 20,
+              }}
+            >
               <ToggleField
                 label="Show Diamond Separator (✦)"
                 checked={config.navShowDiamondSeparator}
@@ -838,34 +1122,106 @@ export default function AdminCustomizationPage() {
             />
 
             <div>
-              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>Payment Gateway Toggles</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-                <ToggleField label="Enable Bank Transfer (IMPS/NEFT/RTGS)" checked={config.enableBankTransfer} onChange={(v) => updateField("enableBankTransfer", v)} />
-                <ToggleField label="Enable Stripe (Cards / Apple Pay)" checked={config.enableStripe} onChange={(v) => updateField("enableStripe", v)} />
-                <ToggleField label="Enable Razorpay (UPI / Netbanking)" checked={config.enableRazorpay} onChange={(v) => updateField("enableRazorpay", v)} />
-                <ToggleField label="Enable Cash on Delivery (COD)" checked={config.enableCod} onChange={(v) => updateField("enableCod", v)} />
+              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>
+                Payment Gateway Toggles
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: 12,
+                }}
+              >
+                <ToggleField
+                  label="Enable Bank Transfer (IMPS/NEFT/RTGS)"
+                  checked={config.enableBankTransfer}
+                  onChange={(v) => updateField("enableBankTransfer", v)}
+                />
+                <ToggleField
+                  label="Enable Stripe (Cards / Apple Pay)"
+                  checked={config.enableStripe}
+                  onChange={(v) => updateField("enableStripe", v)}
+                />
+                <ToggleField
+                  label="Enable Razorpay (UPI / Netbanking)"
+                  checked={config.enableRazorpay}
+                  onChange={(v) => updateField("enableRazorpay", v)}
+                />
+                <ToggleField
+                  label="Enable Cash on Delivery (COD)"
+                  checked={config.enableCod}
+                  onChange={(v) => updateField("enableCod", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Bank Transfer Account Details</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <InputField label="Account Holder Name" value={config.bankAccountName} onChange={(v) => updateField("bankAccountName", v)} />
-                <InputField label="Bank Name" value={config.bankName} onChange={(v) => updateField("bankName", v)} />
-                <InputField label="Account Number" value={config.bankAccountNumber} onChange={(v) => updateField("bankAccountNumber", v)} />
-                <InputField label="IFSC Code" value={config.bankIfscCode} onChange={(v) => updateField("bankIfscCode", v)} />
-                <InputField label="Account Type" value={config.bankAccountType} onChange={(v) => updateField("bankAccountType", v)} />
-                <InputField label="Branch Name" value={config.bankBranchName} onChange={(v) => updateField("bankBranchName", v)} />
-                <InputField label="UPI ID / VPA Handle" value={config.bankUpiId} onChange={(v) => updateField("bankUpiId", v)} />
+              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
+                Bank Transfer Account Details
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Account Holder Name"
+                  value={config.bankAccountName}
+                  onChange={(v) => updateField("bankAccountName", v)}
+                />
+                <InputField
+                  label="Bank Name"
+                  value={config.bankName}
+                  onChange={(v) => updateField("bankName", v)}
+                />
+                <InputField
+                  label="Account Number"
+                  value={config.bankAccountNumber}
+                  onChange={(v) => updateField("bankAccountNumber", v)}
+                />
+                <InputField
+                  label="IFSC Code"
+                  value={config.bankIfscCode}
+                  onChange={(v) => updateField("bankIfscCode", v)}
+                />
+                <InputField
+                  label="Account Type"
+                  value={config.bankAccountType}
+                  onChange={(v) => updateField("bankAccountType", v)}
+                />
+                <InputField
+                  label="Branch Name"
+                  value={config.bankBranchName}
+                  onChange={(v) => updateField("bankBranchName", v)}
+                />
+                <InputField
+                  label="UPI ID / VPA Handle"
+                  value={config.bankUpiId}
+                  onChange={(v) => updateField("bankUpiId", v)}
+                />
               </div>
               <div style={{ marginTop: 16 }}>
-                <TextAreaField label="Branch Physical Address" value={config.bankBranchAddress} onChange={(v) => updateField("bankBranchAddress", v)} />
+                <TextAreaField
+                  label="Branch Physical Address"
+                  value={config.bankBranchAddress}
+                  onChange={(v) => updateField("bankBranchAddress", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Free Shipping &amp; COD Thresholds</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
+                Free Shipping &amp; COD Thresholds
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 16,
+                }}
+              >
                 <InputField
                   label="Free Insured Shipping (USD $)"
                   type="number"
@@ -897,41 +1253,134 @@ export default function AdminCustomizationPage() {
               subtitle="Update your Jaipur showroom location, direct phone lines, and WhatsApp concierge."
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-              <InputField label="Entity Name" value={config.atelierAddressName} onChange={(v) => updateField("atelierAddressName", v)} />
-              <InputField label="Address Line 1" value={config.atelierAddressLine1} onChange={(v) => updateField("atelierAddressLine1", v)} />
-              <InputField label="Address Line 2" value={config.atelierAddressLine2} onChange={(v) => updateField("atelierAddressLine2", v)} />
-              <InputField label="City" value={config.atelierCity} onChange={(v) => updateField("atelierCity", v)} />
-              <InputField label="Postal Code / PIN" value={config.atelierPostalCode} onChange={(v) => updateField("atelierPostalCode", v)} />
-              <InputField label="State" value={config.atelierState} onChange={(v) => updateField("atelierState", v)} />
-              <InputField label="Country" value={config.atelierCountry} onChange={(v) => updateField("atelierCountry", v)} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: 16,
+              }}
+            >
+              <InputField
+                label="Entity Name"
+                value={config.atelierAddressName}
+                onChange={(v) => updateField("atelierAddressName", v)}
+              />
+              <InputField
+                label="Address Line 1"
+                value={config.atelierAddressLine1}
+                onChange={(v) => updateField("atelierAddressLine1", v)}
+              />
+              <InputField
+                label="Address Line 2"
+                value={config.atelierAddressLine2}
+                onChange={(v) => updateField("atelierAddressLine2", v)}
+              />
+              <InputField
+                label="City"
+                value={config.atelierCity}
+                onChange={(v) => updateField("atelierCity", v)}
+              />
+              <InputField
+                label="Postal Code / PIN"
+                value={config.atelierPostalCode}
+                onChange={(v) => updateField("atelierPostalCode", v)}
+              />
+              <InputField
+                label="State"
+                value={config.atelierState}
+                onChange={(v) => updateField("atelierState", v)}
+              />
+              <InputField
+                label="Country"
+                value={config.atelierCountry}
+                onChange={(v) => updateField("atelierCountry", v)}
+              />
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Direct Phone Numbers &amp; WhatsApp Concierge</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <InputField label="Direct Telephone 1 (Primary)" value={config.directPhonePrimary} onChange={(v) => updateField("directPhonePrimary", v)} />
-                <InputField label="Direct Telephone 2 (Secondary)" value={config.directPhoneSecondary} onChange={(v) => updateField("directPhoneSecondary", v)} />
-                <InputField label="WhatsApp Concierge Number (E.164 without +)" value={config.whatsappConciergeNumber} onChange={(v) => updateField("whatsappConciergeNumber", v)} desc="Example: 919828156465" />
-                <InputField label="Support Email" value={config.supportEmail} onChange={(v) => updateField("supportEmail", v)} />
-                <InputField label="Wholesale &amp; Press Email" value={config.wholesaleEmail} onChange={(v) => updateField("wholesaleEmail", v)} />
-                <InputField label="Atelier Salon Operating Hours" value={config.atelierHours} onChange={(v) => updateField("atelierHours", v)} />
+              <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
+                Direct Phone Numbers &amp; WhatsApp Concierge
+              </h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Direct Telephone 1 (Primary)"
+                  value={config.directPhonePrimary}
+                  onChange={(v) => updateField("directPhonePrimary", v)}
+                />
+                <InputField
+                  label="Direct Telephone 2 (Secondary)"
+                  value={config.directPhoneSecondary}
+                  onChange={(v) => updateField("directPhoneSecondary", v)}
+                />
+                <InputField
+                  label="WhatsApp Concierge Number (E.164 without +)"
+                  value={config.whatsappConciergeNumber}
+                  onChange={(v) => updateField("whatsappConciergeNumber", v)}
+                  desc="Example: 919828156465"
+                />
+                <InputField
+                  label="Support Email"
+                  value={config.supportEmail}
+                  onChange={(v) => updateField("supportEmail", v)}
+                />
+                <InputField
+                  label="Wholesale &amp; Press Email"
+                  value={config.wholesaleEmail}
+                  onChange={(v) => updateField("wholesaleEmail", v)}
+                />
+                <InputField
+                  label="Atelier Salon Operating Hours"
+                  value={config.atelierHours}
+                  onChange={(v) => updateField("atelierHours", v)}
+                />
               </div>
               <div style={{ marginTop: 16 }}>
-                <TextAreaField label="Default WhatsApp Concierge Pre-Filled Message" value={config.whatsappConciergeGreeting} onChange={(v) => updateField("whatsappConciergeGreeting", v)} />
+                <TextAreaField
+                  label="Default WhatsApp Concierge Pre-Filled Message"
+                  value={config.whatsappConciergeGreeting}
+                  onChange={(v) => updateField("whatsappConciergeGreeting", v)}
+                />
               </div>
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 8px", fontSize: "0.9375rem", display: "flex", alignItems: "center", gap: 8 }}>
+              <h4
+                style={{
+                  margin: "0 0 8px",
+                  fontSize: "0.9375rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
                 <span>✉</span>
                 <span>Gmail Authentication &amp; OTP SMTP Credentials</span>
               </h4>
-              <p style={{ margin: "0 0 16px", fontSize: "0.8125rem", color: "var(--md-fg-muted)", lineHeight: 1.5 }}>
-                Used to dispatch single-use 6-digit verification codes to clients signing in with their email address.
-                You can set them here or in your <code>.env</code> file as <code>GMAIL_USER</code> and <code>GMAIL_APP_PASSWORD</code>.
+              <p
+                style={{
+                  margin: "0 0 16px",
+                  fontSize: "0.8125rem",
+                  color: "var(--md-fg-muted)",
+                  lineHeight: 1.5,
+                }}
+              >
+                Used to dispatch single-use 6-digit verification codes to clients signing in
+                with their email address. You can set them here or in your <code>.env</code>{" "}
+                file as <code>GMAIL_USER</code> and <code>GMAIL_APP_PASSWORD</code>.
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: 16,
+                }}
+              >
                 <InputField
                   label="Gmail Address / Sender Email"
                   value={config.gmailUser || ""}
@@ -957,20 +1406,64 @@ export default function AdminCustomizationPage() {
               subtitle="Manage footer hallmarks, copyright statement, and social channels."
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-              <InputField label="Brand Mission Statement" value={config.footerBrandStatement} onChange={(v) => updateField("footerBrandStatement", v)} />
-              <InputField label="Copyright Notice" value={config.footerCopyrightNotice} onChange={(v) => updateField("footerCopyrightNotice", v)} />
-              <InputField label="Hallmarks Badge Strip" value={config.footerHallmarkStrip} onChange={(v) => updateField("footerHallmarkStrip", v)} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 16,
+              }}
+            >
+              <InputField
+                label="Brand Mission Statement"
+                value={config.footerBrandStatement}
+                onChange={(v) => updateField("footerBrandStatement", v)}
+              />
+              <InputField
+                label="Copyright Notice"
+                value={config.footerCopyrightNotice}
+                onChange={(v) => updateField("footerCopyrightNotice", v)}
+              />
+              <InputField
+                label="Hallmarks Badge Strip"
+                value={config.footerHallmarkStrip}
+                onChange={(v) => updateField("footerHallmarkStrip", v)}
+              />
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
               <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>Social Media Links</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-                <InputField label="Instagram Profile URL" value={config.socialInstagramUrl} onChange={(v) => updateField("socialInstagramUrl", v)} />
-                <InputField label="Facebook Page URL" value={config.socialFacebookUrl} onChange={(v) => updateField("socialFacebookUrl", v)} />
-                <InputField label="Pinterest URL" value={config.socialPinterestUrl} onChange={(v) => updateField("socialPinterestUrl", v)} />
-                <InputField label="YouTube Channel URL" value={config.socialYoutubeUrl} onChange={(v) => updateField("socialYoutubeUrl", v)} />
-                <InputField label="Twitter / X Profile URL" value={config.socialTwitterUrl} onChange={(v) => updateField("socialTwitterUrl", v)} />
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Instagram Profile URL"
+                  value={config.socialInstagramUrl}
+                  onChange={(v) => updateField("socialInstagramUrl", v)}
+                />
+                <InputField
+                  label="Facebook Page URL"
+                  value={config.socialFacebookUrl}
+                  onChange={(v) => updateField("socialFacebookUrl", v)}
+                />
+                <InputField
+                  label="Pinterest URL"
+                  value={config.socialPinterestUrl}
+                  onChange={(v) => updateField("socialPinterestUrl", v)}
+                />
+                <InputField
+                  label="YouTube Channel URL"
+                  value={config.socialYoutubeUrl}
+                  onChange={(v) => updateField("socialYoutubeUrl", v)}
+                />
+                <InputField
+                  label="Twitter / X Profile URL"
+                  value={config.socialTwitterUrl}
+                  onChange={(v) => updateField("socialTwitterUrl", v)}
+                />
               </div>
             </div>
           </div>
@@ -984,11 +1477,33 @@ export default function AdminCustomizationPage() {
               subtitle="Inject custom CSS, tracking tags, and modify global palette accents."
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
-              <ColorField label="Accent Gold" value={config.colorAccentGold} onChange={(v) => updateField("colorAccentGold", v)} />
-              <ColorField label="Deep Emerald Surface" value={config.colorEmeraldDeep} onChange={(v) => updateField("colorEmeraldDeep", v)} />
-              <ColorField label="Dark Green-Black Ground" value={config.colorGreenBlack} onChange={(v) => updateField("colorGreenBlack", v)} />
-              <ColorField label="Ivory Background Ground" value={config.colorBgIvory} onChange={(v) => updateField("colorBgIvory", v)} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 16,
+              }}
+            >
+              <ColorField
+                label="Accent Gold"
+                value={config.colorAccentGold}
+                onChange={(v) => updateField("colorAccentGold", v)}
+              />
+              <ColorField
+                label="Deep Emerald Surface"
+                value={config.colorEmeraldDeep}
+                onChange={(v) => updateField("colorEmeraldDeep", v)}
+              />
+              <ColorField
+                label="Dark Green-Black Ground"
+                value={config.colorGreenBlack}
+                onChange={(v) => updateField("colorGreenBlack", v)}
+              />
+              <ColorField
+                label="Ivory Background Ground"
+                value={config.colorBgIvory}
+                onChange={(v) => updateField("colorBgIvory", v)}
+              />
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
@@ -1000,7 +1515,15 @@ export default function AdminCustomizationPage() {
               />
             </div>
 
-            <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 20 }}>
+            <div
+              style={{
+                borderTop: "1px solid var(--md-rule)",
+                paddingTop: 20,
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+              }}
+            >
               <TextAreaField
                 label="Custom CSS Injection"
                 value={config.customCss}
@@ -1034,30 +1557,76 @@ export default function AdminCustomizationPage() {
               subtitle="Configure emergency banners, holiday notices, and maintenance switches."
             />
 
-            <div style={{ border: "1px solid var(--md-rule)", borderRadius: 4, padding: 20, background: "var(--md-bg-subtle)" }}>
-              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>Seasonal / Holiday Announcement Modal</h4>
+            <div
+              style={{
+                border: "1px solid var(--md-rule)",
+                borderRadius: 4,
+                padding: 20,
+                background: "var(--md-bg-subtle)",
+              }}
+            >
+              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem" }}>
+                Seasonal / Holiday Announcement Modal
+              </h4>
               <ToggleField
                 label="Enable Seasonal Announcement Modal"
                 checked={config.seasonalNoticeEnabled}
                 onChange={(v) => updateField("seasonalNoticeEnabled", v)}
                 desc="Renders an elegant modal popup for special occasions, exhibitions, or holidays."
               />
-              <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-                <InputField label="Modal Title" value={config.seasonalNoticeTitle} onChange={(v) => updateField("seasonalNoticeTitle", v)} />
-                <ToggleField label="Dismissible by User" checked={config.seasonalNoticeDismissible} onChange={(v) => updateField("seasonalNoticeDismissible", v)} />
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                <InputField
+                  label="Modal Title"
+                  value={config.seasonalNoticeTitle}
+                  onChange={(v) => updateField("seasonalNoticeTitle", v)}
+                />
+                <ToggleField
+                  label="Dismissible by User"
+                  checked={config.seasonalNoticeDismissible}
+                  onChange={(v) => updateField("seasonalNoticeDismissible", v)}
+                />
               </div>
               <div style={{ marginTop: 12 }}>
-                <TextAreaField label="Modal Announcement Message" value={config.seasonalNoticeMessage} onChange={(v) => updateField("seasonalNoticeMessage", v)} />
+                <TextAreaField
+                  label="Modal Announcement Message"
+                  value={config.seasonalNoticeMessage}
+                  onChange={(v) => updateField("seasonalNoticeMessage", v)}
+                />
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-              <InputField label="Insured Delivery Promise Notice" value={config.deliveryPromiseText} onChange={(v) => updateField("deliveryPromiseText", v)} />
-              <InputField label="Return &amp; Exchange Policy Summary" value={config.returnPolicySummary} onChange={(v) => updateField("returnPolicySummary", v)} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 16,
+              }}
+            >
+              <InputField
+                label="Insured Delivery Promise Notice"
+                value={config.deliveryPromiseText}
+                onChange={(v) => updateField("deliveryPromiseText", v)}
+              />
+              <InputField
+                label="Return &amp; Exchange Policy Summary"
+                value={config.returnPolicySummary}
+                onChange={(v) => updateField("returnPolicySummary", v)}
+              />
             </div>
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
-              <h4 style={{ margin: "0 0 12px", fontSize: "0.9375rem", color: "#c5221f" }}>Emergency Maintenance Mode</h4>
+              <h4
+                style={{ margin: "0 0 12px", fontSize: "0.9375rem", color: "var(--md-danger)" }}
+              >
+                Emergency Maintenance Mode
+              </h4>
               <ToggleField
                 label="Enable Storefront Maintenance Mode"
                 checked={config.maintenanceModeEnabled}
@@ -1066,7 +1635,11 @@ export default function AdminCustomizationPage() {
               />
               {config.maintenanceModeEnabled && (
                 <div style={{ marginTop: 12 }}>
-                  <TextAreaField label="Maintenance Notice Copy" value={config.maintenanceModeMessage} onChange={(v) => updateField("maintenanceModeMessage", v)} />
+                  <TextAreaField
+                    label="Maintenance Notice Copy"
+                    value={config.maintenanceModeMessage}
+                    onChange={(v) => updateField("maintenanceModeMessage", v)}
+                  />
                 </div>
               )}
             </div>
@@ -1081,15 +1654,41 @@ export default function AdminCustomizationPage() {
               subtitle="Define default meta tags, title formats, and social share previews."
             />
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-              <InputField label="Global Title Template (%s = page name)" value={config.seoGlobalTitleTemplate} onChange={(v) => updateField("seoGlobalTitleTemplate", v)} />
-              <InputField label="Default OpenGraph Image URL" value={config.seoDefaultOgImage} onChange={(v) => updateField("seoDefaultOgImage", v)} />
-              <InputField label="Twitter / X Site Handle" value={config.seoTwitterHandle} onChange={(v) => updateField("seoTwitterHandle", v)} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 16,
+              }}
+            >
+              <InputField
+                label="Global Title Template (%s = page name)"
+                value={config.seoGlobalTitleTemplate}
+                onChange={(v) => updateField("seoGlobalTitleTemplate", v)}
+              />
+              <InputField
+                label="Default OpenGraph Image URL"
+                value={config.seoDefaultOgImage}
+                onChange={(v) => updateField("seoDefaultOgImage", v)}
+              />
+              <InputField
+                label="Twitter / X Site Handle"
+                value={config.seoTwitterHandle}
+                onChange={(v) => updateField("seoTwitterHandle", v)}
+              />
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 8 }}>
-              <TextAreaField label="Default Meta Description (US & International)" value={config.seoDefaultDescriptionUs} onChange={(v) => updateField("seoDefaultDescriptionUs", v)} />
-              <TextAreaField label="Default Meta Description (India Market)" value={config.seoDefaultDescriptionIn} onChange={(v) => updateField("seoDefaultDescriptionIn", v)} />
+              <TextAreaField
+                label="Default Meta Description (US & International)"
+                value={config.seoDefaultDescriptionUs}
+                onChange={(v) => updateField("seoDefaultDescriptionUs", v)}
+              />
+              <TextAreaField
+                label="Default Meta Description (India Market)"
+                value={config.seoDefaultDescriptionIn}
+                onChange={(v) => updateField("seoDefaultDescriptionIn", v)}
+              />
             </div>
           </div>
         )}
@@ -1103,7 +1702,14 @@ export default function AdminCustomizationPage() {
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div style={{ borderBottom: "1px solid var(--md-rule)", paddingBottom: 16 }}>
-      <h2 style={{ margin: 0, fontSize: "1.25rem", fontFamily: "var(--md-font-display)", color: "var(--md-fg)" }}>
+      <h2
+        style={{
+          margin: 0,
+          fontSize: "1.25rem",
+          fontFamily: "var(--md-font-display)",
+          color: "var(--md-fg)",
+        }}
+      >
         {title}
       </h2>
       <p style={{ margin: "4px 0 0", fontSize: "0.8125rem", color: "var(--md-fg-muted)" }}>
@@ -1128,7 +1734,9 @@ function InputField({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>{label}</label>
+      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+        {label}
+      </label>
       <input
         type={type}
         value={value}
@@ -1142,7 +1750,9 @@ function InputField({
           fontSize: "0.875rem",
         }}
       />
-      {desc && <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>{desc}</span>}
+      {desc && (
+        <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>{desc}</span>
+      )}
     </div>
   );
 }
@@ -1162,7 +1772,9 @@ function TextAreaField({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>{label}</label>
+      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+        {label}
+      </label>
       <textarea
         rows={rows}
         value={value}
@@ -1179,7 +1791,9 @@ function TextAreaField({
           resize: "vertical",
         }}
       />
-      {desc && <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>{desc}</span>}
+      {desc && (
+        <span style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)" }}>{desc}</span>
+      )}
     </div>
   );
 }
@@ -1201,11 +1815,23 @@ function ToggleField({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        style={{ width: 18, height: 18, marginTop: 2, cursor: "pointer", accentColor: "var(--md-green-black, #051811)" }}
+        style={{
+          width: 18,
+          height: 18,
+          marginTop: 2,
+          cursor: "pointer",
+          accentColor: "var(--md-green-black)",
+        }}
       />
       <div>
-        <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>{label}</div>
-        {desc && <div style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)", marginTop: 2 }}>{desc}</div>}
+        <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+          {label}
+        </div>
+        {desc && (
+          <div style={{ fontSize: "0.6875rem", color: "var(--md-fg-muted)", marginTop: 2 }}>
+            {desc}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1222,13 +1848,22 @@ function ColorField({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>{label}</label>
+      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+        {label}
+      </label>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <input
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          style={{ width: 36, height: 36, padding: 0, border: "1px solid var(--md-rule)", borderRadius: 4, cursor: "pointer" }}
+          style={{
+            width: 36,
+            height: 36,
+            padding: 0,
+            border: "1px solid var(--md-rule)",
+            borderRadius: 4,
+            cursor: "pointer",
+          }}
         />
         <input
           type="text"
@@ -1263,7 +1898,9 @@ function SelectField({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>{label}</label>
+      <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+        {label}
+      </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}

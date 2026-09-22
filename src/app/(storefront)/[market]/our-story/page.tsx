@@ -38,8 +38,7 @@ export default async function OurStoryPage({
 }): Promise<JSX.Element> {
   const { market } = await params;
   const resolved = await resolveMarket(market);
-  const prefix =
-    resolved.code.toLowerCase() === "us" ? "" : `/${resolved.code.toLowerCase()}`;
+  const prefix = resolved.code.toLowerCase() === "us" ? "" : `/${resolved.code.toLowerCase()}`;
   const whatsappUrl = buildWhatsAppInquiryUrl({
     topic: "bespoke",
     customMessage:
@@ -143,8 +142,8 @@ export default async function OurStoryPage({
             }}
           >
             Founded in 1961 by our grandfather <strong>B. L. Agarwal</strong> as Pushpak Jewels,
-            we are a family-owned jewellery maison in Jaipur. We melt our own silver,
-            hand-set natural gemstones, and create fine jewellery with zero outsourcing.
+            we are a family-owned jewellery maison in Jaipur. We melt our own silver, hand-set
+            natural gemstones, and create fine jewellery with zero outsourcing.
           </p>
 
           {/* Quick Pillar Strip */}
@@ -184,7 +183,14 @@ export default async function OurStoryPage({
         }}
       >
         <div className="md-story-container">
-          <div style={{ textAlign: "center", maxWidth: "680px", marginInline: "auto", marginBottom: "clamp(36px, 5vw, 56px)" }}>
+          <div
+            style={{
+              textAlign: "center",
+              maxWidth: "680px",
+              marginInline: "auto",
+              marginBottom: "clamp(36px, 5vw, 56px)",
+            }}
+          >
             <span
               style={{
                 fontSize: "0.6875rem",
@@ -266,9 +272,9 @@ export default async function OurStoryPage({
                 }}
               >
                 Our story began in the gemstone corridors of Jaipur. Grandfather B. L. Agarwal
-                founded Pushpak Jewels with a focus on natural emeralds. He built the brand on three
-                unshakeable pillars: authentic gemstones, trust with patrons, and meticulous
-                hand-craftsmanship.
+                founded Pushpak Jewels with a focus on natural emeralds. He built the brand on
+                three unshakeable pillars: authentic gemstones, trust with patrons, and
+                meticulous hand-craftsmanship.
               </p>
             </div>
 
@@ -321,15 +327,18 @@ export default async function OurStoryPage({
                   color: "var(--md-fg-secondary)",
                 }}
               >
-                Brothers Amit &amp; Saket expanded into international 925 sterling silver fine jewellery.
-                They developed our proprietary anti-tarnish alloy and presented collections at private
-                expositions across New York, London, and Milan &mdash; earning the trust of fine jewellery
-                collectors worldwide.
+                Brothers Amit &amp; Saket expanded into international 925 sterling silver fine
+                jewellery. They developed our proprietary anti-tarnish alloy and presented
+                collections at private expositions across New York, London, and Milan &mdash;
+                earning the trust of fine jewellery collectors worldwide.
               </p>
             </div>
 
             {/* Step 3: Today */}
-            <div className="md-milestone-card" style={{ borderTop: "2px solid var(--md-forest)" }}>
+            <div
+              className="md-milestone-card"
+              style={{ borderTop: "2px solid var(--md-forest)" }}
+            >
               <span
                 style={{
                   fontFamily: "var(--md-font-display)",
@@ -377,9 +386,9 @@ export default async function OurStoryPage({
                   color: "var(--md-fg-secondary)",
                 }}
               >
-                Operating from our own dedicated workshop at Noor Plaza, Chameliwala Market in Jaipur.
-                Every single design is sketched, cast in silver, stone-set, and hand polished under one roof.
-                Nothing is ever outsourced.
+                Operating from our own dedicated workshop at Noor Plaza, Chameliwala Market in
+                Jaipur. Every single design is sketched, cast in silver, stone-set, and hand
+                polished under one roof. Nothing is ever outsourced.
               </p>
             </div>
           </div>
@@ -512,7 +521,8 @@ export default async function OurStoryPage({
                     marginInline: "auto",
                   }}
                 >
-                  Founded Pushpak Jewels in the gemstone corridors of Jaipur, setting the cornerstone of our family legacy in natural emeralds.
+                  Founded Pushpak Jewels in the gemstone corridors of Jaipur, setting the
+                  cornerstone of our family legacy in natural emeralds.
                 </p>
               </div>
             </div>
@@ -581,7 +591,8 @@ export default async function OurStoryPage({
                     marginInline: "auto",
                   }}
                 >
-                  Expanded the atelier globally, developing our proprietary anti-tarnish alloy and presenting collections across New York, London and Milan.
+                  Expanded the atelier globally, developing our proprietary anti-tarnish alloy
+                  and presenting collections across New York, London and Milan.
                 </p>
               </div>
             </div>
@@ -608,7 +619,7 @@ export default async function OurStoryPage({
                 }}
               >
                 <Image
-                  src="/images/story/sanket-agarwal.jpg"
+                  src="/images/story/saket-agarwal.jpg"
                   alt="Saket Agarwal, Director of Millennium Designs"
                   fill
                   sizes="(max-width: 768px) 90vw, 320px"
@@ -650,7 +661,8 @@ export default async function OurStoryPage({
                     marginInline: "auto",
                   }}
                 >
-                  Leads product design and collector relationships, bringing a contemporary vision to six decades of Jaipur master-craft.
+                  Leads product design and collector relationships, bringing a contemporary
+                  vision to six decades of Jaipur master-craft.
                 </p>
               </div>
             </div>
@@ -671,7 +683,14 @@ export default async function OurStoryPage({
         }}
       >
         <div className="md-story-container">
-          <div style={{ textAlign: "center", maxWidth: "680px", marginInline: "auto", marginBottom: "clamp(32px, 4.5vw, 48px)" }}>
+          <div
+            style={{
+              textAlign: "center",
+              maxWidth: "680px",
+              marginInline: "auto",
+              marginBottom: "clamp(32px, 4.5vw, 48px)",
+            }}
+          >
             <span
               style={{
                 fontSize: "0.6875rem",
@@ -707,7 +726,8 @@ export default async function OurStoryPage({
                 color: "var(--md-fg-inverse-muted)",
               }}
             >
-              Four defining principles that set our Jaipur family atelier apart from commercial distributors.
+              Four defining principles that set our Jaipur family atelier apart from commercial
+              distributors.
             </p>
           </div>
 
@@ -777,7 +797,8 @@ export default async function OurStoryPage({
                 </h3>
                 <div
                   style={{
-                    borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 15%, transparent)",
+                    borderTop:
+                      "1px solid color-mix(in srgb, var(--md-champagne) 15%, transparent)",
                     paddingTop: "12px",
                     flexGrow: 1,
                   }}
@@ -944,15 +965,30 @@ export default async function OurStoryPage({
                   color: "var(--md-fg-secondary)",
                 }}
               >
-                &ldquo;Unlike commercial brands that broker mass-produced stock, we remain craftsmen
-                first. Every customer receives our personal guarantee of pure 925 silver, authentic
-                gemstones, and transparent workshop pricing.&rdquo;
+                &ldquo;Unlike commercial brands that broker mass-produced stock, we remain
+                craftsmen first. Every customer receives our personal guarantee of pure 925
+                silver, authentic gemstones, and transparent workshop pricing.&rdquo;
               </p>
               <div style={{ paddingTop: "12px", borderTop: "1px solid var(--md-rule)" }}>
-                <span style={{ fontFamily: "var(--md-font-display)", fontSize: "1.0625rem", fontStyle: "italic", display: "block" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.0625rem",
+                    fontStyle: "italic",
+                    display: "block",
+                  }}
+                >
                   Amit Agarwal &amp; Saket Agarwal
                 </span>
-                <span style={{ fontSize: "0.6875rem", color: "var(--md-gold-antique)", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600 }}>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    color: "var(--md-gold-antique)",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                  }}
+                >
                   Managing Directors · Millennium Designs
                 </span>
               </div>
@@ -1017,8 +1053,8 @@ export default async function OurStoryPage({
               maxWidth: "580px",
             }}
           >
-            Whether you are inquiring about a custom commission, wholesale catalog, or an heirloom
-            emerald piece, our Jaipur workshop welcomes your inquiry.
+            Whether you are inquiring about a custom commission, wholesale catalog, or an
+            heirloom emerald piece, our Jaipur workshop welcomes your inquiry.
           </p>
 
           {/* Physical Address Card */}
@@ -1042,25 +1078,44 @@ export default async function OurStoryPage({
                 fontWeight: 500,
               }}
             >
-              <strong style={{ fontSize: "1.0625rem", color: "var(--md-forest)" }}>Millenium Designs</strong>
+              <strong style={{ fontSize: "1.0625rem", color: "var(--md-forest)" }}>
+                Millenium Designs
+              </strong>
               <br />
               5, Noor Plaza, Chameliwala Market, M.I. Road, Jaipur, 302001
               <br />
               Rajasthan, India
             </address>
 
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center", fontSize: "0.875rem", marginTop: "6px" }}>
-              <a href="tel:+919828156465" style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                fontSize: "0.875rem",
+                marginTop: "6px",
+              }}
+            >
+              <a
+                href="tel:+919828156465"
+                style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}
+              >
                 📞 +91 98281 56465
               </a>
               <span>·</span>
-              <a href="tel:+919829056597" style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}>
+              <a
+                href="tel:+919829056597"
+                style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}
+              >
                 📞 +91 98290 56597
               </a>
             </div>
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", flexWrap: "wrap", gap: "14px", justifyContent: "center" }}
+          >
             <a
               href={whatsappUrl}
               target="_blank"

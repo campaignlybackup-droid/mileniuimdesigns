@@ -22,8 +22,8 @@ export interface SendEmailResult {
  */
 async function getGmailCredentials(): Promise<{ user?: string; pass?: string }> {
   // 1. Check environment variables
-  const envUser = secret("GMAIL_USER") || process.env["GMAIL_USER"];
-  const envPass = secret("GMAIL_APP_PASSWORD") || process.env["GMAIL_APP_PASSWORD"];
+  const envUser = secret("GMAIL_USER");
+  const envPass = secret("GMAIL_APP_PASSWORD");
 
   if (envUser && envPass) {
     return { user: envUser, pass: envPass };
@@ -151,7 +151,9 @@ function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
 /**
  * Sends a customer OTP verification email via Gmail SMTP or logs to console during development.
  */
-export async function sendCustomerOtpEmail(params: SendOtpEmailParams): Promise<SendEmailResult> {
+export async function sendCustomerOtpEmail(
+  params: SendOtpEmailParams,
+): Promise<SendEmailResult> {
   const { to, code, expiresMinutes = 10 } = params;
   const { user, pass } = await getGmailCredentials();
 
@@ -175,29 +177,37 @@ export async function sendCustomerOtpEmail(params: SendOtpEmailParams): Promise<
         html: buildOtpEmailHtml(code, expiresMinutes),
       });
 
-      console.log(`[GMAIL SMTP SUCCESS] Dispatched OTP ${code} to ${to}, messageId: ${info.messageId}`);
+      console.log(
+        `[GMAIL SMTP SUCCESS] Dispatched OTP ${code} to ${to}, messageId: ${info.messageId}`,
+      );
       return {
         sent: true,
         messageId: info.messageId,
         provider: "gmail",
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(`[GMAIL SMTP ERROR] Failed to send OTP to ${to}:`, error);
+      const msg =
+        error instanceof Error ? error.message : "Failed to deliver email via Gmail SMTP";
       return {
         sent: false,
         provider: "gmail",
-        error: error.message || "Failed to deliver email via Gmail SMTP",
+        error: msg,
       };
     }
   }
 
   // If unconfigured:
   const isDev = appEnv() !== "production";
-  console.log(`[EMAIL NOTIFICATION - GMAIL UNCONFIGURED] Send code ${code} to ${to}. Set GMAIL_USER and GMAIL_APP_PASSWORD to enable live delivery.`);
+  console.log(
+    `[EMAIL NOTIFICATION - GMAIL UNCONFIGURED] Send code ${code} to ${to}. Set GMAIL_USER and GMAIL_APP_PASSWORD to enable live delivery.`,
+  );
 
   return {
     sent: isDev,
     provider: isDev ? "console_dev" : "unconfigured",
-    error: isDev ? undefined : "Gmail SMTP credentials not configured (GMAIL_USER & GMAIL_APP_PASSWORD required)",
+    error: isDev
+      ? undefined
+      : "Gmail SMTP credentials not configured (GMAIL_USER & GMAIL_APP_PASSWORD required)",
   };
 }

@@ -1,5 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getStorefrontConfig, saveStorefrontSettings, type StorefrontCustomizationConfig } from "@/lib/cms/storefrontConfig";
+import {
+  getStorefrontConfig,
+  saveStorefrontSettings,
+  type StorefrontCustomizationConfig,
+} from "@/lib/cms/storefrontConfig";
 import { requireStaffSession } from "@/lib/auth/actor";
 
 export const dynamic = "force-dynamic";
@@ -10,11 +14,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const marketCode = searchParams.get("market");
     const config = await getStorefrontConfig(marketCode);
     return NextResponse.json({ success: true, config });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || "Failed to load settings" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Failed to load settings";
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
 
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!settings || typeof settings !== "object") {
       return NextResponse.json(
         { success: false, error: "Invalid settings payload" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,10 +44,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       message: "Storefront customization settings saved successfully",
       config: updated,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || "Failed to save settings" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Failed to save settings";
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }

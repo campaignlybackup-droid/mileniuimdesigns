@@ -95,10 +95,15 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to verify code");
 
-      const accountUrl = marketCode.toLowerCase() === "us" ? "/account" : `/${marketCode.toLowerCase()}/account`;
+      const accountUrl =
+        marketCode.toLowerCase() === "us" ? "/account" : `/${marketCode.toLowerCase()}/account`;
       router.push(accountUrl);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Invalid verification code. Please check and try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Invalid verification code. Please check and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -166,9 +171,9 @@ export default function LoginPage() {
         {error && (
           <div
             style={{
-              background: "color-mix(in srgb, #e53e3e 10%, var(--md-bg-raised))",
-              border: "1px solid color-mix(in srgb, #e53e3e 30%, transparent)",
-              color: "#c53030",
+              background: "color-mix(in srgb, var(--md-danger) 10%, var(--md-bg-raised))",
+              border: "1px solid color-mix(in srgb, var(--md-danger) 30%, transparent)",
+              color: "var(--md-danger)",
               padding: "12px 16px",
               borderRadius: "var(--md-radius-sm)",
               marginBottom: "var(--md-space-4)",
@@ -214,7 +219,10 @@ export default function LoginPage() {
               color: "var(--md-fg)",
             }}
           >
-            Development Testing Code: <strong style={{ letterSpacing: "0.15em", color: "var(--md-gold)" }}>{devCode}</strong>
+            Development Testing Code:{" "}
+            <strong style={{ letterSpacing: "0.15em", color: "var(--md-gold)" }}>
+              {devCode}
+            </strong>
           </div>
         )}
 
@@ -288,7 +296,10 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSendOtp} style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
+            <form
+              onSubmit={handleSendOtp}
+              style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}
+            >
               <div>
                 <label
                   style={{
@@ -358,7 +369,10 @@ export default function LoginPage() {
             </form>
           </div>
         ) : (
-          <form onSubmit={handleVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}>
+          <form
+            onSubmit={handleVerifyOtp}
+            style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}
+          >
             <div>
               <div
                 style={{
@@ -368,7 +382,9 @@ export default function LoginPage() {
                   marginBottom: 8,
                 }}
               >
-                <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}>
+                <label
+                  style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}
+                >
                   Enter 6-Digit Code
                 </label>
                 <button
@@ -468,7 +484,8 @@ export default function LoginPage() {
             lineHeight: 1.5,
           }}
         >
-          🔒 Encrypted 256-bit single-use code · No permanent passwords required.<br />
+          🔒 Encrypted 256-bit single-use code · No permanent passwords required.
+          <br />
           Need assistance? Contact our Jaipur atelier concierge on{" "}
           <Link
             href="https://wa.me/919828156465?text=Hello%20Millennium%20Designs%20concierge,%20I%20need%20assistance%20signing%20in%20to%20my%20client%20portal."
