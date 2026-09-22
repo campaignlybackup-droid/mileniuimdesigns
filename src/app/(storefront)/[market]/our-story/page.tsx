@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { resolveMarket } from "@/lib/market";
 import { buildCanonicalAndAlternates } from "@/lib/seo";
@@ -380,6 +381,278 @@ export default async function OurStoryPage({
                 Every single design is sketched, cast in silver, stone-set, and hand polished under one roof.
                 Nothing is ever outsourced.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2b. MEET THE FAMILY ─────────────────────────────────────────── */}
+      <section
+        style={{
+          paddingInline: "var(--md-gutter)",
+          paddingBlock: "clamp(56px, 7vw, 96px)",
+          background: "var(--md-bg-raised, var(--md-ivory-soft, #f9f7f4))",
+          borderTop: "1px solid var(--md-rule)",
+          borderBottom: "1px solid var(--md-rule)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "var(--md-container)",
+            marginInline: "auto",
+          }}
+        >
+          {/* Section header */}
+          <div
+            style={{
+              textAlign: "center",
+              marginBottom: "clamp(36px, 5vw, 60px)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "var(--md-gold-antique)",
+                fontWeight: 600,
+                display: "block",
+                marginBottom: "8px",
+                fontFamily: "var(--md-font-crest), Georgia, serif",
+              }}
+            >
+              ✦ THE AGARWAL FAMILY ✦
+            </span>
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: "var(--md-font-display)",
+                fontSize: "clamp(1.75rem, 3.2vw, 2.5rem)",
+                fontWeight: 400,
+                color: "var(--md-fg)",
+                letterSpacing: "-0.01em",
+                lineHeight: 1.15,
+              }}
+            >
+              The Makers Behind Every Piece
+            </h2>
+          </div>
+
+          {/* Portrait trio */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "clamp(20px, 3vw, 36px)",
+              alignItems: "start",
+            }}
+          >
+            {/* B. L. Agarwal — Founder */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "18px",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "320px",
+                  aspectRatio: "3 / 4",
+                  overflow: "hidden",
+                  borderRadius: "var(--md-radius-sm, 2px)",
+                  background: "var(--md-bg-raised)",
+                  boxShadow: "0 12px 36px -8px rgba(0,0,0,0.14)",
+                }}
+              >
+                <Image
+                  src="/images/story/bl-agarwal.jpg"
+                  alt="B.L. Agarwal, Founder of Millennium Designs, Jaipur"
+                  fill
+                  sizes="(max-width: 768px) 90vw, 320px"
+                  style={{ objectFit: "cover", objectPosition: "center top" }}
+                  priority
+                />
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <p
+                  style={{
+                    margin: "0 0 3px",
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.125rem",
+                    fontWeight: 400,
+                    color: "var(--md-fg)",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  B.L. Agarwal
+                </p>
+                <p
+                  style={{
+                    margin: "0 0 8px",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "var(--md-gold-antique)",
+                    fontWeight: 600,
+                  }}
+                >
+                  Founder · Est. 1961
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.8125rem",
+                    lineHeight: 1.65,
+                    color: "var(--md-fg-secondary)",
+                    maxWidth: "260px",
+                    marginInline: "auto",
+                  }}
+                >
+                  Founded Pushpak Jewels in the gemstone corridors of Jaipur, setting the cornerstone of our family legacy in natural emeralds.
+                </p>
+              </div>
+            </div>
+
+            {/* Amit Agarwal — Managing Director */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "18px",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "320px",
+                  aspectRatio: "3 / 4",
+                  overflow: "hidden",
+                  borderRadius: "var(--md-radius-sm, 2px)",
+                  background: "var(--md-bg-raised)",
+                  boxShadow: "0 12px 36px -8px rgba(0,0,0,0.14)",
+                }}
+              >
+                <Image
+                  src="/images/story/amit-agarwal.jpg"
+                  alt="Amit Agarwal, Managing Director of Millennium Designs"
+                  fill
+                  sizes="(max-width: 768px) 90vw, 320px"
+                  style={{ objectFit: "cover", objectPosition: "center top" }}
+                />
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <p
+                  style={{
+                    margin: "0 0 3px",
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.125rem",
+                    fontWeight: 400,
+                    color: "var(--md-fg)",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Amit Agarwal
+                </p>
+                <p
+                  style={{
+                    margin: "0 0 8px",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "var(--md-gold-antique)",
+                    fontWeight: 600,
+                  }}
+                >
+                  Managing Director
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.8125rem",
+                    lineHeight: 1.65,
+                    color: "var(--md-fg-secondary)",
+                    maxWidth: "260px",
+                    marginInline: "auto",
+                  }}
+                >
+                  Expanded the atelier globally, developing our proprietary anti-tarnish alloy and presenting collections across New York, London and Milan.
+                </p>
+              </div>
+            </div>
+
+            {/* Sanket Agarwal — Director */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "18px",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "320px",
+                  aspectRatio: "3 / 4",
+                  overflow: "hidden",
+                  borderRadius: "var(--md-radius-sm, 2px)",
+                  background: "var(--md-bg-raised)",
+                  boxShadow: "0 12px 36px -8px rgba(0,0,0,0.14)",
+                }}
+              >
+                <Image
+                  src="/images/story/sanket-agarwal.jpg"
+                  alt="Sanket Agarwal, Director of Millennium Designs"
+                  fill
+                  sizes="(max-width: 768px) 90vw, 320px"
+                  style={{ objectFit: "cover", objectPosition: "center top" }}
+                />
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <p
+                  style={{
+                    margin: "0 0 3px",
+                    fontFamily: "var(--md-font-display)",
+                    fontSize: "1.125rem",
+                    fontWeight: 400,
+                    color: "var(--md-fg)",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Sanket Agarwal
+                </p>
+                <p
+                  style={{
+                    margin: "0 0 8px",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "var(--md-gold-antique)",
+                    fontWeight: 600,
+                  }}
+                >
+                  Director
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.8125rem",
+                    lineHeight: 1.65,
+                    color: "var(--md-fg-secondary)",
+                    maxWidth: "260px",
+                    marginInline: "auto",
+                  }}
+                >
+                  Leads product design and collector relationships, bringing a contemporary vision to six decades of Jaipur master-craft.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -811,7 +1084,6 @@ export default async function OurStoryPage({
               }}
             >
               <span>WhatsApp Founders Consultation</span>
-              <span>→</span>
             </a>
 
             <Link

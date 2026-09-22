@@ -162,7 +162,7 @@ export function StoneCard({
             fontWeight: 600,
           }}
         >
-          {isFeatured ? "Explore Stone & Collections →" : "View Collection →"}
+          {isFeatured ? "Explore Stone & Collections" : "View Collection"}
         </span>
       </div>
     </Link>

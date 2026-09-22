@@ -259,7 +259,6 @@ export function MobileNav({
                   }}
                 >
                   <span>{item.label}</span>
-                  <span style={{ color: "var(--md-fg-muted)", fontSize: "0.875rem" }}>→</span>
                 </Link>
               </li>
             ))}
@@ -337,7 +336,7 @@ export function MobileNav({
                       letterSpacing: "0.04em",
                     }}
                   >
-                    View All Gemstones →
+                    View All Gemstones
                   </Link>
                 </li>
               </ul>
@@ -382,7 +381,7 @@ export function MobileNav({
                     <span style={{ color: "var(--md-champagne)" }}>✦</span>
                     <span>Our Story · 1961</span>
                   </span>
-                  <span style={{ color: "var(--md-green)", fontSize: "0.875rem" }}>→</span>
+
                 </Link>
               </li>
             </ul>
@@ -420,7 +419,6 @@ export function MobileNav({
             }}
           >
             <span>WhatsApp Concierge</span>
-            <span>→</span>
           </a>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 36, fontSize: "0.8125rem" }}>

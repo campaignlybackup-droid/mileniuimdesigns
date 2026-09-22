@@ -226,7 +226,7 @@ export function ProductInfo({
                 fontWeight: 600,
               }}
             >
-              Ring Sizing Guide →
+              Ring Sizing Guide
             </button>
           </div>
         )}
@@ -284,7 +284,7 @@ export function ProductInfo({
             rel="noopener noreferrer"
             style={{ color: "var(--md-fg)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "3px" }}
           >
-            WhatsApp Atelier Concierge →
+            WhatsApp Atelier Concierge
           </a>
         </div>
       </div>

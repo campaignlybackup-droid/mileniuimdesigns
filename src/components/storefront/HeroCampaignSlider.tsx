@@ -312,7 +312,6 @@ export function HeroCampaignSlider({
               }}
             >
               <span>{activeSlide.ctaText}</span>
-              <span style={{ fontSize: "1rem", lineHeight: 1 }}>→</span>
             </Link>
           </div>
         </div>

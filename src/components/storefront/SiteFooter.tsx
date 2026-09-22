@@ -131,7 +131,7 @@ export function SiteFooter({
                     fontWeight: 600,
                   }}
                 >
-                  <span>WhatsApp Concierge →</span>
+                   <span>WhatsApp Concierge</span>
                 </a>
               </div>
             </div>
