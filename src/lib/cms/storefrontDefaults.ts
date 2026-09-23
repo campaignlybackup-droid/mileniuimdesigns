@@ -195,7 +195,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   heroSlides: [
     {
       id: "slide-1",
-      tag: "ATELIER SIGNATURE · JAIPUR BENCH EST. 1961",
+      tag: "ATELIER SIGNATURE · EST. 1961 JAIPUR",
       subhead: "Unheated Mineral Sovereignty",
       title: "Natural Gems, Cold-Forged in Pure 925 Silver.",
       standfirst:
@@ -238,7 +238,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   // 3. Trust Pillars
   trustPillarsVisible: true,
   trustPillars: [
-    { id: "tp-1", label: "JAIPUR BENCH EST. 1961", detail: "100% In-House Atelier", icon: "✦" },
+    { id: "tp-1", label: "EST. 1961 JAIPUR", detail: "100% In-House Atelier", icon: "✦" },
     { id: "tp-2", label: "SOLID 925 STERLING SILVER", detail: "Permanent Anti-Tarnish Alloy", icon: "✦" },
     { id: "tp-3", label: "NATURAL COURTLY GEMSTONES", detail: "Unheated Mineral Character", icon: "✦" },
     { id: "tp-4", label: "INSURED WORLDWIDE DELIVERY", detail: "Hallmarked & Certified", icon: "✦" },

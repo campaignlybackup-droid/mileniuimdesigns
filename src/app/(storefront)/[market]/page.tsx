@@ -138,29 +138,32 @@ export default async function StorefrontHomePage({
               alignItems: "center",
             }}
           >
-            {storefrontConfig.trustPillars.map((item, i) => (
-              <div
-                key={item.id || i}
-                className="md-trust-item"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  padding: "3px 6px",
-                }}
-              >
-                <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "0.5625rem" }}>{item.icon || "✦"}</span>
-                <div style={{ textAlign: "left" }}>
-                  <div className="md-trust-label" style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--md-fg)" }}>
-                    {item.label}
-                  </div>
-                  <div className="md-trust-detail" style={{ fontSize: "0.625rem", color: "var(--md-fg-muted)", letterSpacing: "0.02em" }}>
-                    {item.detail}
+            {storefrontConfig.trustPillars.map((item, i) => {
+              const label = item.label === "JAIPUR BENCH EST. 1961" ? "EST. 1961 JAIPUR" : item.label;
+              return (
+                <div
+                  key={item.id || i}
+                  className="md-trust-item"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    padding: "3px 6px",
+                  }}
+                >
+                  <span style={{ color: "var(--md-gold, #c9a86a)", fontSize: "0.5625rem" }}>{item.icon || "✦"}</span>
+                  <div style={{ textAlign: "left" }}>
+                    <div className="md-trust-label" style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", color: "var(--md-fg)" }}>
+                      {label}
+                    </div>
+                    <div className="md-trust-detail" style={{ fontSize: "0.625rem", color: "var(--md-fg-muted)", letterSpacing: "0.02em" }}>
+                      {item.detail}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
