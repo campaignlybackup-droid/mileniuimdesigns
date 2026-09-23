@@ -65,7 +65,7 @@ export default async function StorefrontHomePage({
   const showcaseProducts = allFeatured.slice(0, 4);
   const signatureGrid = allFeatured.slice(4, 12).length >= 4 ? allFeatured.slice(4, 12) : allFeatured.slice(0, 8);
 
-  const whatsappConsultationUrl = buildWhatsAppInquiryUrl({ topic: "bespoke" });
+  const whatsappWholesaleUrl = buildWhatsAppInquiryUrl({ topic: "wholesale" });
 
   return (
     <main
@@ -632,7 +632,7 @@ export default async function StorefrontHomePage({
             </p>
 
             <a
-              href={whatsappConsultationUrl}
+              href={whatsappWholesaleUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="md-btn-editorial"
@@ -643,7 +643,7 @@ export default async function StorefrontHomePage({
                 textAlign: "center",
               }}
             >
-              Inquire on WhatsApp
+              Inquire on WhatsApp for Wholesale
             </a>
           </div>
         </section>
