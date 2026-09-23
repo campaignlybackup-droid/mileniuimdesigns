@@ -32,7 +32,7 @@ export default function CartPage() {
               marginBottom: "8px",
             }}
           >
-            ✦ JAIPUR ATELIER 1961
+            ✦ EST. 1961 JAIPUR
           </span>
           <h1
             style={{
@@ -251,14 +251,17 @@ export default function CartPage() {
                             type="button"
                             onClick={() => updateQuantity(line.id, Math.max(1, line.quantity - 1))}
                             disabled={isLoading || line.quantity <= 1}
+                            aria-label="Decrease quantity"
                             style={{
-                              width: 32,
-                              height: 32,
+                              width: 44,
+                              height: 44,
+                              minWidth: 44,
+                              minHeight: 44,
                               background: "transparent",
                               border: "none",
                               cursor: line.quantity <= 1 ? "not-allowed" : "pointer",
                               color: line.quantity <= 1 ? "var(--md-fg-muted)" : "var(--md-fg)",
-                              fontSize: "1rem",
+                              fontSize: "1.125rem",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -268,11 +271,11 @@ export default function CartPage() {
                           </button>
                           <span
                             style={{
-                              minWidth: 32,
+                              minWidth: 36,
                               textAlign: "center",
                               fontSize: "0.875rem",
                               fontFamily: "var(--md-font-body)",
-                              fontWeight: 500,
+                              fontWeight: 600,
                             }}
                           >
                             {line.quantity}
@@ -281,14 +284,17 @@ export default function CartPage() {
                             type="button"
                             onClick={() => updateQuantity(line.id, line.quantity + 1)}
                             disabled={isLoading}
+                            aria-label="Increase quantity"
                             style={{
-                              width: 32,
-                              height: 32,
+                              width: 44,
+                              height: 44,
+                              minWidth: 44,
+                              minHeight: 44,
                               background: "transparent",
                               border: "none",
                               cursor: "pointer",
                               color: "var(--md-fg)",
-                              fontSize: "1rem",
+                              fontSize: "1.125rem",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -302,6 +308,7 @@ export default function CartPage() {
                           type="button"
                           onClick={() => removeItem(line.id)}
                           disabled={isLoading}
+                          aria-label={`Remove ${line.productTitle} from bag`}
                           style={{
                             background: "none",
                             border: "none",
@@ -309,7 +316,10 @@ export default function CartPage() {
                             fontSize: "0.75rem",
                             cursor: "pointer",
                             textDecoration: "underline",
-                            padding: "4px 8px",
+                            padding: "8px 12px",
+                            minHeight: 44,
+                            display: "inline-flex",
+                            alignItems: "center",
                           }}
                         >
                           Remove

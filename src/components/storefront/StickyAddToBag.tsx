@@ -102,7 +102,7 @@ export function StickyAddToBag({
         size="md"
         onClick={handleAddToCart}
         disabled={loading || !variantId}
-        style={{ flexShrink: 0, minHeight: 44, paddingInline: "var(--md-space-5)" }}
+        style={{ flexShrink: 0, minHeight: 48, paddingInline: "var(--md-space-5)" }}
       >
         {added ? "Added to Bag ✓" : loading ? "…" : "Add to Bag"}
       </Button>

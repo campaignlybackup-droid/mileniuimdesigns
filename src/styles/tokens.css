@@ -98,7 +98,11 @@
 
   --md-container: 1560px;
   --md-container-text: 760px;
-  --md-gutter: clamp(1.25rem, 4vw, 4rem);
+  --md-gutter: clamp(1rem, 3.5vw, 4rem);
+  --md-safe-top: env(safe-area-inset-top, 0px);
+  --md-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --md-safe-left: env(safe-area-inset-left, 0px);
+  --md-safe-right: env(safe-area-inset-right, 0px);
 
   /* Aspect Ratios */
   --md-ratio-product: 4 / 5;

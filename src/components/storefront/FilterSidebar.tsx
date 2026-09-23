@@ -183,13 +183,17 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
                 return (
                   <label
                     key={opt.id}
+                    className="md-filter-option"
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "var(--md-space-2)",
+                      gap: "var(--md-space-3)",
                       fontSize: "0.875rem",
                       cursor: "pointer",
                       color: selected ? "var(--md-fg)" : "var(--md-fg-secondary)",
+                      minHeight: 44,
+                      padding: "4px 0",
+                      userSelect: "none",
                     }}
                   >
                     <input
@@ -197,7 +201,9 @@ export function FilterSidebar({ groups, className }: FilterSidebarProps): JSX.El
                       checked={selected}
                       onChange={() => toggleFilter(group.key, opt.slug)}
                       style={{
-                        accentColor: "var(--md-fg)",
+                        width: 18,
+                        height: 18,
+                        accentColor: "var(--md-emerald-deep)",
                         cursor: "pointer",
                       }}
                     />

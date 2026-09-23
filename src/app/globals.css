@@ -64,8 +64,10 @@
 
 html {
   background-color: var(--md-bg);
+  width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -75,8 +77,18 @@ body {
   font-size: var(--md-t-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Touch-action optimization for instantaneous tap feedback on mobile devices */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
 }
 
 /*
@@ -531,13 +543,19 @@ img[data-tone="ivory"] {
 
 @media (max-width: 767px) {
   :root {
-    --md-gutter: 14px;
+    --md-gutter: 16px;
+  }
+
+  @media (max-width: 360px) {
+    :root {
+      --md-gutter: 12px;
+    }
   }
   
   .md-product-grid,
   .md-product-grid.md-grid-2 {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
   }
 
   /* Compact Hero Campaign on smartphones: refined height and typography */
@@ -560,60 +578,73 @@ img[data-tone="ivory"] {
     display: none !important;
   }
 
-  /* Delicate Wishlist button on mobile */
+  /* 44x44px minimum comfortable Touch Target for Wishlist button on mobile */
   .md-wishlist-btn {
-    min-width: 30px !important;
-    min-height: 30px !important;
-    padding: 3px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    -webkit-tap-highlight-color: transparent;
   }
   .md-wishlist-btn svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 18px !important;
+    height: 18px !important;
   }
 
-  /* Product Card on Mobile: smaller font and aligned baseline */
+  /* Product Card on Mobile: comfortable font and aligned 2-line baseline */
   .md-product-card h3 {
-    font-size: 0.8125rem !important;
-    line-height: 1.3 !important;
-    height: 2.35em !important;
+    font-size: 0.84375rem !important;
+    line-height: 1.35 !important;
+    height: 2.7em !important;
   }
 
-  /* Category pills on mobile */
+  /* Category pills on mobile: comfortable tap height and clear typography */
   .md-mobile-nav-rail a {
-    padding: 4px 10px !important;
-    font-size: 0.625rem !important;
-    min-height: 26px !important;
-    letter-spacing: 0.05em !important;
+    padding: 7px 14px !important;
+    font-size: 0.6875rem !important;
+    min-height: 38px !important;
+    letter-spacing: 0.06em !important;
+    white-space: nowrap !important;
   }
 
   /* Trust Strip: 2x2 grid on mobile */
   .md-trust-strip-inner {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px 8px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px 10px !important;
   }
   .md-trust-item {
     justify-content: flex-start !important;
+    min-height: 38px;
   }
   .md-trust-label {
-    font-size: 0.59375rem !important;
+    font-size: 0.625rem !important;
   }
   .md-trust-detail {
-    font-size: 0.53125rem !important;
+    font-size: 0.5625rem !important;
   }
 
-  /* Category Grid: 2-column mobile with clean 10px spacing */
+  /* Category Grid: 2-column mobile with clean 12px spacing */
   .md-category-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
   }
   .md-category-grid h3 {
     font-size: 0.875rem !important;
   }
 
-  /* Gemstone Grid on mobile: 10px gap */
+  /* Gemstone Grid on mobile: 12px gap */
   .md-stone-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  /* Form controls on mobile: 16px minimum prevents iOS automatic zoom */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 }
 
@@ -867,6 +898,72 @@ img[data-tone="ivory"] {
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 }
+
+/* ── Mobile-First E-Commerce Helpers ── */
+.md-footer-toggle-icon {
+  display: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--md-champagne);
+  font-weight: 400;
+}
+
+@media (max-width: 860px) {
+  .md-checkout-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--md-space-6) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .md-form-grid-row {
+    grid-template-columns: 1fr !important;
+  }
+  .md-form-grid-row > * {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .md-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--md-space-2) !important;
+  }
+
+  .md-footer-col {
+    border-bottom: 1px solid color-mix(in srgb, var(--md-fg-inverse) 12%, transparent);
+    padding-bottom: var(--md-space-1);
+  }
+
+  .md-footer-heading-btn {
+    min-height: 44px;
+    padding-block: var(--md-space-2) !important;
+  }
+
+  .md-footer-toggle-icon {
+    display: inline-block;
+  }
+
+  .md-footer-content {
+    display: none;
+  }
+
+  .md-footer-content.is-open {
+    display: block;
+    animation: fadeIn 200ms ease;
+  }
+}
+
+@media (min-width: 768px) {
+  .md-footer-heading-btn {
+    pointer-events: none;
+    cursor: default;
+  }
+  .md-footer-content {
+    display: block !important;
+  }
+}
+
 
 
 

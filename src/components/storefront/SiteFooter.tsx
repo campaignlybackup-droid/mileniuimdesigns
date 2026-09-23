@@ -1,9 +1,10 @@
 import { Logo } from "@/components/ui/Logo";
 import { type StorefrontCustomizationConfig, DEFAULT_STOREFRONT_CONFIG } from "@/lib/cms/storefrontConfig";
+import { FooterColumnAccordion } from "@/components/storefront/FooterColumnAccordion";
 
 /**
  * The footer shell — 10 §5.1, on the dark half of the house (`--md-emerald-deep`).
- * Now fully customizable via Atelier CMS (100+ settings).
+ * Now fully customizable via Atelier CMS (100+ settings) with responsive mobile accordion.
  */
 export function SiteFooter({
   year,
@@ -33,6 +34,7 @@ export function SiteFooter({
 
         {columns.length > 0 && (
           <div
+            className="md-footer-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
@@ -41,32 +43,7 @@ export function SiteFooter({
             }}
           >
             {columns.map((column) => (
-              <nav key={column.heading} aria-label={column.heading}>
-                <h2 className="md-label" style={{ color: "var(--md-champagne)", letterSpacing: "0.18em" }}>
-                  {column.heading}
-                </h2>
-                <ul style={{ listStyle: "none", margin: "var(--md-space-4) 0 0", padding: 0 }}>
-                  {column.links.map((link) => (
-                    <li key={link.href} style={{ marginBlockEnd: "var(--md-space-2)" }}>
-                      <a
-                        href={link.href}
-                        className="md-nav-link"
-                        style={{
-                          color: "var(--md-fg-inverse-muted)",
-                          textDecoration: "none",
-                          fontSize: "var(--md-t-small)",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          minHeight: 36,
-                          transition: "color var(--md-dur-fast) ease",
-                        }}
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <FooterColumnAccordion key={column.heading} column={column} />
             ))}
 
             {/* Atelier Contact & Location */}

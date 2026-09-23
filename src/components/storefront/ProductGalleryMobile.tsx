@@ -117,7 +117,32 @@ export function ProductGalleryMobile({
         })}
       </div>
 
-      {/* Minimal progress bar at bottom — swipe to navigate */}
+      {/* Photo counter pill (e.g. 1 / 4) in bottom-right corner */}
+      {items.length > 1 && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "12px",
+            right: "12px",
+            background: "rgba(6, 19, 13, 0.72)",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            color: "var(--md-ivory-soft)",
+            padding: "3px 9px",
+            borderRadius: "999px",
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            letterSpacing: "0.08em",
+            zIndex: 3,
+            pointerEvents: "none",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+          }}
+        >
+          {activeIndex + 1} / {items.length}
+        </div>
+      )}
+
+      {/* Minimal progress bar at bottom */}
       {items.length > 1 && (
         <div
           style={{
@@ -125,7 +150,7 @@ export function ProductGalleryMobile({
             bottom: 0,
             left: 0,
             right: 0,
-            height: 1,
+            height: 2,
             background: "var(--md-rule)",
             zIndex: 2,
           }}

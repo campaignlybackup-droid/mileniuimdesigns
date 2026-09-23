@@ -183,8 +183,10 @@ export default function CheckoutPage() {
       <div
         style={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "space-between",
-          alignItems: "baseline",
+          alignItems: "center",
+          gap: "var(--md-space-4)",
           borderBottom: "1px solid var(--md-rule)",
           paddingBottom: "var(--md-space-4)",
           marginBottom: "var(--md-space-8)",
@@ -194,7 +196,7 @@ export default function CheckoutPage() {
           <h1
             style={{
               fontFamily: "var(--md-font-display)",
-              fontSize: "2.25rem",
+              fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)",
               margin: 0,
               fontWeight: 500,
               color: "var(--md-fg)",
@@ -210,7 +212,7 @@ export default function CheckoutPage() {
         {/* Currency Lock Badge - Prompt §25 */}
         <div
           style={{
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
             gap: "var(--md-space-2)",
             background: "var(--md-bg-subtle, var(--md-rule))",
@@ -246,9 +248,10 @@ export default function CheckoutPage() {
 
       {/* Main Grid */}
       <div
+        className="md-checkout-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
           gap: "var(--md-space-8)",
           alignItems: "start",
         }}
@@ -273,7 +276,7 @@ export default function CheckoutPage() {
             >
               1. Contact Information
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--md-space-4)" }}>
+            <div className="md-form-grid-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--md-space-4)" }}>
               <div style={{ gridColumn: "span 2" }}>
                 <label style={{ display: "block", fontSize: "0.8125rem", marginBottom: 6, color: "var(--md-fg-secondary)" }}>
                   Email Address *
@@ -286,11 +289,14 @@ export default function CheckoutPage() {
                   placeholder="name@example.com"
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -306,11 +312,14 @@ export default function CheckoutPage() {
                   placeholder={isIndia ? "+91 98200 00000" : "+1 (555) 000-0000"}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -335,7 +344,7 @@ export default function CheckoutPage() {
             >
               2. Shipping Address
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--md-space-4)" }}>
+            <div className="md-form-grid-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--md-space-4)" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8125rem", marginBottom: 6, color: "var(--md-fg-secondary)" }}>
                   First Name *
@@ -347,11 +356,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setFirstName(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -366,11 +378,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setLastName(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -386,11 +401,14 @@ export default function CheckoutPage() {
                   placeholder="Street address, suite, apartment"
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -405,11 +423,14 @@ export default function CheckoutPage() {
                   placeholder="Apartment, suite, unit, etc."
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -424,11 +445,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setCity(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -443,11 +467,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setState(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -462,11 +489,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setPostalCode(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 />
               </div>
@@ -479,11 +509,14 @@ export default function CheckoutPage() {
                   onChange={(e) => setCountryCode(e.target.value)}
                   style={{
                     width: "100%",
-                    padding: "10px 12px",
+                    minHeight: 48,
+                    padding: "12px 14px",
                     border: "1px solid var(--md-rule)",
                     background: "transparent",
                     color: "var(--md-fg)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
+                    borderRadius: "2px",
                   }}
                 >
                   {isIndia ? (
@@ -818,7 +851,7 @@ export default function CheckoutPage() {
               variant="primary"
               size="lg"
               disabled={submitting}
-              style={{ width: "100%", marginTop: "var(--md-space-2)" }}
+              style={{ width: "100%", marginTop: "var(--md-space-2)", minHeight: 52 }}
             >
               {submitting ? "Placing Order…" : `Place Order • ${cart?.formattedSubtotal}`}
             </Button>
