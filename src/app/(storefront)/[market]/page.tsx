@@ -44,6 +44,30 @@ export async function generateMetadata({
   };
 }
 
+const ATELIER_MAKERS = [
+  {
+    name: "B.L. Agarwal",
+    role: "Founder · Est. 1961",
+    image: "/images/story/bl-agarwal.jpg",
+    alt: "B.L. Agarwal, Founder of Millennium Designs",
+    bio: "Founded our family legacy in the gemstone corridors of Jaipur in 1961, establishing generational standards in unheated natural emeralds.",
+  },
+  {
+    name: "Amit Agarwal",
+    role: "Managing Director",
+    image: "/images/story/amit-agarwal.jpg",
+    alt: "Amit Agarwal, Managing Director of Millennium Designs",
+    bio: "Expanded the atelier globally, formulating our signature anti-tarnish 925 sterling silver and presenting collections internationally.",
+  },
+  {
+    name: "Saket Agarwal",
+    role: "Director",
+    image: "/images/story/saket-agarwal.jpg",
+    alt: "Saket Agarwal, Director of Millennium Designs",
+    bio: "Leads design architecture and collector commissions, bringing contemporary geometric vision to six decades of Jaipur bench craft.",
+  },
+];
+
 export default async function StorefrontHomePage({
   params,
 }: {
@@ -383,7 +407,7 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 6. ART OF THE ATELIER (JAIPUR BENCH CRAFTSMANSHIP SPREAD) ── */}
+      {/* ── 6. ATELIER STORY & THREE GENERATIONS ────────────────────── */}
       {storefrontConfig.sectionHeritageVisible !== false && (
         <section
           data-surface="forest"
@@ -391,34 +415,24 @@ export default async function StorefrontHomePage({
             background: "var(--md-forest)",
             color: "var(--md-fg-inverse)",
             paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(40px, 5vw, 72px)",
+            paddingBlock: "clamp(48px, 6vw, 84px)",
             position: "relative",
             overflow: "hidden",
+            borderTop: "1px solid color-mix(in srgb, var(--md-champagne) 15%, transparent)",
+            borderBottom: "1px solid color-mix(in srgb, var(--md-champagne) 15%, transparent)",
           }}
         >
           <div
             style={{
               maxWidth: "var(--md-container)",
               marginInline: "auto",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",
-              gap: "clamp(24px, 4vw, 56px)",
-              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+              gap: "clamp(32px, 4.5vw, 48px)",
             }}
           >
-            {/* Craftsmanship Image */}
-            <div className="md-craft-image" style={{ borderRadius: "var(--md-radius-sm)" }}>
-              <Image
-                src={storefrontConfig.heritageStoryImageUrl || "/images/story/atelier_bench_silversmith.jpg"}
-                alt="Master silversmith at work in our Jaipur workshop"
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-
-            {/* Clean, Non-bloated Narrative */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-3)" }}>
+            {/* Editorial Heading & Story */}
+            <div style={{ textAlign: "center", maxWidth: "780px", marginInline: "auto" }}>
               <span
                 style={{
                   fontSize: "0.6875rem",
@@ -426,73 +440,138 @@ export default async function StorefrontHomePage({
                   textTransform: "uppercase",
                   color: "var(--md-champagne)",
                   fontWeight: 600,
+                  display: "block",
+                  marginBottom: "8px",
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
                 }}
               >
-                JAIPUR BENCH HERITAGE
+                ✦ ATELIER HERITAGE · EST. 1961 JAIPUR ✦
               </span>
 
               <h2
                 style={{
-                  margin: 0,
+                  margin: "0 0 12px",
                   fontFamily: "var(--md-font-display)",
-                  fontSize: "clamp(1.25rem, 3vw, 2.25rem)",
+                  fontSize: "clamp(1.5rem, 3.2vw, 2.5rem)",
                   fontWeight: 400,
                   lineHeight: 1.2,
                   color: "var(--md-fg-inverse)",
                   letterSpacing: "-0.01em",
                 }}
               >
-                {storefrontConfig.heritageStoryHeadline}
+                The Story Behind Every Creation
               </h2>
 
               <p
                 style={{
                   margin: 0,
-                  fontSize: "clamp(0.875rem, 1.1vw, 1rem)",
+                  fontSize: "clamp(0.875rem, 1.05vw, 0.9375rem)",
                   lineHeight: 1.7,
                   color: "var(--md-fg-inverse-muted)",
                 }}
               >
-                {storefrontConfig.heritageStoryStandfirst}
+                Founded in 1961 in the historic gemstone corridors of Jaipur by B.L. Agarwal, Millennium Designs unites generational bench heritage with contemporary silver architecture. Today, led by brothers Amit and Saket Agarwal, every creation remains true to our founding principles of solid 925 sterling silver and unheated natural earth-mined gems.
               </p>
+            </div>
 
-              {storefrontConfig.heritageStoryQuote && (
-                <blockquote
+            {/* Three Makers / Founders Portraits */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+                gap: "clamp(24px, 3.5vw, 40px)",
+              }}
+            >
+              {ATELIER_MAKERS.map((maker) => (
+                <div
+                  key={maker.name}
                   style={{
-                    margin: 0,
-                    fontStyle: "italic",
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "0.9375rem",
-                    color: "var(--md-champagne)",
-                    borderLeft: "2px solid var(--md-gold)",
-                    paddingLeft: "12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center",
+                    gap: "16px",
                   }}
                 >
-                  &ldquo;{storefrontConfig.heritageStoryQuote}&rdquo;
-                  {storefrontConfig.heritageStorySignature && (
-                    <footer style={{ fontSize: "0.75rem", marginTop: 4, fontStyle: "normal", opacity: 0.8 }}>
-                      — {storefrontConfig.heritageStorySignature}
-                    </footer>
-                  )}
-                </blockquote>
-              )}
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      maxWidth: "280px",
+                      aspectRatio: "3 / 4",
+                      overflow: "hidden",
+                      borderRadius: "var(--md-radius-sm)",
+                      border: "1px solid color-mix(in srgb, var(--md-champagne) 25%, transparent)",
+                      boxShadow: "0 16px 40px -12px rgba(0,0,0,0.35)",
+                      background: "var(--md-forest-deep, #041811)",
+                    }}
+                  >
+                    <Image
+                      src={maker.image}
+                      alt={maker.alt}
+                      fill
+                      sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
+                      style={{ objectFit: "cover", objectPosition: "center top" }}
+                    />
+                  </div>
+                  <div>
+                    <h3
+                      style={{
+                        margin: "0 0 4px",
+                        fontFamily: "var(--md-font-display)",
+                        fontSize: "1.25rem",
+                        fontWeight: 400,
+                        color: "var(--md-fg-inverse)",
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {maker.name}
+                    </h3>
+                    <p
+                      style={{
+                        margin: "0 0 8px",
+                        fontSize: "0.6875rem",
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "var(--md-champagne)",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {maker.role}
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "0.8125rem",
+                        lineHeight: 1.6,
+                        color: "var(--md-fg-inverse-muted)",
+                        maxWidth: "280px",
+                        marginInline: "auto",
+                      }}
+                    >
+                      {maker.bio}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-              <div style={{ paddingTop: "var(--md-space-2)" }}>
-                <Link
-                  href={`${prefix}/our-story`}
-                  style={{
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--md-champagne)",
-                    textDecoration: "underline",
-                    textUnderlineOffset: "6px",
-                    fontWeight: 600,
-                  }}
-                >
-                  Our Story &amp; Atelier
-                </Link>
-              </div>
+            {/* Link to Full Story */}
+            <div style={{ textAlign: "center", paddingTop: "var(--md-space-2)" }}>
+              <Link
+                href={`${prefix}/our-story`}
+                style={{
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--md-champagne)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "6px",
+                  fontWeight: 600,
+                }}
+              >
+                Our Story &amp; Atelier Archive →
+              </Link>
             </div>
           </div>
         </section>
