@@ -1322,7 +1322,7 @@ export default function AdminCustomizationPage() {
                   label="WhatsApp Concierge Number (E.164 without +)"
                   value={config.whatsappConciergeNumber}
                   onChange={(v) => updateField("whatsappConciergeNumber", v)}
-                  desc="Example: 919828156465"
+                  desc="Example: 919829056597"
                 />
                 <InputField
                   label="Support Email"

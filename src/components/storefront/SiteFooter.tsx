@@ -16,7 +16,7 @@ export function SiteFooter({
   columns?: { heading: string; links: { label: string; href: string }[] }[];
   config?: StorefrontCustomizationConfig;
 }): React.ReactElement {
-  const whatsappUrl = `https://wa.me/${config?.whatsappConciergeNumber || "919828156465"}?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/${config?.whatsappConciergeNumber || "919829056597"}?text=${encodeURIComponent(
     config?.whatsappConciergeGreeting || "Hello Millennium Designs, I would like to enquire about your jewellery creations."
   )}`;
   return (
@@ -75,47 +75,43 @@ export function SiteFooter({
                 JAIPUR ATELIER &amp; CONTACT
               </h2>
               <address style={{ fontStyle: "normal", color: "var(--md-fg-inverse-muted)", fontSize: "var(--md-t-small)", lineHeight: 1.6 }}>
-                {config?.atelierAddressName || "Millenium Designs"}<br />
+                {config?.atelierAddressName || "Millennium Designs Jaipur Atelier"}<br />
                 {config?.atelierAddressLine1 || "5, Noor Plaza, Chameliwala Market"}<br />
                 {config?.atelierAddressLine2 ? <>{config.atelierAddressLine2}<br /></> : null}
                 {config?.atelierCity || "Jaipur"}, {config?.atelierPostalCode || "302001"}<br />
                 {config?.atelierState || "Rajasthan"}, {config?.atelierCountry || "India"}
               </address>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "4px" }}>
-                {config?.directPhonePrimary && (
-                  <a
-                    href={`tel:${config.directPhonePrimary.replace(/[^+\d]/g, "")}`}
-                    style={{
-                      color: "var(--md-fg-inverse-muted)",
-                      textDecoration: "none",
-                      fontSize: "var(--md-t-small)",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      minHeight: 44,
-                      gap: "8px",
-                    }}
-                  >
-                    <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Direct</span>
-                    <span>{config.directPhonePrimary}</span>
-                  </a>
-                )}
-                {config?.directPhoneSecondary && (
-                  <a
-                    href={`tel:${config.directPhoneSecondary.replace(/[^+\d]/g, "")}`}
-                    style={{
-                      color: "var(--md-fg-inverse-muted)",
-                      textDecoration: "none",
-                      fontSize: "var(--md-t-small)",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      minHeight: 44,
-                      gap: "8px",
-                    }}
-                  >
-                    <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Atelier</span>
-                    <span>{config.directPhoneSecondary}</span>
-                  </a>
-                )}
+                <a
+                  href={`tel:${(config?.directPhonePrimary || "+91 98290 56597").replace(/[^+\d]/g, "")}`}
+                  style={{
+                    color: "var(--md-fg-inverse-muted)",
+                    textDecoration: "none",
+                    fontSize: "var(--md-t-small)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    minHeight: 44,
+                    gap: "8px",
+                  }}
+                >
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Phone</span>
+                  <span>{config?.directPhonePrimary || "+91 98290 56597"}</span>
+                </a>
+                <a
+                  href={`tel:${(config?.directPhoneSecondary || "+91 98281 56465").replace(/[^+\d]/g, "")}`}
+                  style={{
+                    color: "var(--md-fg-inverse-muted)",
+                    textDecoration: "none",
+                    fontSize: "var(--md-t-small)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    minHeight: 44,
+                    gap: "8px",
+                  }}
+                >
+                  <span style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>Alternate</span>
+                  <span>{config?.directPhoneSecondary || "+91 98281 56465"}</span>
+                </a>
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -131,7 +127,7 @@ export function SiteFooter({
                     fontWeight: 600,
                   }}
                 >
-                   <span>WhatsApp Concierge</span>
+                   <span>Connect on WhatsApp</span>
                 </a>
               </div>
             </div>

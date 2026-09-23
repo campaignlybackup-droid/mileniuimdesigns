@@ -1098,17 +1098,17 @@ export default async function OurStoryPage({
               }}
             >
               <a
-                href="tel:+919828156465"
-                style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}
-              >
-                📞 +91 98281 56465
-              </a>
-              <span>·</span>
-              <a
                 href="tel:+919829056597"
                 style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}
               >
                 📞 +91 98290 56597
+              </a>
+              <span>·</span>
+              <a
+                href="tel:+919828156465"
+                style={{ color: "var(--md-forest)", textDecoration: "none", fontWeight: 600 }}
+              >
+                +91 98281 56465
               </a>
             </div>
           </div>

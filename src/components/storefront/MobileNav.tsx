@@ -450,21 +450,6 @@ export function MobileNav({
             }}
           >
             <a
-              href="tel:+919828156465"
-              style={{
-                color: "var(--md-fg)",
-                textDecoration: "none",
-                fontWeight: 600,
-                display: "inline-flex",
-                alignItems: "center",
-                minHeight: 44,
-                padding: "0 4px",
-              }}
-            >
-              📞 +91 98281 56465
-            </a>
-            <span style={{ color: "var(--md-fg-muted)" }}>·</span>
-            <a
               href="tel:+919829056597"
               style={{
                 color: "var(--md-fg)",
@@ -476,7 +461,22 @@ export function MobileNav({
                 padding: "0 4px",
               }}
             >
-              +91 98290 56597
+              📞 +91 98290 56597
+            </a>
+            <span style={{ color: "var(--md-fg-muted)" }}>·</span>
+            <a
+              href="tel:+919828156465"
+              style={{
+                color: "var(--md-fg)",
+                textDecoration: "none",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                minHeight: 44,
+                padding: "0 4px",
+              }}
+            >
+              +91 98281 56465
             </a>
           </div>
         </div>

@@ -19,8 +19,8 @@ export const BANK_TRANSFER_DETAILS: BankTransferDetails = {
   accountType: "Current Account",
   branchName: "Jaipur - C Scheme Branch",
   branchAddress: "C-101, Ridhi Sidhi Complex, Subhash Marg, Ahinsa Circle, C-Scheme, Jaipur, Rajasthan - 302001",
-  whatsappNumber: "919828156465",
-  whatsappDisplay: "+91 98281 56465",
+  whatsappNumber: "919829056597",
+  whatsappDisplay: "+91 98290 56597",
   instructions: [
     "Initiate an IMPS, NEFT, or RTGS bank transfer using the ICICI Bank account details above.",
     "Quote your Order Number in the transfer remarks/description for automatic reconciliation.",

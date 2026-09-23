@@ -41,7 +41,7 @@ export default function LoginPage() {
       setError(
         authMode === "email"
           ? "Please enter a valid email address (e.g. name@gmail.com)"
-          : "Please enter a valid WhatsApp mobile number with country code (e.g. +91 98281 56465)",
+          : "Please enter a valid WhatsApp mobile number with country code (e.g. +91 98290 56597)",
       );
       return;
     }
@@ -328,7 +328,7 @@ export default function LoginPage() {
                     authMode === "email"
                       ? "client@gmail.com"
                       : isIndia
-                        ? "+91 98281 56465"
+                        ? "+91 98290 56597"
                         : "+1 (555) 019-2834"
                   }
                   style={{
@@ -488,12 +488,12 @@ export default function LoginPage() {
           <br />
           Need assistance? Contact our Jaipur atelier concierge on{" "}
           <Link
-            href="https://wa.me/919828156465?text=Hello%20Millennium%20Designs%20concierge,%20I%20need%20assistance%20signing%20in%20to%20my%20client%20portal."
+            href="https://wa.me/919829056597?text=Hello%20Millennium%20Designs%20concierge,%20I%20need%20assistance%20signing%20in%20to%20my%20client%20portal."
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: "var(--md-gold)", textDecoration: "underline" }}
           >
-            WhatsApp (+91 98281 56465)
+            WhatsApp (+91 98290 56597)
           </Link>
         </div>
       </div>

@@ -135,7 +135,7 @@ function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
               </p>
               <p style="font-size: 11px; color: #6d8076; line-height: 1.5; margin: 0;">
                 Millennium Designs Jaipur Atelier · Opp. G.P.O., M.I. Road, Jaipur, Rajasthan 302001<br />
-                Concierge Direct: +91 98281 56465 · concierge@millenniumdesigns.in
+                Concierge Direct: +91 98290 56597 · concierge@millenniumdesigns.in
               </p>
             </td>
           </tr>
