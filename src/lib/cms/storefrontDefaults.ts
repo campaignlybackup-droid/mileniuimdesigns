@@ -257,7 +257,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   sectionStonesVisible: true,
   sectionHeritageVisible: true,
   sectionBespokeVisible: true,
-  sectionTestimonialsVisible: true,
+  sectionTestimonialsVisible: false,
   sectionNewsletterVisible: true,
   categoriesSectionTitle: "The Curated Collections",
   categoriesSectionSubtitle: "Explore our archive of master-crafted sterling silver designs by category.",
