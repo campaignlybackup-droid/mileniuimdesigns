@@ -11,7 +11,6 @@ import { StoneCard } from "@/components/storefront/StoneCard";
 import { ArchivalShowcase } from "@/components/storefront/ArchivalShowcase";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getCategoryImage } from "@/lib/media/categoryImages";
-import { buildWhatsAppInquiryUrl } from "@/lib/whatsapp";
 import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
 import { getStorefrontConfig } from "@/lib/cms/storefrontConfig";
 
@@ -88,8 +87,6 @@ export default async function StorefrontHomePage({
   const allFeatured = featuredResult.products;
   const showcaseProducts = allFeatured.slice(0, 4);
   const signatureGrid = allFeatured.slice(4, 12).length >= 4 ? allFeatured.slice(4, 12) : allFeatured.slice(0, 8);
-
-  const whatsappWholesaleUrl = buildWhatsAppInquiryUrl({ topic: "wholesale" });
 
   return (
     <main
@@ -654,83 +651,6 @@ export default async function StorefrontHomePage({
           </div>
         </section>
       )}
-
-      {/* ── 8. PRIVATE ATELIER CONCIERGE & BESPOKE INQUIRY ─────────── */}
-      {storefrontConfig.sectionBespokeVisible !== false && (
-        <section
-          data-surface="ivory"
-          style={{
-            background: "var(--md-bg-raised)",
-            borderTop: "1px solid var(--md-rule)",
-            paddingInline: "var(--md-gutter)",
-            paddingBlock: "clamp(36px, 5vw, 64px)",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "600px",
-              marginInline: "auto",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "var(--md-space-2)",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "var(--md-fg-secondary)",
-                fontWeight: 600,
-              }}
-            >
-              BESPOKE COMMISSIONS
-            </span>
-
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: "var(--md-font-display)",
-                fontSize: "clamp(1.25rem, 3vw, 2.25rem)",
-                fontWeight: 400,
-                color: "var(--md-fg)",
-                letterSpacing: "-0.015em",
-              }}
-            >
-              Custom Sizing &amp; Mineral Sourcing
-            </h2>
-
-            <p
-              style={{
-                margin: "4px 0 var(--md-space-2)",
-                fontSize: "0.875rem",
-                lineHeight: 1.6,
-                color: "var(--md-fg-secondary)",
-              }}
-            >
-              Inquire for custom ring sizing, chain adjustments, or rare unheated gemstone sourcing directly from our master jewellers.
-            </p>
-
-            <a
-              href={whatsappWholesaleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="md-btn-editorial"
-              style={{
-                background: "var(--md-emerald-deep)",
-                color: "var(--md-ivory-soft)",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
-              Inquire on WhatsApp for Wholesale
-            </a>
-          </div>
-        </section>
-      )}
-
     </main>
   );
 }

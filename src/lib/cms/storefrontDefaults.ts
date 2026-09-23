@@ -256,7 +256,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   sectionFeaturedVisible: true,
   sectionStonesVisible: true,
   sectionHeritageVisible: true,
-  sectionBespokeVisible: true,
+  sectionBespokeVisible: false,
   sectionTestimonialsVisible: false,
   sectionNewsletterVisible: true,
   categoriesSectionTitle: "The Curated Collections",
