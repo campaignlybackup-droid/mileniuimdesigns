@@ -17,7 +17,6 @@ export function SiteHeader({
   marketSegment,
   navigation = [],
   markets = [],
-  ourStoryHref,
   config = DEFAULT_STOREFRONT_CONFIG,
 }: {
   /** "" for the primary market, which has no prefix. */
@@ -28,7 +27,6 @@ export function SiteHeader({
   config?: StorefrontCustomizationConfig;
 }): React.ReactElement {
   const prefix = marketSegment === "" ? "" : `/${marketSegment}`;
-  const resolvedStoryHref = ourStoryHref || `${prefix}/our-story`;
   const isSticky = config?.headerSticky !== false;
 
   return (
@@ -289,39 +287,6 @@ export function SiteHeader({
                 </Link>
               </li>
             ))}
-            {/* Our Story option in the primary navigation rail */}
-            <li style={{ display: "inline-flex", alignItems: "center", gap: "clamp(6px, 1.15vw, 18px)" }}>
-              {config?.navShowDiamondSeparator !== false && (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    color: "color-mix(in srgb, var(--md-champagne) 45%, transparent)",
-                    fontSize: "0.375rem",
-                    userSelect: "none",
-                    lineHeight: 1,
-                  }}
-                >
-                  ✦
-                </span>
-              )}
-              <Link
-                href={resolvedStoryHref}
-                className="md-label md-nav-rail-link"
-                style={{
-                  fontSize: "clamp(0.65625rem, 0.72vw, 0.71875rem)",
-                  letterSpacing: "clamp(0.08em, 0.1vw, 0.12em)",
-                  textDecoration: "none",
-                  color: "var(--md-green)",
-                  fontWeight: 600,
-                  paddingBlock: "4px",
-                  display: "inline-block",
-                  whiteSpace: "nowrap",
-                  transition: "color 150ms ease",
-                }}
-              >
-                OUR STORY
-              </Link>
-            </li>
           </ul>
         </nav>
       </div>
