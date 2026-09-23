@@ -136,7 +136,9 @@ export function SiteHeader({
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              {config?.ribbonProvenanceTag?.split("·")[0] || "✦ JAIPUR ATELIER"} · {config?.foundingYear || "1961"}
+              {config?.ribbonProvenanceTag && config.ribbonProvenanceTag.trim() !== ""
+                ? config.ribbonProvenanceTag.replace(/✦?\s*JAIPUR ATELIER\s*·?\s*1961/i, "✦ EST. 1961 JAIPUR")
+                : "✦ EST. 1961 JAIPUR"}
             </span>
           </div>
 

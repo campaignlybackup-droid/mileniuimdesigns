@@ -182,7 +182,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   announcementLink: "/our-story",
   announcementBgColor: "var(--md-forest, #062319)",
   announcementTextColor: "var(--md-champagne, #e8d8b9)",
-  ribbonProvenanceTag: "",
+  ribbonProvenanceTag: "✦ EST. 1961 JAIPUR",
   ribbonRightTag: "",
   headerLogoMode: "wordmark",
   headerCustomLogoUrl: "",
