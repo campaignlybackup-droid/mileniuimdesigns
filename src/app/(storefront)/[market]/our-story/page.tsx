@@ -527,7 +527,7 @@ export default async function OurStoryPage({
               </div>
             </div>
 
-            {/* Amit Agarwal — Managing Director */}
+            {/* Amit Agarwal — Director */}
             <div
               style={{
                 display: "flex",
@@ -550,7 +550,7 @@ export default async function OurStoryPage({
               >
                 <Image
                   src="/images/story/amit-agarwal.jpg"
-                  alt="Amit Agarwal, Managing Director of Millennium Designs"
+                  alt="Amit Agarwal, Director of Millennium Designs"
                   fill
                   sizes="(max-width: 768px) 90vw, 320px"
                   style={{ objectFit: "cover", objectPosition: "center top" }}
@@ -579,7 +579,7 @@ export default async function OurStoryPage({
                     fontWeight: 600,
                   }}
                 >
-                  Managing Director
+                  Director
                 </p>
                 <p
                   style={{
@@ -989,7 +989,7 @@ export default async function OurStoryPage({
                     fontWeight: 600,
                   }}
                 >
-                  Managing Directors · Millennium Designs
+                  Directors · Millennium Designs
                 </span>
               </div>
             </div>

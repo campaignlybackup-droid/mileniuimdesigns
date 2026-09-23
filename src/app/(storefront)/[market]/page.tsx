@@ -53,9 +53,9 @@ const ATELIER_MAKERS = [
   },
   {
     name: "Amit Agarwal",
-    role: "Managing Director",
+    role: "Director",
     image: "/images/story/amit-agarwal.jpg",
-    alt: "Amit Agarwal, Managing Director of Millennium Designs",
+    alt: "Amit Agarwal, Director of Millennium Designs",
     bio: "Expanded the atelier globally, formulating our signature anti-tarnish 925 sterling silver and presenting collections internationally.",
   },
   {
