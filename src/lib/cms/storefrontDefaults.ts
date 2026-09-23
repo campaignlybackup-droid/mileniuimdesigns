@@ -356,7 +356,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   // 8. Footer, Hallmarks & Social
   footerBrandStatement:
     "Millennium Designs is a courtly jewellery atelier established in Johari Bazaar, Jaipur in 1961. We specialize exclusively in anti-tarnish 925 sterling silver, 14k gold, and unheated natural earth-mined gemstones.",
-  footerCopyrightNotice: "MILLENNIUM DESIGNS · JAIPUR ATELIER 1961",
+  footerCopyrightNotice: "MILLENNIUM DESIGNS",
   footerHallmarkStrip: "SOLID 925 STERLING SILVER · PERMANENT ANTI-TARNISH ALLOY · JAIPUR BENCH CRAFTSMANSHIP",
   socialInstagramUrl: "https://instagram.com/millenniumdesigns",
   socialFacebookUrl: "https://facebook.com/millenniumdesigns",

@@ -134,44 +134,6 @@ export function SiteFooter({
           </div>
         )}
 
-        {/* Social Media Links Bar */}
-        {(config?.socialInstagramUrl || config?.socialFacebookUrl || config?.socialPinterestUrl || config?.socialYoutubeUrl) && (
-          <div
-            style={{
-              marginBlockStart: "var(--md-space-6)",
-              paddingBlockStart: "var(--md-space-4)",
-              display: "flex",
-              gap: "16px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <span style={{ fontSize: "0.6875rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-champagne)", fontWeight: 600 }}>
-              Follow The Atelier:
-            </span>
-            {config?.socialInstagramUrl && (
-              <a href={config.socialInstagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
-                Instagram
-              </a>
-            )}
-            {config?.socialFacebookUrl && (
-              <a href={config.socialFacebookUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
-                Facebook
-              </a>
-            )}
-            {config?.socialPinterestUrl && (
-              <a href={config.socialPinterestUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
-                Pinterest
-              </a>
-            )}
-            {config?.socialYoutubeUrl && (
-              <a href={config.socialYoutubeUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--md-fg-inverse-muted)", fontSize: "0.8125rem", textDecoration: "none" }}>
-                YouTube
-              </a>
-            )}
-          </div>
-        )}
-
         <div
           style={{
             marginBlockStart: "var(--md-space-8)",
@@ -187,7 +149,7 @@ export function SiteFooter({
           }}
         >
           <p style={{ margin: 0 }}>
-            © {year} {config?.footerCopyrightNotice || "MILLENNIUM DESIGNS · JAIPUR ATELIER 1961"}
+            © {year} {(config?.footerCopyrightNotice || "MILLENNIUM DESIGNS").replace(/\s*·\s*JAIPUR ATELIER 1961/gi, "").replace(/JAIPUR ATELIER 1961/gi, "").trim()}
           </p>
           <div style={{ display: "flex", gap: "var(--md-space-2) var(--md-space-3)", fontSize: "0.6875rem", letterSpacing: "0.08em", flexWrap: "wrap" }}>
             <span>{config?.footerHallmarkStrip || "925 STERLING SILVER · ANTI-TARNISH ALLOY · JAIPUR CRAFTSMANSHIP"}</span>
