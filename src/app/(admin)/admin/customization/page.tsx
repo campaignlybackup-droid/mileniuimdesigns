@@ -10,16 +10,16 @@ import {
 } from "@/lib/cms/storefrontDefaults";
 
 const TABS = [
-  { id: "header", label: "Header & Ribbon", icon: "✦" },
-  { id: "hero", label: "Hero Slider", icon: "◈" },
-  { id: "trust", label: "Trust Pillars", icon: "❖" },
+  { id: "header", label: "Header & Announcement", icon: "✦" },
+  { id: "hero", label: "Hero Banner Slider", icon: "◈" },
+  { id: "trust", label: "Brand Pillars & Trust", icon: "❖" },
   { id: "homepage", label: "Homepage & Story", icon: "⚜" },
-  { id: "nav", label: "Navigation", icon: "☵" },
+  { id: "nav", label: "Navigation Menus", icon: "☵" },
   { id: "checkout", label: "Checkout & Bank", icon: "⚖" },
-  { id: "contact", label: "Atelier Contact", icon: "✉" },
+  { id: "contact", label: "Store Contact & Care", icon: "✉" },
   { id: "footer", label: "Footer & Social", icon: "❦" },
-  { id: "styling", label: "Colors & Custom Code", icon: "🎨" },
-  { id: "policies", label: "Notices & Policies", icon: "⚐" },
+  { id: "styling", label: "Colors & Theme Styles", icon: "🎨" },
+  { id: "policies", label: "Customer Policies", icon: "⚐" },
   { id: "seo", label: "SEO & Social", icon: "🔍" },
 ];
 
@@ -29,6 +29,7 @@ export default function AdminCustomizationPage() {
     DEFAULT_STOREFRONT_CONFIG,
   );
   const [market, setMarket] = useState<string>("global");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
@@ -96,12 +97,12 @@ export default function AdminCustomizationPage() {
   const handleResetDefaults = () => {
     if (
       confirm(
-        "Reset all settings to original atelier defaults? Unsaved changes will be replaced.",
+        "Reset all settings to original store defaults? Unsaved changes will be replaced.",
       )
     ) {
       setConfig({ ...DEFAULT_STOREFRONT_CONFIG });
       setStatusMessage({
-        text: "Form reset to atelier defaults. Click 'Save Live Settings' to commit.",
+        text: "Form reset to store defaults. Click 'Save Live Settings' to commit.",
         type: "success",
       });
     }
@@ -112,7 +113,7 @@ export default function AdminCustomizationPage() {
     const newSlide: HeroSlideConfig = {
       id: `slide-${Date.now()}`,
       tag: "SPECIAL COLLECTION",
-      subhead: "JAIPUR ATELIER",
+      subhead: "JAIPUR HERITAGE",
       title: "New Masterpiece Creation",
       standfirst: "Natural precious minerals hand-set in 925 sterling silver alloy.",
       ctaText: "Discover Pieces",
@@ -174,7 +175,7 @@ export default function AdminCustomizationPage() {
             color: "var(--md-fg)",
           }}
         >
-          ✦ Loading Atelier Customization Engine...
+          ✦ Loading Store Customization Engine...
         </div>
         <p style={{ marginTop: 8 }}>Connecting to PostgreSQL settings vault...</p>
       </div>
@@ -324,6 +325,115 @@ export default function AdminCustomizationPage() {
           {statusMessage.text}
         </div>
       )}
+
+      {/* ── DAILY SILVER RATE & BULK PRICING CALLOUT ────────────────── */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #182c23 0%, #264336 100%)",
+          color: "#ffffff",
+          borderRadius: 10,
+          padding: "18px 24px",
+          marginBottom: 20,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 16,
+          boxShadow: "0 4px 12px rgba(24, 44, 35, 0.12)",
+          border: "1px solid #365646",
+        }}
+      >
+        <div style={{ maxWidth: 640 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+            <span style={{ fontSize: "1.25rem" }}>💎</span>
+            <span style={{ fontWeight: 700, fontSize: "1.05rem", letterSpacing: "0.02em" }}>
+              Daily Silver Rate & Bulk Price Adjustment
+            </span>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                background: "#c5a880",
+                color: "#182c23",
+                padding: "2px 8px",
+                borderRadius: 4,
+                fontWeight: 700,
+                textTransform: "uppercase",
+              }}
+            >
+              Daily Tool
+            </span>
+          </div>
+          <p style={{ margin: 0, fontSize: "0.85rem", color: "#e3decb", lineHeight: 1.4 }}>
+            Silver rates change daily. Easily update all 520+ silver jewellery catalogue prices across India (₹) and US ($) in seconds using percentage changes, flat adjustments, or silver gram rate recalculations.
+          </p>
+        </div>
+        <Link
+          href="/admin/pricing"
+          style={{
+            background: "#ffffff",
+            color: "#182c23",
+            padding: "10px 18px",
+            borderRadius: 6,
+            fontWeight: 700,
+            fontSize: "0.85rem",
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+          }}
+        >
+          <span>Open Bulk Pricing Tool</span>
+          <span style={{ fontSize: "1rem" }}>→</span>
+        </Link>
+      </div>
+
+      {/* ── SEARCH & FILTER CONTROLS ───────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginBottom: 16,
+          background: "#ffffff",
+          padding: "10px 16px",
+          borderRadius: 8,
+          border: "1px solid var(--md-rule, #e7e2d7)",
+        }}
+      >
+        <span style={{ fontSize: "1rem", color: "#6e6b63" }}>🔍</span>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Filter or search 100+ settings (e.g. silver, banner, phone, email, color, return, guarantee, hero)..."
+          style={{
+            flex: 1,
+            border: "none",
+            outline: "none",
+            fontSize: "0.875rem",
+            color: "var(--md-fg, #222)",
+            background: "transparent",
+          }}
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            style={{
+              border: "none",
+              background: "#ede8df",
+              borderRadius: 4,
+              padding: "2px 8px",
+              fontSize: "0.75rem",
+              cursor: "pointer",
+              color: "#555",
+            }}
+          >
+            Clear
+          </button>
+        )}
+      </div>
 
       {/* ── TAB NAVIGATION ────────────────────────────────────────── */}
       <div
@@ -682,8 +792,8 @@ export default function AdminCustomizationPage() {
         {activeTab === "trust" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <SectionHeader
-              title="Atelier Trust Pillars & Hallmarks"
-              subtitle="Configure the 4 core atelier hallmarks beneath the hero."
+              title="Store Trust Pillars & Guarantees"
+              subtitle="Configure the 4 core brand trust pillars beneath the hero."
             />
 
             <ToggleField
@@ -785,8 +895,8 @@ export default function AdminCustomizationPage() {
         {activeTab === "homepage" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <SectionHeader
-              title="Homepage Sections & Atelier Story"
-              subtitle="Control visibility, headlines, master artisan heritage copy, and client reviews."
+              title="Homepage Sections & Brand Story"
+              subtitle="Control visibility, headlines, brand heritage copy, and customer reviews."
             />
 
             <div>
@@ -836,7 +946,7 @@ export default function AdminCustomizationPage() {
                   onChange={(v) => updateField("sectionTestimonialsVisible", v)}
                 />
                 <ToggleField
-                  label="Atelier Newsletter"
+                  label="Store Newsletter"
                   checked={config.sectionNewsletterVisible}
                   onChange={(v) => updateField("sectionNewsletterVisible", v)}
                 />
@@ -889,7 +999,7 @@ export default function AdminCustomizationPage() {
 
             <div style={{ borderTop: "1px solid var(--md-rule)", paddingTop: 20 }}>
               <h4 style={{ margin: "0 0 16px", fontSize: "0.9375rem" }}>
-                Jaipur Atelier Heritage Editorial Copy
+                Jaipur Silver Heritage Editorial Copy
               </h4>
               <div
                 style={{
@@ -1245,12 +1355,12 @@ export default function AdminCustomizationPage() {
           </div>
         )}
 
-        {/* TAB 7: ATELIER CONTACT, CONCIERGE & WHATSAPP */}
+        {/* TAB 7: STORE CONTACT, SUPPORT & WHATSAPP */}
         {activeTab === "contact" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <SectionHeader
-              title="Atelier Physical Address & Direct Concierge"
-              subtitle="Update your Jaipur showroom location, direct phone lines, and WhatsApp concierge."
+              title="Store Physical Address & Customer Care"
+              subtitle="Update your Jaipur store location, direct phone lines, and customer support."
             />
 
             <div
@@ -1335,7 +1445,7 @@ export default function AdminCustomizationPage() {
                   onChange={(v) => updateField("wholesaleEmail", v)}
                 />
                 <InputField
-                  label="Atelier Salon Operating Hours"
+                  label="Store Operating Hours"
                   value={config.atelierHours}
                   onChange={(v) => updateField("atelierHours", v)}
                 />

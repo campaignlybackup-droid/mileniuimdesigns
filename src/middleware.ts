@@ -23,7 +23,6 @@ import { routeForPath } from "@/lib/edge/markets";
 /** Paths middleware must not touch: they are not storefront pages and have no market. */
 const BYPASS = [
   "/api",
-  "/admin",
   "/_next",
   "/_vercel",
   "/brand",
@@ -49,6 +48,23 @@ export const MARKET_COOKIE = "md_market";
 
 export function middleware(req: NextRequest): NextResponse {
   const { pathname, search } = req.nextUrl;
+
+  // Intercept Admin routes: Require admin session or redirect to /admin/login
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    if (pathname === "/admin/login") {
+      return NextResponse.next();
+    }
+    const adminToken =
+      req.cookies.get("md_admin")?.value ||
+      req.cookies.get("__Host-md_admin")?.value;
+
+    if (!adminToken) {
+      const loginUrl = req.nextUrl.clone();
+      loginUrl.pathname = "/admin/login";
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
 
   if (
     BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||

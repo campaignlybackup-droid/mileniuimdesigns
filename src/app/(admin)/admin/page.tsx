@@ -27,6 +27,91 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
+      {/* Daily Operations Quick Bar */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: 16,
+        }}
+      >
+        <Link
+          href="/admin/pricing"
+          style={{
+            background: "linear-gradient(135deg, #182c23 0%, #29493a 100%)",
+            color: "#ffffff",
+            borderRadius: 8,
+            padding: "20px",
+            textDecoration: "none",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            boxShadow: "0 4px 12px rgba(24, 44, 35, 0.12)",
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span style={{ fontSize: "1.2rem" }}>💎</span>
+              <span style={{ fontWeight: 700, fontSize: "1rem" }}>Daily Silver &amp; Bulk Pricing</span>
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  background: "#c5a880",
+                  color: "#182c23",
+                  padding: "2px 6px",
+                  borderRadius: 4,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                }}
+              >
+                Daily Action
+              </span>
+            </div>
+            <div style={{ fontSize: "0.8rem", color: "#e3decb", maxWidth: 280, lineHeight: 1.4 }}>
+              Adjust all 520+ products instantly based on today's silver market rates.
+            </div>
+          </div>
+          <span style={{ fontSize: "1.25rem", color: "#ffffff" }}>→</span>
+        </Link>
+
+        <Link
+          href="/admin/customization"
+          style={{
+            background: "#ffffff",
+            border: "1px solid var(--md-rule, #e7e2d7)",
+            borderRadius: 8,
+            padding: "20px",
+            textDecoration: "none",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span style={{ fontSize: "1.2rem" }}>✦</span>
+              <span style={{ fontWeight: 700, fontSize: "1rem", color: "#182c23" }}>CMS &amp; Customizations</span>
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  background: "#eee8dd",
+                  color: "#555",
+                  padding: "2px 6px",
+                  borderRadius: 4,
+                  fontWeight: 600,
+                }}
+              >
+                100+ Controls
+              </span>
+            </div>
+            <div style={{ fontSize: "0.8rem", color: "#6e6b63", maxWidth: 280, lineHeight: 1.4 }}>
+              Edit announcement ribbons, hero banners, guarantee badges, and policies.
+            </div>
+          </div>
+          <span style={{ fontSize: "1.25rem", color: "#182c23" }}>→</span>
+        </Link>
+      </div>
+
       {/* KPI Cards Grid */}
       <div
         style={{
