@@ -7,7 +7,7 @@ import { Logo } from "@/components/ui/Logo";
 export default function AdminLoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"password" | "otp">("password");
-  const [email, setEmail] = useState("aditidec23@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -249,7 +249,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="aditidec23@gmail.com"
+                placeholder="anshbhatt0902@gmail.com"
                 required
                 style={{
                   width: "100%",
@@ -339,7 +339,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="aditidec23@gmail.com"
+                  placeholder="anshbhatt0902@gmail.com"
                   disabled={otpSent}
                   required
                   style={{
