@@ -107,6 +107,17 @@ type CreateInput = {
   totpVerifiedAt?: Date | null;
 };
 
+function cleanInet(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  // If x-forwarded-for contains a chain of IPs, take the first client IP
+  const first = raw.split(",")[0]?.trim();
+  if (!first) return null;
+  // Basic IPv4 or IPv6 pattern check to avoid invalid inet syntax errors
+  const isIpv4 = /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/.test(first);
+  const isIpv6 = /^[0-9a-fA-F:]+$/.test(first) && first.includes(":");
+  return isIpv4 || isIpv6 ? first : null;
+}
+
 /**
  * Mint a session and return the PLAINTEXT token, which exists only in transit — the
  * database holds its SHA-256 and nothing else, so a database dump is not a set of live
@@ -133,7 +144,7 @@ export async function createSession(
       userId: input.userId ?? null,
       customerId: input.customerId ?? null,
       impersonatorUserId: input.impersonatorUserId ?? null,
-      ipAddress: input.ipAddress ?? null,
+      ipAddress: cleanInet(input.ipAddress),
       userAgent: input.userAgent ?? null,
       totpVerifiedAt: input.totpVerifiedAt ?? null,
       expiresAt,

@@ -63,12 +63,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Extract single IP address safe for postgres inet
+    const rawIp =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip")?.trim() ||
+      null;
+
     // Mint staff session
     const sessionResult = await withTransaction(async (tx) => {
       const created = await createSession(tx, {
         userId: user.id,
         totpVerifiedAt: new Date(),
-        ipAddress: request.headers.get("x-forwarded-for") ?? null,
+        ipAddress: rawIp,
         userAgent: request.headers.get("user-agent") ?? null,
       });
 
