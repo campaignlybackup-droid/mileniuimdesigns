@@ -149,10 +149,78 @@ export const getSeoMetadataOverride = cache(
 );
 
 /**
- * Build JSON-LD for Product detail page — 04 §5.4.
+ * Build global Organization & JewelryStore JSON-LD for rich snippets and AEO (Answer Engine Optimization).
+ */
+export function buildOrganizationJsonLd(): Record<string, unknown> {
+  let domain = "https://millenniumdesigns.in";
+  try {
+    domain = env().NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  } catch {
+    // fallback
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "JewelryStore",
+    name: "Millennium Designs",
+    alternateName: ["Millennium Designs Jewellery", "Millennium Silver"],
+    url: domain,
+    logo: `${domain}/images/logo.png`,
+    description:
+      "Millennium Designs is a luxury 925 sterling silver jewellery brand offering handcrafted silver rings, earrings, pendants, necklaces, and bespoke gemstone creations worldwide.",
+    currenciesAccepted: "INR, USD",
+    paymentAccepted: "Credit Card, Debit Card, UPI, Net Banking, International Wire",
+    priceRange: "₹₹ - ₹₹₹₹ / $$ - $$$$",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "IN",
+    },
+    knowsAbout: [
+      "925 Sterling Silver Jewellery",
+      "Handcrafted Silver Rings",
+      "Pure Silver Necklaces",
+      "Hallmarked 925 Silver",
+      "Gemstone Silver Pendants",
+      "Haute Silver Bracelets",
+    ],
+    sameAs: [
+      "https://www.instagram.com/millenniumdesigns",
+    ],
+  };
+}
+
+/**
+ * Build WebSite JSON-LD with Sitelinks Searchbox for Search & AI Engines.
+ */
+export function buildWebSiteJsonLd(): Record<string, unknown> {
+  let domain = "https://millenniumdesigns.in";
+  try {
+    domain = env().NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  } catch {
+    // fallback
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Millennium Designs",
+    url: domain,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${domain}/search?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/**
+ * Build JSON-LD for Product detail page — 04 §5.4 and AEO.
  */
 export function buildProductJsonLd(product: PdpProduct, marketCode: string): Record<string, unknown> {
-  let domain = "https://millenniumdesigns.com";
+  let domain = "https://millenniumdesigns.in";
   try {
     domain = env().NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
   } catch {
@@ -166,15 +234,54 @@ export function buildProductJsonLd(product: PdpProduct, marketCode: string): Rec
 
   const images = product.media.map((m) => m.publicId);
 
+  const primaryMaterial = product.materials?.[0]?.name ?? "925 Sterling Silver";
+  const primaryStone = product.stones?.[0]?.name;
+
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    description: product.subtitle ?? undefined,
+    description:
+      product.subtitle ??
+      `${product.title} - Handcrafted pure 925 sterling silver jewellery by Millennium Designs.`,
     image: images.length > 0 ? images : undefined,
-    sku: product.variants[0]?.sku,
+    sku: product.variants[0]?.sku ?? product.slug,
     url,
+    brand: {
+      "@type": "Brand",
+      name: "Millennium Designs",
+    },
+    material: primaryMaterial,
+    category: product.primaryCategoryName ?? "Silver Jewellery",
+    itemCondition: "https://schema.org/NewCondition",
+    countryOfOrigin: {
+      "@type": "Country",
+      name: "India",
+    },
   };
+
+  if (primaryStone) {
+    jsonLd.additionalProperty = [
+      {
+        "@type": "PropertyValue",
+        name: "Primary Stone",
+        value: primaryStone,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Metal Purity",
+        value: "925 Sterling Silver",
+      },
+    ];
+  } else {
+    jsonLd.additionalProperty = [
+      {
+        "@type": "PropertyValue",
+        name: "Metal Purity",
+        value: "925 Sterling Silver",
+      },
+    ];
+  }
 
   const pricedVariant = product.variants.find((v) => v.price !== null);
   if (pricedVariant && pricedVariant.price) {
@@ -190,8 +297,14 @@ export function buildProductJsonLd(product: PdpProduct, marketCode: string): Rec
       "@type": "Offer",
       url,
       priceCurrency: p.currencyCode,
-      price: finalAmount.toString(),
+      price: finalAmount.toFixed(2),
       availability,
+      itemCondition: "https://schema.org/NewCondition",
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      seller: {
+        "@type": "Organization",
+        name: "Millennium Designs",
+      },
     };
   }
 

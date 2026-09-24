@@ -27,9 +27,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const navItems = [
     { label: "Executive Dashboard", href: "/admin", icon: "📊" },
     { label: "Daily Silver & Bulk Pricing", href: "/admin/pricing", icon: "💎", badge: "Daily Silver" },
-    { label: "CMS & Customization (100+)", href: "/admin/customization", icon: "✦" },
-    { label: "Catalogue & Products", href: "/admin/products", icon: "💍" },
+    { label: "Product Catalogue", href: "/admin/products", icon: "💍" },
+    { label: "Categories", href: "/admin/categories", icon: "🏷️" },
+    { label: "Collections", href: "/admin/collections", icon: "⚜️" },
     { label: "Bulk Product Import", href: "/admin/products/import", icon: "📦" },
+    { label: "CMS & Customization (100+)", href: "/admin/customization", icon: "✦" },
     { label: "Orders & Acquisitions", href: "/admin/orders", icon: "🛍️" },
     { label: "Currency & Markets", href: "/admin/currency", icon: "🌐" },
   ];
