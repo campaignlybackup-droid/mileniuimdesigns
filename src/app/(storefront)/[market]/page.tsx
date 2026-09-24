@@ -33,9 +33,9 @@ export async function generateMetadata({
   });
 
   return {
-    title: "MILLENNIUM DESIGNS | Fine Jewellery & Gemstones · Jaipur Atelier 1961",
+    title: "MILLENNIUM DESIGNS | 925 Sterling Silver Jewellery & Gemstones · Jaipur",
     description:
-      "Sixty-five years of courtly gemstone curation and anti-tarnish 925 sterling silver craftsmanship. Handcrafted in our Jaipur atelier.",
+      "Sixty-five years of authentic gemstone curation and anti-tarnish 925 sterling silver craftsmanship in Jaipur, India.",
     alternates: {
       canonical,
       languages,
@@ -56,7 +56,7 @@ const ATELIER_MAKERS = [
     role: "Director",
     image: "/images/story/amit-agarwal.jpg",
     alt: "Amit Agarwal, Director of Millennium Designs",
-    bio: "Expanded the atelier globally, formulating our signature anti-tarnish 925 sterling silver and presenting collections internationally.",
+    bio: "Expanded our collections globally, formulating our signature anti-tarnish 925 sterling silver and presenting jewellery internationally.",
   },
   {
     name: "Saket Agarwal",
@@ -442,7 +442,7 @@ export default async function StorefrontHomePage({
                   fontFamily: "var(--md-font-crest), Georgia, serif",
                 }}
               >
-                ✦ ATELIER HERITAGE · EST. 1961 JAIPUR ✦
+                ✦ HERITAGE · EST. 1961 JAIPUR ✦
               </span>
 
               <h2
@@ -567,7 +567,7 @@ export default async function StorefrontHomePage({
                   fontWeight: 600,
                 }}
               >
-                Our Story &amp; Atelier Archive →
+                Our Story &amp; Heritage →
               </Link>
             </div>
           </div>

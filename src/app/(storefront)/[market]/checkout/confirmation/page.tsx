@@ -139,8 +139,8 @@ function OrderConfirmationContent() {
           }}
         >
           {isBankTransfer
-            ? "Your bespoke selection has been reserved in our atelier. Please complete your payment via direct bank transfer using the ICICI Bank details below to initiate hallmarking and dispatch."
-            : "Thank you for choosing Millennium Designs. Your bespoke piece is now entered into our atelier schedule for precision inspection, hallmark verification, and presentation preparation."}
+            ? "Your jewellery order has been received. Please complete your payment via direct bank transfer using the ICICI Bank details below to initiate hallmarking and dispatch."
+            : "Thank you for shopping with Millennium Designs. Your order is now being processed for quality inspection, hallmark verification, and dispatch."}
         </p>
 
         {/* Order Details Pill */}
@@ -456,8 +456,8 @@ function OrderConfirmationContent() {
             }}
           >
             {isBankTransfer
-              ? "Click below to connect directly with our atelier on WhatsApp to share your bank transfer UTR or transaction screenshot for instant verification."
-              : "Our dedicated concierge is at your service for delivery coordination, sizing adjustments, or certification details."}
+              ? "Click below to connect directly with our support team on WhatsApp to share your bank transfer UTR or transaction screenshot for instant verification."
+              : "Our customer support team is at your service for delivery coordination, sizing assistance, or order details."}
           </p>
 
           <div style={{ display: "flex", justifyContent: "center", gap: "var(--md-space-4)", flexWrap: "wrap" }}>

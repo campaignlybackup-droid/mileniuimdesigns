@@ -363,7 +363,7 @@ export default async function OurStoryPage({
                   minHeight: "1.2em",
                 }}
               >
-                Millennium Designs · In-House Atelier
+                Millennium Designs · 925 Silver Jewellery
               </span>
               <h3
                 style={{
@@ -591,7 +591,7 @@ export default async function OurStoryPage({
                     marginInline: "auto",
                   }}
                 >
-                  Expanded the atelier globally, developing our proprietary anti-tarnish alloy
+                  Expanded our brand globally, developing our proprietary anti-tarnish alloy
                   and presenting collections across New York, London and Milan.
                 </p>
               </div>
@@ -726,7 +726,7 @@ export default async function OurStoryPage({
                 color: "var(--md-fg-inverse-muted)",
               }}
             >
-              Four defining principles that set our Jaipur family atelier apart from commercial
+              Four defining principles that set our Jaipur family jewellery brand apart from commercial
               distributors.
             </p>
           </div>
@@ -740,8 +740,8 @@ export default async function OurStoryPage({
               },
               {
                 number: "02",
-                title: "100% In-House Atelier",
-                desc: "Every step is performed in our Jaipur workshop. From lost-wax casting and lapidary gem cutting to hand setting and final polishing, our artisans control complete quality.",
+                title: "100% In-House Craftsmanship",
+                desc: "Every piece is created with dedicated craftsmanship in Jaipur. From precision casting and lapidary gem cutting to hand setting and final polishing, we maintain complete quality control.",
               },
               {
                 number: "03",
@@ -750,8 +750,8 @@ export default async function OurStoryPage({
               },
               {
                 number: "04",
-                title: "Direct Workshop Pricing",
-                desc: "Acquire directly from the makers in Jaipur. With no middlemen, licensing tiers, or showroom overheads, you receive genuine master-jeweller pricing.",
+                title: "Direct E-Commerce Pricing",
+                desc: "Buy directly online from the makers in Jaipur. With no middlemen or expensive showroom overheads, you receive transparent, direct-to-consumer pricing.",
               },
             ].map((col) => (
               <div key={col.number} className="md-connoisseur-card">
@@ -1041,7 +1041,7 @@ export default async function OurStoryPage({
               color: "var(--md-fg)",
             }}
           >
-            Our Atelier in Jaipur
+            Visit Our Store in Jaipur
           </h2>
 
           <p
@@ -1053,8 +1053,8 @@ export default async function OurStoryPage({
               maxWidth: "580px",
             }}
           >
-            Whether you are inquiring about a custom commission, wholesale catalog, or an
-            heirloom emerald piece, our Jaipur workshop welcomes your inquiry.
+            Whether you have questions about our silver jewellery collection, an order, or shipping,
+            our team in Jaipur is here to help.
           </p>
 
           {/* Physical Address Card */}

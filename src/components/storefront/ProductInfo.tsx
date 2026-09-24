@@ -274,17 +274,17 @@ export function ProductInfo({
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
           <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Provenance</span>
-          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Jaipur Atelier · In-House Bench (Est. 1961)</span>
+          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Pure 925 Silver · Jaipur (Est. 1961)</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Bespoke Sizing</span>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Sizing & Help</span>
           <a
             href={whatsappInquiryUrl}
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: "var(--md-fg)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "3px" }}
           >
-            WhatsApp Atelier Concierge
+            WhatsApp Support
           </a>
         </div>
       </div>

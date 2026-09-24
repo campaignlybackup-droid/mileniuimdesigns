@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 
 export const metadata = {
-  title: "Millennium Designs — Atelier Administration",
+  title: "Millennium Designs — Store Administration",
   description: "Executive e-commerce administration and currency governance for Millennium Designs.",
 };
 
@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               MILLENNIUM
             </div>
             <div style={{ fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-fg-muted)" }}>
-              Atelier Admin
+              Store Admin
             </div>
           </div>
         </div>

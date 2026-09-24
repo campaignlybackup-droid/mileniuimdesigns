@@ -24,11 +24,11 @@ export function buildWhatsAppInquiryUrl(options: {
   } else if (options.productTitle) {
     text += `I am inquiring about the ${options.productTitle} creation and would like to know more details.`;
   } else if (options.topic === "bespoke") {
-    text += "I would like to schedule a private atelier consultation for a bespoke jewellery commission.";
+    text += "I have an inquiry regarding custom sizing or custom silver jewellery.";
   } else if (options.topic === "wholesale") {
     text += "I would like to enquire about wholesale / trade pricing for 925 sterling silver jewellery.";
   } else {
-    text += "I would like to speak with a jewellery concierge.";
+    text += "I would like to speak with customer support regarding silver jewellery.";
   }
 
   return `https://wa.me/${MILLENNIUM_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;

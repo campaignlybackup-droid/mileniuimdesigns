@@ -183,7 +183,7 @@ export default async function CategoryPage({
                 fontFamily: "var(--md-font-crest), Georgia, serif",
               }}
             >
-              JAIPUR ATELIER · PURE 925 STERLING SILVER
+              JAIPUR · PURE 925 STERLING SILVER
             </span>
             <span
               style={{

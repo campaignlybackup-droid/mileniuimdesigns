@@ -46,13 +46,13 @@ export function SiteFooter({
               <FooterColumnAccordion key={column.heading} column={column} />
             ))}
 
-            {/* Atelier Contact & Location */}
+            {/* Store Contact & Location */}
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-3)" }}>
               <h2 className="md-label" style={{ color: "var(--md-champagne)", letterSpacing: "0.18em" }}>
-                JAIPUR ATELIER &amp; CONTACT
+                JAIPUR STORE &amp; CONTACT
               </h2>
               <address style={{ fontStyle: "normal", color: "var(--md-fg-inverse-muted)", fontSize: "var(--md-t-small)", lineHeight: 1.6 }}>
-                {config?.atelierAddressName || "Millennium Designs Jaipur Atelier"}<br />
+                {config?.atelierAddressName?.replace(/\s*Atelier/gi, "") || "Millennium Designs"}<br />
                 {config?.atelierAddressLine1 || "5, Noor Plaza, Chameliwala Market"}<br />
                 {config?.atelierAddressLine2 ? <>{config.atelierAddressLine2}<br /></> : null}
                 {config?.atelierCity || "Jaipur"}, {config?.atelierPostalCode || "302001"}<br />

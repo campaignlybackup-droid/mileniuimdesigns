@@ -93,7 +93,7 @@ export function RingSizeGuideModal({ isOpen, onClose }: RingSizeGuideModalProps)
                 marginBottom: "4px",
               }}
             >
-              ✦ ATELIER SIZING ✦
+              ✦ SIZE GUIDE ✦
             </span>
             <h2
               style={{
@@ -128,7 +128,7 @@ export function RingSizeGuideModal({ isOpen, onClose }: RingSizeGuideModalProps)
 
         <p style={{ margin: "0 0 20px", fontSize: "0.875rem", lineHeight: 1.6, color: "var(--md-fg-secondary)" }}>
           Every Millennium Designs ring is calibrated to global precision standards. If you are between
-          sizes, we recommend ordering the larger size or contacting our atelier for bespoke custom sizing.
+          sizes, we recommend ordering the larger size or contacting our support team for sizing assistance.
         </p>
 
         {/* Size Table */}

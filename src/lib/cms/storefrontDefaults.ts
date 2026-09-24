@@ -195,7 +195,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   heroSlides: [
     {
       id: "slide-1",
-      tag: "ATELIER SIGNATURE · EST. 1961 JAIPUR",
+      tag: "SIGNATURE COLLECTION · EST. 1961 JAIPUR",
       subhead: "Unheated Mineral Sovereignty",
       title: "Natural Gems, Cold-Forged in Pure 925 Silver.",
       standfirst:
@@ -238,14 +238,14 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   // 3. Trust Pillars
   trustPillarsVisible: true,
   trustPillars: [
-    { id: "tp-1", label: "EST. 1961 JAIPUR", detail: "100% In-House Atelier", icon: "✦" },
+    { id: "tp-1", label: "EST. 1961 JAIPUR", detail: "100% In-House Craftsmanship", icon: "✦" },
     { id: "tp-2", label: "SOLID 925 STERLING SILVER", detail: "Permanent Anti-Tarnish Alloy", icon: "✦" },
     { id: "tp-3", label: "NATURAL COURTLY GEMSTONES", detail: "Unheated Mineral Character", icon: "✦" },
     { id: "tp-4", label: "INSURED WORLDWIDE DELIVERY", detail: "Hallmarked & Certified", icon: "✦" },
   ],
   foundingYear: "1961",
   silverPurityBadge: "925 Sterling Silver",
-  hallmarkText: "Jaipur Atelier Hallmarked",
+  hallmarkText: "Certified 925 Silver Hallmark",
   guaranteeBadgeTitle: "Certified Anti-Tarnish Alloy",
 
   // 4. Homepage Sections & Editorial Story
@@ -262,15 +262,15 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   categoriesSectionTitle: "The Curated Collections",
   categoriesSectionSubtitle: "Explore our archive of master-crafted sterling silver designs by category.",
   signatureSectionTitle: "Signature Creations",
-  signatureSectionSubtitle: "Our benchmark high jewellery, hallmarked with the atelier emblem.",
+  signatureSectionSubtitle: "Our benchmark fine jewellery in solid 925 sterling silver.",
   stonesSectionTitle: "The Gemstone Archive",
   stonesSectionSubtitle: "Natural, unheated, courtly minerals certified by veteran gemmologists.",
   heritageStoryHeadline: "Lost-Wax Casting & Micro-Prong Setting",
   heritageStoryStandfirst:
-    "Every master model is shaped in wax, cast in pure anti-tarnish 925 sterling silver, and hand-set with natural untreated minerals entirely inside our Jaipur atelier.",
+    "Every piece is shaped in wax, cast in pure anti-tarnish 925 sterling silver, and hand-set with natural untreated gemstones in Jaipur.",
   heritageStoryQuote:
     "We do not plate base metals, nor do we set laboratory simulants. Every stone is earth-mined; every setting is solid silver.",
-  heritageStorySignature: "Master Jeweller, Millennium Designs Atelier, Jaipur",
+  heritageStorySignature: "Master Jeweller, Millennium Designs, Jaipur",
   heritageStoryImageUrl: "/images/story/atelier_bench_silversmith.jpg",
   testimonials: [
     {
@@ -334,8 +334,8 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   freeShippingThresholdInr: 0,
   freeShippingThresholdUsd: 0,
 
-  // 7. Atelier Contact & WhatsApp
-  atelierAddressName: "Millennium Designs Jaipur Atelier",
+  // 7. Store Contact & WhatsApp
+  atelierAddressName: "Millennium Designs",
   atelierAddressLine1: "5, Noor Plaza, Chameliwala Market",
   atelierAddressLine2: "Opp. G.P.O., M.I. Road",
   atelierCity: "Jaipur",
@@ -348,14 +348,14 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   wholesaleEmail: "wholesale@millenniumdesigns.in",
   whatsappConciergeNumber: "919829056597",
   whatsappConciergeGreeting:
-    "Namaste. I am inquiring about a fine jewellery creation from the Millennium Designs Jaipur atelier archive.",
-  atelierHours: "Monday – Saturday: 11:00 AM – 7:30 PM IST (Sundays by private appointment)",
+    "Namaste. I am inquiring about a silver jewellery piece from the Millennium Designs collection.",
+  atelierHours: "Monday – Saturday: 11:00 AM – 7:30 PM IST",
   gmailUser: "",
   gmailAppPassword: "",
 
   // 8. Footer, Hallmarks & Social
   footerBrandStatement:
-    "Millennium Designs is a courtly jewellery atelier established in Johari Bazaar, Jaipur in 1961. We specialize exclusively in anti-tarnish 925 sterling silver, 14k gold, and unheated natural earth-mined gemstones.",
+    "Millennium Designs is an established silver jewellery brand from Johari Bazaar, Jaipur (Est. 1961). We specialize in anti-tarnish 925 sterling silver, 14k gold, and natural earth-mined gemstones.",
   footerCopyrightNotice: "MILLENNIUM DESIGNS",
   footerHallmarkStrip: "SOLID 925 STERLING SILVER · PERMANENT ANTI-TARNISH ALLOY · JAIPUR BENCH CRAFTSMANSHIP",
   socialInstagramUrl: "https://instagram.com/millenniumdesigns",
@@ -378,20 +378,20 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
 
   // 10. Seasonal Notices & Policies
   seasonalNoticeEnabled: false,
-  seasonalNoticeTitle: "Atelier Annual Holiday Salon Notice",
+  seasonalNoticeTitle: "Holiday Notice",
   seasonalNoticeMessage:
-    "Commissions placed between October 20 and November 5 will receive priority dispatch with complimentary insured express courier.",
+    "Orders placed will receive priority dispatch with complimentary insured express courier.",
   seasonalNoticeDismissible: true,
   maintenanceModeEnabled: false,
   maintenanceModeMessage:
-    "The atelier website is undergoing scheduled refinement. Please contact our WhatsApp concierge directly for bespoke inquiries.",
+    "The website is undergoing scheduled maintenance. Please contact our WhatsApp support directly for inquiries.",
 
   // 11. SEO & Metadata
-  seoGlobalTitleTemplate: "%s · Millennium Designs | Jaipur Bench High Jewellery",
+  seoGlobalTitleTemplate: "%s · Millennium Designs | Pure 925 Sterling Silver Jewellery",
   seoDefaultDescriptionUs:
-    "Handcrafted in our Jaipur atelier since 1961. Solid 925 sterling silver, unheated natural gemstones, and bespoke commissions with insured worldwide courier.",
+    "Solid 925 sterling silver and unheated natural gemstones handcrafted in Jaipur since 1961, with insured worldwide courier.",
   seoDefaultDescriptionIn:
-    "Courtly fine jewellery, natural gemstones, and solid 925 sterling silver handcrafted in Johari Bazaar, Jaipur since 1961.",
+    "Fine silver jewellery, natural gemstones, and solid 925 sterling silver crafted in Johari Bazaar, Jaipur since 1961.",
   seoDefaultOgImage: "/images/brand/crest-gold.svg",
   seoTwitterHandle: "@millenniumdes",
 };

@@ -50,7 +50,7 @@ async function getGmailCredentials(): Promise<{ user?: string; pass?: string }> 
 }
 
 /**
- * Builds a royal Jaipur luxury editorial HTML template for client authentication.
+ * Builds a clean luxury HTML email template for customer authentication.
  */
 function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
   return `<!DOCTYPE html>
@@ -65,25 +65,16 @@ function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
     <tr>
       <td align="center">
         <!-- Main Card -->
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 540px; background-color: #0b2f23; border: 1px solid rgba(201, 168, 106, 0.35); border-radius: 4px; overflow: hidden; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 520px; background-color: #0b2f23; border: 1px solid rgba(201, 168, 106, 0.35); border-radius: 4px; overflow: hidden; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);">
           
-          <!-- Top Ornament Ribbon -->
-          <tr>
-            <td style="background-color: #051811; border-bottom: 1px solid rgba(201, 168, 106, 0.25); padding: 12px 24px; text-align: center;">
-              <span style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #c9a86a; font-weight: 600;">
-                ✦ JOHARI BAZAAR, JAIPUR · EST. 1961 ✦
-              </span>
-            </td>
-          </tr>
-
-          <!-- Header Logo / Atelier Crest -->
+          <!-- Header Logo -->
           <tr>
             <td style="padding: 36px 32px 20px; text-align: center;">
-              <div style="font-family: 'Cinzel', Georgia, serif; font-size: 24px; letter-spacing: 0.22em; text-transform: uppercase; color: #fbf9f5; font-weight: 500; margin-bottom: 4px;">
+              <div style="font-family: 'Cinzel', Georgia, serif; font-size: 24px; letter-spacing: 0.2em; text-transform: uppercase; color: #fbf9f5; font-weight: 500; margin-bottom: 6px;">
                 MILLENNIUM DESIGNS
               </div>
-              <div style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #c9a86a;">
-                Fine Jewellery &amp; Gemstone Atelier
+              <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #c9a86a;">
+                925 Sterling Silver Jewellery &amp; Gemstones
               </div>
             </td>
           </tr>
@@ -98,12 +89,12 @@ function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
           <!-- Body Content -->
           <tr>
             <td style="padding: 32px; text-align: center;">
-              <h1 style="font-family: 'Cinzel', Georgia, serif; font-size: 20px; font-weight: 400; color: #fbf9f5; margin: 0 0 14px; letter-spacing: 0.02em;">
-                Atelier Client Authentication
+              <h1 style="font-family: 'Cinzel', Georgia, serif; font-size: 22px; font-weight: 400; color: #fbf9f5; margin: 0 0 14px; letter-spacing: 0.02em;">
+                Your Verification Code
               </h1>
               
               <p style="font-size: 14px; line-height: 1.6; color: #c4d0c9; margin: 0 0 28px;">
-                Please use the single-use 6-digit security code below to sign in to your Millennium Designs client portal and access your private bespoke acquisitions:
+                Please use this single-use 6-digit verification code to sign in to your Millennium Designs account:
               </p>
 
               <!-- OTP Code Display Card -->
@@ -117,25 +108,25 @@ function buildOtpEmailHtml(code: string, expiresMinutes: number): string {
                 </tr>
               </table>
 
-              <p style="font-size: 12px; color: #8e9f96; line-height: 1.5; margin: 0 0 8px;">
+              <p style="font-size: 13px; color: #8e9f96; line-height: 1.5; margin: 0 0 10px;">
                 This code is valid for <strong>${expiresMinutes} minutes</strong> and can only be used once.
               </p>
               
-              <p style="font-size: 11px; color: #6d8076; line-height: 1.4; margin: 0;">
-                If you did not initiate this sign-in request, please disregard this email. Your atelier vault remains secure.
+              <p style="font-size: 12px; color: #6d8076; line-height: 1.4; margin: 0;">
+                If you did not request this code, you can safely ignore this email. Your account remains secure.
               </p>
             </td>
           </tr>
 
-          <!-- Footer Hallmarks -->
+          <!-- Footer -->
           <tr>
-            <td style="background-color: #051811; border-top: 1px solid rgba(201, 168, 106, 0.2); padding: 24px 32px; text-align: center;">
+            <td style="background-color: #051811; border-top: 1px solid rgba(201, 168, 106, 0.2); padding: 22px 32px; text-align: center;">
               <p style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #c9a86a; margin: 0 0 8px;">
-                Solid 925 Sterling Silver · Natural Unheated Minerals
+                Solid 925 Sterling Silver · Natural Gemstones
               </p>
               <p style="font-size: 11px; color: #6d8076; line-height: 1.5; margin: 0;">
-                Millennium Designs Jaipur Atelier · Opp. G.P.O., M.I. Road, Jaipur, Rajasthan 302001<br />
-                Concierge Direct: +91 98290 56597 · concierge@millenniumdesigns.in
+                Millennium Designs · Opp. G.P.O., M.I. Road, Jaipur, Rajasthan 302001<br />
+                Customer Support: +91 98290 56597 · concierge@millenniumdesigns.in
               </p>
             </td>
           </tr>
@@ -170,10 +161,10 @@ export async function sendCustomerOtpEmail(
       });
 
       const info = await transporter.sendMail({
-        from: `"Millennium Designs Atelier" <${user}>`,
+        from: `"Millennium Designs" <${user}>`,
         to,
         subject: `${code} is your Millennium Designs verification code`,
-        text: `Your Millennium Designs atelier verification code is: ${code}\n\nThis code expires in ${expiresMinutes} minutes.\n\nJohari Bazaar, Jaipur · Est. 1961`,
+        text: `Your Millennium Designs verification code is: ${code}\n\nThis code expires in ${expiresMinutes} minutes.\n\nSolid 925 Sterling Silver Jewellery · Jaipur`,
         html: buildOtpEmailHtml(code, expiresMinutes),
       });
 

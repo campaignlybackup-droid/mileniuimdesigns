@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
+import { Mail, Phone, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export default function LoginPage() {
@@ -10,19 +10,22 @@ export default function LoginPage() {
   const params = useParams();
   const marketParam = (params?.market as string) || "us";
   const marketCode = marketParam.toUpperCase();
-  const isIndia = marketCode === "IN";
 
-  const [authMode, setAuthMode] = useState<"email" | "whatsapp">("email");
   const [step, setStep] = useState<"identifier" | "otp">("identifier");
   const [identifier, setIdentifier] = useState("");
+  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successInfo, setSuccessInfo] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
   const [resendCountdown, setResendCountdown] = useState(0);
 
-  // Timer countdown for resend button
+  const otpInputsRef = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Automatically detect whether the input is an email or a phone number
+  const isEmail = identifier.includes("@");
+
+  // Countdown timer for resend
   useEffect(() => {
     if (resendCountdown <= 0) return;
     const timer = setInterval(() => {
@@ -31,18 +34,23 @@ export default function LoginPage() {
     return () => clearInterval(timer);
   }, [resendCountdown]);
 
+  // Focus the first OTP box upon entering the OTP step
+  useEffect(() => {
+    if (step === "otp") {
+      const timer = setTimeout(() => {
+        otpInputsRef.current[0]?.focus();
+      }, 60);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError(null);
-    setSuccessInfo(null);
 
     const clean = identifier.trim();
     if (!clean || clean.length < 4) {
-      setError(
-        authMode === "email"
-          ? "Please enter a valid email address (e.g. name@gmail.com)"
-          : "Please enter a valid WhatsApp mobile number with country code (e.g. +91 98290 56597)",
-      );
+      setError("Please enter a valid email or phone number.");
       return;
     }
 
@@ -56,32 +64,33 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send code");
+      if (!res.ok) throw new Error(data.error || "Failed to send verification code");
 
       if (data.devCode) {
         setDevCode(data.devCode);
-        setCode(data.devCode); // Autopopulate in dev mode for testing
+        const chars = String(data.devCode).slice(0, 6).split("");
+        const padded = [...chars, ...Array(6 - chars.length).fill("")].slice(0, 6);
+        setOtpDigits(padded);
+        setCode(data.devCode);
+      } else {
+        setOtpDigits(["", "", "", "", "", ""]);
+        setCode("");
       }
 
-      setSuccessInfo(
-        data.channel === "email"
-          ? data.emailSent
-            ? `A 6-digit code has been sent directly to your Gmail inbox (${clean}). Please check your inbox or spam.`
-            : `A single-use verification code has been generated for ${clean}.`
-          : `Verification code initiated for WhatsApp ${clean}.`,
-      );
-
-      setResendCountdown(60);
+      setResendCountdown(45);
       setStep("otp");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send verification code");
+      setError(err instanceof Error ? err.message : "Failed to send code. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleVerifyOtp = async (e?: React.FormEvent, customCode?: string) => {
+    if (e) e.preventDefault();
+    const codeToVerify = (customCode ?? code).trim();
+    if (codeToVerify.length < 6) return;
+
     setError(null);
     setLoading(true);
 
@@ -89,11 +98,11 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: identifier.trim(), code: code.trim(), marketCode }),
+        body: JSON.stringify({ identifier: identifier.trim(), code: codeToVerify, marketCode }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to verify code");
+      if (!res.ok) throw new Error(data.error || "Invalid verification code");
 
       const accountUrl =
         marketCode.toLowerCase() === "us" ? "/account" : `/${marketCode.toLowerCase()}/account`;
@@ -102,68 +111,157 @@ export default function LoginPage() {
       setError(
         err instanceof Error
           ? err.message
-          : "Invalid verification code. Please check and try again.",
+          : "Invalid code. Please check and try again.",
       );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleOtpChange = (index: number, val: string) => {
+    const raw = val.replace(/\D/g, "");
+
+    // Multi-digit paste or autofill
+    if (raw.length > 1) {
+      const nextDigits = [...otpDigits];
+      for (let i = 0; i < 6; i++) {
+        if (index + i < 6 && raw[i]) {
+          nextDigits[index + i] = raw[i];
+        }
+      }
+      setOtpDigits(nextDigits);
+      const combined = nextDigits.join("");
+      setCode(combined);
+
+      const nextFocus = Math.min(index + raw.length, 5);
+      otpInputsRef.current[nextFocus]?.focus();
+
+      if (combined.length === 6) {
+        handleVerifyOtp(undefined, combined);
+      }
+      return;
+    }
+
+    const nextDigits = [...otpDigits];
+    nextDigits[index] = raw;
+    setOtpDigits(nextDigits);
+    const combined = nextDigits.join("");
+    setCode(combined);
+
+    if (raw && index < 5) {
+      otpInputsRef.current[index + 1]?.focus();
+    }
+
+    if (combined.length === 6) {
+      handleVerifyOtp(undefined, combined);
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      if (!otpDigits[index] && index > 0) {
+        otpInputsRef.current[index - 1]?.focus();
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      otpInputsRef.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      otpInputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+
+    const chars = pasted.split("");
+    const padded = [...chars, ...Array(6 - chars.length).fill("")].slice(0, 6);
+    setOtpDigits(padded);
+    setCode(pasted);
+
+    const focusIdx = Math.min(pasted.length, 5);
+    otpInputsRef.current[focusIdx]?.focus();
+
+    if (pasted.length === 6) {
+      handleVerifyOtp(undefined, pasted);
+    }
+  };
+
   return (
-    <div
+    <main
+      data-surface="ivory-soft"
       style={{
-        maxWidth: 480,
-        margin: "clamp(40px, 8vw, 90px) auto",
-        padding: "0 var(--md-gutter)",
+        minHeight: "calc(100vh - 200px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "clamp(36px, 7vw, 72px) var(--md-gutter)",
       }}
     >
       <div
         style={{
+          width: "100%",
+          maxWidth: 400,
           background: "var(--md-bg-raised)",
-          border: "1px solid var(--md-rule)",
-          padding: "clamp(24px, 5vw, 40px)",
-          borderRadius: "var(--md-radius-sm)",
-          boxShadow: "0 12px 32px rgba(0,0,0,0.06)",
+          border: "1px solid color-mix(in srgb, var(--md-champagne) 24%, var(--md-rule))",
+          borderRadius: "4px",
+          boxShadow:
+            "0 16px 40px -12px rgba(11, 47, 35, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02)",
+          padding: "clamp(32px, 6vw, 44px) clamp(24px, 5vw, 36px)",
         }}
       >
-        {/* Atelier Crest & Branding */}
-        <div style={{ textAlign: "center", marginBottom: "var(--md-space-6)" }}>
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              color: "var(--md-gold)",
-              fontWeight: 600,
-              display: "block",
-              marginBottom: 8,
-            }}
-          >
-            ✦ JOHARI BAZAAR, JAIPUR · EST. 1961 ✦
-          </span>
+        {/* Simple & Clean Header */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <h1
+            className="md-editorial-title"
             style={{
-              fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.5rem, 3.5vw, 2rem)",
-              margin: 0,
+              fontSize: "clamp(1.75rem, 3.5vw, 2.125rem)",
+              margin: "0 0 8px",
               fontWeight: 400,
               color: "var(--md-fg)",
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.015em",
             }}
           >
-            {step === "identifier" ? "Client Vault Access" : "Enter Verification Code"}
+            {step === "identifier" ? "Sign In" : "Enter Code"}
           </h1>
+
           <p
             style={{
               fontSize: "0.875rem",
               color: "var(--md-fg-secondary)",
-              marginTop: "var(--md-space-2)",
+              margin: 0,
               lineHeight: 1.5,
             }}
           >
-            {step === "identifier"
-              ? "Sign in with your email or WhatsApp number to view reserved bespoke creations, orders, and certificates."
-              : `A 6-digit access code was dispatched for ${identifier}`}
+            {step === "identifier" ? (
+              "Enter your email or phone number to continue"
+            ) : (
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
+                <span>Code sent to</span>
+                <strong style={{ color: "var(--md-fg)", fontWeight: 600 }}>
+                  {identifier}
+                </strong>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep("identifier");
+                    setError(null);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    color: "var(--md-gold-antique)",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                  }}
+                >
+                  Edit
+                </button>
+              </span>
+            )}
           </p>
         </div>
 
@@ -171,12 +269,14 @@ export default function LoginPage() {
         {error && (
           <div
             style={{
-              background: "color-mix(in srgb, var(--md-danger) 10%, var(--md-bg-raised))",
-              border: "1px solid color-mix(in srgb, var(--md-danger) 30%, transparent)",
+              background:
+                "color-mix(in srgb, var(--md-danger) 9%, var(--md-bg-raised))",
+              border:
+                "1px solid color-mix(in srgb, var(--md-danger) 28%, transparent)",
               color: "var(--md-danger)",
-              padding: "12px 16px",
-              borderRadius: "var(--md-radius-sm)",
-              marginBottom: "var(--md-space-4)",
+              padding: "10px 14px",
+              borderRadius: "4px",
+              marginBottom: 20,
               fontSize: "0.8125rem",
               lineHeight: 1.4,
               textAlign: "center",
@@ -186,269 +286,204 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Success / Dispatched Info */}
-        {successInfo && (
-          <div
-            style={{
-              background: "color-mix(in srgb, var(--md-gold) 12%, var(--md-bg-raised))",
-              border: "1px solid color-mix(in srgb, var(--md-gold) 35%, transparent)",
-              color: "var(--md-fg)",
-              padding: "12px 16px",
-              borderRadius: "var(--md-radius-sm)",
-              marginBottom: "var(--md-space-4)",
-              fontSize: "0.8125rem",
-              lineHeight: 1.4,
-              textAlign: "center",
-            }}
-          >
-            {successInfo}
-          </div>
-        )}
-
-        {/* Dev Code Quick-Fill Badge */}
-        {devCode && step === "otp" && (
-          <div
-            style={{
-              background: "var(--md-bg)",
-              border: "1px dashed var(--md-gold)",
-              padding: "8px 12px",
-              borderRadius: "var(--md-radius-sm)",
-              marginBottom: "var(--md-space-4)",
-              fontSize: "0.8125rem",
-              textAlign: "center",
-              color: "var(--md-fg)",
-            }}
-          >
-            Development Testing Code:{" "}
-            <strong style={{ letterSpacing: "0.15em", color: "var(--md-gold)" }}>
-              {devCode}
-            </strong>
-          </div>
-        )}
-
+        {/* STEP 1: Single Unified Input (Auto-detects Email or Phone) */}
         {step === "identifier" ? (
-          <div>
-            {/* Mode Switcher Tabs: Email vs WhatsApp */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 6,
-                background: "var(--md-bg)",
-                padding: 4,
-                borderRadius: "var(--md-radius-sm)",
-                marginBottom: "var(--md-space-5)",
-                border: "1px solid var(--md-rule)",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMode("email");
-                  setError(null);
-                }}
+          <form onSubmit={handleSendOtp} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            <div>
+              <label
+                htmlFor="login-identifier"
                 style={{
-                  padding: "10px 14px",
+                  display: "block",
                   fontSize: "0.8125rem",
                   fontWeight: 600,
-                  border: "none",
-                  borderRadius: "calc(var(--md-radius-sm) - 2px)",
-                  cursor: "pointer",
-                  background: authMode === "email" ? "var(--md-bg-raised)" : "transparent",
-                  color: authMode === "email" ? "var(--md-fg)" : "var(--md-fg-muted)",
-                  boxShadow: authMode === "email" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                  transition: "all 150ms ease",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
+                  marginBottom: 8,
+                  color: "var(--md-fg)",
                 }}
               >
-                <span>✉</span>
-                <span>Gmail / Email</span>
-              </button>
+                Email or phone number
+              </label>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMode("whatsapp");
-                  setError(null);
-                }}
-                style={{
-                  padding: "10px 14px",
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  border: "none",
-                  borderRadius: "calc(var(--md-radius-sm) - 2px)",
-                  cursor: "pointer",
-                  background: authMode === "whatsapp" ? "var(--md-bg-raised)" : "transparent",
-                  color: authMode === "whatsapp" ? "var(--md-fg)" : "var(--md-fg-muted)",
-                  boxShadow: authMode === "whatsapp" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                  transition: "all 150ms ease",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                }}
-              >
-                <span>📱</span>
-                <span>WhatsApp</span>
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleSendOtp}
-              style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}
-            >
-              <div>
-                <label
+              <div style={{ position: "relative" }}>
+                <div
                   style={{
-                    display: "block",
-                    fontSize: "0.8125rem",
-                    fontWeight: 600,
-                    marginBottom: 8,
-                    color: "var(--md-fg)",
+                    position: "absolute",
+                    left: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    color: "var(--md-fg-muted)",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {authMode === "email" ? "Your Email Address" : "Your WhatsApp Mobile Number"}
-                </label>
+                  {isEmail ? (
+                    <Mail style={{ width: 16, height: 16, color: "var(--md-emerald-deep)" }} />
+                  ) : (
+                    <Phone style={{ width: 16, height: 16 }} />
+                  )}
+                </div>
+
                 <input
-                  type={authMode === "email" ? "email" : "text"}
+                  id="login-identifier"
+                  type="text"
                   required
                   autoFocus
                   value={identifier}
-                  onChange={(e) => {
-                    setIdentifier(e.target.value);
-                    // Smart auto-detection if pasted/typed
-                    if (e.target.value.includes("@") && authMode !== "email") {
-                      setAuthMode("email");
-                    }
-                  }}
-                  placeholder={
-                    authMode === "email"
-                      ? "client@gmail.com"
-                      : isIndia
-                        ? "+91 98290 56597"
-                        : "+1 (555) 019-2834"
-                  }
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="name@gmail.com or +91 98290 56597"
                   style={{
                     width: "100%",
-                    padding: "13px 15px",
-                    border: "1px solid var(--md-rule)",
+                    padding: "13px 14px 13px 40px",
+                    border: "1px solid var(--md-rule-strong)",
                     background: "var(--md-bg)",
                     color: "var(--md-fg)",
                     fontSize: "0.9375rem",
-                    borderRadius: "var(--md-radius-sm)",
+                    borderRadius: "4px",
                     outline: "none",
                     boxSizing: "border-box",
+                    transition: "border-color 150ms ease",
                   }}
                 />
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    color: "var(--md-fg-muted)",
-                    marginTop: 6,
-                  }}
-                >
-                  {authMode === "email"
-                    ? "✦ A 6-digit verification code will be sent to your Gmail/email inbox."
-                    : "✦ Enter your number with country code (e.g. +91 for India, +1 for US)."}
-                </span>
               </div>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                disabled={loading}
-                style={{ width: "100%", marginTop: "var(--md-space-2)" }}
-              >
-                {loading ? "Dispatching Code…" : "Send Verification Code"}
-              </Button>
-            </form>
-          </div>
-        ) : (
-          <form
-            onSubmit={handleVerifyOtp}
-            style={{ display: "flex", flexDirection: "column", gap: "var(--md-space-4)" }}
-          >
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 8,
-                }}
-              >
-                <label
-                  style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--md-fg)" }}
-                >
-                  Enter 6-Digit Code
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("identifier");
-                    setCode("");
-                    setError(null);
-                    setSuccessInfo(null);
-                  }}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    padding: 0,
-                    fontSize: "0.75rem",
-                    color: "var(--md-gold)",
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                  }}
-                >
-                  Edit destination
-                </button>
-              </div>
-
-              <input
-                type="text"
-                required
-                autoFocus
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                placeholder="123456"
-                style={{
-                  width: "100%",
-                  padding: "14px 16px",
-                  border: "1.5px solid var(--md-gold)",
-                  background: "var(--md-bg)",
-                  color: "var(--md-fg)",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.35em",
-                  textAlign: "center",
-                  borderRadius: "var(--md-radius-sm)",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
-              />
             </div>
 
             <Button
               type="submit"
               variant="primary"
-              size="lg"
-              disabled={loading || code.trim().length < 6}
-              style={{ width: "100%", marginTop: "var(--md-space-2)" }}
+              size="md"
+              disabled={loading}
+              style={{
+                width: "100%",
+                marginTop: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
             >
-              {loading ? "Verifying Vault Access…" : "Access Client Vault"}
+              {loading ? (
+                <>
+                  <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" />
+                  <span>Sending code…</span>
+                </>
+              ) : (
+                <>
+                  <span>Continue</span>
+                  <ArrowRight style={{ width: 15, height: 15 }} />
+                </>
+              )}
+            </Button>
+          </form>
+        ) : (
+          /* STEP 2: 6-Digit OTP Verification */
+          <form onSubmit={handleVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(6, 1fr)",
+                  gap: 8,
+                }}
+                onPaste={handleOtpPaste}
+              >
+                {otpDigits.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => {
+                      otpInputsRef.current[idx] = el;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={idx === 0 ? 6 : 1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    style={{
+                      width: "100%",
+                      height: 52,
+                      textAlign: "center",
+                      fontSize: "1.375rem",
+                      fontWeight: 700,
+                      fontFamily:
+                        "-apple-system, BlinkMacSystemFont, 'SF Mono', monospace",
+                      color: "var(--md-fg)",
+                      background: "var(--md-bg)",
+                      border: digit
+                        ? "1.5px solid var(--md-emerald-deep)"
+                        : "1px solid var(--md-rule-strong)",
+                      borderRadius: "4px",
+                      outline: "none",
+                      boxSizing: "border-box",
+                      transition: "all 140ms ease",
+                    }}
+                    autoComplete={idx === 0 ? "one-time-code" : "off"}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Dev helper tag (only shown in development mode) */}
+            {devCode && (
+              <div style={{ textAlign: "center" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const chars = String(devCode).slice(0, 6).split("");
+                    setOtpDigits(chars);
+                    setCode(devCode);
+                    handleVerifyOtp(undefined, devCode);
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: "1px dashed var(--md-champagne)",
+                    color: "var(--md-gold-antique)",
+                    fontSize: "0.75rem",
+                    padding: "4px 10px",
+                    borderRadius: "3px",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
+                  <Sparkles style={{ width: 12, height: 12 }} />
+                  <span>Dev code: <strong>{devCode}</strong> (tap to fill)</span>
+                </button>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              disabled={loading || code.trim().length < 6}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
+              {loading ? (
+                <>
+                  <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" />
+                  <span>Signing In…</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight style={{ width: 15, height: 15 }} />
+                </>
+              )}
             </Button>
 
-            {/* Resend Code Action */}
-            <div style={{ textAlign: "center", marginTop: 8 }}>
+            {/* Resend Link */}
+            <div style={{ textAlign: "center" }}>
               {resendCountdown > 0 ? (
                 <span style={{ fontSize: "0.8125rem", color: "var(--md-fg-muted)" }}>
-                  Resend code available in {resendCountdown}s
+                  Resend code in {resendCountdown}s
                 </span>
               ) : (
                 <button
@@ -465,38 +500,13 @@ export default function LoginPage() {
                     fontWeight: 500,
                   }}
                 >
-                  Did not receive code? Resend verification code
+                  Didn&apos;t receive code? Resend
                 </button>
               )}
             </div>
           </form>
         )}
-
-        {/* Security & Provenance Footnote */}
-        <div
-          style={{
-            marginTop: "var(--md-space-6)",
-            paddingTop: "var(--md-space-4)",
-            borderTop: "1px solid var(--md-rule)",
-            textAlign: "center",
-            fontSize: "0.75rem",
-            color: "var(--md-fg-muted)",
-            lineHeight: 1.5,
-          }}
-        >
-          🔒 Encrypted 256-bit single-use code · No permanent passwords required.
-          <br />
-          Need assistance? Contact our Jaipur atelier concierge on{" "}
-          <Link
-            href="https://wa.me/919829056597?text=Hello%20Millennium%20Designs%20concierge,%20I%20need%20assistance%20signing%20in%20to%20my%20client%20portal."
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "var(--md-gold)", textDecoration: "underline" }}
-          >
-            WhatsApp (+91 98290 56597)
-          </Link>
-        </div>
       </div>
-    </div>
+    </main>
   );
 }

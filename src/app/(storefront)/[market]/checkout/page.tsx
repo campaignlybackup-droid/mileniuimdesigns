@@ -758,7 +758,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div style={{ marginTop: 12, padding: "8px 12px", background: "var(--md-bg-raised)", borderRadius: "var(--md-radius-sm)", fontSize: "0.75rem", color: "var(--md-fg-secondary)", lineHeight: 1.4 }}>
-                      ✦ Your bespoke jewellery will be immediately reserved upon clicking &quot;Place Order&quot;. You can then transfer via bank app and share your UTR or confirmation with our atelier on WhatsApp.
+                      ✦ Your jewellery order will be reserved upon clicking &quot;Place Order&quot;. You can then transfer via bank app and share your UTR or confirmation with our team on WhatsApp.
                     </div>
                   </div>
                 )}

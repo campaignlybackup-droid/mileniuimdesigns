@@ -232,7 +232,7 @@ export default function CartPage() {
                             marginTop: 4,
                           }}
                         >
-                          925 Silver · Jaipur Atelier
+                          925 Sterling Silver · Jaipur
                         </span>
                       </div>
 
@@ -367,7 +367,7 @@ export default function CartPage() {
                   <span style={{ color: "var(--md-gold)", fontWeight: 500 }}>Complimentary</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.875rem" }}>
-                  <span style={{ color: "var(--md-fg-secondary)" }}>Atelier Hallmark</span>
+                  <span style={{ color: "var(--md-fg-secondary)" }}>Quality Hallmark</span>
                   <span style={{ color: "var(--md-fg-muted)" }}>Certified 925</span>
                 </div>
               </div>
