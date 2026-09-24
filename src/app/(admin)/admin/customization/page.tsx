@@ -774,6 +774,36 @@ export default function AdminCustomizationPage() {
                         value={slide.imageSrc}
                         onChange={(v) => updateHeroSlide(idx, { imageSrc: v })}
                       />
+                      <InputField
+                        label="Desktop Video URL (.mp4)"
+                        value={slide.videoSrc || ""}
+                        onChange={(v) => updateHeroSlide(idx, { videoSrc: v, isVideo: Boolean(v) })}
+                        desc="e.g. /videos/banner-1080p.mp4"
+                      />
+                      <InputField
+                        label="Mobile Video URL (.mp4)"
+                        value={slide.videoMobileSrc || ""}
+                        onChange={(v) => updateHeroSlide(idx, { videoMobileSrc: v })}
+                        desc="e.g. /videos/banner-mobile.mp4"
+                      />
+                      <InputField
+                        label="Video Poster Image URL"
+                        value={slide.videoPoster || ""}
+                        onChange={(v) => updateHeroSlide(idx, { videoPoster: v })}
+                        desc="e.g. /videos/banner-poster.jpg"
+                      />
+                    </div>
+
+                    <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.8125rem", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={Boolean(slide.isVideo)}
+                          onChange={(e) => updateHeroSlide(idx, { isVideo: e.target.checked })}
+                          style={{ accentColor: "var(--md-gold)" }}
+                        />
+                        <span>Enable Video Banner Mode for this slide</span>
+                      </label>
                     </div>
 
                     <TextAreaField

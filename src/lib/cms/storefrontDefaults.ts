@@ -8,6 +8,10 @@ export interface HeroSlideConfig {
   ctaHref: string;
   imageSrc: string;
   imageAlt: string;
+  isVideo?: boolean;
+  videoSrc?: string;
+  videoMobileSrc?: string;
+  videoPoster?: string;
 }
 
 export interface TrustPillarConfig {
@@ -193,6 +197,22 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
 
   // 2. Hero Slider
   heroSlides: [
+    {
+      id: "slide-video",
+      tag: "MILLENNIUM CRAFTSMANSHIP & MASTERY",
+      subhead: "Pure 925 Sterling Silver Factory Insights",
+      title: "Pure 925 Sterling Silver Artistry",
+      standfirst:
+        "Watch our authentic silversmithing process: casting, rolling, precise filing, ultrasonic cleaning, and hand gemstone setting.",
+      ctaText: "Explore Collection",
+      ctaHref: "/rings",
+      imageSrc: "/videos/banner-poster.jpg",
+      imageAlt: "Millennium Designs 925 Sterling Silver Factory Craftsmanship Video",
+      isVideo: true,
+      videoSrc: "/videos/banner-1080p.mp4",
+      videoMobileSrc: "/videos/banner-mobile.mp4",
+      videoPoster: "/videos/banner-poster.jpg",
+    },
     {
       id: "slide-1",
       tag: "SIGNATURE COLLECTION · EST. 1961 JAIPUR",
