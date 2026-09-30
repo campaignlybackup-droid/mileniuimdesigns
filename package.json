@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "postinstall": "prisma generate || true",
-    "build": "prisma generate && npm run check:brand && npm run gen:markets && npm run gen:tokens && next build",
+    "build": "prisma generate && npm run check:brand && npm run gen:markets && npm run gen:tokens && next build --webpack",
     "postbuild": "node -e \"const fs=require('fs'); if(fs.existsSync('.next/standalone')){ fs.cpSync('.next/static', '.next/standalone/.next/static', {recursive:true}); if(fs.existsSync('public')) fs.cpSync('public', '.next/standalone/public', {recursive:true}); console.log('✓ Copied static & public assets into .next/standalone'); }\"",
     "build:hostinger": "npm run build",
     "start": "next start",
