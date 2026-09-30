@@ -62,7 +62,7 @@ export function Logo({
       // the client supplies; inverting or hue-rotating the green mark to make a light one is
       // the redesign this component exists to prevent.
       data-tone={tone}
-      style={{ height, width: "auto" }}
+      style={{ width: "auto", height: "auto", maxHeight: height }}
     />
   );
 }

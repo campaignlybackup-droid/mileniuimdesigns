@@ -301,23 +301,23 @@ export function HeroCampaignSlider({
                 </video>
 
 
-                {/* Subtle Luxury Floating Watermark Tag (Bottom Left) */}
+                {/* Subtle Luxury Floating Watermark Tag (Bottom Left, Desktop only) */}
                 <div
                   style={{
                     position: "absolute",
                     bottom: "clamp(12px, 2.5vw, 24px)",
                     left: "clamp(12px, 3vw, 32px)",
                     zIndex: 5,
-                    display: "flex",
+                    display: isMobile ? "none" : "flex",
                     alignItems: "center",
                     gap: 8,
                     padding: "6px 14px",
                     borderRadius: 20,
-                    background: "rgba(6, 35, 25, 0.85)",
+                    background: "color-mix(in srgb, var(--md-green-dark) 85%, transparent)",
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(232, 216, 185, 0.35)",
-                    color: "var(--md-champagne, #e8d8b9)",
+                    border: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
+                    color: "var(--md-champagne)",
                     fontSize: "clamp(0.625rem, 1.4vw, 0.725rem)",
                     letterSpacing: "0.15em",
                     textTransform: "uppercase",
@@ -327,7 +327,7 @@ export function HeroCampaignSlider({
                     pointerEvents: "auto",
                   }}
                 >
-                  <span style={{ color: "var(--md-gold, #c5a059)" }}>✦</span>
+                  <span style={{ color: "var(--md-champagne)" }}>✦</span>
                   <span>{slide.tag || "CRAFTSMANSHIP & MASTERY · 925 STERLING SILVER"}</span>
                   {slide.ctaHref && (
                     <Link
@@ -335,8 +335,8 @@ export function HeroCampaignSlider({
                       style={{
                         marginLeft: 6,
                         paddingLeft: 8,
-                        borderLeft: "1px solid rgba(232, 216, 185, 0.35)",
-                        color: "var(--md-champagne, #e8d8b9)",
+                        borderLeft: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
+                        color: "var(--md-champagne)",
                         textDecoration: "underline",
                         textUnderlineOffset: "3px",
                       }}
@@ -528,8 +528,8 @@ export function HeroCampaignSlider({
                     alignItems: "center",
                     gap: 10,
                     padding: "12px 24px",
-                    background: "var(--md-gold, #c5a059)",
-                    color: "#062319",
+                    background: "var(--md-champagne)",
+                    color: "var(--md-green-dark)",
                     fontWeight: 600,
                     fontSize: "0.8125rem",
                     letterSpacing: "0.15em",
@@ -551,7 +551,7 @@ export function HeroCampaignSlider({
       )}
 
       {/* ── Slideable Controls: Next & Prev Arrows ───────────────────── */}
-      {totalSlides > 1 && (
+      {totalSlides > 1 && !isMobile && (
         <>
           <button
             type="button"
@@ -569,11 +569,11 @@ export function HeroCampaignSlider({
               width: "clamp(36px, 4.2vw, 46px)",
               height: "clamp(36px, 4.2vw, 46px)",
               borderRadius: "50%",
-              background: "rgba(6, 35, 25, 0.7)",
+              background: "color-mix(in srgb, var(--md-green-dark) 70%, transparent)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(232, 216, 185, 0.4)",
-              color: "var(--md-champagne, #e8d8b9)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+              color: "var(--md-champagne)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -583,11 +583,11 @@ export function HeroCampaignSlider({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-              e.currentTarget.style.background = "rgba(6, 35, 25, 0.95)";
+              e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-dark) 95%, transparent)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(-50%) scale(1.0)";
-              e.currentTarget.style.background = "rgba(6, 35, 25, 0.7)";
+              e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-dark) 70%, transparent)";
             }}
           >
             <svg
@@ -620,11 +620,11 @@ export function HeroCampaignSlider({
               width: "clamp(36px, 4.2vw, 46px)",
               height: "clamp(36px, 4.2vw, 46px)",
               borderRadius: "50%",
-              background: "rgba(6, 35, 25, 0.7)",
+              background: "color-mix(in srgb, var(--md-green-dark) 70%, transparent)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(232, 216, 185, 0.4)",
-              color: "var(--md-champagne, #e8d8b9)",
+              border: "1px solid color-mix(in srgb, var(--md-champagne) 40%, transparent)",
+              color: "var(--md-champagne)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -634,11 +634,11 @@ export function HeroCampaignSlider({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-              e.currentTarget.style.background = "rgba(6, 35, 25, 0.95)";
+              e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-dark) 95%, transparent)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(-50%) scale(1.0)";
-              e.currentTarget.style.background = "rgba(6, 35, 25, 0.7)";
+              e.currentTarget.style.background = "color-mix(in srgb, var(--md-green-dark) 70%, transparent)";
             }}
           >
             <svg
@@ -671,10 +671,10 @@ export function HeroCampaignSlider({
             gap: 8,
             padding: "5px 12px",
             borderRadius: 24,
-            background: "rgba(6, 35, 25, 0.85)",
+            background: "color-mix(in srgb, var(--md-green-dark) 85%, transparent)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid rgba(232, 216, 185, 0.3)",
+            border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
             boxShadow: "0 4px 14px rgba(0,0,0,0.3)",
           }}
         >
@@ -694,8 +694,8 @@ export function HeroCampaignSlider({
                   height: 7,
                   borderRadius: 4,
                   background: isSlideActive
-                    ? "var(--md-gold, #c5a059)"
-                    : "rgba(255, 255, 255, 0.35)",
+                    ? "var(--md-champagne)"
+                    : "color-mix(in srgb, var(--md-fg-inverse) 35%, transparent)",
                   border: "none",
                   cursor: "pointer",
                   transition: "all 300ms cubic-bezier(0.16, 1, 0.3, 1)",
