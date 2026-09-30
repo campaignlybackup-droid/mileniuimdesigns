@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "../../../../../components/ui/Button";
 import type { ImportResult } from "@/lib/catalog/bulk-import";
 
 const SAMPLE_CSV = `sku,title,category,inr_price,usd_price,stock,subtitle

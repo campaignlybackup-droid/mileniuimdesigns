@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Logo } from "@/components/ui/Logo";
+import { Logo } from "../../../../components/ui/Logo";
 
 export default function AdminLoginPage() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Logo } from "@/components/ui/Logo";
+import { Logo } from "../../../components/ui/Logo";
 import { getStaffActor } from "@/lib/auth/actor";
 import { db } from "@/lib/db/client";
 import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";

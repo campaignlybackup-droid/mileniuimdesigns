@@ -7,7 +7,7 @@ import {
   type StorefrontCustomizationConfig,
   type HeroSlideConfig,
   type TestimonialConfig,
-} from "@/lib/cms/storefrontDefaults";
+} from "../../../../lib/cms/storefrontDefaults";
 
 const TABS = [
   { id: "header", label: "Header & Announcement", icon: "✦" },
