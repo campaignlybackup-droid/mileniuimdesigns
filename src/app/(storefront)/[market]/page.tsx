@@ -13,6 +13,7 @@ import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getCategoryImage } from "@/lib/media/categoryImages";
 import { HeroCampaignSlider } from "@/components/storefront/HeroCampaignSlider";
 import { getStorefrontConfig } from "@/lib/cms/storefrontConfig";
+import { ExhibitionShowcase } from "@/components/storefront/ExhibitionShowcase";
 
 export const revalidate = 3600;
 
@@ -403,6 +404,9 @@ export default async function StorefrontHomePage({
           </div>
         </section>
       )}
+
+      {/* ── 5b. GLOBAL EXHIBITIONS & TRADE SALONS (TUCSON USA & EUROPE/ITALY) ── */}
+      <ExhibitionShowcase />
 
       {/* ── 6. ATELIER STORY & THREE GENERATIONS ────────────────────── */}
       {storefrontConfig.sectionHeritageVisible !== false && (

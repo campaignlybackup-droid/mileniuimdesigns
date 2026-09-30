@@ -964,7 +964,54 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Global Exhibition Infinite Marquee (Right to Left) ─────────────────── */
+@keyframes mdExhibitionScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
 
+.md-exhibition-marquee-sequence {
+  display: flex;
+  gap: 20px;
+  padding-right: 20px;
+  will-change: transform;
+  animation: mdExhibitionScroll 36s linear infinite;
+}
 
+@media (max-width: 640px) {
+  .md-exhibition-marquee-sequence {
+    animation-duration: 26s;
+  }
+}
 
+.md-exhibition-marquee-wrapper:hover .md-exhibition-marquee-sequence,
+.md-exhibition-marquee-wrapper:focus-within .md-exhibition-marquee-sequence,
+.md-exhibition-marquee-sequence.is-paused {
+  animation-play-state: paused;
+}
+
+.md-exhibition-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--md-champagne) 60%, transparent) !important;
+  box-shadow: 0 14px 32px -8px rgba(0, 0, 0, 0.12) !important;
+}
+
+.md-exhibition-card:focus-visible {
+  outline: 2px solid var(--md-green);
+  outline-offset: 2px;
+}
+
+.md-exhibition-card:hover .md-exhibition-img {
+  transform: scale(1.05) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-exhibition-marquee-sequence {
+    animation: none !important;
+  }
+}
 
