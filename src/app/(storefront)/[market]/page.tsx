@@ -405,9 +405,6 @@ export default async function StorefrontHomePage({
         </section>
       )}
 
-      {/* ── 5b. GLOBAL EXHIBITIONS & TRADE SALONS (TUCSON USA & EUROPE/ITALY) ── */}
-      <ExhibitionShowcase />
-
       {/* ── 6. ATELIER STORY & THREE GENERATIONS ────────────────────── */}
       {storefrontConfig.sectionHeritageVisible !== false && (
         <section
@@ -577,6 +574,9 @@ export default async function StorefrontHomePage({
           </div>
         </section>
       )}
+
+      {/* ── 6b. GLOBAL EXHIBITIONS & TRADE SALONS (TUCSON USA & EUROPE/ITALY) ── */}
+      <ExhibitionShowcase />
 
       {/* ── 7. NATURAL GEMSTONES LAPIDARY ARCHIVE ───────────────────── */}
       {storefrontConfig.sectionStonesVisible !== false && stones.length > 0 && (
