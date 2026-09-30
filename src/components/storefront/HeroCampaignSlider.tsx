@@ -18,6 +18,7 @@ export type CampaignSlide = {
   videoSrc?: string;
   videoMobileSrc?: string;
   videoPoster?: string;
+  videoMobilePoster?: string;
 };
 
 const CAMPAIGN_SLIDES: CampaignSlide[] = [
@@ -28,12 +29,13 @@ const CAMPAIGN_SLIDES: CampaignSlide[] = [
     title: "Pure 925 Sterling Silver Artistry",
     standfirst:
       "Watch our authentic silversmithing process: casting, rolling, precise filing, ultrasonic cleaning, and hand gemstone setting.",
-    imageSrc: "/videos/banner-poster.jpg",
+    imageSrc: "/videos/banner-poster.webp",
     imageAlt: "Millennium Designs 925 Sterling Silver Factory Craftsmanship Video",
     isVideo: true,
     videoSrc: "/videos/banner-1080p.mp4",
     videoMobileSrc: "/videos/banner-mobile.mp4",
-    videoPoster: "/videos/banner-poster.jpg",
+    videoPoster: "/videos/banner-poster.webp",
+    videoMobilePoster: "/videos/banner-poster-mobile.webp",
     ctaText: "Explore Pure Silver Collection",
     ctaHref: "/rings",
   },
@@ -158,6 +160,28 @@ export function HeroCampaignSlider({
   const isCentered = textAlign === "center";
   const effectiveOpacity = Math.max(0.2, Math.min(overlayOpacity, 0.85));
 
+  // Responsive device detection for seamless mobile/desktop media serving
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Play/pause video when active slide changes with strict muted autoplay policy
+  useEffect(() => {
+    if (isCurrentVideo && videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {
+        // Handle browser autoplay policy restrictions gracefully
+      });
+    }
+  }, [currentIdx, isCurrentVideo, isMobile]);
+
   // Prefix CTA links with market if needed
   const resolveHref = (href?: string) => {
     if (!href) return "/";
@@ -172,7 +196,7 @@ export function HeroCampaignSlider({
     <section
       data-surface="emerald-deep"
       aria-label="Millennium Designs Haute Joaillerie Showcase"
-      className="md-hero-section"
+      className={`md-hero-section ${isCurrentVideo ? "is-video-banner" : ""}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -183,13 +207,12 @@ export function HeroCampaignSlider({
         width: "100%",
         maxWidth: "100vw",
         overflow: "hidden",
-        background: isCurrentVideo ? "#F6F3EE" : "var(--md-green-black)",
-        color: isCurrentVideo ? "#1a2a22" : "var(--md-fg-inverse)",
+        background: isCurrentVideo ? "var(--md-bg-raised)" : "var(--md-green-black)",
+        color: isCurrentVideo ? "var(--md-fg)" : "var(--md-fg-inverse)",
         transition: "background 500ms ease",
-        // Perfect 16:9 adaptive aspect ratio ensures zero cropping/cutting on all screens
-        aspectRatio: isCurrentVideo ? "16 / 9" : undefined,
+        aspectRatio: isCurrentVideo ? (isMobile ? "1 / 1" : "16 / 9") : undefined,
         minHeight: isCurrentVideo ? "auto" : "clamp(460px, 66vh, 840px)",
-        maxHeight: isCurrentVideo ? "calc(100vh - 80px)" : undefined,
+        maxHeight: isCurrentVideo ? (isMobile ? "85vh" : "calc(100vh - 80px)") : undefined,
         margin: "0 auto",
         display: "flex",
         alignItems: "center",
@@ -199,6 +222,10 @@ export function HeroCampaignSlider({
       {activeSlides.map((slide, idx) => {
         const isActive = idx === currentIdx;
         const isSlideVideo = Boolean(slide.isVideo || slide.videoSrc);
+        const activePoster =
+          isMobile && slide.videoMobilePoster
+            ? slide.videoMobilePoster
+            : slide.videoPoster || "/videos/banner-poster.webp";
 
         return (
           <div
@@ -216,11 +243,11 @@ export function HeroCampaignSlider({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: isSlideVideo ? "#F6F3EE" : "transparent",
+              background: isSlideVideo ? "var(--md-bg-raised)" : "transparent",
             }}
           >
             {isSlideVideo ? (
-              // Edge-to-Edge Uncropped Streamable Video Banner
+              // Edge-to-Edge Streamable Video Banner
               <div
                 style={{
                   position: "relative",
@@ -229,6 +256,7 @@ export function HeroCampaignSlider({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
                 }}
               >
                 <video
@@ -237,14 +265,15 @@ export function HeroCampaignSlider({
                   muted
                   loop
                   playsInline
-                  preload="metadata"
-                  poster={slide.videoPoster || "/videos/banner-poster.jpg"}
+                  preload="auto"
+                  poster={activePoster}
                   aria-label={slide.imageAlt || "Millennium Designs Pure 925 Sterling Silver Factory Insights"}
+                  className="md-hero-video-element"
                   style={{
                     width: "100%",
                     height: "100%",
-                    // Object-fit contain ensures ZERO cropping or cut edges on all aspect ratios
-                    objectFit: "contain",
+                    objectFit: "cover",
+                    objectPosition: "center center",
                     display: "block",
                   }}
                 >
@@ -260,11 +289,17 @@ export function HeroCampaignSlider({
                   )}
                   {/* Fallback Poster */}
                   <img
-                    src={slide.videoPoster || "/videos/banner-poster.jpg"}
+                    src={activePoster}
                     alt={slide.imageAlt}
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center center",
+                    }}
                   />
                 </video>
+
 
                 {/* Subtle Luxury Floating Watermark Tag (Bottom Left) */}
                 <div

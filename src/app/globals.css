@@ -1015,3 +1015,29 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Edge-to-Edge Fast-Loading Video Banner ─────────────────────── */
+.md-hero-section.is-video-banner {
+  aspect-ratio: 16 / 9;
+  width: 100vw;
+  max-width: 100%;
+  margin-inline: auto;
+  background: var(--md-bg-raised);
+}
+
+.md-hero-section.is-video-banner .md-hero-video-element {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+@media (max-width: 768px) {
+  .md-hero-section.is-video-banner {
+    aspect-ratio: 1 / 1 !important;
+    min-height: unset !important;
+    max-height: 85vh !important;
+    width: 100% !important;
+  }
+}
+

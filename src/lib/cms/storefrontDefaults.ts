@@ -12,6 +12,7 @@ export interface HeroSlideConfig {
   videoSrc?: string;
   videoMobileSrc?: string;
   videoPoster?: string;
+  videoMobilePoster?: string;
 }
 
 export interface TrustPillarConfig {
@@ -206,12 +207,13 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
         "Watch our authentic silversmithing process: casting, rolling, precise filing, ultrasonic cleaning, and hand gemstone setting.",
       ctaText: "Explore Collection",
       ctaHref: "/rings",
-      imageSrc: "/videos/banner-poster.jpg",
+      imageSrc: "/videos/banner-poster.webp",
       imageAlt: "Millennium Designs 925 Sterling Silver Factory Craftsmanship Video",
       isVideo: true,
       videoSrc: "/videos/banner-1080p.mp4",
       videoMobileSrc: "/videos/banner-mobile.mp4",
-      videoPoster: "/videos/banner-poster.jpg",
+      videoPoster: "/videos/banner-poster.webp",
+      videoMobilePoster: "/videos/banner-poster-mobile.webp",
     },
     {
       id: "slide-1",

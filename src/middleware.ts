@@ -27,6 +27,7 @@ const BYPASS = [
   "/_vercel",
   "/brand",
   "/images",
+  "/videos",
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
@@ -68,7 +69,7 @@ export function middleware(req: NextRequest): NextResponse {
 
   if (
     BYPASS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
-    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|avif|css|js|woff2?|xml)$/.test(pathname)
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico|avif|css|js|woff2?|xml|mp4|webm|m4v|ogg)$/.test(pathname)
   ) {
     return NextResponse.next();
   }
