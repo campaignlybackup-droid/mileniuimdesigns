@@ -3,138 +3,69 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
-export interface ExhibitionItem {
+export interface ExhibitionPhoto {
   id: string;
-  city: string;
-  country: string;
-  badge: string;
-  title: string;
-  category: string;
   image: string;
   fullImage: string;
-  blurDataUrl: string;
   alt: string;
-  description: string;
-  highlight: string;
 }
 
-const EXHIBITION_ITEMS: ExhibitionItem[] = [
+const EXHIBITION_PHOTOS: ExhibitionPhoto[] = [
   {
-    id: "tucson-usa-gem-show",
-    city: "Tucson (Tuscan Show), Arizona",
-    country: "USA",
-    badge: "USA · TUCSON / TUSCAN",
-    title: "Tucson Gem & Mineral Showcase",
-    category: "World's Premier Mineral & Gem Expo",
+    id: "tucson-usa-booth",
     image: "/images/exhibitions/tucson-usa-booth.webp",
     fullImage: "/images/exhibitions/tucson-usa-booth.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAACwAQCdASoQAAkABABoJZQAAq9QroEgAP6+hY6TkLsNfCofqAzz5sg9htYE0tKajb1/TrfSH2kh7+u+xrJ/ToZoqRWrKCgA",
-    alt: "Millennium Designs Silver Reflections exhibition booth at Tucson Gem Show, Arizona, USA",
-    description:
-      "Presenting our signature anti-tarnish 925 sterling silver collections and unheated natural gemstone jewelry at the world-renowned Tucson Gem & Mineral Showcase in Arizona, USA. Meeting American boutique curators, gallery owners, and wholesale gem collectors.",
-    highlight: "Silver Reflections Booth · Tucson, AZ (USA)",
+    alt: "Millennium Designs Silver Reflections exhibition showcase at Tucson Gem Show, USA",
   },
   {
-    id: "vicenza-italy-expo",
-    city: "Vicenza & Tuscany",
-    country: "Italy",
-    badge: "ITALY · VICENZA & TUSCANY",
-    title: "Vicenzaoro Fine Jewellery Expo",
-    category: "European Gold & Silver Fair",
+    id: "italy-europe-gemstones",
     image: "/images/exhibitions/italy-europe-gemstones.webp",
     fullImage: "/images/exhibitions/italy-europe-gemstones.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACwAQCdASoQAAkABABoJZwAAcbXFWwAAP7ZqwGUD3+jO+zhmI1zxQTmVMqjXoCfG84BS2FkowyzQLUluFXGHmW4iQ7P33uPZ/gHQmkZBQhAAAAA",
-    alt: "Natural gemstone collections and silver jewelry at Vicenzaoro exhibition in Italy",
-    description:
-      "Exhibiting handcrafted natural gemstone jewelry, chakra stones, and solid sterling silver to European boutique owners and luxury collectors at Italy's historic jewellery capital.",
-    highlight: "European Lapidary Pavilion · Vicenza, Italy",
+    alt: "Exhibition display of sterling silver jewellery and natural gemstones in Italy",
   },
   {
-    id: "europe-continental-pavilion",
-    city: "Milan & Munich",
-    country: "Europe",
-    badge: "EUROPEAN SHOWCASE",
-    title: "Continental European Trade Fair",
-    category: "International Fine Jewellery Salon",
-    image: "/images/exhibitions/international-pavilion-aisle.webp",
+    id: "international-pavilion-aisle",
+    image: "/images/exhibitions/international-pavilion-aisle-landscape.webp",
     fullImage: "/images/exhibitions/international-pavilion-aisle.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAQCdASoQAAoABABoJZwAAaX1wdnYAP3jZZ21RWzcUni/uI8L9/FUEOe0YC+QB/uJxIteWXG31hCgX1riL8ekidmPe9fK4htNPNp827YnSDYcQ+BAAA==",
-    alt: "Exhibition aisle showcasing handcrafted sterling silver collections in Europe",
-    description:
-      "Bringing sixty-five years of Jaipur bench silversmithing to prestigious European trade halls, connecting family-run atelier craftsmanship directly with continental jewellery houses.",
-    highlight: "Continental Trade Circuit · Europe",
+    alt: "International jewellery trade salon showcase in Europe",
   },
   {
-    id: "tucson-usa-grand-salon",
-    city: "Tucson, Arizona",
-    country: "USA",
-    badge: "USA · WHOLESALE SALON",
-    title: "Tucson International Showcase",
-    category: "Wholesale & Collector Exchange",
+    id: "tucson-usa-salon",
     image: "/images/exhibitions/tucson-usa-booth.webp",
     fullImage: "/images/exhibitions/tucson-usa-booth.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAACwAQCdASoQAAkABABoJZQAAq9QroEgAP6+hY6TkLsNfCofqAzz5sg9htYE0tKajb1/TrfSH2kh7+u+xrJ/ToZoqRWrKCgA",
-    alt: "Millennium Designs international showcase at Tucson Gem Show, Arizona",
-    description:
-      "Direct from our Jaipur foundry to American retail partners, showcasing thousand-piece collections of natural emeralds, rainbow moonstones, and untreated sapphires in solid silver.",
-    highlight: "Annual US Gem Circuit · Arizona, USA",
+    alt: "Handcrafted 925 sterling silver fine jewellery at international exhibition",
   },
   {
     id: "italy-mediterranean-forum",
-    city: "Vicenza & Arezzo",
-    country: "Italy",
-    badge: "ITALY · MEDITERRANEAN",
-    title: "Italian Lapidary & Gem Forum",
-    category: "Mediterranean Artisan Showcase",
     image: "/images/exhibitions/italy-europe-gemstones.webp",
     fullImage: "/images/exhibitions/italy-europe-gemstones.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACwAQCdASoQAAkABABoJZwAAcbXFWwAAP7ZqwGUD3+jO+zhmI1zxQTmVMqjXoCfG84BS2FkowyzQLUluFXGHmW4iQ7P33uPZ/gHQmkZBQhAAAAA",
-    alt: "Exhibition display of silver jewelry and gemstones in Italy",
-    description:
-      "Curating certified natural minerals and anti-tarnish sterling silver creations tailored for Italian and European fine jewellery connoisseurs seeking direct-from-source authenticity.",
-    highlight: "Mediterranean Jewellery Fair · Italy",
+    alt: "Artisan silversmithing and gemstones presented at European trade fairs",
   },
   {
-    id: "international-artisan-aisle",
-    city: "Global Pavilions",
-    country: "USA · Europe · Italy",
-    badge: "GLOBAL CIRCUIT",
-    title: "International Silver & Lapidary Expo",
-    category: "Global Trade Delegation",
-    image: "/images/exhibitions/international-pavilion-aisle.webp",
+    id: "continental-trade-fair",
+    image: "/images/exhibitions/international-pavilion-aisle-landscape.webp",
     fullImage: "/images/exhibitions/international-pavilion-aisle.webp",
-    blurDataUrl:
-      "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAQCdASoQAAoABABoJZwAAaX1wdnYAP3jZZ21RWzcUni/uI8L9/FUEOe0YC+QB/uJxIteWXG31hCgX1riL8ekidmPe9fK4htNPNp827YnSDYcQ+BAAA==",
-    alt: "Exhibition booth showcasing Jaipur bench craftsmanship internationally",
-    description:
-      "Three generations of fine jewellery excellence presented annually across premier exhibitions in the United States, Italy, and Europe. Family-owned and handmade under one roof in Jaipur since 1961.",
-    highlight: "Worldwide Collector Salons",
+    alt: "Millennium Designs trade salon booth and jewelry showcases",
   },
 ];
 
 export function ExhibitionShowcase(): React.JSX.Element {
-  const [isPaused, setIsPaused] = useState(false);
-  const [activeItemIndex, setActiveItemIndex] = useState<number | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null);
 
-  const activeItem = activeItemIndex !== null ? EXHIBITION_ITEMS[activeItemIndex] : null;
+  const activePhoto = activePhotoIndex !== null ? EXHIBITION_PHOTOS[activePhotoIndex] : null;
 
-  // Keyboard navigation for modal (Esc to close, Left/Right arrows to navigate)
+  // Keyboard navigation for lightbox (Esc to close, Left/Right arrows to browse)
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setActiveItemIndex(null);
+        setActivePhotoIndex(null);
       } else if (e.key === "ArrowRight") {
-        setActiveItemIndex((prev) =>
-          prev !== null ? (prev + 1) % EXHIBITION_ITEMS.length : null
+        setActivePhotoIndex((prev) =>
+          prev !== null ? (prev + 1) % EXHIBITION_PHOTOS.length : null
         );
       } else if (e.key === "ArrowLeft") {
-        setActiveItemIndex((prev) =>
-          prev !== null ? (prev - 1 + EXHIBITION_ITEMS.length) % EXHIBITION_ITEMS.length : null
+        setActivePhotoIndex((prev) =>
+          prev !== null ? (prev - 1 + EXHIBITION_PHOTOS.length) % EXHIBITION_PHOTOS.length : null
         );
       }
     },
@@ -142,7 +73,7 @@ export function ExhibitionShowcase(): React.JSX.Element {
   );
 
   useEffect(() => {
-    if (activeItemIndex !== null) {
+    if (activePhotoIndex !== null) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
     } else {
@@ -152,18 +83,18 @@ export function ExhibitionShowcase(): React.JSX.Element {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [activeItemIndex, handleKeyDown]);
+  }, [activePhotoIndex, handleKeyDown]);
 
   return (
     <section
       id="exhibitions"
-      aria-label="Global Exhibitions & Trade Fairs"
+      aria-label="International Exhibitions & Trade Salons"
       style={{
         width: "100%",
         borderTop: "1px solid var(--md-rule)",
         borderBottom: "1px solid var(--md-rule)",
         background: "var(--md-bg-raised)",
-        paddingBlock: "clamp(48px, 6vw, 84px)",
+        paddingBlock: "clamp(48px, 6vw, 80px)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -175,128 +106,57 @@ export function ExhibitionShowcase(): React.JSX.Element {
           marginInline: "auto",
           paddingInline: "var(--md-gutter)",
           marginBottom: "clamp(24px, 3.5vw, 40px)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          flexWrap: "wrap",
-          gap: "16px",
+          textAlign: "center",
         }}
       >
-        <div style={{ maxWidth: "720px" }}>
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--md-fg-secondary)",
-              fontWeight: 600,
-              display: "block",
-              marginBottom: 8,
-              fontFamily: "var(--md-font-crest), Georgia, serif",
-            }}
-          >
-            ✦ GLOBAL PRESENCE · USA · ITALY · EUROPE ✦
-          </span>
-          <h2
-            style={{
-              margin: "0 0 12px",
-              fontFamily: "var(--md-font-display)",
-              fontSize: "clamp(1.5rem, 3.4vw, 2.75rem)",
-              fontWeight: 400,
-              color: "var(--md-fg)",
-              letterSpacing: "-0.01em",
-              lineHeight: 1.15,
-            }}
-          >
-            International Exhibitions &amp; Trade Salons
-          </h2>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "clamp(0.875rem, 1.1vw, 0.9375rem)",
-              lineHeight: 1.68,
-              color: "var(--md-fg-secondary)",
-              maxWidth: "620px",
-            }}
-          >
-            From our family bench in Jaipur to premier exhibitions in Tucson (USA), Vicenza &amp; Tuscany (Italy),
-            and across Europe. Discover our international booths where collectors and fine jewellery
-            boutiques meet three generations of lapidary mastery.
-          </p>
-        </div>
-
-        {/* Animation Play/Pause & Speed indicator */}
-        <div
+        <span
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
+            fontSize: "0.6875rem",
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "var(--md-fg-secondary)",
+            fontWeight: 600,
+            display: "block",
+            marginBottom: 8,
+            fontFamily: "var(--md-font-crest), Georgia, serif",
           }}
         >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "6px 14px",
-              borderRadius: "var(--md-radius-pill)",
-              background: "var(--md-bg)",
-              border: "1px solid var(--md-rule)",
-              fontSize: "0.6875rem",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--md-fg-secondary)",
-              fontWeight: 600,
-            }}
-          >
-            <span
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: isPaused ? "var(--md-taupe)" : "var(--md-green)",
-                boxShadow: isPaused ? "none" : "0 0 8px var(--md-green)",
-                transition: "background 200ms ease",
-              }}
-            />
-            <span>{isPaused ? "Paused" : "Live Showcase"}</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsPaused((prev) => !prev)}
-            aria-label={isPaused ? "Resume exhibition animation" : "Pause exhibition animation"}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: 36,
-              paddingInline: "16px",
-              background: "var(--md-bg)",
-              border: "1px solid var(--md-rule)",
-              borderRadius: "var(--md-radius-sm)",
-              fontSize: "0.6875rem",
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--md-fg)",
-              cursor: "pointer",
-              transition: "border-color 160ms ease, background 160ms ease",
-            }}
-          >
-            {isPaused ? "▶ Resume" : "❚❚ Pause"}
-          </button>
-        </div>
+          ✦ GLOBAL PRESENCE · USA · ITALY · EUROPE ✦
+        </span>
+        <h2
+          style={{
+            margin: "0 0 10px",
+            fontFamily: "var(--md-font-display)",
+            fontSize: "clamp(1.6rem, 3.5vw, 2.75rem)",
+            fontWeight: 400,
+            color: "var(--md-fg)",
+            letterSpacing: "-0.01em",
+            lineHeight: 1.18,
+          }}
+        >
+          International Exhibitions &amp; Trade Salons
+        </h2>
+        <p
+          style={{
+            margin: "0 auto",
+            fontSize: "clamp(0.875rem, 1.1vw, 0.9375rem)",
+            lineHeight: 1.65,
+            color: "var(--md-fg-secondary)",
+            maxWidth: "680px",
+          }}
+        >
+          Showcasing sixty-five years of Jaipur bench silversmithing across premier international jewellery salons in Tucson (USA), Vicenza &amp; Tuscany (Italy), and Europe.
+        </p>
       </div>
 
-      {/* ── Mathematically Seamless Infinite Marquee (Right to Left) ───── */}
+      {/* ── Seamless Moving Photos Marquee (Right to Left) ─────────────── */}
       <div
         className="md-exhibition-marquee-wrapper"
         style={{
           position: "relative",
           width: "100%",
           overflow: "hidden",
-          paddingBlock: "8px",
+          paddingBlock: "10px",
         }}
       >
         {/* Soft edge fade masks for smooth entrance/exit */}
@@ -327,7 +187,7 @@ export function ExhibitionShowcase(): React.JSX.Element {
           }}
         />
 
-        {/* Marquee Track: Two identical sequences moving -100% for 100% seamless continuity */}
+        {/* Marquee Track: Two identical sequences for continuous, seamless right-to-left glide */}
         <div
           className="md-exhibition-marquee-track"
           style={{
@@ -337,101 +197,126 @@ export function ExhibitionShowcase(): React.JSX.Element {
         >
           {/* Primary Sequence */}
           <div
-            className={`md-exhibition-marquee-sequence ${isPaused ? "is-paused" : ""}`}
+            className="md-exhibition-marquee-sequence"
             style={{
               display: "flex",
-              gap: 20,
-              paddingRight: 20,
+              gap: 24,
+              paddingRight: 24,
               willChange: "transform",
             }}
           >
-            {EXHIBITION_ITEMS.map((item, index) => (
-              <ExhibitionCard
+            {EXHIBITION_PHOTOS.map((item, index) => (
+              <div
                 key={`${item.id}-seq1-${index}`}
-                item={item}
-                onSelect={() => setActiveItemIndex(index)}
-              />
+                role="button"
+                tabIndex={0}
+                aria-label={`View exhibition photo: ${item.alt}`}
+                onClick={() => setActivePhotoIndex(index)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActivePhotoIndex(index);
+                  }
+                }}
+                className="md-exhibition-card"
+                style={{
+                  position: "relative",
+                  flex: "0 0 clamp(320px, 36vw, 520px)",
+                  height: "clamp(240px, 28vw, 360px)",
+                  background: "var(--md-forest)",
+                  borderRadius: "var(--md-radius-sm)",
+                  overflow: "hidden",
+                  border: "1px solid var(--md-rule)",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+                  cursor: "pointer",
+                  transition: "transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease",
+                }}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 640px) 320px, (max-width: 1024px) 40vw, 520px"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center center",
+                    transition: "transform 400ms ease",
+                  }}
+                  className="md-exhibition-img"
+                  loading="lazy"
+                />
+              </div>
             ))}
           </div>
 
           {/* Secondary Duplicate Sequence (Seamless loop) */}
           <div
             aria-hidden="true"
-            className={`md-exhibition-marquee-sequence ${isPaused ? "is-paused" : ""}`}
+            className="md-exhibition-marquee-sequence"
             style={{
               display: "flex",
-              gap: 20,
-              paddingRight: 20,
+              gap: 24,
+              paddingRight: 24,
               willChange: "transform",
             }}
           >
-            {EXHIBITION_ITEMS.map((item, index) => (
-              <ExhibitionCard
+            {EXHIBITION_PHOTOS.map((item, index) => (
+              <div
                 key={`${item.id}-seq2-${index}`}
-                item={item}
-                isDuplicate
-                onSelect={() => setActiveItemIndex(index)}
-              />
+                role="button"
+                tabIndex={-1}
+                onClick={() => setActivePhotoIndex(index)}
+                className="md-exhibition-card"
+                style={{
+                  position: "relative",
+                  flex: "0 0 clamp(320px, 36vw, 520px)",
+                  height: "clamp(240px, 28vw, 360px)",
+                  background: "var(--md-forest)",
+                  borderRadius: "var(--md-radius-sm)",
+                  overflow: "hidden",
+                  border: "1px solid var(--md-rule)",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+                  cursor: "pointer",
+                  transition: "transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease",
+                }}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 640px) 320px, (max-width: 1024px) 40vw, 520px"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center center",
+                    transition: "transform 400ms ease",
+                  }}
+                  className="md-exhibition-img"
+                  loading="lazy"
+                />
+              </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Provenance Badges Ribbon ─────────────────────────────────── */}
-      <div
-        style={{
-          maxWidth: "var(--md-container)",
-          marginInline: "auto",
-          paddingInline: "var(--md-gutter)",
-          marginTop: "clamp(24px, 3.5vw, 36px)",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "clamp(16px, 3.5vw, 36px)",
-          fontSize: "0.75rem",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "var(--md-fg-secondary)",
-          fontWeight: 500,
-        }}
-      >
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-gold-antique)" }}>✦</span>
-          <span>Tucson Gem Show, Arizona · USA</span>
-        </span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-gold-antique)" }}>✦</span>
-          <span>Vicenzaoro Fair &amp; Tuscany · Italy</span>
-        </span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-gold-antique)" }}>✦</span>
-          <span>European Continental Pavilions</span>
-        </span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "var(--md-gold-antique)" }}>✦</span>
-          <span>Solid 925 Sterling Silver</span>
-        </span>
-      </div>
-
-      {/* ── Interactive Lightbox Modal ───────────────────────────────── */}
-      {activeItem && activeItemIndex !== null && (
+      {/* ── High-Definition Lightbox Modal ─────────────────────────────── */}
+      {activePhoto && activePhotoIndex !== null && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={activeItem.title}
-          onClick={() => setActiveItemIndex(null)}
+          aria-label={activePhoto.alt}
+          onClick={() => setActivePhotoIndex(null)}
           style={{
             position: "fixed",
             inset: 0,
             zIndex: 9999,
-            background: "rgba(4, 19, 13, 0.92)",
+            background: "rgba(4, 19, 13, 0.94)",
             backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: "clamp(16px, 4vw, 40px)",
-            animation: "fadeIn 200ms ease",
           }}
         >
           <div
@@ -439,402 +324,134 @@ export function ExhibitionShowcase(): React.JSX.Element {
             style={{
               position: "relative",
               width: "100%",
-              maxWidth: "920px",
-              maxHeight: "92vh",
-              background: "var(--md-bg)",
-              borderRadius: "var(--md-radius-sm)",
-              border: "1px solid color-mix(in srgb, var(--md-champagne) 35%, transparent)",
-              boxShadow: "0 24px 64px -12px rgba(0,0,0,0.6)",
+              maxWidth: "1080px",
+              maxHeight: "90vh",
+              background: "transparent",
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            {/* Modal Header */}
-            <div
+            {/* Minimal Close Button */}
+            <button
+              type="button"
+              onClick={() => setActivePhotoIndex(null)}
+              aria-label="Close modal"
               style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                zIndex: 10,
+                background: "rgba(0, 0, 0, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "50%",
+                color: "#ffffff",
+                width: 36,
+                height: 36,
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
-                padding: "14px 20px",
-                borderBottom: "1px solid var(--md-rule)",
-                background: "var(--md-bg-raised)",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "1.1rem",
+                lineHeight: 1,
+                transition: "background 150ms ease",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span
-                  style={{
-                    fontSize: "0.625rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    padding: "4px 10px",
-                    background: "var(--md-forest)",
-                    color: "var(--md-champagne)",
-                    borderRadius: "var(--md-radius-pill)",
-                    fontWeight: 600,
-                  }}
-                >
-                  {activeItem.badge}
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.8125rem",
-                    color: "var(--md-fg)",
-                    fontWeight: 600,
-                    letterSpacing: "0.02em",
-                  }}
-                >
-                  {activeItem.city}, {activeItem.country}
-                </span>
-              </div>
+              ✕
+            </button>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveItemIndex((prev) =>
-                      prev !== null
-                        ? (prev - 1 + EXHIBITION_ITEMS.length) % EXHIBITION_ITEMS.length
-                        : null
-                    )
-                  }
-                  aria-label="Previous exhibition photo"
-                  style={{
-                    background: "transparent",
-                    border: "1px solid var(--md-rule)",
-                    borderRadius: "var(--md-radius-sm)",
-                    color: "var(--md-fg)",
-                    width: 32,
-                    height: 32,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveItemIndex((prev) =>
-                      prev !== null ? (prev + 1) % EXHIBITION_ITEMS.length : null
-                    )
-                  }
-                  aria-label="Next exhibition photo"
-                  style={{
-                    background: "transparent",
-                    border: "1px solid var(--md-rule)",
-                    borderRadius: "var(--md-radius-sm)",
-                    color: "var(--md-fg)",
-                    width: 32,
-                    height: 32,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  →
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveItemIndex(null)}
-                  aria-label="Close modal"
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "1.25rem",
-                    lineHeight: 1,
-                    color: "var(--md-fg)",
-                    cursor: "pointer",
-                    padding: 8,
-                    borderRadius: "var(--md-radius-sm)",
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
+            {/* Previous Photo Button */}
+            <button
+              type="button"
+              onClick={() =>
+                setActivePhotoIndex((prev) =>
+                  prev !== null
+                    ? (prev - 1 + EXHIBITION_PHOTOS.length) % EXHIBITION_PHOTOS.length
+                    : null
+                )
+              }
+              aria-label="Previous exhibition photo"
+              style={{
+                position: "absolute",
+                left: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                background: "rgba(0, 0, 0, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "50%",
+                color: "#ffffff",
+                width: 44,
+                height: 44,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.25rem",
+                transition: "background 150ms ease",
+              }}
+            >
+              ‹
+            </button>
 
-            {/* Modal Photo Frame */}
+            {/* Next Photo Button */}
+            <button
+              type="button"
+              onClick={() =>
+                setActivePhotoIndex((prev) =>
+                  prev !== null ? (prev + 1) % EXHIBITION_PHOTOS.length : null
+                )
+              }
+              aria-label="Next exhibition photo"
+              style={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                background: "rgba(0, 0, 0, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "50%",
+                color: "#ffffff",
+                width: 44,
+                height: 44,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.25rem",
+                transition: "background 150ms ease",
+              }}
+            >
+              ›
+            </button>
+
+            {/* Full Uncropped Photo Frame */}
             <div
               style={{
                 position: "relative",
                 width: "100%",
-                height: "56vh",
-                background: "var(--md-forest)",
+                height: "82vh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               <Image
-                src={activeItem.fullImage}
-                alt={activeItem.alt}
+                src={activePhoto.fullImage}
+                alt={activePhoto.alt}
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 920px"
+                sizes="(max-width: 1200px) 100vw, 1080px"
                 style={{
                   objectFit: "contain",
                 }}
               />
             </div>
-
-            {/* Modal Info Footer */}
-            <div
-              style={{
-                padding: "16px 20px",
-                background: "var(--md-bg)",
-                borderTop: "1px solid var(--md-rule)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  flexWrap: "wrap",
-                  gap: 8,
-                  marginBottom: 6,
-                }}
-              >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "var(--md-font-display)",
-                    fontSize: "1.25rem",
-                    fontWeight: 400,
-                    color: "var(--md-fg)",
-                  }}
-                >
-                  {activeItem.title}
-                </h3>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    color: "var(--md-fg-secondary)",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  Photo {activeItemIndex + 1} of {EXHIBITION_ITEMS.length}
-                </span>
-              </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.875rem",
-                  lineHeight: 1.6,
-                  color: "var(--md-fg-secondary)",
-                }}
-              >
-                {activeItem.description}
-              </p>
-              <div
-                style={{
-                  marginTop: 10,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  fontSize: "0.75rem",
-                  color: "var(--md-gold-antique)",
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                }}
-              >
-                <span>✦ {activeItem.highlight}</span>
-                <span>·</span>
-                <span>Direct Jaipur Silversmithing</span>
-              </div>
-            </div>
           </div>
         </div>
       )}
     </section>
-  );
-}
-
-interface ExhibitionCardProps {
-  item: ExhibitionItem;
-  isDuplicate?: boolean;
-  onSelect: () => void;
-}
-
-function ExhibitionCard({ item, isDuplicate, onSelect }: ExhibitionCardProps): React.JSX.Element {
-  return (
-    <article
-      tabIndex={isDuplicate ? -1 : 0}
-      aria-hidden={isDuplicate}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-      className="md-exhibition-card"
-      style={{
-        flex: "0 0 clamp(280px, 28vw, 360px)",
-        background: "var(--md-bg)",
-        border: "1px solid var(--md-rule)",
-        borderRadius: "var(--md-radius-sm)",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        cursor: "pointer",
-        transition: "transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease",
-        outline: "none",
-        userSelect: "none",
-      }}
-    >
-      {/* Photo with Overlay Badge */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "16 / 10",
-          overflow: "hidden",
-          background: "var(--md-forest)",
-        }}
-      >
-        <Image
-          src={item.image}
-          alt={item.alt}
-          fill
-          placeholder="blur"
-          blurDataURL={item.blurDataUrl}
-          loading="lazy"
-          sizes="(max-width: 640px) 280px, (max-width: 1024px) 34vw, 360px"
-          style={{
-            objectFit: "cover",
-            objectPosition: "center 28%",
-            transition: "transform 360ms ease",
-          }}
-          className="md-exhibition-img"
-        />
-
-        {/* Location Badge (Dark Frosted Glass) */}
-        <div
-          style={{
-            position: "absolute",
-            top: 12,
-            left: 12,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "4px 10px",
-            background: "rgba(4, 19, 13, 0.82)",
-            backdropFilter: "blur(6px)",
-            borderRadius: "var(--md-radius-pill)",
-            border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
-            color: "var(--md-champagne)",
-            fontSize: "0.625rem",
-            fontWeight: 600,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            zIndex: 2,
-          }}
-        >
-          <span style={{ color: "var(--md-gold-antique)", fontSize: "0.5rem" }}>✦</span>
-          <span>{item.badge}</span>
-        </div>
-
-        {/* Expand Icon Cue */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            bottom: 10,
-            right: 10,
-            width: 28,
-            height: 28,
-            borderRadius: "50%",
-            background: "rgba(4, 19, 13, 0.72)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--md-ivory-soft)",
-            fontSize: "0.75rem",
-            border: "1px solid color-mix(in srgb, var(--md-champagne) 25%, transparent)",
-            zIndex: 2,
-          }}
-        >
-          ⤢
-        </div>
-      </div>
-
-      {/* Card Text Content */}
-      <div
-        style={{
-          padding: "16px 18px",
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          justifyContent: "space-between",
-          gap: 10,
-        }}
-      >
-        <div>
-          <span
-            style={{
-              fontSize: "0.625rem",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "var(--md-fg-secondary)",
-              fontWeight: 600,
-              display: "block",
-              marginBottom: 4,
-            }}
-          >
-            {item.category}
-          </span>
-          <h3
-            style={{
-              margin: 0,
-              fontFamily: "var(--md-font-display)",
-              fontSize: "1.0625rem",
-              fontWeight: 400,
-              letterSpacing: "-0.01em",
-              color: "var(--md-fg)",
-              lineHeight: 1.3,
-            }}
-          >
-            {item.title}
-          </h3>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingTop: 8,
-            borderTop: "1px solid var(--md-rule)",
-            fontSize: "0.6875rem",
-          }}
-        >
-          <span style={{ color: "var(--md-fg-secondary)", fontWeight: 500 }}>
-            {item.city}
-          </span>
-          <span
-            style={{
-              color: "var(--md-gold-antique)",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-          >
-            View Gallery →
-          </span>
-        </div>
-      </div>
-    </article>
   );
 }
