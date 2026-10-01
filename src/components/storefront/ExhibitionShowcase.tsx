@@ -243,7 +243,8 @@ export function ExhibitionShowcase(): React.JSX.Element {
                     transition: "transform 400ms ease",
                   }}
                   className="md-exhibition-img"
-                  loading="lazy"
+                  loading={index < 3 ? "eager" : "lazy"}
+                  priority={index === 0}
                 />
               </div>
             ))}

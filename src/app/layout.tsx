@@ -48,10 +48,11 @@ const sans = Plus_Jakarta_Sans({
 });
 
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo";
+import { env } from "@/lib/config/env";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://millenniumdesigns.in"
+    env().NEXT_PUBLIC_APP_URL || "https://millenniumdesigns.in"
   ),
   title: {
     default: "Millennium Designs · Pure 925 Sterling Silver Jewellery",
@@ -124,6 +125,30 @@ export default function RootLayout({
       className={`${bodoni.variable} ${italiana.variable} ${cinzel.variable} ${sans.variable} h-full antialiased`}
     >
       <head>
+        {/* Preconnect to media CDN */}
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+        {/* High-Priority Preloads for Instant First Paint of Hero Video Posters */}
+        <link
+          rel="preload"
+          as="image"
+          href="/videos/banner-poster.webp"
+          type="image/webp"
+          // @ts-expect-error React 19 fetchPriority attribute support
+          fetchpriority="high"
+          media="(min-width: 769px)"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/videos/banner-poster-mobile.webp"
+          type="image/webp"
+          // @ts-expect-error React 19 fetchPriority attribute support
+          fetchpriority="high"
+          media="(max-width: 768px)"
+        />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

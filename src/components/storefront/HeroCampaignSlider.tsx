@@ -162,6 +162,8 @@ export function HeroCampaignSlider({
 
   // Responsive device detection for seamless mobile/desktop media serving
   const [isMobile, setIsMobile] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
@@ -267,6 +269,12 @@ export function HeroCampaignSlider({
                   playsInline
                   preload="auto"
                   poster={activePoster}
+                  onPlaying={() => {
+                    setIsVideoPlaying(true);
+                    setIsBuffering(false);
+                  }}
+                  onWaiting={() => setIsBuffering(true)}
+                  onCanPlay={() => setIsBuffering(false)}
                   aria-label={slide.imageAlt || "Millennium Designs Pure 925 Sterling Silver Factory Insights"}
                   className="md-hero-video-element"
                   style={{
@@ -287,18 +295,71 @@ export function HeroCampaignSlider({
                   {slide.videoSrc && (
                     <source src={slide.videoSrc} type="video/mp4" />
                   )}
-                  {/* Fallback Poster */}
+                </video>
+
+                {/* Instant Zero-Delay Preloaded Poster Overlay */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 1,
+                    pointerEvents: "none",
+                    opacity: isVideoPlaying ? 0 : 1,
+                    transition: "opacity 450ms ease",
+                    background: "var(--md-bg-raised)",
+                  }}
+                  aria-hidden="true"
+                >
                   <img
                     src={activePoster}
-                    alt={slide.imageAlt}
+                    alt={slide.imageAlt || "Millennium Designs Silver Craftsmanship"}
+                    loading="eager"
+                    decoding="async"
                     style={{
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
                       objectPosition: "center center",
+                      display: "block",
                     }}
                   />
-                </video>
+
+                  {/* Luxury Loading Indicator during mandatory network buffering */}
+                  {isBuffering && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "clamp(12px, 2.5vw, 24px)",
+                        right: "clamp(12px, 3vw, 32px)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "6px 14px",
+                        borderRadius: 20,
+                        background: "color-mix(in srgb, var(--md-green-dark) 85%, transparent)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        border: "1px solid color-mix(in srgb, var(--md-champagne) 30%, transparent)",
+                        color: "var(--md-champagne)",
+                        fontSize: "0.6875rem",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        fontFamily: "var(--md-font-crest), Georgia, serif",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          background: "var(--md-champagne)",
+                        }}
+                      />
+                      <span>✦ Loading Reel...</span>
+                    </div>
+                  )}
+                </div>
 
 
                 {/* Subtle Luxury Floating Watermark Tag (Bottom Left, Desktop only) */}
