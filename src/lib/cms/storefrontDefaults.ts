@@ -136,6 +136,7 @@ export interface StorefrontCustomizationConfig {
   directPhoneSecondary: string;
   supportEmail: string;
   wholesaleEmail: string;
+  ownerEmails: string;
   whatsappConciergeNumber: string;
   whatsappConciergeGreeting: string;
   atelierHours: string;
@@ -368,6 +369,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   directPhoneSecondary: "+91 98281 56465",
   supportEmail: "concierge@millenniumdesigns.in",
   wholesaleEmail: "wholesale@millenniumdesigns.in",
+  ownerEmails: "aditidec23@gmail.com, anshbhatt0902@gmail.com",
   whatsappConciergeNumber: "919829056597",
   whatsappConciergeGreeting:
     "Namaste. I am inquiring about a silver jewellery piece from the Millennium Designs collection.",

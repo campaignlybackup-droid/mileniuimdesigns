@@ -27,6 +27,33 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
+      {/* Store Ownership & Administration Bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 12,
+          background: "#ffffff",
+          border: "1px solid var(--md-rule, #e7e2d7)",
+          borderRadius: 8,
+          padding: "12px 18px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem" }}>
+          <span style={{ fontSize: "1.1rem" }}>👑</span>
+          <span style={{ fontWeight: 600, color: "#182c23" }}>CMS Store Owners:</span>
+          <span style={{ color: "#3f3d38" }}>
+            <strong>aditidec23@gmail.com</strong> &bull; <strong>anshbhatt0902@gmail.com</strong>
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.75rem", color: "#2e7d32", fontWeight: 600 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#2e7d32" }}></span>
+          Verified Owner Role Active
+        </div>
+      </div>
+
       {/* Daily Operations Quick Bar */}
       <div
         style={{

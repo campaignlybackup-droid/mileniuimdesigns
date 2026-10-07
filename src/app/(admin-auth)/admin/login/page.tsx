@@ -232,24 +232,79 @@ export default function AdminLoginPage() {
         {mode === "password" ? (
           <form onSubmit={handlePasswordSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "#3f3d38",
-                  marginBottom: 6,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Administrator Email
-              </label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    color: "#3f3d38",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Administrator Email
+                </label>
+                <span style={{ fontSize: "0.7rem", color: "#6e6b63" }}>Select verified Owner:</span>
+              </div>
+
+              {/* Authorized Owner Quick-Select Chips */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setEmail("aditidec23@gmail.com")}
+                  title="Sign in as Aditi (Owner)"
+                  style={{
+                    flex: 1,
+                    padding: "6px 10px",
+                    borderRadius: 6,
+                    border: email === "aditidec23@gmail.com" ? "1.5px solid #182c23" : "1px solid #d5cfc1",
+                    background: email === "aditidec23@gmail.com" ? "#edf5f0" : "#faf9f6",
+                    color: email === "aditidec23@gmail.com" ? "#182c23" : "#4a4740",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <span style={{ fontSize: "0.85rem" }}>👑</span>
+                  <span>aditidec23@gmail.com</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEmail("anshbhatt0902@gmail.com")}
+                  title="Sign in as Ansh (Owner)"
+                  style={{
+                    flex: 1,
+                    padding: "6px 10px",
+                    borderRadius: 6,
+                    border: email === "anshbhatt0902@gmail.com" ? "1.5px solid #182c23" : "1px solid #d5cfc1",
+                    background: email === "anshbhatt0902@gmail.com" ? "#edf5f0" : "#faf9f6",
+                    color: email === "anshbhatt0902@gmail.com" ? "#182c23" : "#4a4740",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <span style={{ fontSize: "0.85rem" }}>👑</span>
+                  <span>anshbhatt0902@gmail.com</span>
+                </button>
+              </div>
+
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="anshbhatt0902@gmail.com"
+                placeholder="aditidec23@gmail.com or anshbhatt0902@gmail.com"
                 required
                 style={{
                   width: "100%",
@@ -321,25 +376,82 @@ export default function AdminLoginPage() {
           /* Mode: OTP Login */
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "#3f3d38",
-                  marginBottom: 6,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Staff Email Address
-              </label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    color: "#3f3d38",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Staff Email Address
+                </label>
+                <span style={{ fontSize: "0.7rem", color: "#6e6b63" }}>Select verified Owner:</span>
+              </div>
+
+              {/* Authorized Owner Quick-Select Chips */}
+              {!otpSent && (
+                <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => setEmail("aditidec23@gmail.com")}
+                    title="Send OTP to Aditi"
+                    style={{
+                      flex: 1,
+                      padding: "6px 10px",
+                      borderRadius: 6,
+                      border: email === "aditidec23@gmail.com" ? "1.5px solid #182c23" : "1px solid #d5cfc1",
+                      background: email === "aditidec23@gmail.com" ? "#edf5f0" : "#faf9f6",
+                      color: email === "aditidec23@gmail.com" ? "#182c23" : "#4a4740",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.85rem" }}>👑</span>
+                    <span>aditidec23@gmail.com</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEmail("anshbhatt0902@gmail.com")}
+                    title="Send OTP to Ansh"
+                    style={{
+                      flex: 1,
+                      padding: "6px 10px",
+                      borderRadius: 6,
+                      border: email === "anshbhatt0902@gmail.com" ? "1.5px solid #182c23" : "1px solid #d5cfc1",
+                      background: email === "anshbhatt0902@gmail.com" ? "#edf5f0" : "#faf9f6",
+                      color: email === "anshbhatt0902@gmail.com" ? "#182c23" : "#4a4740",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.85rem" }}>👑</span>
+                    <span>anshbhatt0902@gmail.com</span>
+                  </button>
+                </div>
+              )}
+
               <div style={{ display: "flex", gap: 8 }}>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="anshbhatt0902@gmail.com"
+                  placeholder="aditidec23@gmail.com or anshbhatt0902@gmail.com"
                   disabled={otpSent}
                   required
                   style={{
@@ -460,7 +572,7 @@ export default function AdminLoginPage() {
         {/* Footer info */}
         <div style={{ textAlign: "center", paddingTop: 8, borderTop: "1px solid #f0ebe1" }}>
           <p style={{ margin: 0, fontSize: "0.75rem", color: "#8a857b" }}>
-            Millennium Designs Silver E-Commerce CMS · Strict Authentication Required
+            Millennium Designs Silver E-Commerce CMS · Authorized Owners: aditidec23@gmail.com · anshbhatt0902@gmail.com
           </p>
         </div>
       </div>

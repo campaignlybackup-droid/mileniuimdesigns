@@ -1475,10 +1475,81 @@ export default function AdminCustomizationPage() {
                   onChange={(v) => updateField("wholesaleEmail", v)}
                 />
                 <InputField
+                  label="Store Owner &amp; Executive Emails"
+                  value={config.ownerEmails || "aditidec23@gmail.com, anshbhatt0902@gmail.com"}
+                  onChange={(v) => updateField("ownerEmails", v)}
+                  desc="Comma-separated verified owner accounts: aditidec23@gmail.com, anshbhatt0902@gmail.com"
+                />
+                <InputField
                   label="Store Operating Hours"
                   value={config.atelierHours}
                   onChange={(v) => updateField("atelierHours", v)}
                 />
+              </div>
+
+              {/* Verified CMS Store Owners Status Card */}
+              <div
+                style={{
+                  marginTop: 18,
+                  padding: "16px 20px",
+                  borderRadius: 8,
+                  background: "#f7f9f7",
+                  border: "1px solid #c8d9ce",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: "1.1rem" }}>👑</span>
+                  <span style={{ fontWeight: 700, fontSize: "0.875rem", color: "#182c23" }}>
+                    Verified CMS Store Owners (Active in Database)
+                  </span>
+                </div>
+                <p style={{ margin: "0 0 12px", fontSize: "0.8rem", color: "#4f5a52", lineHeight: 1.4 }}>
+                  Both accounts hold the verified <strong>Owner</strong> role in PostgreSQL with unconstrained administrative and CMS privileges.
+                </p>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  <div
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid #d5dfd8",
+                      padding: "8px 14px",
+                      borderRadius: 6,
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "#182c23",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#2e7d32" }}></span>
+                    <span>aditidec23@gmail.com</span>
+                    <span style={{ fontSize: "0.7rem", background: "#e8f5e9", color: "#2e7d32", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>
+                      Owner · Active
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid #d5dfd8",
+                      padding: "8px 14px",
+                      borderRadius: 6,
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "#182c23",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#2e7d32" }}></span>
+                    <span>anshbhatt0902@gmail.com</span>
+                    <span style={{ fontSize: "0.7rem", background: "#e8f5e9", color: "#2e7d32", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>
+                      Owner · Active
+                    </span>
+                  </div>
+                </div>
               </div>
               <div style={{ marginTop: 16 }}>
                 <TextAreaField
