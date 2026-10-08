@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ProductMediaManager, type ProductMediaItem } from "@/components/admin/ProductMediaManager";
 
 type CategoryOption = { id: string; name: string; slug: string };
 type CollectionOption = { id: string; title: string; slug: string };
@@ -37,6 +38,7 @@ export default function EditProductPage() {
   const [weightGrams, setWeightGrams] = useState("12.5");
   const [description, setDescription] = useState("");
   const [careInstructions, setCareInstructions] = useState("");
+  const [productMedia, setProductMedia] = useState<ProductMediaItem[]>([]);
 
   useEffect(() => {
     async function loadProduct() {
@@ -64,6 +66,7 @@ export default function EditProductPage() {
         setWeightGrams(String(p.weightGrams || "12.5"));
         setDescription(p.description || "");
         setCareInstructions(p.careInstructions || "");
+        setProductMedia(p.media || []);
 
         setCategories(data.availableCategories || []);
         setCollections(data.availableCollections || []);
@@ -114,6 +117,7 @@ export default function EditProductPage() {
           weightGrams: parseFloat(weightGrams) || 12.5,
           description,
           careInstructions,
+          media: productMedia,
         }),
       });
 
@@ -325,10 +329,19 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Section 2: Dual Market Pricing & Inventory */}
+        {/* Section 2: Photography & Media Gallery */}
+        <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7" }}>
+          <ProductMediaManager
+            productId={productId}
+            initialMedia={productMedia}
+            onChange={(updated) => setProductMedia(updated)}
+          />
+        </div>
+
+        {/* Section 3: Dual Market Pricing & Inventory */}
         <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 16 }}>
           <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-            2. Dual Market Pricing &amp; Stock
+            3. Dual Market Pricing &amp; Stock
           </h3>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16 }}>
@@ -389,11 +402,11 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Section 3: Collections Assignment */}
+        {/* Section 4: Collections Assignment */}
         {collections.length > 0 && (
           <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 14 }}>
             <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-              3. Assigned Collections
+              4. Assigned Collections
             </h3>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {collections.map((col) => {
@@ -425,11 +438,11 @@ export default function EditProductPage() {
           </div>
         )}
 
-        {/* Section 4: Gemstones Assignment */}
+        {/* Section 5: Gemstones Assignment */}
         {stones.length > 0 && (
           <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 14 }}>
             <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-              4. Gemstone Minerals
+              5. Gemstone Minerals
             </h3>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {stones.map((st) => {
@@ -461,10 +474,10 @@ export default function EditProductPage() {
           </div>
         )}
 
-        {/* Section 5: Descriptions & Care */}
+        {/* Section 6: Descriptions & Care */}
         <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 16 }}>
           <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-            5. Editorial Story &amp; Silver Care
+            6. Editorial Story &amp; Silver Care
           </h3>
 
           <div>

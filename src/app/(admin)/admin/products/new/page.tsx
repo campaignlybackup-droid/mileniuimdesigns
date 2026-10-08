@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ProductMediaManager, type ProductMediaItem } from "@/components/admin/ProductMediaManager";
 
 type CategoryOption = { id: string; name: string; slug: string };
 type CollectionOption = { id: string; title: string; slug: string };
@@ -28,6 +29,7 @@ export default function NewProductPage() {
   const [careInstructions, setCareInstructions] = useState(
     "Store in a tarnish-resistant pouch. Clean gently with a soft microfibre cloth. Avoid direct contact with perfumes and harsh pool chemicals.",
   );
+  const [productMedia, setProductMedia] = useState<ProductMediaItem[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +95,7 @@ export default function NewProductPage() {
           weightGrams: parseFloat(weightGrams) || 12.5,
           description,
           careInstructions,
+          mediaIds: productMedia.map((m) => m.mediaId),
         }),
       });
 
@@ -253,11 +256,19 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Section 2: Dual Market Pricing & Inventory */}
+        {/* Section 2: Photography & Media Gallery */}
+        <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7" }}>
+          <ProductMediaManager
+            initialMedia={productMedia}
+            onChange={(updated) => setProductMedia(updated)}
+          />
+        </div>
+
+        {/* Section 3: Dual Market Pricing & Inventory */}
         <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-              2. Independent Dual-Market Pricing &amp; Stock
+              3. Independent Dual-Market Pricing &amp; Stock
             </h3>
             <span style={{ fontSize: "0.75rem", color: "#6e6b63" }}>
               Strictly separate prices (no auto-conversion)
@@ -328,11 +339,11 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Section 3: Collections Assignment */}
+        {/* Section 4: Collections Assignment */}
         {collections.length > 0 && (
           <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 14 }}>
             <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-              3. Curated Collections
+              4. Curated Collections
             </h3>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {collections.map((col) => {
@@ -364,10 +375,10 @@ export default function NewProductPage() {
           </div>
         )}
 
-        {/* Section 4: Descriptions & Silver Care Guide */}
+        {/* Section 5: Descriptions & Silver Care Guide */}
         <div style={{ background: "#ffffff", padding: 24, borderRadius: 8, border: "1px solid #e7e2d7", display: "flex", flexDirection: "column", gap: 16 }}>
           <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 600, color: "#182c23" }}>
-            4. Editorial Story &amp; Silver Care
+            5. Editorial Story &amp; Silver Care
           </h3>
 
           <div>

@@ -73,6 +73,16 @@ export async function GET(request: NextRequest) {
               },
             },
           },
+          media: {
+            where: { media: { deletedAt: null } },
+            take: 1,
+            orderBy: { position: "asc" },
+            include: {
+              media: {
+                select: { publicId: true, altText: true },
+              },
+            },
+          },
         },
         orderBy: { updatedAt: "desc" },
         skip,
@@ -125,6 +135,7 @@ export async function POST(request: NextRequest) {
       description,
       careInstructions,
       weightGrams = 12.5,
+      mediaIds = [],
     } = body;
 
     if (!title || typeof title !== "string" || !title.trim()) {
@@ -175,6 +186,23 @@ export async function POST(request: NextRequest) {
                 collectionId: colId,
                 rank: 0,
                 source: "manual",
+              },
+            }).catch(() => undefined);
+          }
+        }
+      }
+
+      // 2b. Associate uploaded media items if provided
+      if (Array.isArray(mediaIds) && mediaIds.length > 0) {
+        let pos = 0;
+        for (const mId of mediaIds) {
+          if (mId) {
+            await tx.productMedia.create({
+              data: {
+                productId,
+                mediaId: mId,
+                role: pos === 0 ? "hero" : "gallery",
+                position: pos++,
               },
             }).catch(() => undefined);
           }

@@ -31,6 +31,11 @@ export async function GET(
             inventoryItems: true,
           },
         },
+        media: {
+          where: { media: { deletedAt: null } },
+          include: { media: true },
+          orderBy: { position: "asc" },
+        },
         marketContent: true,
       },
     });
@@ -111,6 +116,25 @@ export async function GET(
         description: descriptionText,
         careInstructions: careText,
         updatedAt: product.updatedAt,
+        media: (product.media || []).map((pm) => {
+          const cloudName = process.env["CLOUDINARY_CLOUD_NAME"] || "gm6dexkj";
+          const isUrl = pm.media.publicId.startsWith("http") || pm.media.publicId.startsWith("/");
+          return {
+            id: pm.id,
+            mediaId: pm.mediaId,
+            publicId: pm.media.publicId,
+            format: pm.media.format,
+            width: pm.media.width,
+            height: pm.media.height,
+            bytes: Number(pm.media.bytes),
+            altText: pm.media.altText,
+            role: pm.role,
+            position: pm.position,
+            url: isUrl
+              ? pm.media.publicId
+              : `https://res.cloudinary.com/${cloudName}/image/upload/${pm.media.publicId}`,
+          };
+        }),
       },
       availableCategories: allCategories,
       availableCollections: allCollections,
@@ -149,6 +173,7 @@ export async function PUT(
       description,
       careInstructions,
       weightGrams,
+      media,
     } = body;
 
     const existing = await db.product.findUnique({
@@ -209,6 +234,34 @@ export async function PUT(
             await tx.productStone.create({
               data: { productId: id, stoneId },
             }).catch(() => undefined);
+          }
+        }
+      }
+
+      // 3b. Update Media items if provided
+      if (Array.isArray(media)) {
+        for (const m of media) {
+          if (m.id) {
+            await tx.productMedia.update({
+              where: { id: m.id },
+              data: {
+                position: typeof m.position === "number" ? m.position : undefined,
+                role: m.role ? (m.role as any) : undefined,
+              },
+            }).catch(() => undefined);
+
+            if (m.altText !== undefined) {
+              const pm = await tx.productMedia.findUnique({
+                where: { id: m.id },
+                select: { mediaId: true },
+              });
+              if (pm?.mediaId) {
+                await tx.media.update({
+                  where: { id: pm.mediaId },
+                  data: { altText: m.altText },
+                }).catch(() => undefined);
+              }
+            }
           }
         }
       }

@@ -20,6 +20,9 @@ type ProductRow = {
     prices: Array<{ marketCode: string; currencyCode: string; listMinor: string | number }>;
     inventoryItems: Array<{ onHandQuantity: number; reservedQuantity: number }>;
   }>;
+  media?: Array<{
+    media: { publicId: string; altText: string | null };
+  }>;
 };
 
 type CategoryOption = { id: string; name: string; slug: string };
@@ -322,6 +325,13 @@ export default function AdminProductsPage() {
                     : "—";
                   const stock = variant?.inventoryItems.reduce((acc, curr) => acc + curr.onHandQuantity, 0) ?? 0;
                   const fallback = getProductFallbackImages(p.slug, p.primaryCategory?.slug);
+                  const firstMedia = p.media?.[0]?.media;
+                  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "gm6dexkj";
+                  const primarySrc = firstMedia?.publicId
+                    ? firstMedia.publicId.startsWith("http") || firstMedia.publicId.startsWith("/")
+                      ? firstMedia.publicId
+                      : `https://res.cloudinary.com/${cloudName}/image/upload/w_200,h_250,c_fill,q_auto,f_auto/${firstMedia.publicId}`
+                    : fallback.primary;
 
                   return (
                     <tr
@@ -347,7 +357,7 @@ export default function AdminProductsPage() {
                               border: "1px solid #e7e2d7",
                             }}
                           >
-                            <Image src={fallback.primary} alt={p.title} fill sizes="44px" style={{ objectFit: "cover" }} />
+                            <img src={primarySrc} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                           </div>
                           <div>
                             <Link
