@@ -2,7 +2,7 @@
 
 import React, { type JSX } from "react";
 import Link from "next/link";
-import { imageUrl } from "@/lib/media/url";
+import { imageUrl, buildSrcSet } from "@/lib/media/url";
 import { PriceDisplay } from "@/components/storefront/PriceDisplay";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
 import type { StorefrontCard } from "@/lib/catalog/products";
@@ -34,6 +34,22 @@ export function ProductCard({
   const primaryUrl = product.primaryImage
     ? imageUrl(product.primaryImage.publicId, { width: 480, height: 600, crop: "fill" })
     : null;
+
+  let primarySrcSet: string | undefined = undefined;
+  if (
+    product.primaryImage?.publicId &&
+    !product.primaryImage.publicId.startsWith("/") &&
+    !product.primaryImage.publicId.startsWith("http")
+  ) {
+    try {
+      primarySrcSet = buildSrcSet(
+        { provider: "cloudinary", publicId: product.primaryImage.publicId },
+        { crop: "fill", maxWidth: 768 },
+      );
+    } catch {
+      // Graceful fallback
+    }
+  }
 
   const primarySrc = primaryUrl ?? fallbacks.primary;
 
@@ -82,6 +98,8 @@ export function ProductCard({
         >
           <img
             src={primarySrc}
+            srcSet={primarySrcSet}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             alt={product.primaryImage?.altText ?? product.title}
             loading={priority ? "eager" : "lazy"}
             decoding="async"
