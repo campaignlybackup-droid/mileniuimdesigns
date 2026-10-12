@@ -79,7 +79,7 @@ async function loadActiveMarketsFromDb(): Promise<Market[]> {
   return STANDALONE_MARKETS;
 }
 
-const getCachedActiveMarkets = unstable_cache(
+const cachedActiveMarkets = unstable_cache(
   loadActiveMarketsFromDb,
   ["active-markets-list"],
   {
@@ -87,6 +87,13 @@ const getCachedActiveMarkets = unstable_cache(
     revalidate: 3600,
   },
 );
+
+async function getCachedActiveMarkets(): Promise<Market[]> {
+  if (process.env.NODE_ENV === "test" || process.env.VITEST) {
+    return loadActiveMarketsFromDb();
+  }
+  return cachedActiveMarkets();
+}
 
 /** Every active market, rank ascending. Memoised per request and cached across requests. */
 export const listActiveMarkets = cache(async (): Promise<Market[]> => {
@@ -112,7 +119,7 @@ async function loadMarketFromDb(code: string): Promise<Market> {
   throw new MarketNotFoundError(`No active market '${code}'.`);
 }
 
-const getCachedMarket = unstable_cache(
+const cachedMarket = unstable_cache(
   loadMarketFromDb,
   ["market-by-code"],
   {
@@ -120,6 +127,13 @@ const getCachedMarket = unstable_cache(
     revalidate: 3600,
   },
 );
+
+async function getCachedMarket(code: string): Promise<Market> {
+  if (process.env.NODE_ENV === "test" || process.env.VITEST) {
+    return loadMarketFromDb(code);
+  }
+  return cachedMarket(code);
+}
 
 /**
  * Resolve a URL segment to a market, or throw.

@@ -227,6 +227,7 @@ export type ResolveContext = {
   customerId?: string;
   couponCode?: string;
   at?: Date;
+  isReplay?: boolean;
   /**
    * The client to read through. Pass the transaction when calling from inside one.
    *
@@ -280,7 +281,7 @@ export async function resolvePriceBatch(
   }
 
   const variantIds = [...new Set(lines.map((l) => l.variantId))];
-  const isReplay = ctx.at !== undefined;
+  const isReplay = ctx.isReplay === true;
   const client = ctx.client;
   const [prices, scopes, rules, customerGroupId] = await Promise.all([
     isReplay
