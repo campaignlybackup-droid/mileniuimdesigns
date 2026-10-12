@@ -640,7 +640,6 @@ async function queryProductList(
         FROM product_media pm
         JOIN media m ON m.id = pm.media_id AND m.deleted_at IS NULL
        WHERE pm.product_id = ANY(${productIds}::uuid[])
-         AND pm.variant_id IS NULL
        ORDER BY pm.product_id, pm.position, pm.id
     `,
     ctx.client.$queryRaw<

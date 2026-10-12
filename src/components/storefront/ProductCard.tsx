@@ -53,6 +53,26 @@ export function ProductCard({
 
   const primarySrc = primaryUrl ?? fallbacks.primary;
 
+  const alternateUrl = product.alternateImage
+    ? imageUrl(product.alternateImage.publicId, { width: 480, height: 600, crop: "fill" })
+    : null;
+
+  let alternateSrcSet: string | undefined = undefined;
+  if (
+    product.alternateImage?.publicId &&
+    !product.alternateImage.publicId.startsWith("/") &&
+    !product.alternateImage.publicId.startsWith("http")
+  ) {
+    try {
+      alternateSrcSet = buildSrcSet(
+        { provider: "cloudinary", publicId: product.alternateImage.publicId },
+        { crop: "fill", maxWidth: 768 },
+      );
+    } catch {
+      // Graceful fallback
+    }
+  }
+
   const stoneOrMaterial = [product.stonesText, product.materialsText]
     .filter(Boolean)
     .join(" · ");
@@ -103,13 +123,38 @@ export function ProductCard({
             alt={product.primaryImage?.altText ?? product.title}
             loading={priority ? "eager" : "lazy"}
             decoding="async"
+            className="md-card-img-primary"
             style={{
               width: "100%",
               height: "100%",
               objectFit: "cover",
               display: "block",
+              transition: "opacity 320ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           />
+
+          {alternateUrl && (
+            <img
+              src={alternateUrl}
+              srcSet={alternateSrcSet}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              alt={product.alternateImage?.altText ?? `${product.title} - angle 2`}
+              loading="lazy"
+              decoding="async"
+              className="md-card-img-alternate"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                opacity: 0,
+                pointerEvents: "none",
+                transition: "opacity 350ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            />
+          )}
 
           {/* Archived Piece Hallmark Badge */}
           {isSold && (

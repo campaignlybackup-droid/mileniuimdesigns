@@ -421,6 +421,19 @@ img[data-tone="ivory"] {
   }
 }
 
+/* ── Product Card Luxury Hover Interactions ────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .md-product-card:hover .md-card-img-alternate {
+    opacity: 1 !important;
+  }
+  .md-product-card:hover .md-card-img-primary {
+    opacity: 0 !important;
+  }
+  .md-product-card:hover img {
+    transform: scale(1.035);
+  }
+}
+
 /* ── PDP layout — true single column below 1024px ───────────────────────── */
 .md-pdp-layout {
   display: grid;

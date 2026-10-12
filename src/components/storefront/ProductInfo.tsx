@@ -260,32 +260,124 @@ export function ProductInfo({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
+          gap: "12px",
           paddingBlock: "var(--md-space-4)",
           borderTop: "1px solid var(--md-rule)",
           fontSize: "0.75rem",
-          letterSpacing: "0.06em",
+          letterSpacing: "0.05em",
           color: "var(--md-fg-secondary)",
         }}
       >
+        {selectedVariant?.grossWeightGrams && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+            <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>
+              Gross Weight
+            </span>
+            <span style={{ color: "var(--md-fg)", fontWeight: 600 }}>
+              {Number(selectedVariant.grossWeightGrams).toFixed(2)} grams
+            </span>
+          </div>
+        )}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Material</span>
-          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Anti-Tarnish 925 Sterling Silver</span>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>
+            Metal Purity
+          </span>
+          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>
+            Solid 925 Sterling Silver (Hallmarked)
+          </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Provenance</span>
-          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>Pure 925 Silver · Jaipur (Est. 1961)</span>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>
+            Provenance
+          </span>
+          <span style={{ color: "var(--md-fg)", fontWeight: 500 }}>
+            Jaipur Fine Jewellery Atelier · Est. 1961
+          </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>Sizing & Help</span>
+          <span style={{ textTransform: "uppercase", letterSpacing: "0.12em", fontSize: "0.6875rem" }}>
+            Concierge Assistance
+          </span>
           <a
             href={whatsappInquiryUrl}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "var(--md-fg)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "3px" }}
+            style={{
+              color: "var(--md-fg)",
+              fontWeight: 600,
+              textDecoration: "underline",
+              textUnderlineOffset: "3px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
           >
-            WhatsApp Support
+            WhatsApp Atelier Concierge →
           </a>
+        </div>
+      </div>
+
+      {/* Luxury Client Assurance Pillars */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "12px",
+          padding: "14px",
+          background: "var(--md-bg-subtle, rgba(0, 0, 0, 0.02))",
+          border: "1px solid var(--md-rule)",
+          borderRadius: "var(--md-radius-sm, 2px)",
+          fontSize: "0.6875rem",
+          letterSpacing: "0.04em",
+          color: "var(--md-fg)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+          <span style={{ color: "#d4af37", fontSize: "0.875rem" }}>✦</span>
+          <div>
+            <div style={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Hallmark 925
+            </div>
+            <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.625rem", marginTop: "2px" }}>
+              Certified pure silver
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+          <span style={{ color: "#d4af37", fontSize: "0.875rem" }}>◈</span>
+          <div>
+            <div style={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Express Courier
+            </div>
+            <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.625rem", marginTop: "2px" }}>
+              Insured & tracked
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+          <span style={{ color: "#d4af37", fontSize: "0.875rem" }}>◇</span>
+          <div>
+            <div style={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Keepsake Box
+            </div>
+            <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.625rem", marginTop: "2px" }}>
+              Signature velvet case
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+          <span style={{ color: "#d4af37", fontSize: "0.875rem" }}>✓</span>
+          <div>
+            <div style={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              14-Day Exchange
+            </div>
+            <div style={{ color: "var(--md-fg-secondary)", fontSize: "0.625rem", marginTop: "2px" }}>
+              Hassle-free guarantee
+            </div>
+          </div>
         </div>
       </div>
 

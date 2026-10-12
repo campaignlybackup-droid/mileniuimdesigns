@@ -8,6 +8,7 @@ import type { DisplayPrice } from "@/lib/pricing/types";
 
 export type StickyAddToBagProps = {
   title: string;
+  imageUrl?: string | null;
   price: DisplayPrice | null;
   locale?: string;
   variantId: string | null;
@@ -17,6 +18,7 @@ export type StickyAddToBagProps = {
 
 export function StickyAddToBag({
   title,
+  imageUrl,
   price,
   locale = "en-US",
   variantId,
@@ -79,21 +81,38 @@ export function StickyAddToBag({
         boxShadow: "var(--md-shadow-drawer)",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <span
-          style={{
-            fontSize: "0.875rem",
-            fontWeight: 400,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            color: "var(--md-fg)",
-          }}
-        >
-          {title}
-        </span>
-        <div style={{ fontSize: "0.875rem" }}>
-          <PriceDisplay price={price} locale={locale} />
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt=""
+            style={{
+              width: 38,
+              height: 46,
+              objectFit: "cover",
+              borderRadius: "2px",
+              border: "1px solid var(--md-rule)",
+              flexShrink: 0,
+              display: "block",
+            }}
+          />
+        )}
+        <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+          <span
+            style={{
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              color: "var(--md-fg)",
+            }}
+          >
+            {title}
+          </span>
+          <div style={{ fontSize: "0.8125rem", color: "var(--md-fg-secondary)" }}>
+            <PriceDisplay price={price} locale={locale} />
+          </div>
         </div>
       </div>
 

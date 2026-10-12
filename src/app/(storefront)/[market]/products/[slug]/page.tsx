@@ -16,6 +16,7 @@ import { ProductGalleryMobile } from "@/components/storefront/ProductGalleryMobi
 import { ProductInfo } from "@/components/storefront/ProductInfo";
 import { StickyAddToBag } from "@/components/storefront/StickyAddToBag";
 import { RelatedRail } from "@/components/storefront/RelatedRail";
+import { imageUrl } from "@/lib/media/url";
 
 export const revalidate = 900;
 
@@ -252,6 +253,11 @@ export default async function ProductDetailPage({
         {/* Sticky add-to-bag bar */}
         <StickyAddToBag
           title={product.title}
+          imageUrl={
+            product.media[0]?.publicId
+              ? imageUrl(product.media[0].publicId, { width: 160, height: 200, crop: "fill" })
+              : null
+          }
           price={defaultVariant?.price ?? null}
           locale={resolvedMarket.locale}
           variantId={defaultVariant?.id ?? null}
