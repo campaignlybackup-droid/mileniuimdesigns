@@ -32,8 +32,8 @@ const CAMPAIGN_SLIDES: CampaignSlide[] = [
     imageSrc: "/videos/banner-poster.webp",
     imageAlt: "Millennium Designs 925 Sterling Silver Factory Craftsmanship Video",
     isVideo: true,
-    videoSrc: "/videos/banner-1080p.mp4",
-    videoMobileSrc: "/videos/banner-mobile.mp4",
+    videoSrc: "/videos/banner-loop-720p.mp4",
+    videoMobileSrc: "/videos/banner-loop-mobile.mp4",
     videoPoster: "/videos/banner-poster.webp",
     videoMobilePoster: "/videos/banner-poster-mobile.webp",
     ctaText: "Explore Pure Silver Collection",
@@ -267,7 +267,7 @@ export function HeroCampaignSlider({
                   muted
                   loop
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   poster={activePoster}
                   onPlaying={() => {
                     setIsVideoPlaying(true);
