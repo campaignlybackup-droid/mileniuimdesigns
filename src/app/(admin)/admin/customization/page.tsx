@@ -146,7 +146,7 @@ export default function AdminCustomizationPage() {
       rating: 5,
       reviewText:
         "Exceptional craftsmanship. The gemstone has extraordinary fire and presence.",
-      piecePurchased: "Sovereign Gemstone Ring",
+      piecePurchased: "Natural Opal Silver Bracelet (BL 1)",
       dateStr: "Recent Collector Acquisition",
     };
     updateField("testimonials", [...config.testimonials, newT]);

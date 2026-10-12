@@ -147,6 +147,19 @@ async function main() {
         [crypto.randomUUID(), productId, variantId, item.amount_inr_minor],
       );
 
+      // Insert Price (USD Cents) for US Market
+      const usdMinor = Math.max(1500, Math.round((Number(item.amount_inr) / 85) * 100));
+      await client.query(
+        `INSERT INTO prices (
+          id, product_id, variant_id, market_code, currency_code, 
+          list_minor, price_source, valid_from, created_at
+        ) VALUES (
+          $1, $2, $3, 'US', 'USD', 
+          $4, 'manual', NOW(), NOW()
+        );`,
+        [crypto.randomUUID(), productId, variantId, usdMinor],
+      );
+
       // Insert Inventory
       if (locationId) {
         const qty = item.is_one_of_a_kind ? 1 : 5;

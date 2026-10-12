@@ -1,6 +1,7 @@
 import type { EnrichedCartView, EnrichedCartLine } from "@/lib/cart/enrich";
 import { STANDALONE_PRODUCTS } from "@/lib/storage/standalone-catalog";
 import { money, formatMoney } from "@/lib/money";
+import { imageUrl } from "@/lib/media/url";
 
 const STANDALONE_COOKIE = "md_standalone_cart";
 
@@ -74,7 +75,11 @@ export function formatStandaloneEnrichedCart(
       productSlug: prod.slug,
       variantTitle: null,
       sku: prod.slug,
-      imageUrl: prod.primaryImage || "/images/products/rings-1.jpg",
+      imageUrl:
+        (prod.primaryImage.startsWith("http") || prod.primaryImage.startsWith("/")
+          ? prod.primaryImage
+          : imageUrl(prod.primaryImage, { width: 320, crop: "fill" })) ??
+        "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_1_a",
     });
   }
 

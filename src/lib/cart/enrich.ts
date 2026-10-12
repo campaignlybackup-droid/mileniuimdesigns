@@ -51,6 +51,17 @@ export async function enrichCart(cart: CartView | null): Promise<EnrichedCartVie
           id: true,
           title: true,
           slug: true,
+          media: {
+            where: { role: "hero" },
+            take: 1,
+            select: {
+              media: {
+                select: {
+                  publicId: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -65,8 +76,12 @@ export async function enrichCart(cart: CartView | null): Promise<EnrichedCartVie
     const variantTitle = v?.title ?? null;
     const sku = v?.sku ?? "";
 
-    const fallback = getProductFallbackImages(productSlug || l.variantId);
-    const imageUrl = fallback.primary;
+    const heroPubId = v?.product.media[0]?.media.publicId;
+    const imageUrl = heroPubId
+      ? (heroPubId.startsWith("http") || heroPubId.startsWith("/")
+          ? heroPubId
+          : `https://res.cloudinary.com/drda4d5p4/image/upload/w_320,h_400,c_fill,f_auto,q_auto/v1/${heroPubId}`)
+      : getProductFallbackImages(productSlug || l.variantId).primary;
 
     const unitFinal = money(l.unitFinalMinor, cart.currencyCode);
     const lineSubtotal = money(l.lineSubtotalMinor, cart.currencyCode);

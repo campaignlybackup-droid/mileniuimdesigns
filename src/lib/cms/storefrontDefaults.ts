@@ -302,10 +302,10 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
       location: "Mayfair, London",
       rating: 5,
       reviewText:
-        "The blue adularescence in the Sovereign Moonstone ring is extraordinary. The silver work feels heavy, balanced, and unmistakably bespoke.",
+        "The adularescence and natural fire in the Opal Silver Bracelet is extraordinary. The silver work feels heavy, balanced, and unmistakably bespoke.",
       quote:
-        "The blue adularescence in the Sovereign Moonstone ring is extraordinary. The silver work feels heavy, balanced, and unmistakably bespoke.",
-      piecePurchased: "Sovereign Oval Moonstone Ring",
+        "The adularescence and natural fire in the Opal Silver Bracelet is extraordinary. The silver work feels heavy, balanced, and unmistakably bespoke.",
+      piecePurchased: "Natural Opal Silver Bracelet (BL 1)",
     },
     {
       id: "t-2",
@@ -313,10 +313,10 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
       location: "South Mumbai",
       rating: 5,
       reviewText:
-        "Direct bank transfer payment was smooth, and verification on WhatsApp took under ten minutes. The unheated Zambian emerald pendant arrived beautifully boxed.",
+        "Direct bank transfer payment was smooth, and verification on WhatsApp took under ten minutes. The natural Amethyst Silver Bracelet arrived beautifully boxed.",
       quote:
-        "Direct bank transfer payment was smooth, and verification on WhatsApp took under ten minutes. The unheated Zambian emerald pendant arrived beautifully boxed.",
-      piecePurchased: "Raw Emerald Pendant",
+        "Direct bank transfer payment was smooth, and verification on WhatsApp took under ten minutes. The natural Amethyst Silver Bracelet arrived beautifully boxed.",
+      piecePurchased: "Amethyst Silver Bracelet (BL 2)",
     },
     {
       id: "t-3",
@@ -324,10 +324,10 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
       location: "Upper East Side, New York",
       rating: 5,
       reviewText:
-        "Finding true solid 925 sterling jewellery with authentic unheated courtly gems is nearly impossible in New York. Millennium Designs is in a class of its own.",
+        "Finding true solid 925 sterling jewellery with authentic unheated gemstones is nearly impossible in New York. Millennium Designs is in a class of its own.",
       quote:
-        "Finding true solid 925 sterling jewellery with authentic unheated courtly gems is nearly impossible in New York. Millennium Designs is in a class of its own.",
-      piecePurchased: "Archival Lapis Signet Ring",
+        "Finding true solid 925 sterling jewellery with authentic unheated gemstones is nearly impossible in New York. Millennium Designs is in a class of its own.",
+      piecePurchased: "Natural Larimar Silver Pendant (OK 1)",
     },
   ],
   newsletterHeadline: "The Atelier Journal",

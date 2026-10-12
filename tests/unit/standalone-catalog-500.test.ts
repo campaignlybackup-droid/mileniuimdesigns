@@ -9,30 +9,33 @@ import {
   getStandaloneFeaturedProducts,
 } from "@/lib/storage/standalone-catalog";
 
-describe("500+ luxury catalogue suite", () => {
-  it("hosts 520+ distinct handcrafted products", () => {
-    expect(STANDALONE_PRODUCTS.length).toBeGreaterThanOrEqual(500);
+describe("authentic 82-piece catalogue suite", () => {
+  it("hosts exactly 82 distinct authentic handcrafted products", () => {
+    expect(STANDALONE_PRODUCTS.length).toBe(82);
     const uniqueSlugs = new Set(STANDALONE_PRODUCTS.map((p) => p.slug));
-    expect(uniqueSlugs.size).toBe(STANDALONE_PRODUCTS.length);
+    expect(uniqueSlugs.size).toBe(82);
     const uniqueIds = new Set(STANDALONE_PRODUCTS.map((p) => p.id));
-    expect(uniqueIds.size).toBe(STANDALONE_PRODUCTS.length);
+    expect(uniqueIds.size).toBe(82);
   });
 
-  it("covers all 9 categories with abundant pieces", () => {
-    for (const cat of STANDALONE_CATEGORIES) {
-      const res = getStandaloneCategoryProducts(cat.slug, "US", { limit: 100 });
-      expect(res.totalCount).toBeGreaterThanOrEqual(40);
-    }
+  it("covers key jewellery categories with original pieces", () => {
+    const featured = getStandaloneFeaturedProducts("US", 10);
+    expect(featured.products.length).toBe(10);
+    expect(featured.totalCount).toBe(82);
+
+    const bracelets = getStandaloneCategoryProducts("bracelets", "US", { limit: 50 });
+    expect(bracelets.products.length).toBeGreaterThanOrEqual(9);
   });
 
-  it("covers all 7 gemstones with rich selections", () => {
-    for (const stone of STANDALONE_STONES) {
-      const res = getStandaloneStoneProducts(stone.slug, "US", { limit: 100 });
-      expect(res.totalCount).toBeGreaterThanOrEqual(35);
-    }
+  it("covers gemstones with authentic natural mineral pieces", () => {
+    const opalRes = getStandaloneStoneProducts("opal", "US", { limit: 50 });
+    expect(opalRes.products.length).toBeGreaterThan(0);
+
+    const moonstoneRes = getStandaloneStoneProducts("moonstone", "US", { limit: 50 });
+    expect(moonstoneRes.products.length).toBeGreaterThan(0);
   });
 
-  it("provides independent USD and INR pricing for every piece", () => {
+  it("provides independent USD and INR pricing for every authentic piece", () => {
     for (const p of STANDALONE_PRODUCTS) {
       expect(p.priceUsdMinor).toBeGreaterThan(0n);
       expect(p.priceInrMinor).toBeGreaterThan(0n);
@@ -44,27 +47,27 @@ describe("500+ luxury catalogue suite", () => {
     expect(res).toBeNull();
   });
 
-  it("returns full PDP details for flagship and generated pieces", () => {
-    const flagship = getStandalonePdpProduct("sovereign-oval-moonstone-ring", "US");
-    expect(flagship).not.toBeNull();
-    expect(flagship?.title).toBe("The Sovereign Oval Moonstone Ring");
-    expect(flagship?.variants.length).toBeGreaterThan(0);
-    expect(flagship?.media.length).toBeGreaterThan(0);
+  it("returns full PDP details for original authentic pieces", () => {
+    const piece = getStandalonePdpProduct("natural-opal-silver-bracelet-bl-1", "US");
+    expect(piece).not.toBeNull();
+    expect(piece?.title).toBe("Natural Opal Silver Bracelet (BL 1)");
+    expect(piece?.variants.length).toBeGreaterThan(0);
+    expect(piece?.media.length).toBeGreaterThan(0);
 
-    const generated = getStandalonePdpProduct(STANDALONE_PRODUCTS[50]!.slug, "IN");
-    expect(generated).not.toBeNull();
-    expect(generated?.variants[0]?.price?.currencyCode).toBe("INR");
+    const inPiece = getStandalonePdpProduct(STANDALONE_PRODUCTS[10]!.slug, "IN");
+    expect(inPiece).not.toBeNull();
+    expect(inPiece?.variants[0]?.price?.currencyCode).toBe("INR");
   });
 
   it("sorts category products accurately", () => {
-    const asc = getStandaloneCategoryProducts("rings", "US", { sort: "price_asc", limit: 20 });
+    const asc = getStandaloneCategoryProducts("bracelets", "US", { sort: "price_asc", limit: 20 });
     for (let i = 1; i < asc.products.length; i++) {
       const prev = asc.products[i - 1]!.priceRange?.minListMinor ?? 0n;
       const curr = asc.products[i]!.priceRange?.minListMinor ?? 0n;
       expect(curr >= prev).toBe(true);
     }
 
-    const desc = getStandaloneCategoryProducts("rings", "US", { sort: "price_desc", limit: 20 });
+    const desc = getStandaloneCategoryProducts("bracelets", "US", { sort: "price_desc", limit: 20 });
     for (let i = 1; i < desc.products.length; i++) {
       const prev = desc.products[i - 1]!.priceRange?.minListMinor ?? 0n;
       const curr = desc.products[i]!.priceRange?.minListMinor ?? 0n;

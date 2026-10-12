@@ -2,7 +2,7 @@ import type { PrismaClient } from "@/generated/prisma/client";
 import { STANDALONE_PRODUCTS } from "@/lib/storage/standalone-catalog";
 
 /**
- * Seed 500+ luxury catalogue pieces into PostgreSQL.
+ * Seed authentic luxury catalogue pieces into PostgreSQL.
  * Idempotent: checks for existing product by slug before creating.
  */
 export async function seed500Products(db: PrismaClient): Promise<{ count: number }> {
