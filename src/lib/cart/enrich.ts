@@ -80,7 +80,7 @@ export async function enrichCart(cart: CartView | null): Promise<EnrichedCartVie
     const imageUrl = heroPubId
       ? (heroPubId.startsWith("http") || heroPubId.startsWith("/")
           ? heroPubId
-          : `https://res.cloudinary.com/drda4d5p4/image/upload/w_320,h_400,c_fill,f_auto,q_auto/v1/${heroPubId}`)
+          : `https://res.cloudinary.com/gm6dexkj/image/upload/w_320,h_400,c_fill,f_auto,q_auto/v1/${heroPubId}`)
       : getProductFallbackImages(productSlug || l.variantId).primary;
 
     const unitFinal = money(l.unitFinalMinor, cart.currencyCode);

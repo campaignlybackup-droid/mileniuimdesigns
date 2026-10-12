@@ -67,6 +67,9 @@ export function buildImageUrl(
   if (!opts.width || !Number.isFinite(opts.width) || opts.width <= 0) {
     throw new UnsizedImageUrlError();
   }
+  if (input.publicId.startsWith("http://") || input.publicId.startsWith("https://")) {
+    return input.publicId;
+  }
   if (input.provider !== "cloudinary") {
     throw new Error(`Unknown media provider '${input.provider}'.`);
   }
@@ -85,8 +88,11 @@ export function buildImageUrl(
     opts.sanitize ? "fl_sanitize" : null,
   ].filter(Boolean);
 
-  const version = input.version ? `v${input.version}/` : "";
-  return `https://res.cloudinary.com/${cloud}/image/upload/${parts.join(",")}/${version}${input.publicId}`;
+  const cleanPublicId = input.publicId.replace(/^\//, "");
+  const ext = /\.(jpg|jpeg|png|webp|avif|svg)$/i.test(cleanPublicId) ? "" : ".jpg";
+  const rawVersion = input.version ? String(input.version).replace(/^v/, "") : "1";
+  const version = `v${rawVersion}/`;
+  return `https://res.cloudinary.com/${cloud}/image/upload/${parts.join(",")}/${version}${cleanPublicId}${ext}`;
 }
 
 /** The `srcset` for a responsive image. Only the widths at or below `maxWidth`, so a
@@ -95,6 +101,13 @@ export function buildSrcSet(
   input: { provider: string; publicId: string; version?: string | null },
   opts: Omit<ImageUrlOptions, "width"> & { maxWidth?: number },
 ): string {
+  if (
+    input.publicId.startsWith("http://") ||
+    input.publicId.startsWith("https://") ||
+    input.publicId.startsWith("/")
+  ) {
+    return "";
+  }
   const cap = opts.maxWidth ?? DERIVATIVE_WIDTHS[DERIVATIVE_WIDTHS.length - 1]!;
   return DERIVATIVE_WIDTHS.filter((w) => w <= cap)
     .map((w) => `${buildImageUrl(input, { ...opts, width: w })} ${w}w`)

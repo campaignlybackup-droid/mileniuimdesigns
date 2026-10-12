@@ -79,7 +79,7 @@ export function formatStandaloneEnrichedCart(
         (prod.primaryImage.startsWith("http") || prod.primaryImage.startsWith("/")
           ? prod.primaryImage
           : imageUrl(prod.primaryImage, { width: 320, crop: "fill" })) ??
-        "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_1_a",
+        "https://res.cloudinary.com/gm6dexkj/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_1_a",
     });
   }
 

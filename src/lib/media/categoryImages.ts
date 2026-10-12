@@ -6,48 +6,48 @@
 export const CATEGORY_IMAGE_MAP: Record<string, { hero: string; product1: string; product2: string }> = {
   rings: {
     hero: "/images/categories/rings.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/rings/rg_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/rings/rg_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_22_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
   chains: {
     hero: "/images/categories/chains.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/pendants/pd_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_1_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_22_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
   pendants: {
     hero: "/images/categories/pendants.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/pendants/pd_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/pendants/pd_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_22_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_23_a.jpg",
   },
   bracelets: {
     hero: "/images/categories/bracelets.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_2_a.jpg",
   },
   earrings: {
     hero: "/images/categories/earrings.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/earrings/er_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/earrings/er_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_1_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_2_a.jpg",
   },
   closeouts: {
     hero: "/images/categories/closeouts.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/earrings/er_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/bracelets/bl_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_1_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_2_a.jpg",
   },
   "one-of-a-kind": {
     hero: "/images/categories/one-of-a-kind.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/one-of-a-kind/ok_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/one-of-a-kind/ok_2_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/bl_8_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/bl_9_a.jpg",
   },
   "14k-gold": {
     hero: "/images/categories/14k-gold.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/pendants/pd_1_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/rings/rg_1_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_22_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
   "lab-grown-diamonds": {
     hero: "/images/categories/lab-grown-diamonds.jpg",
-    product1: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/earrings/er_3_a",
-    product2: "https://res.cloudinary.com/drda4d5p4/image/upload/f_auto,q_auto/v1/md_catalog/rings/rg_1_a",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_3_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
 };
 
