@@ -18,7 +18,7 @@ import { Pagination } from "@/components/storefront/Pagination";
 import { FilterSidebar, type FilterGroup } from "@/components/storefront/FilterSidebar";
 import { FilterDrawer } from "@/components/storefront/FilterDrawer";
 
-export const revalidate = 900;
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   try {
