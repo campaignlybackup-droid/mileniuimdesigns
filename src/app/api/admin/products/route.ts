@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { db } from "@/lib/db/client";
 import { Prisma } from "@/generated/prisma/client";
 import { requireStaffSession } from "@/lib/auth/actor";
+import { UnauthenticatedError } from "@/lib/errors";
 import { withTransaction } from "@/lib/db/transaction";
 import { revalidatePath } from "next/cache";
 
@@ -108,6 +109,9 @@ export async function GET(request: NextRequest) {
       categories,
     });
   } catch (error: unknown) {
+    if (error instanceof UnauthenticatedError) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
     const msg = error instanceof Error ? error.message : "Failed to load products.";
     return NextResponse.json({ error: msg }, { status: 500 });
   }
@@ -287,6 +291,9 @@ export async function POST(request: NextRequest) {
       message: `Product "${cleanTitle}" created successfully.`,
     });
   } catch (error: unknown) {
+    if (error instanceof UnauthenticatedError) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
     const msg = error instanceof Error ? error.message : "Failed to create product.";
     console.error("[CREATE PRODUCT ERROR]:", error);
     return NextResponse.json({ error: msg }, { status: 500 });
