@@ -97,9 +97,21 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    const serializedProducts = products.map((p) => ({
+      ...p,
+      variants: p.variants.map((v) => ({
+        ...v,
+        grossWeightGrams: v.grossWeightGrams ? Number(v.grossWeightGrams) : null,
+        prices: v.prices.map((pr) => ({
+          ...pr,
+          listMinor: pr.listMinor ? pr.listMinor.toString() : "0",
+        })),
+      })),
+    }));
+
     return NextResponse.json({
       ok: true,
-      products,
+      products: serializedProducts,
       pagination: {
         total: totalCount,
         page,

@@ -72,28 +72,34 @@ export async function GET(
 
     // Extract text from JSON if exists
     let descriptionText = "";
-    if (product.descriptionJson && typeof product.descriptionJson === "object") {
-      try {
+    if (product.descriptionJson) {
+      if (typeof product.descriptionJson === "string") {
+        descriptionText = product.descriptionJson;
+      } else if (typeof product.descriptionJson === "object") {
         const json = product.descriptionJson as Record<string, unknown>;
-        const content = (json.content as Array<{ content?: Array<{ text?: string }> }>) || [];
-        descriptionText = content
-          .map((c) => c.content?.map((t) => t.text).join("") || "")
-          .join("\n\n");
-      } catch {
-        descriptionText = "";
+        if (typeof json.text === "string") {
+          descriptionText = json.text;
+        } else if (Array.isArray(json.content)) {
+          descriptionText = (json.content as Array<{ content?: Array<{ text?: string }> }>)
+            .map((c) => c.content?.map((t) => t.text).join("") || "")
+            .join("\n\n");
+        }
       }
     }
 
     let careText = "";
-    if (product.careInstructionsJson && typeof product.careInstructionsJson === "object") {
-      try {
+    if (product.careInstructionsJson) {
+      if (typeof product.careInstructionsJson === "string") {
+        careText = product.careInstructionsJson;
+      } else if (typeof product.careInstructionsJson === "object") {
         const json = product.careInstructionsJson as Record<string, unknown>;
-        const content = (json.content as Array<{ content?: Array<{ text?: string }> }>) || [];
-        careText = content
-          .map((c) => c.content?.map((t) => t.text).join("") || "")
-          .join("\n\n");
-      } catch {
-        careText = "";
+        if (typeof json.text === "string") {
+          careText = json.text;
+        } else if (Array.isArray(json.content)) {
+          careText = (json.content as Array<{ content?: Array<{ text?: string }> }>)
+            .map((c) => c.content?.map((t) => t.text).join("") || "")
+            .join("\n\n");
+        }
       }
     }
 
@@ -205,10 +211,10 @@ export async function PUT(
           primaryCategoryId: categoryId !== undefined ? categoryId || null : existing.primaryCategoryId,
           status: status ? (status === "draft" ? "draft" : status === "archived" ? "archived" : "active") : existing.status,
           descriptionJson: description !== undefined
-            ? (description ? { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: description }] }] } : Prisma.DbNull)
+            ? (description ? { text: description, type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: description }] }] } : Prisma.DbNull)
             : (existing.descriptionJson ? (existing.descriptionJson as Prisma.InputJsonValue) : Prisma.DbNull),
           careInstructionsJson: careInstructions !== undefined
-            ? (careInstructions ? { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: careInstructions }] }] } : Prisma.DbNull)
+            ? (careInstructions ? { text: careInstructions, type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: careInstructions }] }] } : Prisma.DbNull)
             : (existing.careInstructionsJson ? (existing.careInstructionsJson as Prisma.InputJsonValue) : Prisma.DbNull),
           updatedAt: new Date(),
         },

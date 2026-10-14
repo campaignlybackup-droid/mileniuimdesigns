@@ -733,7 +733,6 @@ export async function resolveCategoryBySlug(
   heroMediaId: string | null;
 } | null> {
   const normSlug = slug.toLowerCase().trim();
-  const alias = normSlug === "jewellery-sets" ? "bracelets" : normSlug === "bracelets" ? "jewellery-sets" : null;
   const rows = await ctx.client.$queryRaw<
     {
       id: string;
@@ -746,7 +745,7 @@ export async function resolveCategoryBySlug(
   >`
     SELECT id::text, slug, name, materialized_path, description_json, hero_media_id::text
       FROM categories
-     WHERE (slug = ${normSlug} OR (${alias}::text IS NOT NULL AND slug = ${alias}))
+     WHERE slug = ${normSlug}
        AND deleted_at IS NULL
        AND is_published = true
      LIMIT 1
@@ -893,7 +892,7 @@ export async function listStorefrontCategoryProducts(
 ) {
   try {
     const res = await listCategoryProducts(categoryId, marketCode, options, { client: db });
-    if (res && res.products.length > 0) return res;
+    if (res) return res;
   } catch {
     // Database unconfigured / offline on host storage
   }

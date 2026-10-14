@@ -1565,9 +1565,6 @@ export function getStandaloneCategoryProducts(
 ): ListProductsResult {
   const norm = categorySlugOrId.toLowerCase().replace(/^cat-/, "");
   let items = PRODUCTS_BY_CATEGORY.get(norm) ?? [];
-  if (items.length === 0) {
-    items = STANDALONE_PRODUCTS;
-  }
 
   // Filter by stone if requested
   if (options?.filters && options.filters.stoneIds && options.filters.stoneIds.length > 0) {

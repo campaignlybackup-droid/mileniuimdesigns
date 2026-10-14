@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { resolveMarket } from "@/lib/market";
 import {
   getStorefrontCategory,
@@ -137,6 +138,20 @@ export default async function CategoryPage({
 
   const hasActiveFilters = Object.keys(sParams).some((k) => k !== "sort" && k !== "page");
 
+  const activeStoneSlug = typeof sParams["stone"] === "string" ? sParams["stone"] : undefined;
+
+  // Curated quick-filter stones for One of a Kind pieces
+  const ONE_OF_A_KIND_STONES = [
+    { slug: "amber", name: "Amber" },
+    { slug: "larimar", name: "Larimar" },
+    { slug: "labradorite", name: "Labradorite" },
+    { slug: "turquoise", name: "Turquoise" },
+    { slug: "malachite", name: "Malachite" },
+    { slug: "rutilated-quartz", name: "Rutilated Quartz" },
+    { slug: "coral", name: "Coral" },
+    { slug: "moonstone", name: "Moonstone" },
+  ];
+
   return (
     <main
       id="main"
@@ -146,8 +161,8 @@ export default async function CategoryPage({
         paddingInline: "var(--md-gutter)",
         paddingBottom: "var(--md-space-16, 64px)",
         boxSizing: "border-box",
-        background: isOneOfAKind ? "var(--md-emerald-deep, var(--md-bg))" : "var(--md-bg)",
-        color: isOneOfAKind ? "var(--md-fg-inverse, var(--md-fg))" : "var(--md-fg)",
+        background: "var(--md-bg, #ffffff)",
+        color: "var(--md-fg, #182c23)",
         minHeight: "80vh",
       }}
     >
@@ -165,84 +180,236 @@ export default async function CategoryPage({
           ]}
         />
 
-        {/* Header section */}
-        <header
+        {/* Bespoke Header for One of a Kind vs Standard Categories */}
+        {isOneOfAKind ? (
+          <header
+            style={{
+              padding: "clamp(24px, 3.5vw, 44px) clamp(20px, 3vw, 36px)",
+              background: "linear-gradient(180deg, #faf7f2 0%, #f4eee3 100%)",
+              border: "1px solid var(--md-rule, #e7e2d7)",
+              borderRadius: 8,
+              marginTop: "var(--md-space-4, 16px)",
+              marginBottom: "var(--md-space-8, 32px)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ maxWidth: 840 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "var(--md-gold-antique, #a88448)",
+                    fontWeight: 700,
+                    fontFamily: "var(--md-font-crest), Georgia, serif",
+                  }}
+                >
+                  THE SOVEREIGN ARCHIVE · JAIPUR ATELIER
+                </span>
+                <span
+                  style={{
+                    padding: "2px 8px",
+                    borderRadius: 3,
+                    background: "#182c23",
+                    color: "#fcfaf5",
+                    fontSize: "0.65rem",
+                    letterSpacing: "0.1em",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  1 of 1 Edition
+                </span>
+              </div>
+
+              <h1
+                style={{
+                  margin: "0 0 12px 0",
+                  fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)",
+                  fontFamily: "var(--md-font-display)",
+                  fontWeight: 400,
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.1,
+                  color: "#182c23",
+                }}
+              >
+                One of a Kind
+              </h1>
+
+              <p
+                style={{
+                  margin: "0 0 20px 0",
+                  fontSize: "clamp(0.95rem, 1.2vw, 1.05rem)",
+                  lineHeight: 1.6,
+                  color: "#4a463d",
+                  maxWidth: 680,
+                }}
+              >
+                Singular, unrepeatable natural gemstone formations individually bezel-set in solid 925 sterling silver. Every matrix, inclusion, and crystalline depth is entirely unique — once claimed, each masterwork can never be recreated.
+              </p>
+
+              {/* Authenticity Pillars */}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "clamp(12px, 2vw, 24px)",
+                  paddingTop: 14,
+                  borderTop: "1px solid rgba(168, 132, 72, 0.25)",
+                  fontSize: "0.8rem",
+                  color: "#6e675b",
+                  fontWeight: 500,
+                  letterSpacing: "0.03em",
+                }}
+              >
+                <span>✦ Individually Photographed Pieces</span>
+                <span>✦ Authentic Natural Minerals</span>
+                <span>✦ Solid 925 Hallmarked Silver</span>
+                <span>✦ Direct Atelier Provenance</span>
+              </div>
+            </div>
+
+            {/* Quick Gemstone Pills Bar */}
+            <div
+              style={{
+                marginTop: 24,
+                paddingTop: 18,
+                borderTop: "1px solid var(--md-rule, #e7e2d7)",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "#8a8375",
+                  fontWeight: 600,
+                  flexShrink: 0,
+                  marginRight: 4,
+                }}
+              >
+                Filter by Mineral:
+              </span>
+
+              <Link
+                href={`${prefix}/one-of-a-kind`}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 20,
+                  fontSize: "0.8rem",
+                  fontWeight: !activeStoneSlug ? 600 : 400,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                  background: !activeStoneSlug ? "#182c23" : "#ffffff",
+                  color: !activeStoneSlug ? "#ffffff" : "#4a463d",
+                  border: !activeStoneSlug ? "1px solid #182c23" : "1px solid #dcd5c7",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                All Pieces ({totalCount})
+              </Link>
+
+              {ONE_OF_A_KIND_STONES.map((stone) => {
+                const isActive = activeStoneSlug === stone.slug;
+                return (
+                  <Link
+                    key={stone.slug}
+                    href={isActive ? `${prefix}/one-of-a-kind` : `${prefix}/one-of-a-kind?stone=${stone.slug}`}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 20,
+                      fontSize: "0.8rem",
+                      fontWeight: isActive ? 600 : 400,
+                      textDecoration: "none",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                      background: isActive ? "#182c23" : "#ffffff",
+                      color: isActive ? "#ffffff" : "#4a463d",
+                      border: isActive ? "1px solid #182c23" : "1px solid #dcd5c7",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    {stone.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </header>
+        ) : (
+          <header
+            style={{
+              paddingBlock: "clamp(20px, 3.5vw, 40px) clamp(14px, 2.5vw, 24px)",
+              borderBottom: "1px solid var(--md-rule, #e7e2d7)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "8px", marginBottom: "6px" }}>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "var(--md-gold-antique, #a88448)",
+                  fontWeight: 600,
+                  fontFamily: "var(--md-font-crest), Georgia, serif",
+                }}
+              >
+                JAIPUR · PURE 925 STERLING SILVER
+              </span>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "var(--md-fg-muted, #6e675b)",
+                }}
+              >
+                {totalCount} {totalCount === 1 ? "Creation" : "Creations"}
+              </span>
+            </div>
+
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                fontFamily: "var(--md-font-display)",
+                fontWeight: 400,
+                letterSpacing: "-0.015em",
+                lineHeight: 1.1,
+              }}
+            >
+              {cat.name}
+            </h1>
+          </header>
+        )}
+
+        {/* Controls bar: mobile filter toggle + sort */}
+        <div
           style={{
-            paddingBlock: "clamp(20px, 3.5vw, 40px) clamp(14px, 2.5vw, 24px)",
-            borderBottom: isOneOfAKind ? "1px solid var(--md-green, var(--md-rule))" : "1px solid var(--md-rule)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "clamp(12px, 2vw, 20px)",
+            flexWrap: "wrap",
+            gap: "var(--md-space-3)",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "8px", marginBottom: "6px" }}>
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "var(--md-gold-antique)",
-                fontWeight: 600,
-                fontFamily: "var(--md-font-crest), Georgia, serif",
-              }}
-            >
-              JAIPUR · PURE 925 STERLING SILVER
-            </span>
-            <span
-              style={{
-                fontSize: "0.75rem",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--md-fg-muted)",
-              }}
-            >
-              {totalCount} {totalCount === 1 ? "Creation" : "Creations"}
-            </span>
+          <div className="md-mobile-only" style={{ display: filterGroups.length > 0 ? "block" : "none" }}>
+            <FilterDrawer groups={filterGroups} />
           </div>
 
-          <h1
-            style={{
-              margin: 0,
-              fontSize: isOneOfAKind ? "var(--md-t-hero, 2.5rem)" : "clamp(2rem, 4vw, 3.25rem)",
-              fontFamily: "var(--md-font-display)",
-              fontWeight: 400,
-              letterSpacing: "-0.015em",
-              lineHeight: 1.1,
-            }}
-          >
-            {cat.name}
-          </h1>
-
-          {isOneOfAKind && (
-            <p
-              style={{
-                margin: "var(--md-space-2) 0 0 0",
-                fontSize: "1.0625rem",
-                fontStyle: "italic",
-                opacity: 0.85,
-              }}
-            >
-              Pieces with a character that cannot be repeated.
-            </p>
-          )}
-
-          {/* Controls bar: mobile filter toggle + sort */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: "clamp(12px, 2vw, 20px)",
-              flexWrap: "wrap",
-              gap: "var(--md-space-3)",
-            }}
-          >
-            <div className="md-mobile-only" style={{ display: filterGroups.length > 0 ? "block" : "none" }}>
-              <FilterDrawer groups={filterGroups} />
-            </div>
-
-            <div style={{ marginLeft: "auto" }}>
-              <SortSelect currentSort={sort} />
-            </div>
+          <div style={{ marginLeft: "auto" }}>
+            <SortSelect currentSort={sort} />
           </div>
-        </header>
+        </div>
 
         {/* Body section: sidebar + products grid */}
         <div
@@ -253,7 +420,7 @@ export default async function CategoryPage({
             alignItems: "flex-start",
           }}
         >
-          {filterGroups.length > 0 && !isOneOfAKind && (
+          {filterGroups.length > 0 && (
             <div className="md-desktop-only">
               <FilterSidebar groups={filterGroups} />
             </div>
@@ -266,7 +433,7 @@ export default async function CategoryPage({
                   products={products}
                   marketSegment={resolvedMarket.code.toLowerCase() === "us" ? "" : resolvedMarket.code.toLowerCase()}
                   locale={resolvedMarket.locale}
-                  columns={isOneOfAKind ? 2 : 3}
+                  columns={3}
                 />
                 <Pagination
                   currentPage={page}
@@ -277,9 +444,14 @@ export default async function CategoryPage({
               </>
             ) : (
               <EmptyState
-                headline={hasActiveFilters ? "Nothing matched these filters." : "Nothing found"}
-                actionLabel={hasActiveFilters ? "CLEAR FILTERS" : "EXPLORE THE COLLECTION"}
-                actionHref={`${prefix}/${cat.slug}`}
+                headline={hasActiveFilters ? "Nothing matched these filters." : `The ${cat.name} Collection Is Coming Soon`}
+                body={
+                  hasActiveFilters
+                    ? "Try clearing some filters or browse all creations."
+                    : `Our master silversmiths are currently handcrafting new pieces in our Jaipur atelier. In the meantime, discover our exclusive One-of-a-Kind creations and handcrafted Sterling Silver Bracelets.`
+                }
+                actionLabel={hasActiveFilters ? "CLEAR FILTERS" : "EXPLORE ONE OF A KIND"}
+                actionHref={hasActiveFilters ? `${prefix}/${cat.slug}` : `${prefix}/one-of-a-kind`}
               />
             )}
           </div>
