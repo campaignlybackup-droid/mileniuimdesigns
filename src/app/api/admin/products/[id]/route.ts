@@ -17,6 +17,7 @@ export async function GET(
       where: { id },
       include: {
         primaryCategory: true,
+        categories: { select: { categoryId: true, isPrimary: true } },
         collections: {
           include: { collection: true },
         },
@@ -112,6 +113,7 @@ export async function GET(
         slug: product.slug,
         status: product.status,
         primaryCategoryId: product.primaryCategoryId,
+        secondaryCategoryIds: (product.categories || []).filter((c) => !c.isPrimary).map((c) => c.categoryId),
         collectionIds: product.collections.map((c) => c.collectionId),
         stoneIds: product.stones.map((s) => s.stoneId),
         sku: defaultVariant?.sku || "",
@@ -170,6 +172,7 @@ export async function PUT(
       slug,
       sku,
       categoryId,
+      secondaryCategoryIds,
       collectionIds,
       stoneIds,
       status,
@@ -201,14 +204,31 @@ export async function PUT(
     const defaultVariant = existing.variants[0];
 
     await withTransaction(async (tx) => {
-      // 1. Update Product Core
+      // 1. Update Product Core and Category mappings
+      const targetPrimaryCat = categoryId !== undefined ? categoryId || null : existing.primaryCategoryId;
+      const targetSecondaryCats: string[] = Array.isArray(secondaryCategoryIds) ? secondaryCategoryIds : [];
+
+      let isOoak = existing.isOneOfAKind;
+      if (targetPrimaryCat) {
+        const cat = await tx.category.findUnique({
+          where: { id: targetPrimaryCat },
+          select: { slug: true },
+        });
+        if (cat?.slug === "one-of-a-kind") {
+          isOoak = true;
+        } else if (categoryId !== undefined) {
+          isOoak = false;
+        }
+      }
+
       await tx.product.update({
         where: { id },
         data: {
           title: title ? String(title).trim() : existing.title,
           subtitle: subtitle !== undefined ? String(subtitle).trim() || null : existing.subtitle,
           slug: slug ? String(slug).trim().toLowerCase() : existing.slug,
-          primaryCategoryId: categoryId !== undefined ? categoryId || null : existing.primaryCategoryId,
+          primaryCategoryId: targetPrimaryCat,
+          isOneOfAKind: isOoak,
           status: status ? (status === "draft" ? "draft" : status === "archived" ? "archived" : "active") : existing.status,
           descriptionJson: description !== undefined
             ? (description ? { text: description, type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: description }] }] } : Prisma.DbNull)
@@ -219,6 +239,32 @@ export async function PUT(
           updatedAt: new Date(),
         },
       });
+
+      // Synchronize product_categories join table
+      if (categoryId !== undefined || Array.isArray(secondaryCategoryIds)) {
+        await tx.productCategory.deleteMany({ where: { productId: id } });
+        if (targetPrimaryCat) {
+          await tx.productCategory.create({
+            data: {
+              productId: id,
+              categoryId: targetPrimaryCat,
+              isPrimary: true,
+            },
+          }).catch(() => undefined);
+        }
+
+        for (const secCatId of targetSecondaryCats) {
+          if (secCatId && secCatId !== targetPrimaryCat) {
+            await tx.productCategory.create({
+              data: {
+                productId: id,
+                categoryId: secCatId,
+                isPrimary: false,
+              },
+            }).catch(() => undefined);
+          }
+        }
+      }
 
       // 2. Update Collections mapping
       if (Array.isArray(collectionIds)) {
@@ -364,6 +410,12 @@ export async function PUT(
     });
 
     revalidatePath("/admin/products");
+    revalidatePath("/admin/categories");
+    revalidatePath("/[market]/[category]", "page");
+    revalidatePath("/[market]/bracelets", "page");
+    revalidatePath("/[market]/one-of-a-kind", "page");
+    revalidatePath("/[market]/pendants", "page");
+    revalidatePath("/[market]/earrings", "page");
     revalidatePath(`/[market]/products/${existing.slug}`, "page");
     if (slug && slug !== existing.slug) {
       revalidatePath(`/[market]/products/${slug}`, "page");

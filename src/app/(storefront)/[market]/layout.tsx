@@ -155,9 +155,11 @@ export default async function MarketLayout({
     {
       heading: "COLLECTIONS",
       links: [
-        { label: "Rings", href: `${prefix}/rings` },
+        { label: "Bracelets", href: `${prefix}/bracelets` },
+        { label: "One of a Kind", href: `${prefix}/one-of-a-kind` },
         { label: "Pendants", href: `${prefix}/pendants` },
         { label: "Earrings", href: `${prefix}/earrings` },
+        { label: "Rings", href: `${prefix}/rings` },
         { label: "Jewellery Sets", href: `${prefix}/jewellery-sets` },
         { label: "Chains", href: `${prefix}/chains` },
         { label: "14 Carat Gold", href: `${prefix}/14k-gold` },

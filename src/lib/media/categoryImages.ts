@@ -49,6 +49,11 @@ export const CATEGORY_IMAGE_MAP: Record<string, { hero: string; product1: string
     product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_3_a.jpg",
     product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
+  "jewellery-sets": {
+    hero: "/images/categories/bracelets.jpg",
+    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
+    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_2_a.jpg",
+  },
 };
 
 export function getCategoryImage(categorySlug: string): string {

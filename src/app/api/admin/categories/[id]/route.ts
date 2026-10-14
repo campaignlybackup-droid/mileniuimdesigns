@@ -17,7 +17,7 @@ export async function GET(
       where: { id },
       include: {
         _count: {
-          select: { primaryFor: true },
+          select: { products: true, primaryFor: true },
         },
       },
     });
@@ -49,7 +49,8 @@ export async function GET(
         rank: category.rank,
         isPublished: category.isPublished,
         description: descriptionText,
-        productCount: category._count.primaryFor,
+        productCount: category._count.products,
+        primaryCount: category._count.primaryFor,
         updatedAt: category.updatedAt,
       },
     });

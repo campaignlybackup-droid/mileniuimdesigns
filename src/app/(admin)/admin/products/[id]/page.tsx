@@ -29,6 +29,7 @@ export default function EditProductPage() {
   const [slug, setSlug] = useState("");
   const [sku, setSku] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [selectedSecondaryCategories, setSelectedSecondaryCategories] = useState<string[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [selectedStones, setSelectedStones] = useState<string[]>([]);
   const [status, setStatus] = useState("active");
@@ -57,6 +58,7 @@ export default function EditProductPage() {
         setSlug(p.slug || "");
         setSku(p.sku || "");
         setCategoryId(p.primaryCategoryId || "");
+        setSelectedSecondaryCategories(p.secondaryCategoryIds || []);
         setSelectedCollections(p.collectionIds || []);
         setSelectedStones(p.stoneIds || []);
         setStatus(p.status || "active");
@@ -92,6 +94,12 @@ export default function EditProductPage() {
     );
   }
 
+  function toggleSecondaryCategory(id: string) {
+    setSelectedSecondaryCategories((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+    );
+  }
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -108,6 +116,7 @@ export default function EditProductPage() {
           slug,
           sku,
           categoryId,
+          secondaryCategoryIds: selectedSecondaryCategories,
           collectionIds: selectedCollections,
           stoneIds: selectedStones,
           status,
@@ -285,13 +294,14 @@ export default function EditProductPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#444", marginBottom: 6 }}>
-                Category
+                Primary Category *
               </label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: "1px solid #d5cfc1", fontSize: "0.875rem", background: "#fff" }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: "1px solid #d5cfc1", fontSize: "0.875rem", background: "#fff", fontWeight: 600, color: "#182c23" }}
               >
+                <option value="">-- Select Category --</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -327,6 +337,49 @@ export default function EditProductPage() {
               </select>
             </div>
           </div>
+
+          {/* Secondary Categories Pill Selection */}
+          {categories.length > 0 && (
+            <div style={{ padding: "14px 16px", borderRadius: 6, background: "#faf8f4", border: "1px dashed #d5cfc1" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#182c23" }}>
+                  Additional Storefront Categories (Optional)
+                </span>
+                <span style={{ fontSize: "0.72rem", color: "#8a857b" }}>
+                  E.g. Include a One-of-a-Kind bracelet under Bracelets as well
+                </span>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {categories
+                  .filter((c) => c.id !== categoryId)
+                  .map((cat) => {
+                    const active = selectedSecondaryCategories.includes(cat.id);
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => toggleSecondaryCategory(cat.id)}
+                        style={{
+                          padding: "6px 14px",
+                          borderRadius: 999,
+                          border: "1px solid",
+                          borderColor: active ? "#182c23" : "#d5cfc1",
+                          background: active ? "#182c23" : "#ffffff",
+                          color: active ? "#ffffff" : "#444",
+                          fontSize: "0.78rem",
+                          fontWeight: active ? 600 : 500,
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        {active ? "✓ " : "+ "}
+                        {cat.name}
+                      </button>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Section 2: Photography & Media Gallery */}

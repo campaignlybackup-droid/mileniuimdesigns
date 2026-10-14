@@ -91,9 +91,9 @@ export async function GET(request: NextRequest) {
       }),
       db.product.count({ where }),
       db.category.findMany({
-        where: { isPublished: true, deletedAt: null },
+        where: { deletedAt: null },
         select: { id: true, name: true, slug: true },
-        orderBy: { name: "asc" },
+        orderBy: { rank: "asc" },
       }),
     ]);
 
@@ -191,6 +191,17 @@ export async function POST(request: NextRequest) {
           defaultVariantId: variantId,
         },
       });
+
+      // 1b. Associate with category in product_categories join table
+      if (categoryId) {
+        await tx.productCategory.create({
+          data: {
+            productId,
+            categoryId,
+            isPrimary: true,
+          },
+        }).catch(() => undefined);
+      }
 
       // 2. Associate with collections if selected
       if (Array.isArray(collectionIds) && collectionIds.length > 0) {
@@ -293,6 +304,12 @@ export async function POST(request: NextRequest) {
     });
 
     revalidatePath("/admin/products");
+    revalidatePath("/admin/categories");
+    revalidatePath("/[market]/[category]", "page");
+    revalidatePath("/[market]/bracelets", "page");
+    revalidatePath("/[market]/one-of-a-kind", "page");
+    revalidatePath("/[market]/pendants", "page");
+    revalidatePath("/[market]/earrings", "page");
     revalidatePath("/[market]/products", "page");
 
     return NextResponse.json({

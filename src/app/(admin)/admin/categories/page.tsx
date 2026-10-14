@@ -285,7 +285,7 @@ export default function AdminCategoriesPage() {
                         Edit
                       </button>
                       <Link
-                        href={`/us/${cat.slug}`}
+                        href={`/in/${cat.slug}`}
                         target="_blank"
                         title="View category page on live site"
                         style={{

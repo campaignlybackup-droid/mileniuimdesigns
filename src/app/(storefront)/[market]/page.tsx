@@ -250,7 +250,7 @@ export default async function StorefrontHomePage({
             </div>
 
             <Link
-              href={`${prefix}/rings`}
+              href={`${prefix}/bracelets`}
               style={{
                 fontSize: "0.75rem",
                 letterSpacing: "0.14em",

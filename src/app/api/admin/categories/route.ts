@@ -14,7 +14,7 @@ export async function GET() {
       where: { deletedAt: null },
       include: {
         _count: {
-          select: { primaryFor: true },
+          select: { products: true, primaryFor: true },
         },
       },
       orderBy: { rank: "asc" },
@@ -29,7 +29,8 @@ export async function GET() {
         rank: c.rank,
         isPublished: c.isPublished,
         skuToken: c.skuToken,
-        productCount: c._count.primaryFor,
+        productCount: c._count.products,
+        primaryCount: c._count.primaryFor,
         updatedAt: c.updatedAt,
       })),
     });
