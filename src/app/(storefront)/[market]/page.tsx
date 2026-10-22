@@ -125,7 +125,7 @@ export default async function StorefrontHomePage({
         </div>
       )}
 
-      {/* ── 1. CINEMATIC CAMPAIGN SLIDER ─────────────────────────────── */}
+      {/* ── 1. CINEMATIC ATELIER VIDEO BANNER ──────────────────────── */}
       {storefrontConfig.sectionHeroVisible !== false && (
         <HeroCampaignSlider
           marketPrefix={prefix}

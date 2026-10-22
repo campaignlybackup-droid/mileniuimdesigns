@@ -50,6 +50,16 @@ async function loadStorefrontConfigFromDb(
         }
       }
     }
+
+    // Keep only the video slide on the home page hero
+    if (Array.isArray(merged.heroSlides)) {
+      const videoOnly = merged.heroSlides.filter(
+        (slide) => Boolean(slide.isVideo || slide.videoSrc),
+      );
+      if (videoOnly.length > 0) {
+        merged.heroSlides = videoOnly;
+      }
+    }
   } catch (error) {
     console.warn("Could not load storefront customization settings from DB, using defaults:", error);
   }

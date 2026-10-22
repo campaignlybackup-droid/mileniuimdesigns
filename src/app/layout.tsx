@@ -18,7 +18,6 @@ const bodoni = Bodoni_Moda({
   variable: "--md-font-display",
   subsets: ["latin"],
   weight: ["400", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 

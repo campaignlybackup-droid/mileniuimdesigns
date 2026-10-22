@@ -197,7 +197,7 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
   headerShowAccount: true,
   headerShowCurrency: true,
 
-  // 2. Hero Slider
+  // 2. Hero Video Banner
   heroSlides: [
     {
       id: "slide-video",
@@ -211,46 +211,10 @@ export const DEFAULT_STOREFRONT_CONFIG: StorefrontCustomizationConfig = {
       imageSrc: "/videos/banner-poster.webp",
       imageAlt: "Millennium Designs 925 Sterling Silver Factory Craftsmanship Video",
       isVideo: true,
-      videoSrc: "/videos/banner-1080p.mp4",
-      videoMobileSrc: "/videos/banner-mobile.mp4",
+      videoSrc: "/videos/banner-loop-720p.mp4",
+      videoMobileSrc: "/videos/banner-loop-mobile.mp4",
       videoPoster: "/videos/banner-poster.webp",
       videoMobilePoster: "/videos/banner-poster-mobile.webp",
-    },
-    {
-      id: "slide-1",
-      tag: "SIGNATURE COLLECTION · EST. 1961 JAIPUR",
-      subhead: "Unheated Mineral Sovereignty",
-      title: "Natural Gems, Cold-Forged in Pure 925 Silver.",
-      standfirst:
-        "Every master ring, pendant, and talisman is hand-fabricated by master silversmiths using generational lost-wax methods and conflict-free courtly stones.",
-      ctaText: "Acquire Selected Work",
-      ctaHref: "/rings",
-      imageSrc: "/images/hero/campaign_hero_1.jpg",
-      imageAlt: "Millennium Designs Signature High Jewellery Archive",
-    },
-    {
-      id: "slide-2",
-      tag: "THE SOVEREIGN MOONSTONE SUITE",
-      subhead: "Blue Flash Sri Lankan Adularescence",
-      title: "Celestial Light, Set in Sculptural Silver.",
-      standfirst:
-        "Natural unheated cabochons hand-selected for hypnotic optical blue schiller. Each bezel is hand-burnished to mirror polish.",
-      ctaText: "Explore Moonstones",
-      ctaHref: "/moonstone",
-      imageSrc: "/images/hero/campaign_hero_2.jpg",
-      imageAlt: "Natural Blue Flash Moonstone High Jewellery Collection",
-    },
-    {
-      id: "slide-3",
-      tag: "THE REGAL PENDANT VAULT",
-      subhead: "Handcrafted Statement Talismans",
-      title: "Crown Jewels for Modern Connoisseurs.",
-      standfirst:
-        "Archival Jaipur filigree wirework cradling vibrant emeralds, amethysts, and tourmalines in heavy sterling mounts.",
-      ctaText: "View Pendants",
-      ctaHref: "/pendants",
-      imageSrc: "/images/hero/campaign_hero_3.jpg",
-      imageAlt: "Imperial Sterling Silver Statement Gemstone Pendants",
     },
   ],
   heroAutoIntervalMs: 5500,
