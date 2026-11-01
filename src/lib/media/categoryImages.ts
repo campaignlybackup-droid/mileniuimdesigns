@@ -26,9 +26,9 @@ export const CATEGORY_IMAGE_MAP: Record<string, { hero: string; product1: string
     product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/earrings/er_2_a.jpg",
   },
   rings: {
-    hero: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/ok_16_a.jpg",
-    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/ok_16_a.jpg",
-    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/ok_38_a.jpg",
+    hero: "/images/products/cpx/rings/117459.jpg",
+    product1: "/images/products/cpx/rings/101312.jpg",
+    product2: "/images/products/cpx/rings/117426.jpg",
   },
   chains: {
     hero: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_7_a.jpg",
@@ -36,9 +36,9 @@ export const CATEGORY_IMAGE_MAP: Record<string, { hero: string; product1: string
     product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
   "jewellery-sets": {
-    hero: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
-    product1: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
-    product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_2_a.jpg",
+    hero: "/images/products/cpx/jewellery-sets/100802.jpg",
+    product1: "/images/products/cpx/jewellery-sets/100796.jpg",
+    product2: "/images/products/cpx/jewellery-sets/100771.jpg",
   },
   closeouts: {
     hero: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/pendants/ok_23_a.jpg",
