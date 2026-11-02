@@ -110,6 +110,10 @@ export const STONE_IMAGE_MAP: Record<string, string> = {
   kyanite: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_3_a.jpg",
   amber: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/one-of-a-kind/bl_11_a.jpg",
   garnet: "https://res.cloudinary.com/gm6dexkj/image/upload/w_800,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
+  diamond: "/images/products/cpx/jewellery-sets/100802.jpg",
+  emerald: "/images/products/cpx/bracelets/101624.jpg",
+  ruby: "/images/products/cpx/rings/117459.jpg",
+  sapphire: "/images/products/cpx/bracelets/101621.jpg",
 };
 
 /**
@@ -133,6 +137,10 @@ export const STONE_PUBLIC_ID_MAP: Record<string, string> = {
   kyanite: "md_catalog/bracelets/bl_3_a",
   amber: "md_catalog/one-of-a-kind/bl_11_a",
   garnet: "md_catalog/bracelets/bl_1_a",
+  diamond: "/images/products/cpx/jewellery-sets/100802.jpg",
+  emerald: "/images/products/cpx/bracelets/101624.jpg",
+  ruby: "/images/products/cpx/rings/117459.jpg",
+  sapphire: "/images/products/cpx/bracelets/101621.jpg",
 };
 
 export function getStoneImage(stoneSlug: string): string {

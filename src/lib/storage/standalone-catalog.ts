@@ -300,6 +300,62 @@ export const STANDALONE_STONES: StoneRecord[] = [
     isLabGrown: false,
     rank: 17,
   },
+  {
+    id: "a0000000-0000-4000-8000-000000000018",
+    slug: "diamond",
+    name: "Diamond",
+    shortDescription: "Unsurpassed optical dispersion and timeless adamantine brilliance, symbolizing eternal strength and royal majesty.",
+    descriptionJson: null,
+    heroMediaId: null,
+    heroPublicId: "/images/products/cpx/jewellery-sets/100802.jpg",
+    swatchMediaId: null,
+    colourHex: "#F8FAFC",
+    hardnessMohs: "10.0",
+    isLabGrown: false,
+    rank: 18,
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000019",
+    slug: "emerald",
+    name: "Emerald",
+    shortDescription: "Vivid verdant beryl treasure prized across royal dynasties, representing rebirth, wisdom, and sovereign opulence.",
+    descriptionJson: null,
+    heroMediaId: null,
+    heroPublicId: "/images/products/cpx/bracelets/101624.jpg",
+    swatchMediaId: null,
+    colourHex: "#059669",
+    hardnessMohs: "7.5 - 8.0",
+    isLabGrown: false,
+    rank: 19,
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000020",
+    slug: "ruby",
+    name: "Ruby",
+    shortDescription: "The King of Gems, radiating incandescent crimson fire, passion, nobility, and eternal vitality.",
+    descriptionJson: null,
+    heroMediaId: null,
+    heroPublicId: "/images/products/cpx/rings/117459.jpg",
+    swatchMediaId: null,
+    colourHex: "#DC2626",
+    hardnessMohs: "9.0",
+    isLabGrown: false,
+    rank: 20,
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000021",
+    slug: "sapphire",
+    name: "Sapphire",
+    shortDescription: "Deep celestial blue corundum crystalline treasure embodying truth, protection, and sovereign calm.",
+    descriptionJson: null,
+    heroMediaId: null,
+    heroPublicId: "/images/products/cpx/bracelets/101621.jpg",
+    swatchMediaId: null,
+    colourHex: "#1D4ED8",
+    hardnessMohs: "9.0",
+    isLabGrown: false,
+    rank: 21,
+  },
 ];
 
 export type StandaloneProductDefinition = {
@@ -1555,6 +1611,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "e246fb5b-496a-528f-b30f-eea1e37beccd",
     slug: "royal-pear-cut-diamond-drop-necklace-md-js-769",
+    stoneSlug: "diamond",
     title: "Royal Pear-Cut Diamond Drop Necklace",
     subtitle: "MD-JS-769 · 18.5g · 18K Solid Gold · 1.85 ct Pear Diamond",
     categorySlug: "jewellery-sets",
@@ -1569,6 +1626,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "fd1c6b80-e191-5a78-9fb7-0bff68c34ce2",
     slug: "diamond-tear-loop-necklace-earring-suite-md-js-771",
+    stoneSlug: "diamond",
     title: "Diamond Tear Loop Necklace & Earring Suite",
     subtitle: "MD-JS-771 · 26.0g · 18K Solid Gold · 2.40 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1583,6 +1641,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "065d5d42-a591-5ec9-af02-8fab07732dad",
     slug: "grand-arabesque-diamond-necklace-chandelier-suite-md-js-775",
+    stoneSlug: "diamond",
     title: "Grand Arabesque Diamond Necklace & Chandelier Suite",
     subtitle: "MD-JS-775 · 28.0g · 18K Solid Gold · 3.00 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1597,6 +1656,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "bff64134-3a6a-5304-98d0-48914902c6e6",
     slug: "floral-sunburst-diamond-suite-md-js-796",
+    stoneSlug: "diamond",
     title: "Floral Sunburst Diamond Suite",
     subtitle: "MD-JS-796 · 39.3g · 18K Solid Gold · 3.89 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1611,6 +1671,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "1a63ed5f-d480-5342-9d16-609e2f662d64",
     slug: "royal-swan-crest-diamond-suite-md-js-799",
+    stoneSlug: "diamond",
     title: "Royal Swan Crest Diamond Suite",
     subtitle: "MD-JS-799 · 37.6g · 18K Solid Gold · 3.07 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1625,6 +1686,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "84b2d86c-5032-5b8f-87e1-03a614862a76",
     slug: "grand-imperial-diamond-suite-md-js-802",
+    stoneSlug: "diamond",
     title: "Grand Imperial Diamond Suite",
     subtitle: "MD-JS-802 · 50.3g · 18K Solid Gold · 7.17 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1639,6 +1701,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "7bb25783-a578-53a2-b898-4adc9fca2b0f",
     slug: "contemporary-diamond-arc-suite-md-js-804",
+    stoneSlug: "diamond",
     title: "Contemporary Diamond Arc Suite",
     subtitle: "MD-JS-804 · 26.0g · 18K Solid Gold · 2.34 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1653,6 +1716,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "d3dce7cb-2900-51ee-b85e-1153acf0dedc",
     slug: "classic-diamond-floral-suite-md-js-820",
+    stoneSlug: "diamond",
     title: "Classic Diamond Floral Suite",
     subtitle: "MD-JS-820 · 23.5g · 18K Solid Gold · 1.68 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1667,6 +1731,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "1f7c9e1c-70fc-52da-a35e-78a7f77742ec",
     slug: "empress-diamond-collarette-suite-md-js-821",
+    stoneSlug: "diamond",
     title: "Empress Diamond Collarette Suite",
     subtitle: "MD-JS-821 · 34.7g · 18K Solid Gold · 4.30 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1681,6 +1746,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "dada4a0c-c9a4-5022-a8ab-ef3c158692a5",
     slug: "maharani-grand-diamond-suite-md-js-823",
+    stoneSlug: "diamond",
     title: "Maharani Grand Diamond Suite",
     subtitle: "MD-JS-823 · 35.0g · 18K Solid Gold · 5.30 ct Diamonds",
     categorySlug: "jewellery-sets",
@@ -1695,6 +1761,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "76ec5db4-c813-5493-9794-ad3688d47d73",
     slug: "tear-drop-filigree-diamond-earrings-100096",
+    stoneSlug: "diamond",
     title: "Tear Drop Filigree Diamond Earrings",
     subtitle: "ER-096 · 3.1g · 18K Solid Gold · 0.258 ct Diamonds",
     categorySlug: "earrings",
@@ -1709,6 +1776,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "6abcfcc6-0dbf-5dd7-8e55-990b9d757e42",
     slug: "circular-openwork-chandelier-earrings-100100",
+    stoneSlug: "diamond",
     title: "Circular Geometric Openwork Chandelier Earrings",
     subtitle: "ER-100 · 4.5g · 18K Solid Gold · 0.450 ct Diamonds",
     categorySlug: "earrings",
@@ -1723,6 +1791,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "bd5b341d-c2f3-5805-b967-7febe02dd7a2",
     slug: "oval-lattice-drop-diamond-earrings-100101",
+    stoneSlug: "diamond",
     title: "Oval Lattice Drop Diamond Earrings",
     subtitle: "ER-101 · 15.0g · 18K Solid Gold · 2.000 ct Diamonds",
     categorySlug: "earrings",
@@ -1737,6 +1806,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "b1d11876-2ce7-51e5-9dc7-007ea031a655",
     slug: "modern-arc-drop-earrings-100102",
+    stoneSlug: "diamond",
     title: "Modern Arc Drop Diamond Earrings",
     subtitle: "ER-102 · 2.8g · 18K Solid Gold · 0.282 ct Diamonds",
     categorySlug: "earrings",
@@ -1751,6 +1821,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "e0b55593-defa-57b3-932b-6a227309ab22",
     slug: "cascading-chandelier-diamond-earrings-100103",
+    stoneSlug: "diamond",
     title: "Cascading Chandelier Diamond Earrings",
     subtitle: "ER-103 · 12.6g · 18K Solid Gold · 2.468 ct Diamonds",
     categorySlug: "earrings",
@@ -1765,6 +1836,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "7f43394f-b30d-5eec-817a-0534a2be3a8c",
     slug: "arabesque-chandelier-earrings-100107",
+    stoneSlug: "diamond",
     title: "Arabesque Chandelier Diamond Earrings",
     subtitle: "ER-107 · 8.3g · 18K Solid Gold · 1.056 ct Diamonds",
     categorySlug: "earrings",
@@ -1779,6 +1851,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "01aa7dee-0cbc-537f-8b05-abd12aa0b186",
     slug: "linear-chandelier-drop-earrings-100111",
+    stoneSlug: "diamond",
     title: "Linear Chandelier Drop Diamond Earrings",
     subtitle: "ER-111 · 6.3g · 18K Solid Gold · 1.184 ct Diamonds",
     categorySlug: "earrings",
@@ -1793,6 +1866,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "a700e2c6-12ff-5bde-b39f-f11b276466d5",
     slug: "ornate-royal-chandelier-earrings-100114",
+    stoneSlug: "diamond",
     title: "Ornate Royal Chandelier Diamond Earrings",
     subtitle: "ER-114 · 11.2g · 18K Solid Gold · 1.526 ct Diamonds",
     categorySlug: "earrings",
@@ -1807,6 +1881,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "92f60145-0214-52fd-911b-2223e887996b",
     slug: "contemporary-teardrop-earrings-100131",
+    stoneSlug: "diamond",
     title: "Contemporary Teardrop Diamond Earrings",
     subtitle: "ER-131 · 3.0g · 18K Solid Gold · 0.276 ct Diamonds",
     categorySlug: "earrings",
@@ -1821,6 +1896,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "011b9551-7c7b-545b-814f-4796b8042470",
     slug: "halo-stud-diamond-earrings-100135",
+    stoneSlug: "diamond",
     title: "Halo Stud Diamond Earrings",
     subtitle: "ER-135 · 2.8g · 18K Solid Gold · 1.060 ct Diamonds",
     categorySlug: "earrings",
@@ -1835,6 +1911,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "9367f729-40bc-5fd7-8007-dc520c833233",
     slug: "royal-dome-diamond-earrings-100136",
+    stoneSlug: "diamond",
     title: "Royal Dome Diamond Earrings",
     subtitle: "ER-136 · 5.8g · 18K Solid Gold · 0.772 ct Diamonds",
     categorySlug: "earrings",
@@ -1849,6 +1926,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "42473407-1d5c-56d8-9f74-f52d42f170af",
     slug: "blooming-flower-diamond-ring-dds-rn-253",
+    stoneSlug: "diamond",
     title: "Blooming Flower Diamond Ring",
     subtitle: "DDS RN 253 · 4.2g · 18K Two-Tone Gold · 0.17 ct Diamond",
     categorySlug: "rings",
@@ -1863,6 +1941,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "079de711-b9a9-5aa1-9a22-358b224479d8",
     slug: "three-flower-cluster-diamond-ring-dds-rn-254",
+    stoneSlug: "diamond",
     title: "Three-Flower Cluster Diamond Ring",
     subtitle: "DDS RN 254 · 4.3g · 18K Gold · 0.20 ct Diamond",
     categorySlug: "rings",
@@ -1877,6 +1956,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "93286313-01bd-5995-b680-1258af1c5f4c",
     slug: "emerald-diamond-open-bypass-ring-101399",
+    stoneSlug: "emerald",
     title: "Princess Emerald & Diamond Open Bypass Ring",
     subtitle: "MD-RN-399 · 4.5g · 18K Solid Gold · 1.80 ct Gemstones",
     categorySlug: "rings",
@@ -1891,6 +1971,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "5f892a32-1a4d-5d9b-81de-3dd1e5be062b",
     slug: "fluted-pave-diamond-cocktail-dome-ring-101433",
+    stoneSlug: "diamond",
     title: "Fluted Pavé Diamond Cocktail Dome Ring",
     subtitle: "MD-RN-433 · 6.5g · 18K Solid Gold · 0.56 ct Diamonds",
     categorySlug: "rings",
@@ -1905,6 +1986,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "81e8f6ac-7f7c-56f2-ad51-f89bea623670",
     slug: "intertwined-multi-band-diamond-ring-101437",
+    stoneSlug: "diamond",
     title: "Intertwined Multi-Band Diamond Crossover Ring",
     subtitle: "MD-RN-437 · 5.8g · 18K Solid Gold · Pavé Diamonds",
     categorySlug: "rings",
@@ -1919,6 +2001,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "ad5d903b-9eb4-5d21-b037-be24a4da26dd",
     slug: "kurma-sacred-tortoise-pave-ring-101521",
+    stoneSlug: "diamond",
     title: "Kurma Sacred Tortoise Talisman Ring",
     subtitle: "MD-RN-521 · 5.1g · 18K Solid Gold · Multi-Gemstone Pavé",
     categorySlug: "rings",
@@ -1933,6 +2016,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "e7c35c5f-f42a-5142-977a-c94613c4168d",
     slug: "clover-blossom-floral-bypass-ring-101524",
+    stoneSlug: "diamond",
     title: "Clover Blossom Floral Bypass Ring",
     subtitle: "MD-RN-524 · 3.9g · 18K Solid Gold · 18 Diamonds & Gemstones",
     categorySlug: "rings",
@@ -1947,6 +2031,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "d03aa9f9-0772-54a5-a763-25ad3ff9e7a4",
     slug: "tiara-crown-diamond-ring-lr-018",
+    stoneSlug: "diamond",
     title: "Tiara Crown Diamond Ring",
     subtitle: "LR-018 · 18K Yellow Gold · Diamond Crown Arcs",
     categorySlug: "rings",
@@ -1961,6 +2046,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "f786e9dd-4336-5ecb-92d4-d0748cc1fa08",
     slug: "waterfall-diamond-crossover-ring-lr-019",
+    stoneSlug: "diamond",
     title: "Waterfall Diamond Crossover Ring",
     subtitle: "LR-019 · 18K Yellow Gold · Pavé Diamonds",
     categorySlug: "rings",
@@ -1975,6 +2061,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "07ac4c26-47cd-54c6-8cd2-52aa4591a526",
     slug: "solitaire-engagement-ring-pave-shoulders-lr-080",
+    stoneSlug: "diamond",
     title: "Solitaire Engagement Ring with Pavé Shoulders",
     subtitle: "LR-080 · 18K Solid Gold · Brilliant Solitaire & Pavé",
     categorySlug: "rings",
@@ -1989,6 +2076,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "3da1c169-8e92-5008-ae10-3b5ffa19f2bb",
     slug: "modern-geometric-solitaire-ring-lr-088",
+    stoneSlug: "diamond",
     title: "Modern Geometric Solitaire Ring",
     subtitle: "LR-088 · 18K White Gold · Princess Diamond Center",
     categorySlug: "rings",
@@ -2003,6 +2091,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "d0cae1e9-fe25-56bd-b9d5-497f6b0de94a",
     slug: "architectural-quad-diamond-ring-lr-172",
+    stoneSlug: "diamond",
     title: "Architectural Quad Diamond Ring",
     subtitle: "LR-172 · 18K Solid Gold · Four Diamond Clusters",
     categorySlug: "rings",
@@ -2017,6 +2106,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "3ffb5808-9cca-53ea-955a-61daa7c66019",
     slug: "geometric-rhombus-diamond-crossover-ring-lr-233",
+    stoneSlug: "diamond",
     title: "Geometric Rhombus Diamond Crossover Ring",
     subtitle: "LR-233 · 18K White Gold · Pavé Diamond Rhombus",
     categorySlug: "rings",
@@ -2031,6 +2121,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "be76f91d-4dc9-55d1-a4c4-80183aae5d63",
     slug: "wave-pave-diamond-bypass-ring-lr-238",
+    stoneSlug: "diamond",
     title: "Wave Pavé Diamond Bypass Ring",
     subtitle: "LR-238 · 18K White Gold · Channel Diamonds",
     categorySlug: "rings",
@@ -2045,6 +2136,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "0fa27f12-5745-5037-b8c1-d24c47cba1a1",
     slug: "multi-row-diamond-band-ring-lr-240",
+    stoneSlug: "diamond",
     title: "Multi-Row Diamond Band Ring",
     subtitle: "LR-240 · 18K White Gold · Triple Pavé Bands",
     categorySlug: "rings",
@@ -2059,6 +2151,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "3ff247bc-8887-5106-9e7d-b9e4e0bc1fe8",
     slug: "scalloped-pave-dome-ring-ruby-center-lr-267",
+    stoneSlug: "ruby",
     title: "Scalloped Pavé Dome Ring with Ruby Center",
     subtitle: "LR-267 · 18K White Gold · Oval Ruby & Pavé Dome",
     categorySlug: "rings",
@@ -2073,6 +2166,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "a5f5f2f0-f4e3-5d5a-9c18-3b4e81fcfa8f",
     slug: "modern-sculpted-diamond-ring-lr-278",
+    stoneSlug: "diamond",
     title: "Modern Sculpted Diamond Ring",
     subtitle: "LR-278 · 18K White Gold · Floating Diamond Center",
     categorySlug: "rings",
@@ -2087,6 +2181,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "b50cd0fb-a7e0-5ffc-bca0-f283e8f8d656",
     slug: "tiered-emerald-cut-diamond-ring-lr-303",
+    stoneSlug: "diamond",
     title: "Tiered Emerald-Cut Diamond Ring",
     subtitle: "LR-303 · 18K White Gold · Graduated Diamond Halos",
     categorySlug: "rings",
@@ -2101,6 +2196,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "b2d4538a-af35-5470-9fdc-584a4b1a049a",
     slug: "hexagonal-pave-solitaire-ring-lr-307",
+    stoneSlug: "diamond",
     title: "Hexagonal Pavé Solitaire Ring",
     subtitle: "LR-307 · 18K White Gold · Hexagon Halo",
     categorySlug: "rings",
@@ -2115,6 +2211,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "904a146f-ece5-5162-af12-e26b9862cfb6",
     slug: "architectural-split-shank-diamond-ring-lr-312",
+    stoneSlug: "diamond",
     title: "Architectural Split-Shank Diamond Ring",
     subtitle: "LR-312 · 18K White Gold · Tension Set Center",
     categorySlug: "rings",
@@ -2129,6 +2226,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "7e352a18-7960-5850-b3a7-b506ab8735f1",
     slug: "sapphire-blossom-sculpted-gold-bangle-101621",
+    stoneSlug: "sapphire",
     title: "Sapphire Blossom Sculpted Openwork Bangle",
     subtitle: "MD-BG-621 · 18K Yellow Gold · Sapphire & Diamond Flowers",
     categorySlug: "bracelets",
@@ -2143,6 +2241,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "409ebc6f-c4da-5da4-bc5e-2b0a51a5804d",
     slug: "navette-ribbon-wave-diamond-bangle-101622",
+    stoneSlug: "diamond",
     title: "Navette Ribbon Wave Diamond Bangle",
     subtitle: "MD-BG-622 · 18K Two-Tone Gold · Diamond Navettes",
     categorySlug: "bracelets",
@@ -2157,6 +2256,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "206f0da7-0245-5a42-a861-4723b9c36778",
     slug: "emerald-marquise-flora-diamond-bangle-101624",
+    stoneSlug: "emerald",
     title: "Emerald Marquise Flora Diamond Bangle",
     subtitle: "MD-BG-624 · 18K Yellow Gold · Emerald & Diamond Petals",
     categorySlug: "bracelets",
@@ -2171,6 +2271,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "68fa1d8e-6681-50d0-b717-60d9661aa19a",
     slug: "emerald-bloom-swirl-diamond-bangle-101634",
+    stoneSlug: "emerald",
     title: "Emerald Bloom Swirl Diamond Bangle",
     subtitle: "MD-BG-634 · 18K Yellow Gold · Emerald Cluster Centers",
     categorySlug: "bracelets",
@@ -2185,6 +2286,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "5a5099c4-04ee-5d5c-b684-c88c18c17419",
     slug: "twin-wave-pave-diamond-bangle-101637",
+    stoneSlug: "diamond",
     title: "Twin Wave Pavé Diamond Bangle",
     subtitle: "MD-BG-637 · 18K Yellow Gold · Dual Diamond Ribbons",
     categorySlug: "bracelets",
@@ -2199,6 +2301,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "bd35b391-dcbb-5b04-9768-7f1d28fb6cd5",
     slug: "double-marquise-diamond-lattice-bangle-101638",
+    stoneSlug: "diamond",
     title: "Double Marquise Diamond Lattice Bangle",
     subtitle: "MD-BG-638 · 18K Yellow Gold · Interlocking Diamond Loops",
     categorySlug: "bracelets",
@@ -2213,6 +2316,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "adfb4077-3972-5e6e-aefa-4ca804a706ec",
     slug: "ruby-cabochon-oval-halo-bangle-101640",
+    stoneSlug: "ruby",
     title: "Ruby Cabochon Oval Halo Bangle",
     subtitle: "MD-BG-640 · 18K Yellow Gold · Oval Ruby Halo & Diamonds",
     categorySlug: "bracelets",
@@ -2227,6 +2331,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "b4cba34f-fdb5-50ed-a833-0754c519ead0",
     slug: "asymmetric-blossom-diamond-wave-bangle-101645",
+    stoneSlug: "diamond",
     title: "Asymmetric Blossom Diamond Wave Bangle",
     subtitle: "MD-BG-645 · 18K Yellow Gold · Floating Flower Clusters",
     categorySlug: "bracelets",
@@ -2241,6 +2346,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "21d77099-db16-5081-9a43-6b695c1d9380",
     slug: "tri-floral-diamond-chain-bracelet-101648",
+    stoneSlug: "diamond",
     title: "Tri-Floral Diamond Chain Link Bracelet",
     subtitle: "MD-BR-648 · 18K Yellow Gold · Three Floral Motifs",
     categorySlug: "bracelets",
@@ -2255,6 +2361,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "a57a09d7-c8bf-5c10-b9e8-27f8aed4833e",
     slug: "windmill-petal-diamond-link-bracelet-101649",
+    stoneSlug: "diamond",
     title: "Windmill Petal Diamond Link Bracelet",
     subtitle: "MD-BR-649 · 18K Yellow Gold · Articulated Diamond Windmills",
     categorySlug: "bracelets",
@@ -2269,6 +2376,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "d816d041-a913-5e07-8803-ab14af5fa371",
     slug: "beaded-halo-diamond-tennis-bracelet-gbr-004",
+    stoneSlug: "diamond",
     title: "Beaded Halo Diamond Tennis Bracelet",
     subtitle: "GBR-004 · 18K Yellow Gold · Alternating Beaded Links",
     categorySlug: "bracelets",
@@ -2283,6 +2391,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "814721a6-e142-509c-aa80-c3ecb71e5d92",
     slug: "classic-round-diamond-tennis-bracelet-gbr-006",
+    stoneSlug: "diamond",
     title: "Classic Round Diamond Tennis Bracelet",
     subtitle: "GBR-006 · 18K Solid Gold · 4-Prong Diamond Links",
     categorySlug: "bracelets",
@@ -2297,6 +2406,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "3461b18d-5640-5f4b-b237-9de72bc37e57",
     slug: "chevron-geometric-bar-diamond-bracelet-gbr-009b",
+    stoneSlug: "diamond",
     title: "Chevron Geometric Bar Diamond Bracelet",
     subtitle: "GBR-009B · 18K Solid Gold · Articulated Chevron Bars",
     categorySlug: "bracelets",
@@ -2311,6 +2421,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "2f3d64e1-08f6-57fe-9a1c-eb2696b2d012",
     slug: "double-row-diamond-tennis-bracelet-gbr-009",
+    stoneSlug: "diamond",
     title: "Double Row Diamond Tennis Bracelet",
     subtitle: "GBR-009 · 18K Solid Gold · Dual Row Diamond Setting",
     categorySlug: "bracelets",
@@ -2325,6 +2436,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "e2ef6bcd-9303-5dbb-8925-615685573d45",
     slug: "oval-link-diamond-tennis-bracelet-gbr-009a",
+    stoneSlug: "diamond",
     title: "Oval Link Diamond Tennis Bracelet",
     subtitle: "GBR-009A · 18K Solid Gold · Interconnected Diamond Ovals",
     categorySlug: "bracelets",
@@ -2339,6 +2451,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "aca7bcfb-f652-52aa-bddd-534d96f5212a",
     slug: "baguette-round-diamond-bar-bracelet-gbr-011",
+    stoneSlug: "diamond",
     title: "Baguette & Round Diamond Bar Bracelet",
     subtitle: "GBR-011 · 18K Solid Gold · Mixed Cut Diamond Bars",
     categorySlug: "bracelets",
@@ -2353,6 +2466,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "5de9ecb3-9b4b-5bc5-bd8d-62d6f621c79e",
     slug: "art-deco-geometric-diamond-bracelet-gbr-013",
+    stoneSlug: "diamond",
     title: "Art Deco Geometric Diamond Bracelet",
     subtitle: "GBR-013 · 18K Solid Gold · Step-Cut Diamond Links",
     categorySlug: "bracelets",
@@ -2367,6 +2481,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "c01cc657-7b22-56ea-9261-f21fec6ea38d",
     slug: "modern-minimalist-diamond-bangle-gbr-017",
+    stoneSlug: "diamond",
     title: "Modern Minimalist Diamond Bangle",
     subtitle: "GBR-017 · 18K Solid Gold · Channel-Set Diamond Line",
     categorySlug: "bracelets",
@@ -2381,6 +2496,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "4490891a-dbad-504b-a68f-a158635a2ab5",
     slug: "interlocking-cable-diamond-bracelet-gbr-019",
+    stoneSlug: "diamond",
     title: "Interlocking Cable Diamond Bracelet",
     subtitle: "GBR-019 · 18K Solid Gold · Twisted Gold & Diamonds",
     categorySlug: "bracelets",
@@ -2395,6 +2511,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "016efc80-455d-5587-b918-a2057f21c681",
     slug: "sculptural-diamond-link-bracelet-gbr-019a",
+    stoneSlug: "diamond",
     title: "Sculptural Diamond Link Bracelet",
     subtitle: "GBR-019A · 18K Solid Gold · Heavyweight Articulated Links",
     categorySlug: "bracelets",
@@ -2409,6 +2526,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "7823451d-76d7-5832-8a23-ede5997ee3f0",
     slug: "leaf-solitaire-two-tone-diamond-pendant-al1ze-pd024",
+    stoneSlug: "diamond",
     title: "Leaf & Solitaire Two-Tone Diamond Pendant",
     subtitle: "AL1ZE-PD024 · 18K White & Rose Gold · Solitaire Drop",
     categorySlug: "pendants",
@@ -2423,6 +2541,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "987edcf1-5fff-5614-999d-e43b0e4cfcec",
     slug: "ribbon-wave-diamond-pendant-al1ze-pd028",
+    stoneSlug: "diamond",
     title: "Ribbon Wave Diamond Pendant",
     subtitle: "AL1ZE-PD028 · 18K White Gold · Pavé Swirl",
     categorySlug: "pendants",
@@ -2437,6 +2556,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "067c09b0-f610-58eb-8e03-b2e8ee8020c6",
     slug: "geometric-circle-halo-two-tone-pendant-al1ze-pd029",
+    stoneSlug: "diamond",
     title: "Geometric Circle Halo Two-Tone Pendant",
     subtitle: "AL1ZE-PD029 · 18K White & Yellow Gold · Dual Halos",
     categorySlug: "pendants",
@@ -2451,6 +2571,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "e38d1d07-550e-5f2c-aa8d-33d8c91f8532",
     slug: "linear-teardrop-solitaire-pendant-al1ze-pd030",
+    stoneSlug: "diamond",
     title: "Linear Teardrop Solitaire Pendant",
     subtitle: "AL1ZE-PD030 · 18K White Gold · Graduated Diamond Drop",
     categorySlug: "pendants",
@@ -2465,6 +2586,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "bccf77f8-90e7-53fe-886b-be271796ca95",
     slug: "architectural-diamond-drop-pendant-al1ze-pd037",
+    stoneSlug: "diamond",
     title: "Architectural Diamond Drop Pendant",
     subtitle: "AL1ZE-PD037 · 18K White Gold · Suspended Diamond Cluster",
     categorySlug: "pendants",
@@ -2479,6 +2601,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "f9788b6a-0e32-5bcf-886a-bb2ebc755bb9",
     slug: "midnight-onyx-floral-diamond-pendant-pd1264f",
+    stoneSlug: "diamond",
     title: "Midnight Onyx Floral Diamond Pendant",
     subtitle: "PD1264F · 18K Rose Gold · Black Onyx & Diamond Halo",
     categorySlug: "pendants",
@@ -2493,6 +2616,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "6fb934e2-427f-55f0-9c32-8d44e3d1f150",
     slug: "floating-blossom-diamond-pendant-pd1282f",
+    stoneSlug: "diamond",
     title: "Floating Blossom Diamond Pendant",
     subtitle: "PD1282F · 18K Rose Gold · Articulated Diamond Petals",
     categorySlug: "pendants",
@@ -2507,6 +2631,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "9001fe87-cd71-5be7-8de0-31d4d14f8b67",
     slug: "diamond-infinity-ribbon-pendant-pd-1302f",
+    stoneSlug: "diamond",
     title: "Diamond Infinity Ribbon Pendant",
     subtitle: "PD-1302F · 18K Rose Gold · Endless Loop Diamonds",
     categorySlug: "pendants",
@@ -2521,6 +2646,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "101470a6-6030-5127-80e8-aca77aa93514",
     slug: "royal-filigree-diamond-medallion-pd-1312f",
+    stoneSlug: "diamond",
     title: "Royal Filigree Diamond Medallion Pendant",
     subtitle: "PD-1312F · 18K Rose Gold · Intricate Lace Diamond Motif",
     categorySlug: "pendants",
@@ -2535,6 +2661,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "bc9f0398-bce1-5111-9281-0aa0fe880cef",
     slug: "tri-circle-interlocking-diamond-pendant-p-1803",
+    stoneSlug: "diamond",
     title: "Tri-Circle Interlocking Diamond Cluster Pendant",
     subtitle: "P-1803 · 18K Yellow Gold · Diamond Cluster Center",
     categorySlug: "pendants",
@@ -2549,6 +2676,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "b3117d55-8403-540d-84cf-eed51c800f39",
     slug: "solar-flare-diamond-halo-pendant-p-1806",
+    stoneSlug: "diamond",
     title: "Solar Flare Diamond Halo Pendant",
     subtitle: "P-1806 · 18K Yellow Gold · Radiating Diamond Corona",
     categorySlug: "pendants",
@@ -2563,6 +2691,7 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
   {
     id: "3777038c-bb05-5adb-8caf-218f12b2dbd2",
     slug: "fluted-diamond-dome-pendant-p-1818",
+    stoneSlug: "diamond",
     title: "Contemporary Fluted Diamond Dome Pendant",
     subtitle: "P-1818 · 18K Yellow Gold · Fluted Gold with Pavé Accents",
     categorySlug: "pendants",
@@ -2640,9 +2769,43 @@ export function buildStorefrontCard(
 // ── Fast Storefront Queries ───────────────────────────────────────────
 export function getStandaloneFeaturedProducts(
   marketCode: string,
-  limit = 4,
+  limit = 16,
 ): ListProductsResult {
-  const products = STANDALONE_PRODUCTS.slice(0, limit).map((p) => buildStorefrontCard(p, marketCode));
+  const FEATURED_SLUGS = [
+    "grand-imperial-diamond-suite-md-js-802",
+    "blooming-flower-diamond-ring-dds-rn-253",
+    "sapphire-blossom-sculpted-gold-bangle-101621",
+    "natural-opal-silver-bracelet-bl-1",
+    "cascading-chandelier-diamond-earrings-100103",
+    "leaf-solitaire-two-tone-diamond-pendant-al1ze-pd024",
+    "scalloped-pave-dome-ring-ruby-center-lr-267",
+    "royal-swan-crest-diamond-suite-md-js-799",
+    "amethyst-silver-bracelet-bl-2",
+    "beaded-halo-diamond-tennis-bracelet-gbr-004",
+    "circular-openwork-chandelier-earrings-100100",
+    "tri-circle-interlocking-diamond-pendant-p-1803",
+    "emerald-diamond-open-bypass-ring-101399",
+    "maharani-grand-diamond-suite-md-js-823",
+    "kyanite-silver-bracelet-bl-3",
+    "moonstone-silver-bracelet-bl-5",
+  ];
+
+  const featuredItems: StandaloneProductDefinition[] = [];
+  for (const slug of FEATURED_SLUGS) {
+    const p = PRODUCTS_BY_SLUG.get(slug);
+    if (p) featuredItems.push(p);
+  }
+
+  if (featuredItems.length < limit) {
+    for (const p of STANDALONE_PRODUCTS) {
+      if (!featuredItems.includes(p)) {
+        featuredItems.push(p);
+        if (featuredItems.length >= limit) break;
+      }
+    }
+  }
+
+  const products = featuredItems.slice(0, limit).map((p) => buildStorefrontCard(p, marketCode));
   return { products, totalCount: STANDALONE_PRODUCTS.length };
 }
 
@@ -2671,6 +2834,22 @@ export function getStandaloneCategoryProducts(
       return stoneObj
         ? stoneIdSet.has(stoneObj.id.toLowerCase()) || stoneIdSet.has(stoneObj.slug.toLowerCase())
         : false;
+    });
+  }
+
+  // Filter by material if requested
+  if (options?.filters && options.filters.materialIds && options.filters.materialIds.length > 0) {
+    const matSet = new Set(options.filters.materialIds.map((id) => id.toLowerCase()));
+    items = items.filter((p) => {
+      const mat = p.materialName.toLowerCase();
+      if (matSet.has("mat-18k-gold") && mat.includes("18k solid gold")) return true;
+      if (matSet.has("mat-18k-white") && mat.includes("18k white gold")) return true;
+      if (matSet.has("mat-18k-two-tone") && mat.includes("18k two-tone gold")) return true;
+      if (matSet.has("mat-925-silver") && (mat.includes("925") || mat.includes("silver"))) return true;
+      if (matSet.has("mat-14k-yellow") && mat.includes("14k yellow gold")) return true;
+      if (matSet.has("mat-14k-white") && mat.includes("14k white gold")) return true;
+      if (matSet.has("mat-14k-rose") && mat.includes("14k rose gold")) return true;
+      return false;
     });
   }
 
@@ -2717,7 +2896,11 @@ export function getStandaloneStoneProducts(
   },
 ): ListProductsResult {
   const norm = stoneSlugOrId.toLowerCase().replace(/^stone-/, "");
-  let items = PRODUCTS_BY_STONE.get(norm) ?? [];
+  const foundStone = STANDALONE_STONES.find(
+    (s) => s.id.toLowerCase() === stoneSlugOrId.toLowerCase() || s.slug.toLowerCase() === norm,
+  );
+  const targetSlug = foundStone ? foundStone.slug.toLowerCase() : norm;
+  let items = PRODUCTS_BY_STONE.get(targetSlug) ?? [];
   if (items.length === 0) {
     items = STANDALONE_PRODUCTS.filter((p) => p.stoneSlug);
   }
@@ -2785,7 +2968,10 @@ export function getStandalonePdpProduct(
     inventoryPolicy: "deny",
     ringSize: p.categorySlug === "rings" ? "7" : null,
     lengthMm: p.categorySlug === "chains" ? "450" : null,
-    grossWeightGrams: "4.50",
+    grossWeightGrams: (() => {
+      const match = p.subtitle.match(/(\d+(?:\.\d+)?)\s*g/i);
+      return match ? match[1] : "4.50";
+    })(),
     optionValues: [],
     price: {
       currencyCode,
@@ -2863,7 +3049,10 @@ export function getStandalonePdpProduct(
             name: stone.name,
             slug: stone.slug,
             isPrimary: true,
-            caratWeight: "2.80",
+            caratWeight: (() => {
+              const match = p.subtitle.match(/([A-Z]:\s*)?(\d+(?:\.\d+)?)\s*ct/i);
+              return match ? match[2] : "2.80";
+            })(),
             cut: "Atelier Faceted",
             stoneCount: 1,
           },
@@ -2879,7 +3068,14 @@ export function getStandalonePdpProduct(
     ],
     attributes: [
       { name: "Craftsmanship", value: "Jaipur In-House Handcrafted" },
-      { name: "Hallmark", value: "925 Anti-Tarnish Sterling Silver" },
+      {
+        name: "Hallmark",
+        value: p.materialName.toLowerCase().includes("18k")
+          ? "18K (750) BIS Hallmarked Solid Gold"
+          : p.materialName.toLowerCase().includes("14k")
+            ? "14K (585) Hallmarked Gold"
+            : "925 Anti-Tarnish Sterling Silver",
+      },
     ],
     options: [],
   };
@@ -2893,7 +3089,11 @@ export function getStandaloneStoneCategoryLinks(
   stoneIdOrSlug: string,
 ): StoneCategoryLink[] {
   const norm = stoneIdOrSlug.toLowerCase().replace(/^stone-/, "");
-  const matching = STANDALONE_PRODUCTS.filter((p) => p.stoneSlug?.toLowerCase() === norm);
+  const foundStone = STANDALONE_STONES.find(
+    (s) => s.id.toLowerCase() === stoneIdOrSlug.toLowerCase() || s.slug.toLowerCase() === norm,
+  );
+  const targetSlug = foundStone ? foundStone.slug.toLowerCase() : norm;
+  const matching = STANDALONE_PRODUCTS.filter((p) => p.stoneSlug?.toLowerCase() === targetSlug);
 
   const categories = new Set(matching.map((p) => p.categorySlug));
   return STANDALONE_CATEGORIES.filter((c) => categories.has(c.slug)).map((c) => ({

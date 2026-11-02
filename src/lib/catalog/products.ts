@@ -1007,6 +1007,10 @@ async function loadCategoryFilterOptionsFromDb() {
   return {
     stones: STANDALONE_STONES.map((s) => ({ id: s.id, name: s.name, slug: s.slug })),
     materials: [
+      { id: "mat-18k-gold", name: "18K Solid Gold", slug: "18k-solid-gold" },
+      { id: "mat-18k-white", name: "18K White Gold", slug: "18k-white-gold" },
+      { id: "mat-18k-two-tone", name: "18K Two-Tone Gold", slug: "18k-two-tone-gold" },
+      { id: "mat-925-silver", name: "925 Sterling Silver", slug: "925-sterling-silver" },
       { id: "mat-14k-yellow", name: "14K Yellow Gold", slug: "14k-yellow-gold" },
       { id: "mat-14k-white", name: "14K White Gold", slug: "14k-white-gold" },
       { id: "mat-14k-rose", name: "14K Rose Gold", slug: "14k-rose-gold" },
@@ -1126,7 +1130,9 @@ export async function searchStorefrontProducts(
     const slugMatch = p.slug.toLowerCase().includes(clean);
     const catMatch = p.categorySlug.toLowerCase().includes(clean);
     const stoneMatch = p.stoneSlug ? p.stoneSlug.toLowerCase().includes(clean) : false;
-    return titleMatch || slugMatch || catMatch || stoneMatch;
+    const materialMatch = p.materialName ? p.materialName.toLowerCase().includes(clean) : false;
+    const subtitleMatch = p.subtitle ? p.subtitle.toLowerCase().includes(clean) : false;
+    return titleMatch || slugMatch || catMatch || stoneMatch || materialMatch || subtitleMatch;
   });
 
   const cards: StorefrontCard[] = matched

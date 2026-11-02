@@ -142,6 +142,27 @@ export async function parseCatalogFilters(params: URLSearchParams): Promise<Pars
         attr_key: null,
         matched: s.slug,
       }));
+
+      const STANDALONE_MATERIALS = [
+        { id: "mat-18k-gold", name: "18K Solid Gold", slug: "18k-solid-gold" },
+        { id: "mat-18k-white", name: "18K White Gold", slug: "18k-white-gold" },
+        { id: "mat-18k-two-tone", name: "18K Two-Tone Gold", slug: "18k-two-tone-gold" },
+        { id: "mat-925-silver", name: "925 Sterling Silver", slug: "925-sterling-silver" },
+        { id: "mat-14k-yellow", name: "14K Yellow Gold", slug: "14k-yellow-gold" },
+        { id: "mat-14k-white", name: "14K White Gold", slug: "14k-white-gold" },
+        { id: "mat-14k-rose", name: "14K Rose Gold", slug: "14k-rose-gold" },
+      ];
+      const matchedMaterials = STANDALONE_MATERIALS.filter((m) =>
+        materialSlugs.map((slug) => slug.toLowerCase()).includes(m.slug.toLowerCase()),
+      );
+      const matRows = matchedMaterials.map((m) => ({
+        kind: "material",
+        id: m.id,
+        attribute_id: null,
+        attr_key: null,
+        matched: m.slug,
+      }));
+      rows = [...rows, ...matRows];
     } catch {
       rows = [];
     }
