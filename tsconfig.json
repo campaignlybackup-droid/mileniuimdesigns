@@ -43,6 +43,10 @@
   "exclude": [
     "node_modules",
     "src/generated",
+    "tests",
+    "tests/**/*",
+    "playwright.config.ts",
+    "vitest.config.mts",
     "tests/lint/boundaries.fixture"
   ]
 }
