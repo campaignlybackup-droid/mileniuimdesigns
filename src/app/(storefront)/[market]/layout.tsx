@@ -92,10 +92,11 @@ export default async function MarketLayout({
     { slug: "stones", label: "STONES", href: "/stones", rank: 5 },
     { slug: "rings", label: "RINGS", href: "/rings", rank: 6 },
     { slug: "jewellery-sets", label: "JEWELLERY SETS", href: "/jewellery-sets", rank: 7 },
-    { slug: "closeouts", label: "CLOSEOUTS", href: "/closeouts", rank: 8 },
-    { slug: "14k-gold", label: "14 CARAT GOLD", href: "/14k-gold", rank: 9 },
-    { slug: "lab-grown-diamonds", label: "LAB GROWN DIAMOND", href: "/lab-grown-diamonds", rank: 10 },
-    { slug: "chains", label: "CHAINS", href: "/chains", rank: 11 },
+    { slug: "cpx-folder", label: "CPX FOLDER", href: "/cpx-folder", rank: 8 },
+    { slug: "closeouts", label: "CLOSEOUTS", href: "/closeouts", rank: 9 },
+    { slug: "14k-gold", label: "14 CARAT GOLD", href: "/14k-gold", rank: 10 },
+    { slug: "lab-grown-diamonds", label: "LAB GROWN DIAMOND", href: "/lab-grown-diamonds", rank: 11 },
+    { slug: "chains", label: "CHAINS", href: "/chains", rank: 12 },
   ];
 
   const orderRank: Record<string, number> = {
@@ -106,10 +107,11 @@ export default async function MarketLayout({
     stones: 5,
     rings: 6,
     "jewellery-sets": 7,
-    closeouts: 8,
-    "14k-gold": 9,
-    "lab-grown-diamonds": 10,
-    chains: 11,
+    "cpx-folder": 8,
+    closeouts: 9,
+    "14k-gold": 10,
+    "lab-grown-diamonds": 11,
+    chains: 12,
   };
 
   const navMap = new Map<string, { label: string; href: string; rank: number }>();
@@ -161,6 +163,7 @@ export default async function MarketLayout({
         { label: "Earrings", href: `${prefix}/earrings` },
         { label: "Rings", href: `${prefix}/rings` },
         { label: "Jewellery Sets", href: `${prefix}/jewellery-sets` },
+        { label: "CPX Folder", href: `${prefix}/cpx-folder` },
         { label: "Chains", href: `${prefix}/chains` },
         { label: "14 Carat Gold", href: `${prefix}/14k-gold` },
         { label: "Lab Grown Diamond", href: `${prefix}/lab-grown-diamonds` },
@@ -169,6 +172,7 @@ export default async function MarketLayout({
     {
       heading: "EXPLORE",
       links: [
+        { label: "CPX Reference Vault", href: `${prefix}/cpx-folder` },
         { label: "Stones Explorer", href: `${prefix}/stones` },
         { label: "One of a Kind", href: `${prefix}/one-of-a-kind` },
         { label: "Closeouts", href: `${prefix}/closeouts` },

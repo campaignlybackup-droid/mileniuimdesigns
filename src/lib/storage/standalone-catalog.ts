@@ -59,6 +59,7 @@ export const STANDALONE_CATEGORIES = [
   { id: "01a0c549-2f34-752e-bef5-6cc41e51b8e0", slug: "14k-gold", name: "14 Carat Gold", rank: 8 },
   { id: "01a0c549-2f6a-709f-8866-f2182c0227c2", slug: "lab-grown-diamonds", name: "Lab Grown Diamond", rank: 9 },
   { id: "01a0c549-2f9b-7341-9cde-9a8b7c6d5e4f", slug: "jewellery-sets", name: "Jewellery Sets", rank: 10 },
+  { id: "01a0c549-2fce-7552-bf12-9cba8e7f1234", slug: "cpx-folder", name: "CPX Folder", rank: 8 },
 ] as const;
 
 export const STANDALONE_STONES: StoneRecord[] = [
@@ -373,6 +374,7 @@ export type StandaloneProductDefinition = {
   compareAtInrMinor?: bigint | null;
   primaryImage: string;
   alternateImage: string;
+  galleryImages?: string[];
   description: string;
 };
 
@@ -1934,8 +1936,13 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 98000n,
     priceInrMinor: 8100000n,
-    primaryImage: "/images/products/cpx/rings/101312.jpg",
-    alternateImage: "/images/products/cpx/rings/101312_b.jpg",
+    primaryImage: "/images/products/cpx/101312/angle_1.jpg",
+    alternateImage: "/images/products/cpx/101312/details.jpg",
+    galleryImages: [
+        "/images/products/cpx/101312/angle_1.jpg",
+        "/images/products/cpx/101312/angle_2.jpg",
+        "/images/products/cpx/101312/details.jpg"
+    ],
     description: "A sculpted blossom crafted in rose and yellow 18K gold with 7 brilliant-cut diamonds blooming at the crown of a bypass shank.",
   },
   {
@@ -1949,8 +1956,15 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 105000n,
     priceInrMinor: 8600000n,
-    primaryImage: "/images/products/cpx/rings/101313.jpg",
-    alternateImage: "/images/products/cpx/rings/101313_b.jpg",
+    primaryImage: "/images/products/cpx/101313/angle_1.jpg",
+    alternateImage: "/images/products/cpx/101313/details.jpg",
+    galleryImages: [
+        "/images/products/cpx/101313/angle_1.jpg",
+        "/images/products/cpx/101313/angle_2.jpg",
+        "/images/products/cpx/101313/angle_3.jpg",
+        "/images/products/cpx/101313/angle_4.jpg",
+        "/images/products/cpx/101313/details.jpg"
+    ],
     description: "Trio of hand-carved floral heads in multi-tone gold centered with 9 brilliant-cut diamonds across 4.3g of 18K gold.",
   },
   {
@@ -1964,8 +1978,19 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 240000n,
     priceInrMinor: 19800000n,
-    primaryImage: "/images/products/cpx/rings/101399.jpg",
-    alternateImage: "/images/products/cpx/rings/101399_b.jpg",
+    primaryImage: "/images/products/cpx/101399/angle_1.jpg",
+    alternateImage: "/images/products/cpx/101399/details.jpg",
+    galleryImages: [
+        "/images/products/cpx/101399/angle_1.jpg",
+        "/images/products/cpx/101399/angle_2.jpg",
+        "/images/products/cpx/101399/angle_3.jpg",
+        "/images/products/cpx/101399/angle_4.jpg",
+        "/images/products/cpx/101399/angle_5.jpg",
+        "/images/products/cpx/101399/angle_6.jpg",
+        "/images/products/cpx/101399/angle_7.jpg",
+        "/images/products/cpx/101399/angle_8.jpg",
+        "/images/products/cpx/101399/details.jpg"
+    ],
     description: "Striking modern wrap ring centering a princess-cut vibrant emerald paired with 52 round brilliant diamonds along an open bypass band.",
   },
   {
@@ -1979,8 +2004,19 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 165000n,
     priceInrMinor: 13600000n,
-    primaryImage: "/images/products/cpx/rings/101433.jpg",
-    alternateImage: "/images/products/cpx/rings/101433_b.jpg",
+    primaryImage: "/images/products/cpx/101433/angle_1.jpg",
+    alternateImage: "/images/products/cpx/101433/details.jpg",
+    galleryImages: [
+        "/images/products/cpx/101433/angle_1.jpg",
+        "/images/products/cpx/101433/angle_2.jpg",
+        "/images/products/cpx/101433/angle_3.jpg",
+        "/images/products/cpx/101433/angle_4.jpg",
+        "/images/products/cpx/101433/angle_5.jpg",
+        "/images/products/cpx/101433/angle_6.jpg",
+        "/images/products/cpx/101433/angle_7.jpg",
+        "/images/products/cpx/101433/angle_8.jpg",
+        "/images/products/cpx/101433/details.jpg"
+    ],
     description: "Generously proportioned cocktail dome ring with radiating fluted gold gadroons set with 54 sparkling pavé diamonds.",
   },
   {
@@ -1994,8 +2030,18 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 148000n,
     priceInrMinor: 12200000n,
-    primaryImage: "/images/products/cpx/rings/101437.jpg",
-    alternateImage: "/images/products/cpx/rings/101437_b.jpg",
+    primaryImage: "/images/products/cpx/101437/angle_1.jpg",
+    alternateImage: "/images/products/cpx/101437/details.jpg",
+    galleryImages: [
+        "/images/products/cpx/101437/angle_1.jpg",
+        "/images/products/cpx/101437/angle_2.jpg",
+        "/images/products/cpx/101437/angle_3.jpg",
+        "/images/products/cpx/101437/angle_4.jpg",
+        "/images/products/cpx/101437/angle_5.jpg",
+        "/images/products/cpx/101437/angle_6.jpg",
+        "/images/products/cpx/101437/angle_7.jpg",
+        "/images/products/cpx/101437/details.jpg"
+    ],
     description: "Overlapping ribbons of polished 18K yellow gold intertwined with ribbons of pavé diamonds creating an undulating crossover statement.",
   },
   {
@@ -2144,8 +2190,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 175000n,
     priceInrMinor: 14400000n,
-    primaryImage: "/images/products/cpx/rings/117432.jpg",
-    alternateImage: "/images/products/cpx/rings/117432.jpg",
+    primaryImage: "/images/products/cpx/117432/view_1.jpg",
+    alternateImage: "/images/products/cpx/117432/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/117432/view_1.jpg",
+        "/images/products/cpx/117432/view_2.jpg"
+    ],
     description: "Impressive wide multi-row band uniting polished white gold rails with diamond-encrusted rows for maximum scintillation.",
   },
   {
@@ -2534,8 +2584,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 88000n,
     priceInrMinor: 7200000n,
-    primaryImage: "/images/products/cpx/pendants/127685.jpg",
-    alternateImage: "/images/products/cpx/pendants/127685_b.jpg",
+    primaryImage: "/images/products/cpx/127685/view_1.jpg",
+    alternateImage: "/images/products/cpx/127685/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/127685/view_1.jpg",
+        "/images/products/cpx/127685/view_2.jpg"
+    ],
     description: "A sculpted white gold leaf with pavé diamonds suspending a free-floating rose gold bezel holding a brilliant-cut solitaire.",
   },
   {
@@ -2549,8 +2603,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 79000n,
     priceInrMinor: 6500000n,
-    primaryImage: "/images/products/cpx/pendants/127689.jpg",
-    alternateImage: "/images/products/cpx/pendants/127689_b.jpg",
+    primaryImage: "/images/products/cpx/127689/view_1.jpg",
+    alternateImage: "/images/products/cpx/127689/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/127689/view_1.jpg",
+        "/images/products/cpx/127689/view_2.jpg"
+    ],
     description: "Graceful spiraling ribbon of pavé diamonds curling around a suspended diamond droplet.",
   },
   {
@@ -2564,8 +2622,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 92000n,
     priceInrMinor: 7600000n,
-    primaryImage: "/images/products/cpx/pendants/127690.jpg",
-    alternateImage: "/images/products/cpx/pendants/127690_b.jpg",
+    primaryImage: "/images/products/cpx/127690/view_1.jpg",
+    alternateImage: "/images/products/cpx/127690/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/127690/view_1.jpg",
+        "/images/products/cpx/127690/view_2.jpg"
+    ],
     description: "Concentric circles of yellow and white gold framing a brilliant cluster of diamonds with fine rope texture.",
   },
   {
@@ -2579,8 +2641,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 82000n,
     priceInrMinor: 6700000n,
-    primaryImage: "/images/products/cpx/pendants/127691.jpg",
-    alternateImage: "/images/products/cpx/pendants/127691_b.jpg",
+    primaryImage: "/images/products/cpx/127691/view_1.jpg",
+    alternateImage: "/images/products/cpx/127691/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/127691/view_1.jpg",
+        "/images/products/cpx/127691/view_2.jpg"
+    ],
     description: "Minimalist vertical drop pendant featuring graduated diamonds leading to an articulated teardrop charm.",
   },
   {
@@ -2594,8 +2660,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 86000n,
     priceInrMinor: 7100000n,
-    primaryImage: "/images/products/cpx/pendants/127698.jpg",
-    alternateImage: "/images/products/cpx/pendants/127698_b.jpg",
+    primaryImage: "/images/products/cpx/127698/view_1.jpg",
+    alternateImage: "/images/products/cpx/127698/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/127698/view_1.jpg",
+        "/images/products/cpx/127698/view_2.jpg"
+    ],
     description: "Openwork geometric silhouette featuring clean lines and a floating brilliant-cut diamond cluster.",
   },
   {
@@ -2609,8 +2679,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 145000n,
     priceInrMinor: 11900000n,
-    primaryImage: "/images/products/cpx/pendants/141961.jpg",
-    alternateImage: "/images/products/cpx/pendants/141961_b.jpg",
+    primaryImage: "/images/products/cpx/141961/view_1.jpg",
+    alternateImage: "/images/products/cpx/141961/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/141961/view_1.jpg",
+        "/images/products/cpx/141961/view_2.jpg"
+    ],
     description: "Dramatic deep black onyx disc framed by an 18K rose gold and diamond floral wreath with center solitaire.",
   },
   {
@@ -2624,8 +2698,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 95000n,
     priceInrMinor: 7800000n,
-    primaryImage: "/images/products/cpx/pendants/141965.jpg",
-    alternateImage: "/images/products/cpx/pendants/141965_b.jpg",
+    primaryImage: "/images/products/cpx/141965/view_1.jpg",
+    alternateImage: "/images/products/cpx/141965/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/141965/view_1.jpg",
+        "/images/products/cpx/141965/view_2.jpg"
+    ],
     description: "Delicate sculpted petals of warm rose gold set with diamonds catching every flicker of light.",
   },
   {
@@ -2639,8 +2717,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 105000n,
     priceInrMinor: 8600000n,
-    primaryImage: "/images/products/cpx/pendants/141966.jpg",
-    alternateImage: "/images/products/cpx/pendants/141966_b.jpg",
+    primaryImage: "/images/products/cpx/141966/view_1.jpg",
+    alternateImage: "/images/products/cpx/141966/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/141966/view_1.jpg",
+        "/images/products/cpx/141966/view_2.jpg"
+    ],
     description: "Figure-eight infinity motif encrusted with pavé diamonds across rose gold, symbolizing boundless devotion.",
   },
   {
@@ -2684,8 +2766,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 128000n,
     priceInrMinor: 10500000n,
-    primaryImage: "/images/products/cpx/pendants/142011.jpg",
-    alternateImage: "/images/products/cpx/pendants/142011_b.jpg",
+    primaryImage: "/images/products/cpx/142011/view_1.jpg",
+    alternateImage: "/images/products/cpx/142011/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/142011/view_1.jpg",
+        "/images/products/cpx/142011/view_2.jpg"
+    ],
     description: "Radiating sunburst corona of diamonds encircling a central solitaire in warm 18K yellow gold.",
   },
   {
@@ -2699,8 +2785,12 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 135000n,
     priceInrMinor: 11100000n,
-    primaryImage: "/images/products/cpx/pendants/142023.jpg",
-    alternateImage: "/images/products/cpx/pendants/142023_b.jpg",
+    primaryImage: "/images/products/cpx/142023/view_1.jpg",
+    alternateImage: "/images/products/cpx/142023/view_2.jpg",
+    galleryImages: [
+        "/images/products/cpx/142023/view_1.jpg",
+        "/images/products/cpx/142023/view_2.jpg"
+    ],
     description: "Tactile fluted gold pendant with central channel-set diamond ribbons and articulated bail.",
   },
 ];
@@ -2716,6 +2806,14 @@ for (const p of STANDALONE_PRODUCTS) {
   const catList = PRODUCTS_BY_CATEGORY.get(p.categorySlug.toLowerCase()) || [];
   catList.push(p);
   PRODUCTS_BY_CATEGORY.set(p.categorySlug.toLowerCase(), catList);
+
+  if (p.primaryImage.includes("/images/products/cpx/")) {
+    const cpxList = PRODUCTS_BY_CATEGORY.get("cpx-folder") || [];
+    cpxList.push(p);
+    PRODUCTS_BY_CATEGORY.set("cpx-folder", cpxList);
+    PRODUCTS_BY_CATEGORY.set("cpx", cpxList);
+    PRODUCTS_BY_CATEGORY.set("01a0c549-2fce-7552-bf12-9cba8e7f1234", cpxList);
+  }
 
   if (p.stoneSlug) {
     const stoneList = PRODUCTS_BY_STONE.get(p.stoneSlug.toLowerCase()) || [];
@@ -2981,32 +3079,22 @@ export function getStandalonePdpProduct(
     },
   };
 
-  const media: PdpMediaItem[] = [
-    {
-      id: `media-${p.id}-1`,
-      mediaId: `m-${p.id}-1`,
-      publicId: p.primaryImage,
-      format: "jpg",
-      altText: p.title,
-      width: 800,
-      height: 1000,
-      role: "hero",
-      position: 1,
-      variantId: null,
-    },
-    {
-      id: `media-${p.id}-2`,
-      mediaId: `m-${p.id}-2`,
-      publicId: p.alternateImage,
-      format: "jpg",
-      altText: `${p.title} detail view`,
-      width: 800,
-      height: 1000,
-      role: "gallery",
-      position: 2,
-      variantId: null,
-    },
-  ];
+  const allImages = p.galleryImages && p.galleryImages.length > 0
+    ? p.galleryImages
+    : [p.primaryImage, p.alternateImage];
+
+  const media: PdpMediaItem[] = allImages.map((img, idx) => ({
+    id: `media-${p.id}-${idx + 1}`,
+    mediaId: `m-${p.id}-${idx + 1}`,
+    publicId: img,
+    format: "jpg",
+    altText: idx === 0 ? p.title : `${p.title} angle ${idx + 1}`,
+    width: 800,
+    height: 1000,
+    role: idx === 0 ? "hero" : "gallery",
+    position: idx + 1,
+    variantId: null,
+  }));
 
   return {
     id: p.id,

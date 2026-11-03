@@ -82,6 +82,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/cpx",
+        destination: "/cpx-folder",
+        permanent: true,
+      },
+      {
+        source: "/:market/cpx",
+        destination: "/:market/cpx-folder",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

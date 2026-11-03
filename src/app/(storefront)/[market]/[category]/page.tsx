@@ -111,6 +111,7 @@ export default async function CategoryPage({
   const totalPages = Math.ceil(totalCount / pageSize);
   const prefix = resolvedMarket.code.toLowerCase() === "us" ? "" : `/${resolvedMarket.code.toLowerCase()}`;
   const isOneOfAKind = cat.slug === "one-of-a-kind";
+  const isCpxFolder = cat.slug === "cpx-folder" || cat.slug === "cpx";
 
   // Build facet options for sidebar
   const filterGroups: FilterGroup[] = [];
@@ -342,6 +343,97 @@ export default async function CategoryPage({
                   </Link>
                 );
               })}
+            </div>
+          </header>
+        ) : isCpxFolder ? (
+          <header
+            style={{
+              padding: "clamp(24px, 3.5vw, 44px) clamp(20px, 3vw, 36px)",
+              background: "linear-gradient(180deg, #182c23 0%, #12211a 100%)",
+              border: "1px solid rgba(168, 132, 72, 0.35)",
+              borderRadius: 8,
+              marginTop: "var(--md-space-4, 16px)",
+              marginBottom: "var(--md-space-8, 32px)",
+              color: "#fcfaf5",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ maxWidth: 840 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "var(--md-gold-antique, #d4af37)",
+                    fontWeight: 700,
+                    fontFamily: "var(--md-font-crest), Georgia, serif",
+                  }}
+                >
+                  ATELIER REFERENCE ARCHIVE · CPX BESPOKE VAULT
+                </span>
+                <span
+                  style={{
+                    padding: "2px 8px",
+                    borderRadius: 3,
+                    background: "#a88448",
+                    color: "#ffffff",
+                    fontSize: "0.65rem",
+                    letterSpacing: "0.1em",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Customer Reference
+                </span>
+              </div>
+
+              <h1
+                style={{
+                  margin: "0 0 12px 0",
+                  fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)",
+                  fontFamily: "var(--md-font-display)",
+                  fontWeight: 400,
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.1,
+                  color: "#ffffff",
+                }}
+              >
+                CPX Reference Folder
+              </h1>
+
+              <p
+                style={{
+                  margin: "0 0 20px 0",
+                  fontSize: "clamp(0.95rem, 1.2vw, 1.05rem)",
+                  lineHeight: 1.6,
+                  color: "#d1cec7",
+                  maxWidth: 680,
+                }}
+              >
+                Archival bench blueprints, multi-angle technical CAD renders, and master reference creations for bespoke customer commissions and atelier consultations.
+              </p>
+
+              {/* Authenticity Pillars */}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "clamp(12px, 2vw, 24px)",
+                  paddingTop: 14,
+                  borderTop: "1px solid rgba(168, 132, 72, 0.35)",
+                  fontSize: "0.8rem",
+                  color: "#e6e2d8",
+                  fontWeight: 500,
+                  letterSpacing: "0.03em",
+                }}
+              >
+                <span>✦ Multi-Angle CAD Perspectives</span>
+                <span>✦ Comprehensive Technical Specifications</span>
+                <span>✦ 18K Solid Gold & Fine Diamonds</span>
+                <span>✦ Custom Bench Commissioning</span>
+              </div>
             </div>
           </header>
         ) : (
