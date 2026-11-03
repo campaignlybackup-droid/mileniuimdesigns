@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 import path from "path";
 
+// Cap max build workers to avoid exhausting OS thread/PID limits (cgroups os error 11) on large multi-core CI runners
+if (!process.env.NEXT_PRIVATE_MAX_WORKERS) {
+  process.env.NEXT_PRIVATE_MAX_WORKERS = "4";
+}
+
 const nextConfig: NextConfig = {
   output: "standalone",
   compress: true,
@@ -8,6 +13,7 @@ const nextConfig: NextConfig = {
   turbopack: {},
   productionBrowserSourceMaps: false,
   experimental: {
+    cpus: 4,
     optimizePackageImports: [
       "lucide-react",
       "date-fns",

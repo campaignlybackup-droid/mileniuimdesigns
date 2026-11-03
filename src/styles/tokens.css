@@ -67,7 +67,7 @@
   /* ── Typography ──────────────────────────────────────────────────────────────────── */
   --md-font-display: var(--md-font-display), "Bodoni Moda", "Didot", Georgia, serif;
   --md-font-accent: var(--md-font-accent), "Italiana", Georgia, serif;
-  --md-font-crest: var(--md-font-crest), "Cinzel", Georgia, serif;
+  --md-font-crest: "Cinzel", Georgia, serif;
   --md-font-sans: var(--md-font-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 
   --md-t-hero: clamp(2.75rem, 7vw, 7rem);

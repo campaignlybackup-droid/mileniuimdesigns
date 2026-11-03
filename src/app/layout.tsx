@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Italiana, Cinzel, Plus_Jakarta_Sans } from "next/font/google";
+import { Bodoni_Moda, Italiana, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -29,17 +29,6 @@ const italiana = Italiana({
   variable: "--md-font-accent",
   subsets: ["latin"],
   weight: ["400"],
-  display: "swap",
-});
-
-/**
- * Imperial Crest & Hallmarking Font — Cinzel.
- * Used for royal hallmarks, archival dates, and atelier seals.
- */
-const cinzel = Cinzel({
-  variable: "--md-font-crest",
-  subsets: ["latin"],
-  weight: ["400", "600"],
   display: "swap",
 });
 
@@ -129,7 +118,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bodoni.variable} ${italiana.variable} ${cinzel.variable} ${sans.variable} h-full antialiased`}
+      className={`${bodoni.variable} ${italiana.variable} ${sans.variable} h-full antialiased`}
     >
       <head>
         {/* Preconnect to media CDN */}
