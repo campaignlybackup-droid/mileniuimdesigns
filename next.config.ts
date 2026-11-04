@@ -91,13 +91,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/cpx",
-        destination: "/cpx-folder",
+        source: "/cpx-folder",
+        destination: "/cpx",
         permanent: true,
       },
       {
-        source: "/:market/cpx",
-        destination: "/:market/cpx-folder",
+        source: "/:market/cpx-folder",
+        destination: "/:market/cpx",
         permanent: true,
       },
     ];

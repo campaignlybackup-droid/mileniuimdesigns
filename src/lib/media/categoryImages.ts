@@ -56,14 +56,14 @@ export const CATEGORY_IMAGE_MAP: Record<string, { hero: string; product1: string
     product2: "https://res.cloudinary.com/gm6dexkj/image/upload/w_640,c_fill,q_auto,f_auto/v1/md_catalog/bracelets/bl_1_a.jpg",
   },
   "cpx-folder": {
-    hero: "/images/products/cpx/jewellery-sets/100802.jpg",
-    product1: "/images/products/cpx/101399/angle_1.jpg",
-    product2: "/images/products/cpx/bracelets/101624.jpg",
+    hero: "/images/products/cpx/100802/primary.jpg",
+    product1: "/images/products/cpx/101399/primary.jpg",
+    product2: "/images/products/cpx/101624/primary.jpg",
   },
   cpx: {
-    hero: "/images/products/cpx/jewellery-sets/100802.jpg",
-    product1: "/images/products/cpx/101399/angle_1.jpg",
-    product2: "/images/products/cpx/bracelets/101624.jpg",
+    hero: "/images/products/cpx/100802/primary.jpg",
+    product1: "/images/products/cpx/101399/primary.jpg",
+    product2: "/images/products/cpx/101624/primary.jpg",
   },
 };
 

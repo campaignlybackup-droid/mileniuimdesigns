@@ -829,6 +829,21 @@ export async function resolveCuratedFacet(
 }
 
 async function loadCategoryBySlug(slug: string) {
+  const norm = slug.toLowerCase().trim();
+  if (norm === "cpx" || norm === "cpx-folder") {
+    const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
+    const found = STANDALONE_CATEGORIES.find((c) => (c.slug as string) === "cpx" || (c.slug as string) === "cpx-folder");
+    if (found) {
+      return {
+        id: found.id,
+        slug: "cpx",
+        name: found.name,
+        description: null,
+        parentId: null,
+        rank: found.rank,
+      };
+    }
+  }
   try {
     const cat = await resolveCategoryBySlug(slug, { client: db });
     if (cat) return cat;
@@ -836,7 +851,7 @@ async function loadCategoryBySlug(slug: string) {
     // Database unconfigured / offline on host storage
   }
   const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
-  const found = STANDALONE_CATEGORIES.find((c) => c.slug.toLowerCase() === slug.toLowerCase());
+  const found = STANDALONE_CATEGORIES.find((c) => c.slug.toLowerCase() === norm);
   if (!found) return null;
   return {
     id: found.id,
@@ -860,18 +875,31 @@ export const getStorefrontCategory = cache(async (slug: string) => {
 });
 
 async function loadPublishedCategories() {
+  const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
+  let categories: { id: string; name: string; slug: string }[] = [];
   try {
     const rows = await db.category.findMany({
       where: { deletedAt: null, isPublished: true },
       select: { id: true, name: true, slug: true },
       orderBy: { rank: "asc" },
     });
-    if (rows && rows.length > 0) return rows;
+    if (rows && rows.length > 0) {
+      categories = [...rows];
+    }
   } catch {
     // Database unconfigured / offline on host storage
   }
-  const { STANDALONE_CATEGORIES } = await import("@/lib/storage/standalone-catalog");
-  return STANDALONE_CATEGORIES.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
+  if (categories.length === 0) {
+    return STANDALONE_CATEGORIES.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
+  }
+  // Ensure CPX category is present in published list
+  if (!categories.some((c) => c.slug === "cpx" || c.slug === "cpx-folder")) {
+    const cpxCat = STANDALONE_CATEGORIES.find((c) => (c.slug as string) === "cpx" || (c.slug as string) === "cpx-folder");
+    if (cpxCat) {
+      categories.push({ id: cpxCat.id, name: cpxCat.name, slug: cpxCat.slug });
+    }
+  }
+  return categories;
 }
 
 export const listPublishedCategories = unstable_cache(
@@ -892,7 +920,7 @@ export async function listStorefrontCategoryProducts(
 ) {
   try {
     const res = await listCategoryProducts(categoryId, marketCode, options, { client: db });
-    if (res) return res;
+    if (res && res.products.length > 0) return res;
   } catch {
     // Database unconfigured / offline on host storage
   }

@@ -92,7 +92,7 @@ export default async function MarketLayout({
     { slug: "stones", label: "STONES", href: "/stones", rank: 5 },
     { slug: "rings", label: "RINGS", href: "/rings", rank: 6 },
     { slug: "jewellery-sets", label: "JEWELLERY SETS", href: "/jewellery-sets", rank: 7 },
-    { slug: "cpx-folder", label: "CPX FOLDER", href: "/cpx-folder", rank: 8 },
+    { slug: "cpx", label: "CPX", href: "/cpx", rank: 8 },
     { slug: "closeouts", label: "CLOSEOUTS", href: "/closeouts", rank: 9 },
     { slug: "14k-gold", label: "14 CARAT GOLD", href: "/14k-gold", rank: 10 },
     { slug: "lab-grown-diamonds", label: "LAB GROWN DIAMOND", href: "/lab-grown-diamonds", rank: 11 },
@@ -107,6 +107,7 @@ export default async function MarketLayout({
     stones: 5,
     rings: 6,
     "jewellery-sets": 7,
+    cpx: 8,
     "cpx-folder": 8,
     closeouts: 9,
     "14k-gold": 10,
@@ -172,7 +173,7 @@ export default async function MarketLayout({
     {
       heading: "EXPLORE",
       links: [
-        { label: "CPX Reference Vault", href: `${prefix}/cpx-folder` },
+        { label: "CPX", href: `${prefix}/cpx` },
         { label: "Stones Explorer", href: `${prefix}/stones` },
         { label: "One of a Kind", href: `${prefix}/one-of-a-kind` },
         { label: "Closeouts", href: `${prefix}/closeouts` },

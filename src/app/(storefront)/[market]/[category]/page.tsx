@@ -400,7 +400,7 @@ export default async function CategoryPage({
                   color: "#ffffff",
                 }}
               >
-                CPX Reference Folder
+                CPX
               </h1>
 
               <p

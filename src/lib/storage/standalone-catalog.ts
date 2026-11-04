@@ -59,7 +59,7 @@ export const STANDALONE_CATEGORIES = [
   { id: "01a0c549-2f34-752e-bef5-6cc41e51b8e0", slug: "14k-gold", name: "14 Carat Gold", rank: 8 },
   { id: "01a0c549-2f6a-709f-8866-f2182c0227c2", slug: "lab-grown-diamonds", name: "Lab Grown Diamond", rank: 9 },
   { id: "01a0c549-2f9b-7341-9cde-9a8b7c6d5e4f", slug: "jewellery-sets", name: "Jewellery Sets", rank: 10 },
-  { id: "01a0c549-2fce-7552-bf12-9cba8e7f1234", slug: "cpx-folder", name: "CPX Folder", rank: 8 },
+  { id: "01a0c549-2fce-7552-bf12-9cba8e7f1234", slug: "cpx", name: "CPX", rank: 8 },
 ] as const;
 
 export const STANDALONE_STONES: StoneRecord[] = [
@@ -1621,8 +1621,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 385000n,
     priceInrMinor: 31500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100769.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100769_spec.jpg",
+    primaryImage: "/images/products/cpx/100769/primary.jpg",
+    alternateImage: "/images/products/cpx/100769/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100769/angle_1.jpg"
+    ],
     description: "Handcrafted by master bench jewelers in our Jaipur atelier, this sovereign collarette features intricate filigree goldwork culminating in a dramatic teardrop pendant centered with a radiant pear-cut diamond.",
   },
   {
@@ -1636,8 +1639,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 495000n,
     priceInrMinor: 41000000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100771.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100771_spec.jpg",
+    primaryImage: "/images/products/cpx/100771/primary.jpg",
+    alternateImage: "/images/products/cpx/100771/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100771/angle_1.jpg"
+    ],
     description: "A regal Jaipur bridal suite comprising an articulated necklace of graduated diamond tear loops and matching drop earrings, totaling 2.40 carats of handset brilliant-cut diamonds across 26.0 grams of solid 18K gold.",
   },
   {
@@ -1651,8 +1657,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 580000n,
     priceInrMinor: 47500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100775.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100775_spec.jpg",
+    primaryImage: "/images/products/cpx/100775/primary.jpg",
+    alternateImage: "/images/products/cpx/100775/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100775/angle_1.jpg"
+    ],
     description: "Inspired by royal Mughal architectural arabesques, this grand ceremonial suite unites an opulent diamond-encrusted scrollwork bib necklace with dramatic matching chandelier earrings set with 3.00 carats of natural diamonds.",
   },
   {
@@ -1666,8 +1675,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 720000n,
     priceInrMinor: 59500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100796.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100796_spec.jpg",
+    primaryImage: "/images/products/cpx/100796/primary.jpg",
+    alternateImage: "/images/products/cpx/100796/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100796/angle_1.jpg"
+    ],
     description: "A symphony of botanical brilliance featuring undulating solar floral motifs prong and pavé set with 348 diamonds totaling 3.89 carats across 39.3 grams of solid 18K gold.",
   },
   {
@@ -1681,8 +1693,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 660000n,
     priceInrMinor: 54500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100799.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100799_spec.jpg",
+    primaryImage: "/images/products/cpx/100799/primary.jpg",
+    alternateImage: "/images/products/cpx/100799/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100799/angle_1.jpg"
+    ],
     description: "Sculpted with gracefully interlocking swan crest motifs in warm 18K gold, set with 269 brilliant diamonds embodying Jaipur courtly romance and timeless grace.",
   },
   {
@@ -1696,8 +1711,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 1250000n,
     priceInrMinor: 102500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100802.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100802_spec.jpg",
+    primaryImage: "/images/products/cpx/100802/primary.jpg",
+    alternateImage: "/images/products/cpx/100802/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100802/angle_1.jpg"
+    ],
     description: "The crowning jewel of the Millennium Designs high jewelry collection. Featuring an expansive feathered collarette cascade with a detachable drop pendant and matching chandelier earrings, set with 686 diamonds totaling 7.17 carats.",
   },
   {
@@ -1711,8 +1729,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 485000n,
     priceInrMinor: 39500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100804.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100804_spec.jpg",
+    primaryImage: "/images/products/cpx/100804/primary.jpg",
+    alternateImage: "/images/products/cpx/100804/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100804/angle_1.jpg"
+    ],
     description: "Architectural chevron arcs of 18K gold suspended with graduated diamond clusters, harmonized with matching minimalist stud earrings for a modern royal black-tie aesthetic.",
   },
   {
@@ -1726,8 +1747,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 395000n,
     priceInrMinor: 32500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100820.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100820_spec.jpg",
+    primaryImage: "/images/products/cpx/100820/primary.jpg",
+    alternateImage: "/images/products/cpx/100820/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100820/angle_1.jpg"
+    ],
     description: "Delicate hand-formed four-petal floral tendrils curving gracefully around the collarbone, complemented by matching blossom earrings set with 188 round diamonds.",
   },
   {
@@ -1741,8 +1765,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 790000n,
     priceInrMinor: 65000000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100821.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100821_spec.jpg",
+    primaryImage: "/images/products/cpx/100821/primary.jpg",
+    alternateImage: "/images/products/cpx/100821/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100821/angle_1.jpg"
+    ],
     description: "An intoxicating cascade of articulated diamond navette teardrops suspended in graduating tiers, set with 452 brilliant diamonds totaling 4.30 carats.",
   },
   {
@@ -1756,8 +1783,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 880000n,
     priceInrMinor: 72500000n,
-    primaryImage: "/images/products/cpx/jewellery-sets/100823.jpg",
-    alternateImage: "/images/products/cpx/jewellery-sets/100823_spec.jpg",
+    primaryImage: "/images/products/cpx/100823/primary.jpg",
+    alternateImage: "/images/products/cpx/100823/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100823/angle_1.jpg"
+    ],
     description: "Sovereign Jaipur court splendour rendered in 18K gold, showcasing undulating leaf garlands and a majestic multi-tiered chandelier pendant set with 447 brilliant diamonds.",
   },
   {
@@ -1771,8 +1801,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 85000n,
     priceInrMinor: 6900000n,
-    primaryImage: "/images/products/cpx/earrings/100096.jpg",
-    alternateImage: "/images/products/cpx/earrings/100096_spec.jpg",
+    primaryImage: "/images/products/cpx/100096/primary.jpg",
+    alternateImage: "/images/products/cpx/100096/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100096/angle_1.jpg"
+    ],
     description: "Exquisite openwork filigree teardrops articulated in warm 18K gold, encrusted with 0.258 ct of pavé diamonds handcrafted by our Jaipur artisans.",
   },
   {
@@ -1786,8 +1819,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 115000n,
     priceInrMinor: 9400000n,
-    primaryImage: "/images/products/cpx/earrings/100100.jpg",
-    alternateImage: "/images/products/cpx/earrings/100100_spec.jpg",
+    primaryImage: "/images/products/cpx/100100/primary.jpg",
+    alternateImage: "/images/products/cpx/100100/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100100/angle_1.jpg"
+    ],
     description: "Concentric circular medallions adorned with delicate diamond borders and an inner dangling diamond drop.",
   },
   {
@@ -1801,8 +1837,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 320000n,
     priceInrMinor: 26500000n,
-    primaryImage: "/images/products/cpx/earrings/100101.jpg",
-    alternateImage: "/images/products/cpx/earrings/100101_spec.jpg",
+    primaryImage: "/images/products/cpx/100101/primary.jpg",
+    alternateImage: "/images/products/cpx/100101/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100101/angle_1.jpg"
+    ],
     description: "Substantial 15g 18K gold chandelier earrings featuring a lavish lattice of pavé diamonds totaling 2.0 carats, evoking Jaipur royal court evenings.",
   },
   {
@@ -1816,8 +1855,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 78000n,
     priceInrMinor: 6400000n,
-    primaryImage: "/images/products/cpx/earrings/100102.jpg",
-    alternateImage: "/images/products/cpx/earrings/100102_spec.jpg",
+    primaryImage: "/images/products/cpx/100102/primary.jpg",
+    alternateImage: "/images/products/cpx/100102/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100102/angle_1.jpg"
+    ],
     description: "Sleek architectural golden arcs with sparkling round brilliant diamond accents for effortless everyday elegance.",
   },
   {
@@ -1831,8 +1873,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 360000n,
     priceInrMinor: 29500000n,
-    primaryImage: "/images/products/cpx/earrings/100103.jpg",
-    alternateImage: "/images/products/cpx/earrings/100103_spec.jpg",
+    primaryImage: "/images/products/cpx/100103/primary.jpg",
+    alternateImage: "/images/products/cpx/100103/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100103/angle_1.jpg"
+    ],
     description: "Magnificent waterfall tiers of diamonds totaling 2.468 carats suspended in hand-cast 18K gold with fluid movement.",
   },
   {
@@ -1846,8 +1891,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 185000n,
     priceInrMinor: 15200000n,
-    primaryImage: "/images/products/cpx/earrings/100107.jpg",
-    alternateImage: "/images/products/cpx/earrings/100107_spec.jpg",
+    primaryImage: "/images/products/cpx/100107/primary.jpg",
+    alternateImage: "/images/products/cpx/100107/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100107/angle_1.jpg"
+    ],
     description: "Intricate jali latticework chandelier earrings studded with 1.056 ct of diamonds, honoring timeless Rajasthan palace architecture.",
   },
   {
@@ -1861,8 +1909,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 195000n,
     priceInrMinor: 16000000n,
-    primaryImage: "/images/products/cpx/earrings/100111.jpg",
-    alternateImage: "/images/products/cpx/earrings/100111_spec.jpg",
+    primaryImage: "/images/products/cpx/100111/primary.jpg",
+    alternateImage: "/images/products/cpx/100111/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100111/angle_1.jpg"
+    ],
     description: "Elongated 41.2mm drops set with 132 diamonds totaling 1.184 carats in 18K gold, designed to elongate the neckline.",
   },
   {
@@ -1876,8 +1927,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 245000n,
     priceInrMinor: 20200000n,
-    primaryImage: "/images/products/cpx/earrings/100114.jpg",
-    alternateImage: "/images/products/cpx/earrings/100114_spec.jpg",
+    primaryImage: "/images/products/cpx/100114/primary.jpg",
+    alternateImage: "/images/products/cpx/100114/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100114/angle_1.jpg"
+    ],
     description: "Spectacular 40mm royal chandelier earrings set with 160 diamonds (1.526 ct) across 11.2g of solid 18K gold.",
   },
   {
@@ -1891,8 +1945,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 72000n,
     priceInrMinor: 5900000n,
-    primaryImage: "/images/products/cpx/earrings/100131.jpg",
-    alternateImage: "/images/products/cpx/earrings/100131_spec.jpg",
+    primaryImage: "/images/products/cpx/100131/primary.jpg",
+    alternateImage: "/images/products/cpx/100131/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100131/angle_1.jpg"
+    ],
     description: "Petite 12.6mm teardrop earrings featuring 26 round diamonds in 18K gold, ideal for refined daily luxury.",
   },
   {
@@ -1906,8 +1963,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 165000n,
     priceInrMinor: 13500000n,
-    primaryImage: "/images/products/cpx/earrings/100135.jpg",
-    alternateImage: "/images/products/cpx/earrings/100135_spec.jpg",
+    primaryImage: "/images/products/cpx/100135/primary.jpg",
+    alternateImage: "/images/products/cpx/100135/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100135/angle_1.jpg"
+    ],
     description: "Classic 15mm round halo earrings boasting 62 diamonds totaling 1.06 carats surrounding a luminous center.",
   },
   {
@@ -1921,8 +1981,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 145000n,
     priceInrMinor: 11900000n,
-    primaryImage: "/images/products/cpx/earrings/100136.jpg",
-    alternateImage: "/images/products/cpx/earrings/100136_spec.jpg",
+    primaryImage: "/images/products/cpx/100136/primary.jpg",
+    alternateImage: "/images/products/cpx/100136/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/100136/angle_1.jpg"
+    ],
     description: "19.3mm sculpted gold dome earrings encrusted with 26 pavé diamonds in 5.8g of 18K solid gold.",
   },
   {
@@ -1936,12 +1999,14 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 98000n,
     priceInrMinor: 8100000n,
-    primaryImage: "/images/products/cpx/101312/angle_1.jpg",
-    alternateImage: "/images/products/cpx/101312/details.jpg",
+    primaryImage: "/images/products/cpx/101312/primary.jpg",
+    alternateImage: "/images/products/cpx/101312/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/101312/angle_1.jpg",
-        "/images/products/cpx/101312/angle_2.jpg",
-        "/images/products/cpx/101312/details.jpg"
+      "/images/products/cpx/101312/angle_1.jpg",
+      "/images/products/cpx/101312/angle_2.jpg",
+      "/images/products/cpx/101312/angle_3.jpg",
+      "/images/products/cpx/101312/angle_4.jpg",
+      "/images/products/cpx/101312/angle_5.jpg"
     ],
     description: "A sculpted blossom crafted in rose and yellow 18K gold with 7 brilliant-cut diamonds blooming at the crown of a bypass shank.",
   },
@@ -1956,14 +2021,18 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 105000n,
     priceInrMinor: 8600000n,
-    primaryImage: "/images/products/cpx/101313/angle_1.jpg",
-    alternateImage: "/images/products/cpx/101313/details.jpg",
+    primaryImage: "/images/products/cpx/101313/primary.jpg",
+    alternateImage: "/images/products/cpx/101313/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/101313/angle_1.jpg",
-        "/images/products/cpx/101313/angle_2.jpg",
-        "/images/products/cpx/101313/angle_3.jpg",
-        "/images/products/cpx/101313/angle_4.jpg",
-        "/images/products/cpx/101313/details.jpg"
+      "/images/products/cpx/101313/angle_1.jpg",
+      "/images/products/cpx/101313/angle_2.jpg",
+      "/images/products/cpx/101313/angle_3.jpg",
+      "/images/products/cpx/101313/angle_4.jpg",
+      "/images/products/cpx/101313/angle_5.jpg",
+      "/images/products/cpx/101313/angle_6.jpg",
+      "/images/products/cpx/101313/angle_7.jpg",
+      "/images/products/cpx/101313/angle_8.jpg",
+      "/images/products/cpx/101313/angle_9.jpg"
     ],
     description: "Trio of hand-carved floral heads in multi-tone gold centered with 9 brilliant-cut diamonds across 4.3g of 18K gold.",
   },
@@ -1978,18 +2047,18 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 240000n,
     priceInrMinor: 19800000n,
-    primaryImage: "/images/products/cpx/101399/angle_1.jpg",
-    alternateImage: "/images/products/cpx/101399/details.jpg",
+    primaryImage: "/images/products/cpx/101399/primary.jpg",
+    alternateImage: "/images/products/cpx/101399/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/101399/angle_1.jpg",
-        "/images/products/cpx/101399/angle_2.jpg",
-        "/images/products/cpx/101399/angle_3.jpg",
-        "/images/products/cpx/101399/angle_4.jpg",
-        "/images/products/cpx/101399/angle_5.jpg",
-        "/images/products/cpx/101399/angle_6.jpg",
-        "/images/products/cpx/101399/angle_7.jpg",
-        "/images/products/cpx/101399/angle_8.jpg",
-        "/images/products/cpx/101399/details.jpg"
+      "/images/products/cpx/101399/angle_1.jpg",
+      "/images/products/cpx/101399/angle_2.jpg",
+      "/images/products/cpx/101399/angle_3.jpg",
+      "/images/products/cpx/101399/angle_4.jpg",
+      "/images/products/cpx/101399/angle_5.jpg",
+      "/images/products/cpx/101399/angle_6.jpg",
+      "/images/products/cpx/101399/angle_7.jpg",
+      "/images/products/cpx/101399/angle_8.jpg",
+      "/images/products/cpx/101399/angle_9.jpg"
     ],
     description: "Striking modern wrap ring centering a princess-cut vibrant emerald paired with 52 round brilliant diamonds along an open bypass band.",
   },
@@ -2004,18 +2073,18 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 165000n,
     priceInrMinor: 13600000n,
-    primaryImage: "/images/products/cpx/101433/angle_1.jpg",
-    alternateImage: "/images/products/cpx/101433/details.jpg",
+    primaryImage: "/images/products/cpx/101433/primary.jpg",
+    alternateImage: "/images/products/cpx/101433/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/101433/angle_1.jpg",
-        "/images/products/cpx/101433/angle_2.jpg",
-        "/images/products/cpx/101433/angle_3.jpg",
-        "/images/products/cpx/101433/angle_4.jpg",
-        "/images/products/cpx/101433/angle_5.jpg",
-        "/images/products/cpx/101433/angle_6.jpg",
-        "/images/products/cpx/101433/angle_7.jpg",
-        "/images/products/cpx/101433/angle_8.jpg",
-        "/images/products/cpx/101433/details.jpg"
+      "/images/products/cpx/101433/angle_1.jpg",
+      "/images/products/cpx/101433/angle_2.jpg",
+      "/images/products/cpx/101433/angle_3.jpg",
+      "/images/products/cpx/101433/angle_4.jpg",
+      "/images/products/cpx/101433/angle_5.jpg",
+      "/images/products/cpx/101433/angle_6.jpg",
+      "/images/products/cpx/101433/angle_7.jpg",
+      "/images/products/cpx/101433/angle_8.jpg",
+      "/images/products/cpx/101433/angle_9.jpg"
     ],
     description: "Generously proportioned cocktail dome ring with radiating fluted gold gadroons set with 54 sparkling pavé diamonds.",
   },
@@ -2030,17 +2099,17 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 148000n,
     priceInrMinor: 12200000n,
-    primaryImage: "/images/products/cpx/101437/angle_1.jpg",
-    alternateImage: "/images/products/cpx/101437/details.jpg",
+    primaryImage: "/images/products/cpx/101437/primary.jpg",
+    alternateImage: "/images/products/cpx/101437/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/101437/angle_1.jpg",
-        "/images/products/cpx/101437/angle_2.jpg",
-        "/images/products/cpx/101437/angle_3.jpg",
-        "/images/products/cpx/101437/angle_4.jpg",
-        "/images/products/cpx/101437/angle_5.jpg",
-        "/images/products/cpx/101437/angle_6.jpg",
-        "/images/products/cpx/101437/angle_7.jpg",
-        "/images/products/cpx/101437/details.jpg"
+      "/images/products/cpx/101437/angle_1.jpg",
+      "/images/products/cpx/101437/angle_2.jpg",
+      "/images/products/cpx/101437/angle_3.jpg",
+      "/images/products/cpx/101437/angle_4.jpg",
+      "/images/products/cpx/101437/angle_5.jpg",
+      "/images/products/cpx/101437/angle_6.jpg",
+      "/images/products/cpx/101437/angle_7.jpg",
+      "/images/products/cpx/101437/angle_8.jpg"
     ],
     description: "Overlapping ribbons of polished 18K yellow gold intertwined with ribbons of pavé diamonds creating an undulating crossover statement.",
   },
@@ -2055,8 +2124,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 185000n,
     priceInrMinor: 15200000n,
-    primaryImage: "/images/products/cpx/rings/101521.jpg",
-    alternateImage: "/images/products/cpx/rings/101521_spec.jpg",
+    primaryImage: "/images/products/cpx/101521/primary.jpg",
+    alternateImage: "/images/products/cpx/101521/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101521/angle_1.jpg"
+    ],
     description: "Revered Vedic symbol of cosmic endurance and prosperity, featuring an ornate tortoise carapace micro-pavé set with 45 precious gems.",
   },
   {
@@ -2070,8 +2142,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 112000n,
     priceInrMinor: 9200000n,
-    primaryImage: "/images/products/cpx/rings/101524.jpg",
-    alternateImage: "/images/products/cpx/rings/101524_spec.jpg",
+    primaryImage: "/images/products/cpx/101524/primary.jpg",
+    alternateImage: "/images/products/cpx/101524/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101524/angle_1.jpg"
+    ],
     description: "Whimsical cloverleaf bypass ring with bezel-set center stone and channel-set diamond shoulders along a gracefully coiled shank.",
   },
   {
@@ -2085,8 +2160,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 95000n,
     priceInrMinor: 7800000n,
-    primaryImage: "/images/products/cpx/rings/117216.jpg",
-    alternateImage: "/images/products/cpx/rings/117216.jpg",
+    primaryImage: "/images/products/cpx/117216/primary.jpg",
+    alternateImage: "/images/products/cpx/117216/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117216/angle_1.jpg"
+    ],
     description: "Regal arched tiara ring designed to be worn standalone or as an ornate contoured jacket alongside fine engagement solitaires.",
   },
   {
@@ -2100,8 +2178,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 99000n,
     priceInrMinor: 8200000n,
-    primaryImage: "/images/products/cpx/rings/117217.jpg",
-    alternateImage: "/images/products/cpx/rings/117217.jpg",
+    primaryImage: "/images/products/cpx/117217/primary.jpg",
+    alternateImage: "/images/products/cpx/117217/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117217/angle_1.jpg"
+    ],
     description: "Cascading dual crossover bands in gleaming 18K yellow gold adorned with shimmering pavé diamonds.",
   },
   {
@@ -2115,8 +2196,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 145000n,
     priceInrMinor: 11900000n,
-    primaryImage: "/images/products/cpx/rings/117286.jpg",
-    alternateImage: "/images/products/cpx/rings/117286.jpg",
+    primaryImage: "/images/products/cpx/117286/primary.jpg",
+    alternateImage: "/images/products/cpx/117286/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117286/angle_1.jpg"
+    ],
     description: "Timeless 4-prong solitaire center cradled by micro-pavé diamond shoulders, exuding bridal sophistication.",
   },
   {
@@ -2130,8 +2214,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 135000n,
     priceInrMinor: 11200000n,
-    primaryImage: "/images/products/cpx/rings/117294.jpg",
-    alternateImage: "/images/products/cpx/rings/117294.jpg",
+    primaryImage: "/images/products/cpx/117294/primary.jpg",
+    alternateImage: "/images/products/cpx/117294/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117294/angle_1.jpg"
+    ],
     description: "Contemporary low-profile architectural ring with geometric bezel holding a brilliant diamond center.",
   },
   {
@@ -2145,8 +2232,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 125000n,
     priceInrMinor: 10300000n,
-    primaryImage: "/images/products/cpx/rings/117365.jpg",
-    alternateImage: "/images/products/cpx/rings/117365.jpg",
+    primaryImage: "/images/products/cpx/117365/primary.jpg",
+    alternateImage: "/images/products/cpx/117365/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117365/angle_1.jpg"
+    ],
     description: "Four symmetrical square clusters aligned in a modern band, delivering exceptional surface fire and reflection.",
   },
   {
@@ -2160,8 +2250,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 155000n,
     priceInrMinor: 12800000n,
-    primaryImage: "/images/products/cpx/rings/117426.jpg",
-    alternateImage: "/images/products/cpx/rings/117426.jpg",
+    primaryImage: "/images/products/cpx/117426/primary.jpg",
+    alternateImage: "/images/products/cpx/117426/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117426/angle_1.jpg"
+    ],
     description: "Sensational modern bypass ring featuring a central rhombus plaque pavé set with 9 graduated diamonds held by ribbon arms.",
   },
   {
@@ -2175,8 +2268,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 118000n,
     priceInrMinor: 9700000n,
-    primaryImage: "/images/products/cpx/rings/117430.jpg",
-    alternateImage: "/images/products/cpx/rings/117430.jpg",
+    primaryImage: "/images/products/cpx/117430/primary.jpg",
+    alternateImage: "/images/products/cpx/117430/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117430/angle_1.jpg"
+    ],
     description: "Fluid serpentine wave band adorned with brilliant-cut diamonds hugging the finger in ergonomic splendor.",
   },
   {
@@ -2190,11 +2286,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 175000n,
     priceInrMinor: 14400000n,
-    primaryImage: "/images/products/cpx/117432/view_1.jpg",
-    alternateImage: "/images/products/cpx/117432/view_2.jpg",
+    primaryImage: "/images/products/cpx/117432/primary.jpg",
+    alternateImage: "/images/products/cpx/117432/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/117432/view_1.jpg",
-        "/images/products/cpx/117432/view_2.jpg"
+      "/images/products/cpx/117432/angle_1.jpg",
+      "/images/products/cpx/117432/angle_2.jpg"
     ],
     description: "Impressive wide multi-row band uniting polished white gold rails with diamond-encrusted rows for maximum scintillation.",
   },
@@ -2209,8 +2305,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 295000n,
     priceInrMinor: 24500000n,
-    primaryImage: "/images/products/cpx/rings/117459.jpg",
-    alternateImage: "/images/products/cpx/rings/117459.jpg",
+    primaryImage: "/images/products/cpx/117459/primary.jpg",
+    alternateImage: "/images/products/cpx/117459/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117459/angle_1.jpg"
+    ],
     description: "Breathtaking high-jewelry dome ring sculpted with concentric openwork fish-scale scallop tiers set with over 100 diamonds around a vivid natural oval ruby.",
   },
   {
@@ -2224,8 +2323,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 148000n,
     priceInrMinor: 12200000n,
-    primaryImage: "/images/products/cpx/rings/117470.jpg",
-    alternateImage: "/images/products/cpx/rings/117470.jpg",
+    primaryImage: "/images/products/cpx/117470/primary.jpg",
+    alternateImage: "/images/products/cpx/117470/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117470/angle_1.jpg"
+    ],
     description: "Graceful knife-edge crossover shanks embracing a suspended cluster of brilliant round diamonds in crisp 18K white gold.",
   },
   {
@@ -2239,8 +2341,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 195000n,
     priceInrMinor: 16100000n,
-    primaryImage: "/images/products/cpx/rings/117494.jpg",
-    alternateImage: "/images/products/cpx/rings/117494.jpg",
+    primaryImage: "/images/products/cpx/117494/primary.jpg",
+    alternateImage: "/images/products/cpx/117494/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117494/angle_1.jpg"
+    ],
     description: "Art Deco-inspired octagonal tiered halo ring showcasing an emerald-cut motif framed by micro-pavé diamonds.",
   },
   {
@@ -2254,8 +2359,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 160000n,
     priceInrMinor: 13200000n,
-    primaryImage: "/images/products/cpx/rings/117498.jpg",
-    alternateImage: "/images/products/cpx/rings/117498.jpg",
+    primaryImage: "/images/products/cpx/117498/primary.jpg",
+    alternateImage: "/images/products/cpx/117498/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117498/angle_1.jpg"
+    ],
     description: "Distinctive honeycomb hexagonal halo surrounding a brilliant round diamond center with delicate milgrain edging.",
   },
   {
@@ -2269,8 +2377,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 152000n,
     priceInrMinor: 12500000n,
-    primaryImage: "/images/products/cpx/rings/117503.jpg",
-    alternateImage: "/images/products/cpx/rings/117503.jpg",
+    primaryImage: "/images/products/cpx/117503/primary.jpg",
+    alternateImage: "/images/products/cpx/117503/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/117503/angle_1.jpg"
+    ],
     description: "Sculptural split-shank architecture holding a luminous diamond cluster in suspended poise.",
   },
   {
@@ -2284,8 +2395,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 310000n,
     priceInrMinor: 25500000n,
-    primaryImage: "/images/products/cpx/bracelets/101621.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101621.jpg",
+    primaryImage: "/images/products/cpx/101621/primary.jpg",
+    alternateImage: "/images/products/cpx/101621/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101621/angle_1.jpg"
+    ],
     description: "Interlocking undulating waves of 18K yellow gold micro-pavé set with diamonds, punctuated by four-petal royal blue sapphire florets.",
   },
   {
@@ -2299,8 +2413,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 285000n,
     priceInrMinor: 23500000n,
-    primaryImage: "/images/products/cpx/bracelets/101622.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101622.jpg",
+    primaryImage: "/images/products/cpx/101622/primary.jpg",
+    alternateImage: "/images/products/cpx/101622/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101622/angle_1.jpg"
+    ],
     description: "Rhythmic alternating waves of warm gold ribbon embracing handset diamond navettes with seamless concealed box clasp.",
   },
   {
@@ -2314,8 +2431,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 325000n,
     priceInrMinor: 26800000n,
-    primaryImage: "/images/products/cpx/bracelets/101624.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101624.jpg",
+    primaryImage: "/images/products/cpx/101624/primary.jpg",
+    alternateImage: "/images/products/cpx/101624/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101624/angle_1.jpg"
+    ],
     description: "Vibrant natural emerald marquise gemstones paired with diamond pavé tendrils in a sculpted Jaipur gold bangle.",
   },
   {
@@ -2329,8 +2449,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 295000n,
     priceInrMinor: 24200000n,
-    primaryImage: "/images/products/cpx/bracelets/101634.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101634.jpg",
+    primaryImage: "/images/products/cpx/101634/primary.jpg",
+    alternateImage: "/images/products/cpx/101634/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101634/angle_1.jpg"
+    ],
     description: "Swirling openwork gold bangle highlighted by clusters of fine Columbian-color emeralds framed by diamond ribbons.",
   },
   {
@@ -2344,8 +2467,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 275000n,
     priceInrMinor: 22800000n,
-    primaryImage: "/images/products/cpx/bracelets/101637.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101637.jpg",
+    primaryImage: "/images/products/cpx/101637/primary.jpg",
+    alternateImage: "/images/products/cpx/101637/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101637/angle_1.jpg"
+    ],
     description: "Double parallel ribbons of pavé-set diamonds curving in continuous harmony around the wrist.",
   },
   {
@@ -2359,8 +2485,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 290000n,
     priceInrMinor: 23900000n,
-    primaryImage: "/images/products/cpx/bracelets/101638.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101638.jpg",
+    primaryImage: "/images/products/cpx/101638/primary.jpg",
+    alternateImage: "/images/products/cpx/101638/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101638/angle_1.jpg"
+    ],
     description: "Interlocking marquise links paved in diamonds creating a luminous lattice cuff of timeless elegance.",
   },
   {
@@ -2374,8 +2503,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 340000n,
     priceInrMinor: 27900000n,
-    primaryImage: "/images/products/cpx/bracelets/101640.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101640.jpg",
+    primaryImage: "/images/products/cpx/101640/primary.jpg",
+    alternateImage: "/images/products/cpx/101640/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101640/angle_1.jpg"
+    ],
     description: "Rich pigeon-blood red ruby cabochon surrounded by brilliant diamond halos along an openwork gold cuff.",
   },
   {
@@ -2389,8 +2521,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 265000n,
     priceInrMinor: 21900000n,
-    primaryImage: "/images/products/cpx/bracelets/101645.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101645.jpg",
+    primaryImage: "/images/products/cpx/101645/primary.jpg",
+    alternateImage: "/images/products/cpx/101645/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101645/angle_1.jpg"
+    ],
     description: "Dynamic bypass bangle featuring asymmetric blossom florets blooming along diamond-accented tendrils.",
   },
   {
@@ -2404,8 +2539,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 145000n,
     priceInrMinor: 11900000n,
-    primaryImage: "/images/products/cpx/bracelets/101648.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101648.jpg",
+    primaryImage: "/images/products/cpx/101648/primary.jpg",
+    alternateImage: "/images/products/cpx/101648/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101648/angle_1.jpg"
+    ],
     description: "Delicate articulated gold link bracelet centered with three blooming diamond flowers for subtle everyday poise.",
   },
   {
@@ -2419,8 +2557,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 155000n,
     priceInrMinor: 12800000n,
-    primaryImage: "/images/products/cpx/bracelets/101649.jpg",
-    alternateImage: "/images/products/cpx/bracelets/101649.jpg",
+    primaryImage: "/images/products/cpx/101649/primary.jpg",
+    alternateImage: "/images/products/cpx/101649/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/101649/angle_1.jpg"
+    ],
     description: "Articulated geometric windmill motifs set with diamonds linked by polished 18K gold jump rings.",
   },
   {
@@ -2434,8 +2575,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 380000n,
     priceInrMinor: 31200000n,
-    primaryImage: "/images/products/cpx/bracelets/122941.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122941.jpg",
+    primaryImage: "/images/products/cpx/122941/primary.jpg",
+    alternateImage: "/images/products/cpx/122941/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122941/angle_1.jpg"
+    ],
     description: "Masterful 4000px resolution bench design pairing round diamond halos with polished gold spherules.",
   },
   {
@@ -2449,8 +2593,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 420000n,
     priceInrMinor: 34500000n,
-    primaryImage: "/images/products/cpx/bracelets/122945.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122945.jpg",
+    primaryImage: "/images/products/cpx/122945/primary.jpg",
+    alternateImage: "/images/products/cpx/122945/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122945/angle_1.jpg"
+    ],
     description: "The quintessential fine jewelry staple: a continuous strand of 4-prong set brilliant-cut diamonds with double-safety lock.",
   },
   {
@@ -2464,8 +2611,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 350000n,
     priceInrMinor: 28800000n,
-    primaryImage: "/images/products/cpx/bracelets/122949.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122949.jpg",
+    primaryImage: "/images/products/cpx/122949/primary.jpg",
+    alternateImage: "/images/products/cpx/122949/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122949/angle_1.jpg"
+    ],
     description: "Interlinked geometric chevron bars channel-set with diamonds for a modern architectural line on the wrist.",
   },
   {
@@ -2479,8 +2629,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 550000n,
     priceInrMinor: 45500000n,
-    primaryImage: "/images/products/cpx/bracelets/122950.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122950.jpg",
+    primaryImage: "/images/products/cpx/122950/primary.jpg",
+    alternateImage: "/images/products/cpx/122950/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122950/angle_1.jpg"
+    ],
     description: "Double the radiance with two parallel tracks of handset diamonds articulated for fluid drape and high-impact brilliance.",
   },
   {
@@ -2494,8 +2647,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 390000n,
     priceInrMinor: 32200000n,
-    primaryImage: "/images/products/cpx/bracelets/122951.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122951.jpg",
+    primaryImage: "/images/products/cpx/122951/primary.jpg",
+    alternateImage: "/images/products/cpx/122951/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122951/angle_1.jpg"
+    ],
     description: "Graceful oval bezels linked in sequence, each framing a brilliant-cut diamond in 18K gold.",
   },
   {
@@ -2509,8 +2665,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 460000n,
     priceInrMinor: 37800000n,
-    primaryImage: "/images/products/cpx/bracelets/122954.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122954.jpg",
+    primaryImage: "/images/products/cpx/122954/primary.jpg",
+    alternateImage: "/images/products/cpx/122954/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122954/angle_1.jpg"
+    ],
     description: "Art Deco interplay of step-cut baguette diamonds alternating with round brilliants in rigid bar links.",
   },
   {
@@ -2524,8 +2683,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 440000n,
     priceInrMinor: 36200000n,
-    primaryImage: "/images/products/cpx/bracelets/122956.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122956.jpg",
+    primaryImage: "/images/products/cpx/122956/primary.jpg",
+    alternateImage: "/images/products/cpx/122956/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122956/angle_1.jpg"
+    ],
     description: "Bold geometric links reminiscent of 1920s high jewelry, paved with diamonds in 18K gold.",
   },
   {
@@ -2539,8 +2701,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 310000n,
     priceInrMinor: 25600000n,
-    primaryImage: "/images/products/cpx/bracelets/122958.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122958.jpg",
+    primaryImage: "/images/products/cpx/122958/primary.jpg",
+    alternateImage: "/images/products/cpx/122958/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122958/angle_1.jpg"
+    ],
     description: "Streamlined channel of brilliant diamonds set flush into a substantial solid 18K gold bangle with hinge release.",
   },
   {
@@ -2554,8 +2719,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 365000n,
     priceInrMinor: 30100000n,
-    primaryImage: "/images/products/cpx/bracelets/122960.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122960.jpg",
+    primaryImage: "/images/products/cpx/122960/primary.jpg",
+    alternateImage: "/images/products/cpx/122960/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122960/angle_1.jpg"
+    ],
     description: "Textured nautical cable links woven with pavé diamond cuffs, uniting rugged tactile strength with refined sparkle.",
   },
   {
@@ -2569,8 +2737,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 490000n,
     priceInrMinor: 40500000n,
-    primaryImage: "/images/products/cpx/bracelets/122961.jpg",
-    alternateImage: "/images/products/cpx/bracelets/122961.jpg",
+    primaryImage: "/images/products/cpx/122961/primary.jpg",
+    alternateImage: "/images/products/cpx/122961/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/122961/angle_1.jpg"
+    ],
     description: "Substantial heavyweight 18K gold links sculpted with organic curvature and set with brilliant pavé diamonds.",
   },
   {
@@ -2584,11 +2755,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 88000n,
     priceInrMinor: 7200000n,
-    primaryImage: "/images/products/cpx/127685/view_1.jpg",
-    alternateImage: "/images/products/cpx/127685/view_2.jpg",
+    primaryImage: "/images/products/cpx/127685/primary.jpg",
+    alternateImage: "/images/products/cpx/127685/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/127685/view_1.jpg",
-        "/images/products/cpx/127685/view_2.jpg"
+      "/images/products/cpx/127685/angle_1.jpg",
+      "/images/products/cpx/127685/angle_2.jpg"
     ],
     description: "A sculpted white gold leaf with pavé diamonds suspending a free-floating rose gold bezel holding a brilliant-cut solitaire.",
   },
@@ -2603,11 +2774,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 79000n,
     priceInrMinor: 6500000n,
-    primaryImage: "/images/products/cpx/127689/view_1.jpg",
-    alternateImage: "/images/products/cpx/127689/view_2.jpg",
+    primaryImage: "/images/products/cpx/127689/primary.jpg",
+    alternateImage: "/images/products/cpx/127689/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/127689/view_1.jpg",
-        "/images/products/cpx/127689/view_2.jpg"
+      "/images/products/cpx/127689/angle_1.jpg",
+      "/images/products/cpx/127689/angle_2.jpg"
     ],
     description: "Graceful spiraling ribbon of pavé diamonds curling around a suspended diamond droplet.",
   },
@@ -2622,11 +2793,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 92000n,
     priceInrMinor: 7600000n,
-    primaryImage: "/images/products/cpx/127690/view_1.jpg",
-    alternateImage: "/images/products/cpx/127690/view_2.jpg",
+    primaryImage: "/images/products/cpx/127690/primary.jpg",
+    alternateImage: "/images/products/cpx/127690/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/127690/view_1.jpg",
-        "/images/products/cpx/127690/view_2.jpg"
+      "/images/products/cpx/127690/angle_1.jpg",
+      "/images/products/cpx/127690/angle_2.jpg"
     ],
     description: "Concentric circles of yellow and white gold framing a brilliant cluster of diamonds with fine rope texture.",
   },
@@ -2641,11 +2812,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 82000n,
     priceInrMinor: 6700000n,
-    primaryImage: "/images/products/cpx/127691/view_1.jpg",
-    alternateImage: "/images/products/cpx/127691/view_2.jpg",
+    primaryImage: "/images/products/cpx/127691/primary.jpg",
+    alternateImage: "/images/products/cpx/127691/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/127691/view_1.jpg",
-        "/images/products/cpx/127691/view_2.jpg"
+      "/images/products/cpx/127691/angle_1.jpg",
+      "/images/products/cpx/127691/angle_2.jpg"
     ],
     description: "Minimalist vertical drop pendant featuring graduated diamonds leading to an articulated teardrop charm.",
   },
@@ -2660,11 +2831,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 86000n,
     priceInrMinor: 7100000n,
-    primaryImage: "/images/products/cpx/127698/view_1.jpg",
-    alternateImage: "/images/products/cpx/127698/view_2.jpg",
+    primaryImage: "/images/products/cpx/127698/primary.jpg",
+    alternateImage: "/images/products/cpx/127698/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/127698/view_1.jpg",
-        "/images/products/cpx/127698/view_2.jpg"
+      "/images/products/cpx/127698/angle_1.jpg",
+      "/images/products/cpx/127698/angle_2.jpg"
     ],
     description: "Openwork geometric silhouette featuring clean lines and a floating brilliant-cut diamond cluster.",
   },
@@ -2679,11 +2850,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: true,
     priceUsdMinor: 145000n,
     priceInrMinor: 11900000n,
-    primaryImage: "/images/products/cpx/141961/view_1.jpg",
-    alternateImage: "/images/products/cpx/141961/view_2.jpg",
+    primaryImage: "/images/products/cpx/141961/primary.jpg",
+    alternateImage: "/images/products/cpx/141961/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/141961/view_1.jpg",
-        "/images/products/cpx/141961/view_2.jpg"
+      "/images/products/cpx/141961/angle_1.jpg",
+      "/images/products/cpx/141961/angle_2.jpg"
     ],
     description: "Dramatic deep black onyx disc framed by an 18K rose gold and diamond floral wreath with center solitaire.",
   },
@@ -2698,11 +2869,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 95000n,
     priceInrMinor: 7800000n,
-    primaryImage: "/images/products/cpx/141965/view_1.jpg",
-    alternateImage: "/images/products/cpx/141965/view_2.jpg",
+    primaryImage: "/images/products/cpx/141965/primary.jpg",
+    alternateImage: "/images/products/cpx/141965/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/141965/view_1.jpg",
-        "/images/products/cpx/141965/view_2.jpg"
+      "/images/products/cpx/141965/angle_1.jpg",
+      "/images/products/cpx/141965/angle_2.jpg"
     ],
     description: "Delicate sculpted petals of warm rose gold set with diamonds catching every flicker of light.",
   },
@@ -2717,11 +2888,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 105000n,
     priceInrMinor: 8600000n,
-    primaryImage: "/images/products/cpx/141966/view_1.jpg",
-    alternateImage: "/images/products/cpx/141966/view_2.jpg",
+    primaryImage: "/images/products/cpx/141966/primary.jpg",
+    alternateImage: "/images/products/cpx/141966/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/141966/view_1.jpg",
-        "/images/products/cpx/141966/view_2.jpg"
+      "/images/products/cpx/141966/angle_1.jpg",
+      "/images/products/cpx/141966/angle_2.jpg"
     ],
     description: "Figure-eight infinity motif encrusted with pavé diamonds across rose gold, symbolizing boundless devotion.",
   },
@@ -2736,8 +2907,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 120000n,
     priceInrMinor: 9900000n,
-    primaryImage: "/images/products/cpx/pendants/141969.jpg",
-    alternateImage: "/images/products/cpx/pendants/141969_b.jpg",
+    primaryImage: "/images/products/cpx/141969/primary.jpg",
+    alternateImage: "/images/products/cpx/141969/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/141969/angle_1.jpg"
+    ],
     description: "Ornate round medallion featuring Rajasthan royal palace jaali openwork adorned with fine diamond accents.",
   },
   {
@@ -2751,8 +2925,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 115000n,
     priceInrMinor: 9400000n,
-    primaryImage: "/images/products/cpx/pendants/142007.jpg",
-    alternateImage: "/images/products/cpx/pendants/142007_b.jpg",
+    primaryImage: "/images/products/cpx/142007/primary.jpg",
+    alternateImage: "/images/products/cpx/142007/alternate.jpg",
+    galleryImages: [
+      "/images/products/cpx/142007/angle_1.jpg"
+    ],
     description: "Three polished yellow gold rings interlinked and crowned by an 18K white gold plaque holding a floral cluster of 7 diamonds.",
   },
   {
@@ -2766,11 +2943,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 128000n,
     priceInrMinor: 10500000n,
-    primaryImage: "/images/products/cpx/142011/view_1.jpg",
-    alternateImage: "/images/products/cpx/142011/view_2.jpg",
+    primaryImage: "/images/products/cpx/142011/primary.jpg",
+    alternateImage: "/images/products/cpx/142011/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/142011/view_1.jpg",
-        "/images/products/cpx/142011/view_2.jpg"
+      "/images/products/cpx/142011/angle_1.jpg",
+      "/images/products/cpx/142011/angle_2.jpg"
     ],
     description: "Radiating sunburst corona of diamonds encircling a central solitaire in warm 18K yellow gold.",
   },
@@ -2785,11 +2962,11 @@ export const STANDALONE_PRODUCTS: StandaloneProductDefinition[] = [
     isOneOfAKind: false,
     priceUsdMinor: 135000n,
     priceInrMinor: 11100000n,
-    primaryImage: "/images/products/cpx/142023/view_1.jpg",
-    alternateImage: "/images/products/cpx/142023/view_2.jpg",
+    primaryImage: "/images/products/cpx/142023/primary.jpg",
+    alternateImage: "/images/products/cpx/142023/alternate.jpg",
     galleryImages: [
-        "/images/products/cpx/142023/view_1.jpg",
-        "/images/products/cpx/142023/view_2.jpg"
+      "/images/products/cpx/142023/angle_1.jpg",
+      "/images/products/cpx/142023/angle_2.jpg"
     ],
     description: "Tactile fluted gold pendant with central channel-set diamond ribbons and articulated bail.",
   },
